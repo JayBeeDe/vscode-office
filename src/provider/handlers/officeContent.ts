@@ -132,7 +132,7 @@ async function readGitUriBytes(uri: Uri): Promise<Uint8Array> {
 
 export async function readUriBytes(uri: Uri): Promise<Uint8Array> {
     if (uri.scheme === 'git' && !isWebExtensionHost() && process.platform === 'win32' && (
-        ['.pdf', '.docx'].includes(extname(uri.fsPath).toLowerCase())
+        ['.pdf', '.docx', '.docm', '.dotm'].includes(extname(uri.fsPath).toLowerCase())
     )) {
         try {
             return await readGitUriBytes(uri);

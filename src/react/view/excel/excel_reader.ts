@@ -471,8 +471,9 @@ const loadCsv = (buffer: ArrayBuffer): ExcelData => {
 };
 
 const isCsvExt = (ext: string) => /csv|tsv/.test(ext.toLowerCase());
-const isOdsExt = (ext: string) => ext.toLowerCase().includes('ods');
-const isXlsExt = (ext: string) => ext.toLowerCase().replace(/^\./, '') === 'xls';
+const isOdsExt = (ext: string) => ['ods', 'ots'].includes(ext.toLowerCase().replace(/^\./, ''));
+// xlt 与 xls 同为 BIFF 格式，模板仅由扩展名区分
+const isXlsExt = (ext: string) => ['xls', 'xlt'].includes(ext.toLowerCase().replace(/^\./, ''));
 
 export async function loadSheets(buffer: ArrayBuffer, ext: string): Promise<ExcelData> {
     if (isCsvExt(ext)) {

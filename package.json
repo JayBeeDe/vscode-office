@@ -12,12 +12,23 @@
 		"pdf",
 		"word",
 		"docx",
+		"docm",
+		"dotm",
 		"excel",
 		"xlsx",
+		"xltx",
+		"xltm",
+		"xlt",
 		"csv",
 		"tsv",
+		"ods",
+		"ots",
 		"powerpoint",
 		"pptx",
+		"ppsx",
+		"potx",
+		"ppsm",
+		"potm",
 		"markdown",
 		"epub",
 		"xmind",
@@ -96,10 +107,19 @@
 						"filenamePattern": "*.xls"
 					},
 					{
+						"filenamePattern": "*.xlt"
+					},
+					{
 						"filenamePattern": "*.xlsx"
 					},
 					{
 						"filenamePattern": "*.xlsm"
+					},
+					{
+						"filenamePattern": "*.xltx"
+					},
+					{
+						"filenamePattern": "*.xltm"
 					},
 					{
 						"filenamePattern": "file:/**/*.csv"
@@ -117,6 +137,9 @@
 						"filenamePattern": "*.ods"
 					},
 					{
+						"filenamePattern": "*.ots"
+					},
+					{
 						"filenamePattern": "file:/**/*.docx"
 					},
 					{
@@ -126,13 +149,31 @@
 						"filenamePattern": "vscode-remote:/**/*.docx"
 					},
 					{
+						"filenamePattern": "*.docm"
+					},
+					{
 						"filenamePattern": "*.dotx"
+					},
+					{
+						"filenamePattern": "*.dotm"
 					},
 					{
 						"filenamePattern": "*.pptx"
 					},
 					{
 						"filenamePattern": "*.pptm"
+					},
+					{
+						"filenamePattern": "*.ppsx"
+					},
+					{
+						"filenamePattern": "*.potx"
+					},
+					{
+						"filenamePattern": "*.ppsm"
+					},
+					{
+						"filenamePattern": "*.potm"
 					},
 					{
 						"filenamePattern": "*.pdf"
@@ -172,7 +213,6 @@
 			{
 				"viewType": "cweijan.parquetViewer",
 				"displayName": "Parquet Viewer",
-				"priority": "option",
 				"selector": [
 					{
 						"filenamePattern": "*.parquet"

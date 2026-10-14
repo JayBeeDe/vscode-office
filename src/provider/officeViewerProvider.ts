@@ -39,18 +39,28 @@ export class OfficeViewerProvider implements vscode.CustomReadonlyEditorProvider
 		switch (suffix) {
 			case '.xlsx':
 			case '.xlsm':
+			case '.xltx':
+			case '.xltm':
 			case '.xls':
+			case '.xlt':
 			case '.csv':
 			case '.tsv':
 			case '.ods':
+			case '.ots':
 				route = 'excel';
 				break;
 			case '.docx':
+			case '.docm':
+			case '.dotm':
 			case '.dotx':
 				route = 'word';
 				break;
 			case '.pptx':
 			case '.pptm':
+			case '.ppsx':
+			case '.potx':
+			case '.ppsm':
+			case '.potm':
 				route = 'ppt';
 				break;
 			case '.pdf':

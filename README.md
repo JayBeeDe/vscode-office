@@ -4,9 +4,9 @@
 
 This extension lets you preview and edit common office files directly in VS Code.
 
-- Excel: `.xls`, `.xlsx`, `.xlsm`, `.csv`, `.tsv`, `.ods`
-- Word: `.docx`, `.dotx`
-- PowerPoint: `.pptx`, `.pptm`
+- Excel: `.xls`, `.xlt`, `.xlsx`, `.xlsm`, `.xltx`, `.xltm`, `.csv`, `.tsv`, `.ods`, `.ots`
+- Word: `.docx`, `.docm`, `.dotx`, `.dotm`
+- PowerPoint: `.pptx`, `.pptm`, `.ppsx`, `.potx`, `.ppsm`, `.potm`
 - PDF & eBook: `.pdf`, `.epub`
 - Mind maps: `.xmind`
 - Parquet: `.parquet`
@@ -44,7 +44,7 @@ Shortcuts: Based on [shortcut.md](shortcut.md), plus:
 
 ## Other features
 
-- Excel: preview and save `.xlsx`, `.xls`, `.xlsm`, `.csv`, and `.ods` files
+- Excel: preview and save `.xlsx`, `.xls`, `.xlt`, `.xlsm`, `.xltx`, `.xltm`, `.csv`, `.ods`, and `.ots` files
 - XMind: edit and save mind maps
 - Parquet: browse the schema, edit cells, and save
 

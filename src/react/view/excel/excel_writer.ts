@@ -22,7 +22,21 @@ export interface ExportOptions {
     saveAs?: boolean;
     /** saveAs 时指定目标格式 */
     saveAsExt?: string;
+    /** 目标扩展名，决定 [Content_Types].xml 中工作簿主部件的类型 (xltx/xltm) */
+    targetExt?: string;
 }
+
+const WORKBOOK_CONTENT_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml';
+/** ExcelJS 总是写出普通工作簿类型；这些扩展名需改写主部件类型，否则 Excel 会报扩展名与格式不符 */
+const MAIN_CONTENT_TYPES: Record<string, string> = {
+    xltx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.template.main+xml',
+    xltm: 'application/vnd.ms-excel.template.macroEnabled.main+xml',
+};
+const ODS_MEDIA_TYPE = 'application/vnd.oasis.opendocument.spreadsheet';
+const OTS_MEDIA_TYPE = 'application/vnd.oasis.opendocument.spreadsheet-template';
+
+/** SheetJS 负责写出的格式；模板 (xlt/ots) 与基础格式 (xls/ods) 结构相同 */
+const SHEETJS_BOOK_TYPES: Record<string, XLSX.BookType> = { xls: 'xls', xlt: 'xls', ods: 'ods', ots: 'ods' };
 
 function isRowData(row: RowData | number | undefined): row is RowData {
     return row != null && typeof row === 'object';
@@ -137,13 +151,21 @@ async function emitSave(buffer: Uint8Array, options?: ExportOptions) {
     handler.emit('save', content);
 }
 
-async function patchWorkbookSortStates(buffer: Uint8Array, sheets: SheetData[]) {
+async function patchWorkbookSortStates(buffer: Uint8Array, sheets: SheetData[], targetExt?: string) {
     const zip = await JSZip.loadAsync(buffer);
     for (let i = 0; i < sheets.length; i += 1) {
         const file = zip.file(`xl/worksheets/sheet${i + 1}.xml`);
         if (!file) continue;
         const xml = await file.async('string');
         zip.file(`xl/worksheets/sheet${i + 1}.xml`, patchWorksheetSortStateXml(xml, sheets[i].autofilter));
+    }
+    const mainContentType = targetExt ? MAIN_CONTENT_TYPES[targetExt] : undefined;
+    if (mainContentType) {
+        const contentTypes = zip.file('[Content_Types].xml');
+        if (contentTypes) {
+            const xml = await contentTypes.async('string');
+            zip.file('[Content_Types].xml', xml.replace(WORKBOOK_CONTENT_TYPE, mainContentType));
+        }
     }
     return new Uint8Array(await zip.generateAsync({ type: 'uint8array' }));
 }
@@ -156,7 +178,7 @@ async function exportWithExcelJs(sheets: SheetData[], options?: ExportOptions) {
         await writeSheetToExcelJs(worksheet, workbook, sheetData);
     }
     const buffer = new Uint8Array(await workbook.xlsx.writeBuffer());
-    const patched = await patchWorkbookSortStates(buffer, sheets);
+    const patched = await patchWorkbookSortStates(buffer, sheets, options?.targetExt);
     await emitSave(patched, options);
 }
 
@@ -193,14 +215,31 @@ function dataToSheetJs(xws: SheetData) {
     return ws;
 }
 
-function exportWithSheetJs(sheets: SheetData[], bookType: XLSX.BookType) {
+/** ots = ods 改写 mimetype 与 manifest；mimetype 须为首个且不压缩的条目 */
+async function toOdsTemplate(buffer: Uint8Array) {
+    const source = await JSZip.loadAsync(buffer);
+    const zip = new JSZip();
+    zip.file('mimetype', OTS_MEDIA_TYPE, { compression: 'STORE' });
+    for (const [path, entry] of Object.entries(source.files)) {
+        if (path === 'mimetype' || entry.dir) continue;
+        if (path === 'META-INF/manifest.xml') {
+            const xml = await entry.async('string');
+            zip.file(path, xml.replace(`manifest:media-type="${ODS_MEDIA_TYPE}"`, `manifest:media-type="${OTS_MEDIA_TYPE}"`));
+            continue;
+        }
+        zip.file(path, await entry.async('uint8array'));
+    }
+    return zip.generateAsync({ type: 'uint8array', compression: 'DEFLATE' });
+}
+
+async function writeWithSheetJs(sheets: SheetData[], ext: string) {
     const workbook = XLSX.utils.book_new();
     for (let i = 0; i < sheets.length; i += 1) {
         const sheetData = sheets[i];
         XLSX.utils.book_append_sheet(workbook, dataToSheetJs(sheetData), sheetData.name || `Sheet${i + 1}`);
     }
-    const buffer = XLSX.write(workbook, { bookType, type: 'array' });
-    handler.emit('save', [...new Uint8Array(buffer)]);
+    const buffer = new Uint8Array(XLSX.write(workbook, { bookType: SHEETJS_BOOK_TYPES[ext], type: 'array' }));
+    return ext === 'ots' ? toOdsTemplate(buffer) : buffer;
 }
 
 export async function exportSaveAs(
@@ -211,18 +250,12 @@ export async function exportSaveAs(
 ) {
     const ext = targetExt.replace('.', '').toLowerCase();
     const sheets = spreadSheet.getData();
-    if (ext === 'xlsx' || ext === 'xlsm') {
-        await exportWithExcelJs(sheets, { saveAs: true, saveAsExt: ext });
+    if (ext === 'xlsx' || ext === 'xlsm' || ext === 'xltx' || ext === 'xltm') {
+        await exportWithExcelJs(sheets, { saveAs: true, saveAsExt: ext, targetExt: ext });
         return;
     }
-    if (ext === 'xls' || ext === 'ods') {
-        const wb = XLSX.utils.book_new();
-        sheets.forEach((s, i) => {
-            const ws = dataToSheetJs(s);
-            XLSX.utils.book_append_sheet(wb, ws, s.name || `Sheet${i + 1}`);
-        });
-        const buf = XLSX.write(wb, { bookType: ext as XLSX.BookType, type: 'array' });
-        handler.emit('saveAs', { content: [...new Uint8Array(buf)], ext });
+    if (SHEETJS_BOOK_TYPES[ext]) {
+        handler.emit('saveAs', { content: [...await writeWithSheetJs(sheets, ext)], ext });
         return;
     }
     if (ext === 'csv' || ext === 'tsv') {
@@ -243,12 +276,12 @@ export async function export_xlsx(
     const ext = extName.replace('.', '').toLowerCase();
     const sheets = spreadSheet.getData();
 
-    if (ext === 'xlsx' || ext === 'xlsm' || options?.saveAs) {
-        await exportWithExcelJs(sheets, options?.saveAs ? { saveAs: true } : undefined);
+    if (ext === 'xlsx' || ext === 'xlsm' || ext === 'xltx' || ext === 'xltm' || options?.saveAs) {
+        await exportWithExcelJs(sheets, options?.saveAs ? { saveAs: true } : { targetExt: ext });
         return;
     }
-    if (ext === 'xls' || ext === 'ods') {
-        exportWithSheetJs(sheets, ext);
+    if (SHEETJS_BOOK_TYPES[ext]) {
+        handler.emit('save', [...await writeWithSheetJs(sheets, ext)]);
         return;
     }
     if (ext === 'csv' || ext === 'tsv') {
