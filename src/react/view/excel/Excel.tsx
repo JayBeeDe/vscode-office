@@ -115,6 +115,7 @@ function ExcelViewer() {
     const [activeSpreadsheet, setActiveSpreadsheet] = useState<Spreadsheet | null>(null)
     const [bottombarEl, setBottombarEl] = useState<HTMLElement | null>(null)
     const extRef = useRef('')
+    const sourceBufferRef = useRef<ArrayBuffer | null>(null)
     const documentCacheIdRef = useRef('')
     const readOnlyRef = useRef(false)
     const spreadSheetRef = useRef<Spreadsheet | null>(null)
@@ -223,7 +224,7 @@ function ExcelViewer() {
                                     void (async () => {
                                         dialog.destroy();
                                         try {
-                                            await export_xlsx(spreadSheet, extRef.current, csvEncoding, undefined, csvDelimiter);
+                                            await export_xlsx(spreadSheet, extRef.current, csvEncoding, { vbaSource: sourceBufferRef.current ?? undefined }, csvDelimiter);
                                         } catch (error) {
                                             console.error(`Failed to save Excel file: ${(error as Error).message}`);
                                         }
@@ -257,7 +258,7 @@ function ExcelViewer() {
         }
 
         try {
-            await export_xlsx(spreadSheet, extRef.current, csvEncoding, undefined, csvDelimiter);
+            await export_xlsx(spreadSheet, extRef.current, csvEncoding, { vbaSource: sourceBufferRef.current ?? undefined }, csvDelimiter);
             spreadSheet.setSaveEnabled(false);
         } catch (error) {
             console.error(`Failed to save Excel file: ${(error as Error).message}`);
@@ -323,6 +324,7 @@ function ExcelViewer() {
             if (payload.ext?.match(/csv/i)) {
                 csvEncodingRef.current = detectCsvEncoding(buffer);
             }
+            sourceBufferRef.current = buffer;
             const { sheets, maxLength, maxCols, csvDelimiter } = await loadSheets(buffer, payload.ext);
             if (csvDelimiter) {
                 csvDelimiterRef.current = csvDelimiter;

@@ -12,6 +12,7 @@ import { hyperlinkKey, writeCellHyperlink, type SpreadsheetHyperlink } from './e
 import { writeWorksheetValidations } from './excel_validation';
 import { writeWorksheetProtection } from './excel_protection';
 import { writeWorksheetImages } from './excel_images';
+import { extractVbaParts, injectVbaParts, type VbaParts } from './spreadsheet_vba';
 
 const DEFAULT_COL_WIDTH = 100;
 
@@ -22,14 +23,17 @@ export interface ExportOptions {
     saveAs?: boolean;
     /** saveAs 时指定目标格式 */
     saveAsExt?: string;
-    /** 目标扩展名，决定 [Content_Types].xml 中工作簿主部件的类型 (xltx/xltm) */
+    /** 目标扩展名，决定 [Content_Types].xml 中工作簿主部件的类型 (xltx/xlsm/xltm) */
     targetExt?: string;
+    /** 当前打开文件的原始内容；保存为 xlsm 时从中带回宏 (vbaProject.bin) */
+    vbaSource?: ArrayBuffer;
 }
 
 const WORKBOOK_CONTENT_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml';
 /** ExcelJS 总是写出普通工作簿类型；这些扩展名需改写主部件类型，否则 Excel 会报扩展名与格式不符 */
 const MAIN_CONTENT_TYPES: Record<string, string> = {
     xltx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.template.main+xml',
+    xlsm: 'application/vnd.ms-excel.sheet.macroEnabled.main+xml',
     xltm: 'application/vnd.ms-excel.template.macroEnabled.main+xml',
 };
 const ODS_MEDIA_TYPE = 'application/vnd.oasis.opendocument.spreadsheet';
@@ -151,7 +155,7 @@ async function emitSave(buffer: Uint8Array, options?: ExportOptions) {
     handler.emit('save', content);
 }
 
-async function patchWorkbookSortStates(buffer: Uint8Array, sheets: SheetData[], targetExt?: string) {
+async function patchWorkbookSortStates(buffer: Uint8Array, sheets: SheetData[], targetExt?: string, vba?: VbaParts | null) {
     const zip = await JSZip.loadAsync(buffer);
     for (let i = 0; i < sheets.length; i += 1) {
         const file = zip.file(`xl/worksheets/sheet${i + 1}.xml`);
@@ -167,6 +171,9 @@ async function patchWorkbookSortStates(buffer: Uint8Array, sheets: SheetData[], 
             zip.file('[Content_Types].xml', xml.replace(WORKBOOK_CONTENT_TYPE, mainContentType));
         }
     }
+    if (vba) {
+        await injectVbaParts(zip, vba, sheets.map(sheet => sheet.codeName));
+    }
     return new Uint8Array(await zip.generateAsync({ type: 'uint8array' }));
 }
 
@@ -178,7 +185,9 @@ async function exportWithExcelJs(sheets: SheetData[], options?: ExportOptions) {
         await writeSheetToExcelJs(worksheet, workbook, sheetData);
     }
     const buffer = new Uint8Array(await workbook.xlsx.writeBuffer());
-    const patched = await patchWorkbookSortStates(buffer, sheets, options?.targetExt);
+    const keepsMacros = options?.targetExt === 'xlsm' || options?.targetExt === 'xltm';
+    const vba = keepsMacros && options?.vbaSource ? await extractVbaParts(options.vbaSource) : null;
+    const patched = await patchWorkbookSortStates(buffer, sheets, options?.targetExt, vba);
     await emitSave(patched, options);
 }
 
@@ -277,7 +286,7 @@ export async function export_xlsx(
     const sheets = spreadSheet.getData();
 
     if (ext === 'xlsx' || ext === 'xlsm' || ext === 'xltx' || ext === 'xltm' || options?.saveAs) {
-        await exportWithExcelJs(sheets, options?.saveAs ? { saveAs: true } : { targetExt: ext });
+        await exportWithExcelJs(sheets, options?.saveAs ? { saveAs: true } : { targetExt: ext, vbaSource: options?.vbaSource });
         return;
     }
     if (SHEETJS_BOOK_TYPES[ext]) {
