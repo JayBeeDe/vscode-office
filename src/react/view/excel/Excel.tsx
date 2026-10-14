@@ -191,7 +191,7 @@ function ExcelViewer() {
         const csvEncoding = csvEncodingRef.current;
         const csvDelimiter = csvDelimiterRef.current;
 
-        if (ext !== 'xlsx' && ext !== 'xlsm' && hasFormattingChanged(initialFormattingRef.current, sheets)) {
+        if (ext !== 'xlsx' && ext !== 'xlsm' && ext !== 'xltx' && ext !== 'xltm' && hasFormattingChanged(initialFormattingRef.current, sheets)) {
             await new Promise<void>((resolve) => {
                 const dialog = modal.confirm({
                     title: t('viewer.formatCannotPreserveTitle'),

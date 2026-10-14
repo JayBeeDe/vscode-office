@@ -81,11 +81,17 @@ export function handleCommonEvent(uri: Uri, handler: Handler) {
             const filterMap: Record<string, { label: string; exts: string[] }> = {
                 xlsx: { label: 'Excel Workbook', exts: ['xlsx'] },
                 xlsm: { label: 'Excel Macro-Enabled Workbook', exts: ['xlsm'] },
+                xltx: { label: 'Spreadsheet Template', exts: ['xltx'] },
+                xltm: { label: 'Macro-Enabled Spreadsheet Template', exts: ['xltm'] },
                 xls: { label: 'Excel 97-2003 Workbook', exts: ['xls'] },
+                xlt: { label: 'Spreadsheet 97-2003 Template', exts: ['xlt'] },
                 ods: { label: 'OpenDocument Spreadsheet', exts: ['ods'] },
+                ots: { label: 'OpenDocument Spreadsheet Template', exts: ['ots'] },
                 csv: { label: 'CSV (Comma delimited)', exts: ['csv'] },
                 parquet: { label: 'Apache Parquet', exts: ['parquet'] },
                 docx: { label: 'Word Document', exts: ['docx'] },
+                docm: { label: 'Macro-Enabled Document', exts: ['docm'] },
+                dotm: { label: 'Macro-Enabled Document Template', exts: ['dotm'] },
                 dotx: { label: 'Word Template', exts: ['dotx'] },
             };
             const info = filterMap[ext] ?? { label: ext.toUpperCase(), exts: [ext] };
