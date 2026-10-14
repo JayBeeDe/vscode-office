@@ -8,17 +8,6 @@ export class Util {
             .replace(/((src|href)=("|'))((?!(?:https?:|#|data:|mailto:|javascript:|blob:)).+?["'])/gi, "$1" + webview.asWebviewUri(baseUri) + "/$4");
     }
 
-    public static listen(webviewPanel: vscode.WebviewPanel, uri: vscode.Uri, callback: () => void, disposeCallback?: () => void) {
-        const changeDocumentSubscription = vscode.workspace.onDidChangeTextDocument(e => {
-            if (e.document.uri.toString() === uri.toString()) {
-                callback();
-            }
-        });
-        webviewPanel.onDidDispose(() => {
-            changeDocumentSubscription.dispose()
-        });
-    }
-
     public static async confirm(title: string, placeHolder: string, callback?: () => void): Promise<boolean> {
         return this.confirmActual({ title, placeHolder }, callback)
     }

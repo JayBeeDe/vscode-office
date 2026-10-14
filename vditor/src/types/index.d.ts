@@ -631,9 +631,6 @@ interface IOptions {
     /** 点击赞助站点后触发 */
     onSponsorSiteClick?(): void;
 
-    /** 遥测事件回调；配置后 vditor 内部通过 telemetry() 上报 */
-    onTelemetry?(event: string, properties?: Record<string, string | number | boolean>): void;
-
     /** 全局设置变更后触发（仅在配置文件同步启用时） */
     onSettingsChange?(settings: ViewerSettingsExport): void;
 
