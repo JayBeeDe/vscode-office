@@ -2,7 +2,7 @@ out/
 dist/
 node_modules    
 .vscode-test/
-.idea/
+.idea
 *.vsix
 package-lock.json
 .DS_Store
