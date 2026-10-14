@@ -143,11 +143,6 @@ export async function readUriBytes(uri: Uri): Promise<Uint8Array> {
     return workspace.fs.readFile(uri);
 }
 
-export async function readUriText(uri: Uri): Promise<string> {
-    const data = await readUriBytes(uri);
-    return new TextDecoder('utf-8').decode(data);
-}
-
 export function bytesToPayloadBuffer(data: Uint8Array): number[] {
     const buffer: number[] = new Array(data.length);
     for (let i = 0; i < data.length; i++) {

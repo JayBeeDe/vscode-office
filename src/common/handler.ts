@@ -8,6 +8,10 @@ export class Handler {
     private isEnd: boolean;
     constructor(public panel: WebviewPanel, private eventEmitter: SimpleEventEmitter) { }
 
+    get disposed(): boolean {
+        return this.isEnd;
+    }
+
     on(event: string, callback: (content: any) => any | Promise<any>): this {
         if (event != 'init') {
             const listens = this.eventEmitter.listeners(event)

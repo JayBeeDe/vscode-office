@@ -1,29 +1,18 @@
 # Office Viewer
 
-English | [简体中文](README-CN.md) | [繁體中文](README-TW.md)
-
 ## Introduction
 
-This extension lets you preview and edit common office and design files directly in VS Code.
+This extension lets you preview and edit common office files directly in VS Code.
 
-- Excel: `.xls`, `.xlsx`, `.xlsm`, `.csv`, `.ods`
+- Excel: `.xls`, `.xlsx`, `.xlsm`, `.csv`, `.tsv`, `.ods`
 - Word: `.docx`, `.dotx`
 - PowerPoint: `.pptx`, `.pptm`
 - PDF & eBook: `.pdf`, `.epub`
-- HEIC/TIFF: `.heic`, `.heif`, `.tiff`
-- Design: `.psd`, `.xmind`, `.icns`, `.svg`
-- Font: `.ttf`, `.otf`, `.woff`, `.woff2`
+- Mind maps: `.xmind`
+- Parquet: `.parquet`
 - Markdown: `.md`, `.markdown`
-- HTML: `.html`, `.htm`
-- HTTP request: `.http`, `.rest`
-- Java: `.class` (decompiler)
-- Compressed files: `.zip`, `.jar`, `.vsix`, `.rar`, `.7z`, `.tar`, `.tar.gz`, `.tgz`, `.apk`
 
-## Git History
-
-Office Viewer includes a full Git History workspace for exploring repositories without leaving VS Code. Open it from the Source Control view, the editor title bar, the editor context menu, or the file explorer context menu.
-
-![1783342874748](image/README/1783342874748.png)
+The viewers follow your current VS Code color theme.
 
 ## Markdown
 
@@ -55,12 +44,9 @@ Shortcuts: Based on [shortcut.md](shortcut.md), plus:
 
 ## Other features
 
-- HTML: live preview while editing; press `Ctrl+Shift+V` to open the live view
-- YAML: document outline and anchor navigation (Go to Definition for alias references)
-- Icon theme: includes a subset of [Material Icon Theme](https://github.com/PKief/vscode-material-icon-theme) icons, plus **Office Material Icon Theme** and **One Dark Modern** color themes
 - Excel: preview and save `.xlsx`, `.xls`, `.xlsm`, `.csv`, and `.ods` files
-- HTTP: send requests from `.http` and `.rest` files (integrated from [REST Client](https://github.com/Huachao/vscode-restclient) with fixes for local request issues); press `Ctrl+Enter` / `⌘ Enter` to send
-- Java: decompile and view `.class` files
+- XMind: edit and save mind maps
+- Parquet: browse the schema, edit cells, and save
 
 ## Sponsor
 
@@ -93,7 +79,7 @@ npm run dev
 
 Press `F5` in VS Code, or choose **Extension** from Run and Debug.
 
-**Web extension** (Markdown, HTML, YAML in the browser):
+**Web extension** (office viewers and Markdown in the browser):
 
 ```bash
 npm run dev:web
@@ -108,31 +94,6 @@ npm run build    # production build
 npm run package  # create .vsix
 ```
 
-## Usage data
-
-Office Viewer collects **anonymous usage data** to understand which preview features are used, so we can improve the extension. Data is sent to [Azure Application Insights](https://learn.microsoft.com/azure/azure-monitor/app/app-insights-overview) via the official [`@vscode/extension-telemetry`](https://www.npmjs.com/package/@vscode/extension-telemetry) module.
-
-### What we collect
-
-| Event         | When                              | Properties                                                                                                 |
-| ------------- | --------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `view.open` | A custom preview/editor is opened | `viewType` (e.g. `excel`, `markdown`, `pdf`), `fileType` (extension only, e.g. `xlsx`, `md`) |
-
-We **do not** collect file paths, file names, URLs, repository names, request contents, or other personally identifiable information.
-
-### How to opt out
-
-Telemetry is sent only when **both** of the following allow it:
-
-1. VS Code global telemetry is enabled (`telemetry.telemetryLevel` is not `off`, or `telemetry.enableTelemetry` is `true` on older versions).
-2. Extension telemetry is enabled: set `vscode-office.enableTelemetry` to `false` in Settings.
-
-You can also disable all VS Code telemetry in **Settings → Application → Telemetry**.
-
-### Maintainer setup
-
-If you build and publish this extension yourself, see [docs/telemetry.md](docs/telemetry.md) for Azure Application Insights setup and sample queries.
-
 ## Credits
 
 - PDF rendering: [mozilla/pdf.js](https://github.com/mozilla/pdf.js/)
@@ -142,10 +103,5 @@ If you build and publish this extension yourself, see [docs/telemetry.md](docs/t
   - [SheetJS/sheetjs](https://github.com/SheetJS/sheetjs): XLSX parsing
   - [myliang/x-spreadsheet](https://github.com/myliang/x-spreadsheet): XLSX rendering
 - EPUB: [futurepress/epub.js](https://github.com/futurepress/epub.js)
-- PSD: [ag-psd](https://github.com/Agamnentzar/ag-psd)
 - XMind: [mind-elixir](https://github.com/ssshooter/mind-elixir-core), [@mind-elixir/import-xmind](https://github.com/ssshooter/mind-elixir-core)
-- HEIC conversion: [heic2any](https://github.com/alexcorvi/heic2any)
-- Java decompiler: [JetBrains/java-decompiler](https://github.com/JetBrains/intellij-community/tree/master/plugins/java-decompiler/engine)
-- HTTP: [REST Client](https://github.com/Huachao/vscode-restclient)
 - Markdown: [Vanessa219/vditor](https://github.com/Vanessa219/vditor)
-- Material Icon theme: [PKief/vscode-material-icon-theme](https://github.com/PKief/vscode-material-icon-theme)
