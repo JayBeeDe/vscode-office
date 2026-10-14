@@ -105,3 +105,5 @@ npm run package  # create .vsix
 - EPUB: [futurepress/epub.js](https://github.com/futurepress/epub.js)
 - XMind: [mind-elixir](https://github.com/ssshooter/mind-elixir-core), [@mind-elixir/import-xmind](https://github.com/ssshooter/mind-elixir-core)
 - Markdown: [Vanessa219/vditor](https://github.com/Vanessa219/vditor)
+- File icons for `.parquet`, `.epub`: [PKief/vscode-material-icon-theme](https://github.com/PKief/vscode-material-icon-theme)
+- File icons for spreadsheet, document, `.csv`/`.tsv`, `.pdf` and Markdown formats, and the presentation icon (adapted from the document icon): [jesseweed/seti-ui](https://github.com/jesseweed/seti-ui)
