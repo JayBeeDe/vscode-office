@@ -15,6 +15,7 @@ import {
     readWorksheetProtection,
 } from './excel_protection';
 import type { CellData, SheetData } from './x-spreadsheet/index';
+import { readSheetCodeNames } from './spreadsheet_vba';
 
 type RowMap = NonNullable<SheetData['rows']>;
 
@@ -474,6 +475,7 @@ const isCsvExt = (ext: string) => /csv|tsv/.test(ext.toLowerCase());
 const isOdsExt = (ext: string) => ['ods', 'ots'].includes(ext.toLowerCase().replace(/^\./, ''));
 // xlt 与 xls 同为 BIFF 格式，模板仅由扩展名区分
 const isXlsExt = (ext: string) => ['xls', 'xlt'].includes(ext.toLowerCase().replace(/^\./, ''));
+const isMacroExt = (ext: string) => ['xlsm', 'xltm'].includes(ext.toLowerCase().replace(/^\./, ''));
 
 export async function loadSheets(buffer: ArrayBuffer, ext: string): Promise<ExcelData> {
     if (isCsvExt(ext)) {
@@ -482,7 +484,17 @@ export async function loadSheets(buffer: ArrayBuffer, ext: string): Promise<Exce
     if (isXlsExt(ext) || isOdsExt(ext)) {
         return loadWithSheetJs(buffer);
     }
-    return loadWithExcelJs(buffer);
+    const data = await loadWithExcelJs(buffer);
+    if (isMacroExt(ext)) {
+        const codeNames = await readSheetCodeNames(buffer);
+        for (const sheet of data.sheets) {
+            const codeName = sheet.name ? codeNames[sheet.name] : undefined;
+            if (codeName) {
+                sheet.codeName = codeName;
+            }
+        }
+    }
+    return data;
 }
 
 export function readCSV(buffer: ArrayBuffer): ExcelData {

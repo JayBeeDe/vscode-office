@@ -158,6 +158,8 @@ export interface SheetData {
     validations?: SheetValidationData[];
     /** Excel 工作表保护配置（不含密码） */
     sheetProtection?: Record<string, unknown>;
+    /** 宏工作簿 (xlsm/xltm) 中关联 VBA 工作表模块的 codeName */
+    codeName?: string;
     images?: SheetImage[];
     backgroundImage?: SheetBackgroundImage;
     styles?: CellStyle[];
@@ -341,6 +343,8 @@ export class Spreadsheet {
         const copyName = this.uniqueSheetName(source.name);
         const sheetData = JSON.parse(JSON.stringify(source.getData())) as SheetData;
         sheetData.name = copyName;
+        // 副本没有对应的 VBA 工作表模块
+        delete sheetData.codeName;
 
         const nd = new DataProxy(copyName, this.options);
         nd.change = (...args: any[]) => {
