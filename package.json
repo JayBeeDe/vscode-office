@@ -53,6 +53,151 @@
 	"main": "./out/extension.js",
 	"browser": "./out/extension.web.js",
 	"contributes": {
+		"languages": [
+			{
+				"id": "csv",
+				"aliases": [
+					"CSV"
+				],
+				"extensions": [
+					".csv"
+				],
+				"icon": {
+					"light": "./resource/icons/csv_light.svg",
+					"dark": "./resource/icons/csv.svg"
+				}
+			},
+			{
+				"id": "tsv",
+				"aliases": [
+					"TSV"
+				],
+				"extensions": [
+					".tsv"
+				],
+				"icon": {
+					"light": "./resource/icons/csv_light.svg",
+					"dark": "./resource/icons/csv.svg"
+				}
+			},
+			{
+				"id": "spreadsheet",
+				"aliases": [
+					"Spreadsheet"
+				],
+				"extensions": [
+					".xls",
+					".xlt",
+					".xlsx",
+					".xlsm",
+					".xltx",
+					".xltm",
+					".ods",
+					".ots"
+				],
+				"icon": {
+					"light": "./resource/icons/spreadsheet_light.svg",
+					"dark": "./resource/icons/spreadsheet.svg"
+				}
+			},
+			{
+				"id": "document",
+				"aliases": [
+					"Document"
+				],
+				"extensions": [
+					".docx",
+					".docm",
+					".dotx",
+					".dotm"
+				],
+				"icon": {
+					"light": "./resource/icons/document_light.svg",
+					"dark": "./resource/icons/document.svg"
+				}
+			},
+			{
+				"id": "presentation",
+				"aliases": [
+					"Presentation"
+				],
+				"extensions": [
+					".pptx",
+					".pptm",
+					".ppsx",
+					".potx",
+					".ppsm",
+					".potm"
+				],
+				"icon": {
+					"light": "./resource/icons/presentation_light.svg",
+					"dark": "./resource/icons/presentation.svg"
+				}
+			},
+			{
+				"id": "parquet",
+				"aliases": [
+					"Parquet"
+				],
+				"extensions": [
+					".parquet"
+				],
+				"icon": {
+					"light": "./resource/icons/parquet_light.svg",
+					"dark": "./resource/icons/parquet.svg"
+				}
+			},
+			{
+				"id": "epub",
+				"aliases": [
+					"EPUB"
+				],
+				"extensions": [
+					".epub"
+				],
+				"icon": {
+					"light": "./resource/icons/epub_light.svg",
+					"dark": "./resource/icons/epub.svg"
+				}
+			},
+			{
+				"id": "xmind",
+				"aliases": [
+					"XMind"
+				],
+				"extensions": [
+					".xmind"
+				],
+				"icon": {
+					"light": "./resource/icons/mindmap_light.svg",
+					"dark": "./resource/icons/mindmap.svg"
+				}
+			},
+			{
+				"id": "pdf",
+				"aliases": [
+					"PDF"
+				],
+				"extensions": [
+					".pdf"
+				],
+				"icon": {
+					"light": "./resource/icons/pdf_light.svg",
+					"dark": "./resource/icons/pdf.svg"
+				}
+			},
+			{
+				"id": "markdown",
+				"extensions": [
+					".md",
+					".markdown"
+				],
+				"icon": {
+					"light": "./resource/icons/markdown_light.svg",
+					"dark": "./resource/icons/markdown.svg"
+				}
+			}
+		],
 		"commands": [
 			{
 				"command": "office.markdown.switch",
