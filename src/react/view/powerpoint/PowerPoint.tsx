@@ -4,6 +4,7 @@ import { PPTXViewer } from "pptxviewjs";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { handler, loadDarkMode, applyDarkMode } from "../../util/vscode";
 import { loadOfficeBuffer } from "../../util/loadOfficeContent";
+import { loadMasterImages } from "./masterImages";
 import Sponsor from '../components/Sponsor';
 import './PowerPoint.css';
 
@@ -216,6 +217,7 @@ export default function PowerPoint() {
                 backgroundColor: '#ffffff',
             });
             await viewer.loadFile(buffer);
+            await loadMasterImages(viewer);
             await viewer.render(canvas);
 
             const count = viewer.getSlideCount();
