@@ -360,10 +360,29 @@ async function restoreCustomProperties(zip: JSZip, source: ArrayBuffer) {
     }
 }
 
+/** ExcelJS drops the workbook structure protection: copy it back from the original file. */
+async function restoreWorkbookProtection(zip: JSZip, source: ArrayBuffer) {
+    let sourceXml: string | undefined;
+    try {
+        sourceXml = await (await JSZip.loadAsync(source)).file('xl/workbook.xml')?.async('string');
+    } catch {
+        return;
+    }
+    const protection = sourceXml?.match(/<workbookProtection\b[^>]*\/>/)?.[0];
+    const xml = await zip.file('xl/workbook.xml')?.async('string');
+    if (!protection || !xml || xml.includes('<workbookProtection')) return;
+    // schema order: ... workbookPr, workbookProtection, bookViews ...
+    const patched = xml.includes('<bookViews')
+        ? xml.replace('<bookViews', `${protection}<bookViews`)
+        : xml.replace('<sheets', `${protection}<sheets`);
+    zip.file('xl/workbook.xml', patched);
+}
+
 async function patchWorkbookSortStates(buffer: Uint8Array, sheets: SheetData[], targetExt?: string, vba?: VbaParts | null, source?: ArrayBuffer) {
     const zip = await JSZip.loadAsync(buffer);
     if (source) {
         await restoreCustomProperties(zip, source);
+        await restoreWorkbookProtection(zip, source);
     }
     for (let i = 0; i < sheets.length; i += 1) {
         const file = zip.file(`xl/worksheets/sheet${i + 1}.xml`);
