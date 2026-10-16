@@ -84,6 +84,8 @@ function ParquetViewer() {
     const [readOnly, setReadOnly] = useState(false);
     const [vscodeTheme, setVscodeTheme] = useState(loadParquetVscodeTheme);
     const readOnlyRef = useRef(false);
+    // false while only the first page is read: an edit or a save then would lose the other rows
+    const rowsCompleteRef = useRef(false);
     const fileInfoRef = useRef<ParquetFileInfo | null>(null);
     const allRowsRef = useRef<Record<string, unknown>[]>([]);
     const dirtyRef = useRef(false);
@@ -126,7 +128,7 @@ function ParquetViewer() {
 
     const handleSave = useCallback((backup = false) => {
         const info = fileInfoRef.current;
-        if (!info) return;
+        if (!info || !rowsCompleteRef.current) return;
         if (backup) {
             handler.emit('save', [...new Uint8Array(writeParquetBuffer(info, allRowsRef.current))]);
             return;
@@ -147,7 +149,7 @@ function ParquetViewer() {
     }, [message]);
 
     const startEdit = useCallback((rowIndex: number, column: ParquetColumnInfo, value: unknown) => {
-        if (readOnlyRef.current || column.nested || !isColumnEditable(column.type)) return;
+        if (readOnlyRef.current || !rowsCompleteRef.current || column.nested || !isColumnEditable(column.type)) return;
         setEditingRow(rowIndex);
         setEditingColumn(column.name);
         setEditValue(formatCellValue(value));
@@ -190,6 +192,7 @@ function ParquetViewer() {
     const loadParquet = useCallback(async (payload: { path?: string; buffer?: number[]; readOnly?: boolean }) => {
         // `open` can arrive again while a load is running: only the latest one is applied
         const generation = ++loadGenerationRef.current;
+        rowsCompleteRef.current = false;
         setLoading(true);
         setError(null);
         setFileInfo(null);
@@ -208,8 +211,19 @@ function ParquetViewer() {
         try {
             const buffer = await loadOfficeBuffer(payload);
             const info = await openParquetFile(buffer);
+            // the first page first, so a large file shows at once; then all rows
+            if (info.rowCount > PAGE_SIZE) {
+                const firstRows = await readAllParquetRows(info.file, info.metadata, PAGE_SIZE);
+                if (generation !== loadGenerationRef.current) return;
+                fileInfoRef.current = info;
+                setFileInfo(info);
+                allRowsRef.current = firstRows;
+                setAllRows(firstRows);
+                setLoading(false);
+            }
             const rows = await readAllParquetRows(info.file, info.metadata);
             if (generation !== loadGenerationRef.current) return;
+            rowsCompleteRef.current = true;
             const nextInfo = { ...info, rowCount: rows.length };
             fileInfoRef.current = nextInfo;
             setFileInfo(nextInfo);

@@ -85,16 +85,16 @@ export async function openParquetFile(buffer: ArrayBuffer): Promise<ParquetFileI
     };
 }
 
-export async function readAllParquetRows(file: AsyncBuffer, metadata: FileMetaData): Promise<Record<string, unknown>[]> {
-    const rowCount = Number(metadata.num_rows);
-    if (rowCount <= 0) {
+export async function readAllParquetRows(file: AsyncBuffer, metadata: FileMetaData, rowEnd = Number(metadata.num_rows)): Promise<Record<string, unknown>[]> {
+    const end = Math.min(rowEnd, Number(metadata.num_rows));
+    if (end <= 0) {
         return [];
     }
     return parquetReadObjects({
         file,
         metadata,
         rowStart: 0,
-        rowEnd: rowCount,
+        rowEnd: end,
         rowFormat: 'object',
     });
 }
