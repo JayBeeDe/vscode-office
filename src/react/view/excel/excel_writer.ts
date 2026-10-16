@@ -58,6 +58,14 @@ function pxToExcelColWidth(px: number) {
     return Math.max((px - 5) / 7, 0);
 }
 
+/**
+ * A cell text is a formula when it starts with a single `=` followed by something; text-formatted
+ * cells and texts such as "=== header ===" stay text.
+ */
+function isFormulaText(text: string, format?: string): boolean {
+    return format !== 'text' && /^=[^=]/.test(text) && text.slice(1).trim() !== '';
+}
+
 function setCellValue(cell: ExcelJS.Cell, text: string, format?: string) {
     if (!text) {
         cell.value = null;
@@ -68,7 +76,7 @@ function setCellValue(cell: ExcelJS.Cell, text: string, format?: string) {
         cell.value = date;
         return;
     }
-    if (text.startsWith('=')) {
+    if (isFormulaText(text, format)) {
         cell.value = { formula: text.slice(1) };
         return;
     }
@@ -397,7 +405,7 @@ function applyColWidths(ws: XLSX.WorkSheet, xws: SheetData) {
 function toSheetJsCell(text: string, format?: string): XLSX.CellObject {
     const numFmt = spreadsheetFormatToNumFmt(format);
     const withFormat = (cell: XLSX.CellObject): XLSX.CellObject => (numFmt ? { ...cell, z: numFmt } : cell);
-    if (text.startsWith('=') && text.length > 1) {
+    if (isFormulaText(text, format)) {
         return withFormat({ t: 'n', f: text.slice(1) });
     }
     const date = parseExcelDateText(text, format);
