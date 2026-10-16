@@ -46,10 +46,13 @@ export default class FormulaBar {
       this.editing = true;
       this.changed = false;
       this.originalValue = this.inputEl.val();
+      // the cell being edited: clicking another cell selects it before the blur commits
+      const { ri, ci } = this.data.selector;
+      this.target = { ri, ci, text: this.originalValue };
     });
     this.inputEl.on('input', () => {
       this.changed = true;
-      this.onInput(this.inputEl.val());
+      this.onInput(this.inputEl.val(), this.target);
     });
     this.inputEl.on('keydown', (evt) => {
       evt.stopPropagation();
@@ -59,7 +62,7 @@ export default class FormulaBar {
       } else if (evt.key === 'Escape') {
         evt.preventDefault();
         this.inputEl.val(this.originalValue);
-        if (this.changed) this.onInput(this.originalValue);
+        if (this.changed) this.onInput(this.originalValue, this.target);
         this.changed = false;
         this.editing = false;
         this.inputEl.el.blur();
@@ -68,9 +71,11 @@ export default class FormulaBar {
     this.inputEl.on('blur', () => {
       const nextValue = this.inputEl.val();
       const shouldCommit = this.editing && this.changed && nextValue !== this.originalValue;
+      const { target } = this;
       this.editing = false;
       this.changed = false;
-      if (shouldCommit) this.onCommit(nextValue);
+      this.target = null;
+      if (shouldCommit) this.onCommit(nextValue, target);
     });
 
     this.resetData(data);
