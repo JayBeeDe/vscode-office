@@ -215,6 +215,13 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
             handler.emit("update", updatedText)
         }).on("command", (command) => {
             vscode.commands.executeCommand(command)
+        }).on("searchTag", (tag: string) => {
+            if (!tag) return;
+            void vscode.commands.executeCommand('workbench.action.findInFiles', {
+                query: `#${tag}`,
+                triggerSearch: true,
+                filesToInclude: '*.md,*.markdown',
+            });
         }).on("openLink", async (linkUri: string) => {
             if (linkUri.startsWith('wiki:')) {
                 await openWikiLink(uri, linkUri);

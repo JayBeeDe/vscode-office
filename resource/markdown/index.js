@@ -2,6 +2,13 @@ import { getToolbar, bindShortcut, createContextMenu, setAIAvailable, } from "./
 import { observeWorkspaceAbsoluteImages, createMarkdownValueReader, restoreWorkspaceBaseUrls, } from "./imagePath.js";
 import { mapVscodeLanguageToVditorLang } from "./lang.js";
 
+/** URL of a reference-style link: the "[label]: url" definition (labels ignore case). */
+function findReferenceDefinition(markdown, label) {
+  const escaped = label.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '\\s+');
+  const match = new RegExp(`^ {0,3}\\[${escaped}\\]:\\s*(?:<([^>]*)>|(\\S+))`, 'im').exec(markdown || '');
+  return match ? (match[1] ?? match[2]) : '';
+}
+
 handler.on("open", async (md) => {
   const { content, rootPath, workspaceBaseUrl, documentCacheId, pendingFragment, shouldRestoreFocus, config, fileName } = md;
   window.__officeMarkdownFileName = fileName || 'Note';
@@ -48,11 +55,21 @@ handler.on("open", async (md) => {
         editor.scrollToBlock(`footnote:${payload.href}`);
         return;
       }
-      if (payload.href?.startsWith("#")) {
-        editor.scrollToBlock(payload.href);
+      if (payload.type === "tag") {
+        // a tag is no file: search the workspace for it, as Obsidian does
+        handler.emit("searchTag", payload.href);
         return;
       }
       let uri = payload.href;
+      if (payload.type === "link-ref") {
+        // [text][label]: the target is in the "[label]: url" definition
+        uri = findReferenceDefinition(getMarkdownValue(), payload.href);
+        if (!uri) return;
+      }
+      if (uri?.startsWith("#")) {
+        editor.scrollToBlock(uri);
+        return;
+      }
       if (payload.type === "wikilink" || payload.type === "wikilink-embed") {
         const hashIndex = uri.indexOf("#");
         const page = hashIndex < 0 ? uri : uri.slice(0, hashIndex);
