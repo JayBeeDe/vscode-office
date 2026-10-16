@@ -86,7 +86,11 @@ export default function Word() {
         emitSave(buffer);
     }, [emitSave]);
 
+    const loadGenerationRef = useRef(0);
+
     const loadDocument = useCallback(async (payload: WordOpenPayload) => {
+        // `open` can arrive again while a load is running: only the latest one is applied
+        const generation = ++loadGenerationRef.current;
         setLoading(true);
         setError(null);
         setDocumentBuffer(undefined);
@@ -100,11 +104,15 @@ export default function Word() {
             skipCommentsAutoOpenRef.current = true;
             setCommentsSidebarOpen(false);
             const buffer = await loadOfficeBuffer(payload);
+            if (generation !== loadGenerationRef.current) return;
             setDocumentBuffer(buffer);
         } catch (e) {
+            if (generation !== loadGenerationRef.current) return;
             setError(e instanceof Error ? e.message : "Failed to load document");
         } finally {
-            setLoading(false);
+            if (generation === loadGenerationRef.current) {
+                setLoading(false);
+            }
         }
     }, []);
 
