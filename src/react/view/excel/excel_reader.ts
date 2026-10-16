@@ -130,7 +130,12 @@ export const formatCellText = (cell: ExcelJS.Cell, format?: string) => {
     const raw = cell.value;
     if (raw && typeof raw === 'object' && 'hyperlink' in raw) {
         const hv = raw as ExcelJS.CellHyperlinkValue;
-        return hv.text || hv.hyperlink || '';
+        // the link text can itself be rich text
+        const text = hv.text as unknown;
+        if (text && typeof text === 'object' && 'richText' in text) {
+            return (text as ExcelJS.CellRichTextValue).richText.map(part => part.text).join('') || hv.hyperlink || '';
+        }
+        return (typeof text === 'string' ? text : '') || hv.hyperlink || '';
     }
     if (cell.formula) return `=${cell.formula}`;
     const value = cell.value;
