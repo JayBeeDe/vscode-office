@@ -96,7 +96,10 @@ function keydownEventHandler(evt) {
     this.clear();
   }
   // 不知道为什么单元格事件被吞了, Windows上正常
-  if (evt.metaKey && navigator.userAgent.includes('Mac OS')) {
+  // text editing shortcuts (undo, cut, copy, paste, select all, moving the caret) belong to the
+  // editor itself: re-dispatching them would undo or cut on the sheet
+  const editingKeys = ['z', 'y', 'x', 'c', 'v', 'a', 'arrowleft', 'arrowright', 'arrowup', 'arrowdown', 'backspace', 'delete'];
+  if (evt.metaKey && navigator.userAgent.includes('Mac OS') && !editingKeys.includes(String(evt.key).toLowerCase())) {
     const newEvent = new evt.constructor(evt.type, evt);
     document.body.dispatchEvent(newEvent);
   }
