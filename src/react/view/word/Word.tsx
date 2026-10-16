@@ -135,7 +135,7 @@ export default function Word() {
             <Spin spinning={loading} fullscreen />
             {error && <Alert type="error" message={error} showIcon style={{ margin: 16 }} />}
             {readOnly && !loading && !error && documentBuffer && (
-                <div className="word-readonly-banner">Read-only — edits will be saved to a new file</div>
+                <div className="word-readonly-banner">Read-only</div>
             )}
             {documentBuffer && !loading && !error && (
                 <>

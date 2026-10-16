@@ -60,11 +60,56 @@ export function shouldSkipFileChange(uri: Uri): boolean {
     return !!(lastSaveTime && Date.now() - lastSaveTime < INTERNAL_SAVE_CHANGE_WINDOW_MS);
 }
 
+const SAVE_AS_FILTERS: Record<string, { label: string; exts: string[] }> = {
+    xlsx: { label: 'Excel Workbook', exts: ['xlsx'] },
+    xlsm: { label: 'Excel Macro-Enabled Workbook', exts: ['xlsm'] },
+    xltx: { label: 'Spreadsheet Template', exts: ['xltx'] },
+    xltm: { label: 'Macro-Enabled Spreadsheet Template', exts: ['xltm'] },
+    xls: { label: 'Excel 97-2003 Workbook', exts: ['xls'] },
+    xlt: { label: 'Spreadsheet 97-2003 Template', exts: ['xlt'] },
+    ods: { label: 'OpenDocument Spreadsheet', exts: ['ods'] },
+    ots: { label: 'OpenDocument Spreadsheet Template', exts: ['ots'] },
+    csv: { label: 'CSV (Comma delimited)', exts: ['csv'] },
+    parquet: { label: 'Apache Parquet', exts: ['parquet'] },
+    docx: { label: 'Word Document', exts: ['docx'] },
+    docm: { label: 'Macro-Enabled Document', exts: ['docm'] },
+    dotm: { label: 'Macro-Enabled Document Template', exts: ['dotm'] },
+    dotx: { label: 'Word Template', exts: ['dotx'] },
+};
+
+/** Ask for a target file and write `content` there; returns false when the user cancels. */
+async function saveContentAs(document: OfficeDocument, content: Uint8Array, targetExt?: string): Promise<boolean> {
+    const { uri, handler } = document;
+    const { dir, name, ext: sourceExt } = parse(uri.fsPath);
+    const ext = (targetExt || sourceExt.replace(/^\./, '') || 'xlsx').toLowerCase();
+    const defaultFileName = `${name}.${ext}`;
+    // a read-only source such as a git revision is saved as a regular file next to the original
+    const defaultUri = uri.scheme === 'file' || uri.scheme === 'git'
+        ? Uri.file(join(dir, defaultFileName))
+        : Uri.joinPath(uri, '..', defaultFileName);
+    const info = SAVE_AS_FILTERS[ext] ?? { label: ext.toUpperCase(), exts: [ext] };
+    const target = await vscode.window.showSaveDialog({
+        defaultUri,
+        filters: { [info.label]: info.exts },
+    });
+    if (!target) return false;
+    fileSaveTimes[target.toString()] = Date.now();
+    await workspace.fs.writeFile(target, content);
+    fileSaveTimes[target.toString()] = Date.now();
+    handler?.emit("saveDone");
+    await vscode.commands.executeCommand('vscode.openWith', target, 'cweijan.officeViewer');
+    return true;
+}
+
 async function writeDocument(document: OfficeDocument, content: Uint8Array) {
     const { uri, handler } = document;
     if (document.readOnly) {
-        handler?.emit('saveAs', { content: [...content] });
-        throw new vscode.CancellationError();
+        // the file can't be written: save a copy instead
+        if (!await saveContentAs(document, content)) {
+            throw new vscode.CancellationError();
+        }
+        document.dirty = false;
+        return;
     }
     fileSaveTimes[uri.toString()] = Date.now();
     await workspace.fs.writeFile(uri, content);
@@ -160,40 +205,7 @@ export function handleCommonEvent(document: OfficeDocument, handler: Handler) {
         })
         .on("saveAs", async (payload: { content: number[], ext?: string }) => {
             document.cancelRequest();
-            const res = new Uint8Array(payload.content);
-            const ext = (payload.ext ?? 'xlsx').toLowerCase();
-            const { dir, name } = parse(uri.fsPath);
-            const defaultFileName = `${name}.${ext}`;
-            const defaultUri = uri.scheme === 'file'
-                ? Uri.file(join(dir, defaultFileName))
-                : Uri.joinPath(uri, '..', defaultFileName);
-            const filterMap: Record<string, { label: string; exts: string[] }> = {
-                xlsx: { label: 'Excel Workbook', exts: ['xlsx'] },
-                xlsm: { label: 'Excel Macro-Enabled Workbook', exts: ['xlsm'] },
-                xltx: { label: 'Spreadsheet Template', exts: ['xltx'] },
-                xltm: { label: 'Macro-Enabled Spreadsheet Template', exts: ['xltm'] },
-                xls: { label: 'Excel 97-2003 Workbook', exts: ['xls'] },
-                xlt: { label: 'Spreadsheet 97-2003 Template', exts: ['xlt'] },
-                ods: { label: 'OpenDocument Spreadsheet', exts: ['ods'] },
-                ots: { label: 'OpenDocument Spreadsheet Template', exts: ['ots'] },
-                csv: { label: 'CSV (Comma delimited)', exts: ['csv'] },
-                parquet: { label: 'Apache Parquet', exts: ['parquet'] },
-                docx: { label: 'Word Document', exts: ['docx'] },
-                docm: { label: 'Macro-Enabled Document', exts: ['docm'] },
-                dotm: { label: 'Macro-Enabled Document Template', exts: ['dotm'] },
-                dotx: { label: 'Word Template', exts: ['dotx'] },
-            };
-            const info = filterMap[ext] ?? { label: ext.toUpperCase(), exts: [ext] };
-            const target = await vscode.window.showSaveDialog({
-                defaultUri,
-                filters: { [info.label]: info.exts },
-            });
-            if (!target) return;
-            fileSaveTimes[target.toString()] = Date.now();
-            await workspace.fs.writeFile(target, res);
-            fileSaveTimes[target.toString()] = Date.now();
-            handler.emit("saveDone");
-            await vscode.commands.executeCommand('vscode.openWith', target, 'cweijan.officeViewer');
+            await saveContentAs(document, new Uint8Array(payload.content), payload.ext);
         })
         .on('developerTool', () => vscode.commands.executeCommand('workbench.action.toggleDevTools'))
         .on('sponsorClick', () => { })
