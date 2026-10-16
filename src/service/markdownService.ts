@@ -169,14 +169,25 @@ export class MarkdownService {
         })
     }
 
+    /** Fix the extension of a saved image from its content; the link is kept when unsure. */
     public static async imgExtGuide(absPath: string, relPath: string) {
         const oldExt = extname(absPath)
-        const { ext = "png" } = (await fileTypeFromFile(absPath)) ?? {};
-        if (oldExt != `.${ext}`) {
-            relPath = relPath.replace(oldExt, `.${ext}`)
-            renameSync(absPath, absPath.replace(oldExt, `.${ext}`))
+        // file-type only knows binary formats: svg is text and keeps its name
+        if (oldExt.toLowerCase() === '.svg') return relPath
+        let ext: string | undefined
+        try {
+            ext = (await fileTypeFromFile(absPath))?.ext
+        } catch {
+            ext = undefined
         }
-        return relPath
+        if (!ext || oldExt === `.${ext}`) return relPath
+        try {
+            renameSync(absPath, absPath.replace(oldExt, `.${ext}`))
+        } catch {
+            // e.g. the web build, where renaming isn't available
+            return relPath
+        }
+        return relPath.replace(oldExt, `.${ext}`)
     }
 
     /**

@@ -504,14 +504,19 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
     ): Promise<string | undefined> {
         const { relPath, fullPath } = adjustImgPath(documentUri, ext);
         const imagePath = isAbsolute(fullPath) ? fullPath : `${resolve(documentUri.fsPath, "..")}/${relPath}`.replace(/\\/g, "/");
-        const imageUri = vscode.Uri.file(imagePath);
+        // the image goes next to the document, on the document's own file system (vscode-vfs...)
+        const imageUri = documentUri.scheme === 'file'
+            ? vscode.Uri.file(imagePath)
+            : (isAbsolute(fullPath)
+                ? documentUri.with({ path: fullPath.replace(/\\/g, '/'), query: '', fragment: '' })
+                : vscode.Uri.joinPath(documentUri, '..', relPath));
         await ensureParentDirectory(imageUri);
         const bytes = typeof imageData === 'string'
             ? Uint8Array.from(Buffer.from(imageData, 'binary'))
             : imageData;
         await vscode.workspace.fs.writeFile(imageUri, bytes);
         const fileName = parse(relPath).name;
-        const adjustRelPath = await MarkdownService.imgExtGuide(imagePath, relPath);
+        const adjustRelPath = imageUri.scheme === 'file' ? await MarkdownService.imgExtGuide(imagePath, relPath) : relPath;
         return `![${fileName}](${adjustRelPath})`;
     }
 
