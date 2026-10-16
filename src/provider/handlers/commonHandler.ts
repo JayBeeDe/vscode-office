@@ -193,7 +193,8 @@ export function handleCommonEvent(document: OfficeDocument, handler: Handler) {
             const side = full ? vscode.ViewColumn.Active : vscode.ViewColumn.Beside;
             vscode.commands.executeCommand('vscode.openWith', uri, "default", side);
         })
-        .on("init", () => { void send(); })
+        // the skip window only filters our own writes reported by the file watcher; a new panel always loads
+        .on("init", () => { void send(true); })
         .on("fileChange", () => { void send(); })
         .on("change", () => {
             document.markDirty();
