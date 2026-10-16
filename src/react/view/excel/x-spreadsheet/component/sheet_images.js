@@ -193,7 +193,8 @@ export default class SheetImages {
 
     const item = this.items[index];
     const { data } = this;
-    const startRect = getItemDisplayRect(data, item);
+    // the anchor's own rectangle, not the fitted one shown: moving keeps the image's shape
+    const startRect = data.getImageDisplayRect(item.anchor);
     const startX = evt.clientX;
     const startY = evt.clientY;
     let moved = false;
@@ -205,6 +206,8 @@ export default class SheetImages {
       const dx = e.clientX - startX;
       const dy = e.clientY - startY;
       if (!moved && Math.abs(dx) < 1 && Math.abs(dy) < 1) return;
+      // undo step, taken before the first change
+      if (!moved) data.history.add(data.getData());
       moved = true;
       applyAnchorRect(
         data,
@@ -230,7 +233,7 @@ export default class SheetImages {
 
     const item = this.items[index];
     const { data } = this;
-    const startRect = getItemDisplayRect(data, item);
+    const startRect = data.getImageDisplayRect(item.anchor);
     const startX = evt.clientX;
     const startY = evt.clientY;
     let resized = false;
@@ -242,6 +245,7 @@ export default class SheetImages {
       const dx = e.clientX - startX;
       const dy = e.clientY - startY;
       if (!resized && Math.abs(dx) < 1 && Math.abs(dy) < 1) return;
+      if (!resized) data.history.add(data.getData());
       resized = true;
       const next = resizeRect(
         startRect.l,
