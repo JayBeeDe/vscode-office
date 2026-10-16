@@ -549,16 +549,22 @@ export class Spreadsheet {
     }
 
     gotoMatch(match: FindMatch): this {
-        this.scrollToCell(match.ri, match.ci, match.sheetIndex);
+        // matches are data rows; with an autofilter sort the view rows differ
+        const data = this.datas[match.sheetIndex];
+        const ri = data ? (data as any).getViewRowIndex(match.ri) : match.ri;
+        this.scrollToCell(ri, match.ci, match.sheetIndex);
         return this;
     }
 
     replaceAt(match: FindMatch, findText: string, replaceText: string, options: FindOptions = {}): boolean {
         const sheets = this.getData();
+        const before = this.datas[match.sheetIndex]?.getData();
         const changed = replaceCellText(sheets, match, findText, replaceText, options);
         if (changed) {
             const data = this.datas[match.sheetIndex];
             if (data) {
+                // its own undo step
+                (data as any).history.add(before);
                 data.setData(sheets[match.sheetIndex]);
                 if (match.sheetIndex === this.getActiveSheetIndex()) {
                     this.sheet.resetData(data);
@@ -571,9 +577,14 @@ export class Spreadsheet {
 
     replaceAll(findText: string, replaceText: string, options: FindOptions = {}): number {
         const sheets = this.getData();
+        const before = this.getData();
         const count = replaceAllInSheets(sheets, findText, replaceText, options, this.getActiveSheetIndex());
         if (count > 0) {
             for (let i = 0; i < this.datas.length; i += 1) {
+                if (JSON.stringify((before[i] as SheetData).rows) !== JSON.stringify((sheets[i] as SheetData).rows)) {
+                    // one undo step per changed sheet
+                    (this.datas[i] as any).history.add(before[i]);
+                }
                 this.datas[i].setData(sheets[i]);
             }
             this.sheet.resetData(this.data);

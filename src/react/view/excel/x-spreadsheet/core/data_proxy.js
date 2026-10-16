@@ -1391,6 +1391,11 @@ export default class DataProxy {
     return this.getCellStyleOrDefault(ri, ci);
   }
 
+  /** View row of a data row, when an autofilter sort reorders the rows. */
+  getViewRowIndex(ri) {
+    return this.unsortedRowMap.has(ri) ? this.unsortedRowMap.get(ri) : ri;
+  }
+
   canEditCell(ri, ci) {
     const nri = getDataRowIndex(this, ri);
     if (this.sheetProtection) {
