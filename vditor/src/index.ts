@@ -59,6 +59,7 @@ import {
     exportViewerSettings,
     getGlobalLocalStorageSetting,
     importViewerSettings,
+    setAIModelKeySink,
     setOnViewerSettingsChange,
     ViewerSettingsExport,
 } from "./ts/util/globalLocalStorageSettings";
@@ -116,6 +117,9 @@ class Vditor {
 
         const getOptions = new Options(options);
         const mergedOptions = getOptions.merge();
+        if (mergedOptions.ai?.onSetModelKey) {
+            setAIModelKeySink(mergedOptions.ai.onSetModelKey);
+        }
 
         // 支持自定义国际化
         if (!mergedOptions.i18n) {

@@ -477,7 +477,8 @@ interface IAIPolishOptions {
     uiLanguage?: string;
     vscodeModelId?: string;
     customUrl?: string;
-    customKey?: string;
+    /** id of the custom model, used by the host to look up its stored API key */
+    customModelId?: string;
     customModel?: string;
     /** auto | openai | anthropic | gemini | ollama */
     customApiFormat?: "auto" | "openai" | "anthropic" | "gemini" | "ollama";
@@ -599,6 +600,8 @@ interface IOptions {
         onPolish?(markdown: string, apply: (result: string) => void, options?: IAIPolishOptions): void;
         /** 用户点击取消时触发 */
         onCancelPolish?(): void;
+        /** Store a model's API key outside the webview; an empty key deletes it */
+        onSetModelKey?(modelId: string, key: string): void;
     };
 
     /** 编辑模式修改后触发 */

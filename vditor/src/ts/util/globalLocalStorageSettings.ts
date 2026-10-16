@@ -319,12 +319,39 @@ export interface AIModel {
     format: string;
 }
 
+let aiModelKeySink: ((id: string, key: string) => void) | undefined;
+
+/** Register where API keys are kept; from then on they are never written to localStorage. */
+export const setAIModelKeySink = (sink: (id: string, key: string) => void) => {
+    aiModelKeySink = sink;
+};
+
+/** Store (or delete, when empty) the API key of a model. */
+export const storeAIModelKey = (id: string, key: string) => {
+    aiModelKeySink?.(id, key);
+};
+
 export const getAIModels = (): AIModel[] => {
     const raw = getGlobalLocalStorageSetting<string>(AI_MODELS_KEY, "[]");
-    try { return JSON.parse(raw as string) as AIModel[]; } catch { return []; }
+    let models: AIModel[];
+    try { models = JSON.parse(raw as string) as AIModel[]; } catch { return []; }
+    if (aiModelKeySink && models.some(m => m.key)) {
+        // move keys saved by older versions out of localStorage
+        setAIModels(models);
+        return models.map(m => ({ ...m, key: "" }));
+    }
+    return models;
 };
 
 export const setAIModels = (models: AIModel[]) => {
+    if (aiModelKeySink) {
+        for (const m of models) {
+            if (m.key) {
+                aiModelKeySink(m.id, m.key);
+            }
+        }
+        models = models.map(m => ({ ...m, key: "" }));
+    }
     setGlobalLocalStorageSetting(AI_MODELS_KEY, JSON.stringify(models));
 };
 

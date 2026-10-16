@@ -31,6 +31,8 @@ export interface MarkdownEditorProviderOptions {
     isWeb?: boolean;
 }
 
+const AI_MODEL_KEY_SECRET_PREFIX = 'vscode-office.aiModelKey.';
+
 const MARKDOWN_SYNC_CONFIG_KEYS = [
     'editMode',
     'editorTheme',
@@ -328,6 +330,14 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
             await this.handleAIPolish(handler, payload.markdown, payload.options);
         }).on('aiPolishCancel', () => {
             this.cancelAIPolish();
+        }).on('aiSetModelKey', async ({ modelId, key }: { modelId: string; key: string }) => {
+            if (!modelId) return;
+            const secretKey = `${AI_MODEL_KEY_SECRET_PREFIX}${modelId}`;
+            if (key) {
+                await this.context.secrets.store(secretKey, key);
+            } else {
+                await this.context.secrets.delete(secretKey);
+            }
         }).on('syncViewerSettings', async (settings) => {
             if (await ViewerSettingsService.exists()) {
                 await ViewerSettingsService.writeFromVditor(settings);
@@ -436,7 +446,9 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
         try {
             await streamCustomAI({
                 url,
-                apiKey: options?.customKey?.trim(),
+                apiKey: options?.customModelId
+                    ? (await this.context.secrets.get(`${AI_MODEL_KEY_SECRET_PREFIX}${options.customModelId}`))?.trim()
+                    : undefined,
                 model: options?.customModel?.trim(),
                 format: options?.customApiFormat,
                 prompt: this.buildPolishPrompt(markdown, options),
