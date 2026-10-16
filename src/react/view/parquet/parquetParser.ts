@@ -190,8 +190,11 @@ export function parseCellInput(text: string, column: ParquetColumnInfo): ParsedC
             return { ok: true, value: number };
         }
         case 'INT64': {
+            // BigInt, not Number: values above 2^53 would change
             if (!/^-?\d+$/.test(trimmed)) return fail;
-            return { ok: true, value: Number(trimmed) };
+            const value = BigInt(trimmed);
+            if (value < -(2n ** 63n) || value >= 2n ** 63n) return fail;
+            return { ok: true, value };
         }
         case 'FLOAT':
         case 'DOUBLE': {
