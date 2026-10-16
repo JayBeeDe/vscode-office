@@ -16,6 +16,7 @@ import {
 } from './excel_protection';
 import type { CellData, SheetData } from './x-spreadsheet/index';
 import { readSheetCodeNames } from './spreadsheet_vba';
+import { formatExcelDate } from './excel_dates';
 
 type RowMap = NonNullable<SheetData['rows']>;
 
@@ -115,7 +116,7 @@ const buildColsFromWorksheet = (worksheet: ExcelJS.Worksheet, colCount: number) 
     return cols;
 };
 
-const formatCellText = (cell: ExcelJS.Cell) => {
+const formatCellText = (cell: ExcelJS.Cell, format?: string) => {
     const raw = cell.value;
     if (raw && typeof raw === 'object' && 'hyperlink' in raw) {
         const hv = raw as ExcelJS.CellHyperlinkValue;
@@ -128,10 +129,11 @@ const formatCellText = (cell: ExcelJS.Cell) => {
         if (formula) return `=${formula}`;
     }
     if (cell.value == null) return '';
-    if (cell.text) return cell.text;
+    // checked before cell.text, which is Date.toString() for dates
     if (cell.value instanceof Date) {
-        return cell.value.toISOString().slice(0, 10);
+        return formatExcelDate(cell.value, format);
     }
+    if (cell.text) return cell.text;
     return String(cell.value);
 };
 
@@ -210,8 +212,8 @@ const convertExcelJsWorksheet = (worksheet: ExcelJS.Worksheet, workbook: ExcelJS
             if (cell.isMerged && cell.address !== cell.master.address) return;
 
             const ci = colNumber - 1;
-            const text = formatCellText(cell);
             const cellStyle = excelJsCellToStyle(cell);
+            const text = formatCellText(cell, cellStyle?.format);
             const editable = readCellEditableFromExcel(cell, sheetProtected);
             const hl = readCellHyperlink(cell, ri, ci);
             if (!text && !cellStyle && editable === undefined && !Object.keys(hl).length) return;
