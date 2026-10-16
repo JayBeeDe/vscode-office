@@ -38,7 +38,11 @@ export async function exportByType(filePath, data, type, config) {
 
     // Linux: keep temp html beside the markdown file (snap/isolated browsers often cannot read /tmp)
     const tmpDir = process.platform === 'linux' ? originPath.dir : (isDev ? originPath.dir : os.tmpdir())
-    let tmpfilename = path.resolve(tmpDir, originPath.name + "_tmp.html")
+    // a name no existing file has: a user file called <name>_tmp.html must not be overwritten
+    let tmpfilename
+    do {
+        tmpfilename = path.resolve(tmpDir, `${originPath.name}_${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}_tmp.html`)
+    } while (fs.existsSync(tmpfilename))
     exportHtml(tmpfilename, data)
     if (!isExistsPath(tmpfilename)) {
         throw new Error(`Temporary HTML file not found: ${tmpfilename}`)
@@ -52,55 +56,55 @@ export async function exportByType(filePath, data, type, config) {
     }
 
     const puppeteer = require("puppeteer-core")
-    const browser = await puppeteer.launch(launchOptions).catch(error => {
-        showErrorMessage("puppeteer.launch()", error)
-        throw error
-    })
-    const page = await browser.newPage().catch(error => {
-        showErrorMessage("browser.newPage()", error)
-        throw error
-    });
-    await page.goto(fileUrl, { waitUntil: "load", timeout: 60000 }).catch(async error => {
-        showErrorMessage("page.goto()", error)
-        await page.setContent(data, { waitUntil: "load", timeout: 60000 })
-    });
-
-    // generate pdf
-    if (type == "pdf") {
-        // https://pptr.dev/api/puppeteer.pdfoptions
-        const margin = config["margin"] || {};
-        const pdfOptions = {
-            format: config["format"] || "A4",
-            printBackground: config["printBackground"] || true,
-            margin: {
-                top: margin.top != null ? `${margin.top}px` : undefined,
-                right: margin.right != null ? `${margin.right}px` : undefined,
-                bottom: margin.bottom != null ? `${margin.bottom}px` : undefined,
-                left: margin.left != null ? `${margin.left}px` : undefined
-            }
-        }
-        const pdf = await page.pdf(pdfOptions).catch(error => {
-            showErrorMessage("page.pdf", error)
+    let browser
+    try {
+        browser = await puppeteer.launch(launchOptions).catch(error => {
+            showErrorMessage("puppeteer.launch()", error)
             throw error
         })
+        const page = await browser.newPage().catch(error => {
+            showErrorMessage("browser.newPage()", error)
+            throw error
+        });
+        await page.goto(fileUrl, { waitUntil: "load", timeout: 60000 }).catch(async error => {
+            showErrorMessage("page.goto()", error)
+            await page.setContent(data, { waitUntil: "load", timeout: 60000 })
+        });
 
-        let pdfBytes
-        try {
-            pdfBytes = await createOutline(pdf, data)
-        } catch (error) {
-            showErrorMessage("createOutline()", error)
-            pdfBytes = Buffer.from(pdf)
+        // generate pdf
+        if (type == "pdf") {
+            // https://pptr.dev/api/puppeteer.pdfoptions
+            const margin = config["margin"] || {};
+            const pdfOptions = {
+                format: config["format"] || "A4",
+                printBackground: config["printBackground"] || true,
+                margin: {
+                    top: margin.top != null ? `${margin.top}px` : undefined,
+                    right: margin.right != null ? `${margin.right}px` : undefined,
+                    bottom: margin.bottom != null ? `${margin.bottom}px` : undefined,
+                    left: margin.left != null ? `${margin.left}px` : undefined
+                }
+            }
+            const pdf = await page.pdf(pdfOptions).catch(error => {
+                showErrorMessage("page.pdf", error)
+                throw error
+            })
+
+            let pdfBytes
+            try {
+                pdfBytes = await createOutline(pdf, data)
+            } catch (error) {
+                showErrorMessage("createOutline()", error)
+                pdfBytes = Buffer.from(pdf)
+            }
+            fs.writeFileSync(targetFilePath, pdfBytes)
         }
-        fs.writeFileSync(targetFilePath, pdfBytes)
-
-    }
-
-    await browser.close()
-
-    // delete temporary file
-    let debug = config["debug"] || false
-    if (!debug) {
-        if (isExistsPath(tmpfilename)) {
+    } finally {
+        // also when the export fails: no Chromium left running, no temporary file left behind
+        if (browser) {
+            await browser.close().catch(() => { })
+        }
+        if (!(config["debug"] || false) && isExistsPath(tmpfilename)) {
             fs.unlink(tmpfilename, () => { })
         }
     }
