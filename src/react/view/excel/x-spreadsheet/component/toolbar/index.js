@@ -30,7 +30,7 @@ import Item from './item';
 
 import { h } from '../element';
 import { cssPrefix } from '../../config';
-import { bind } from '../event';
+import { bindGlobal } from '../event';
 
 function buildDivider() {
   return h('div', `${cssPrefix}-toolbar-divider`);
@@ -225,7 +225,7 @@ export default class Toolbar {
         initBtns2.call(this);
         moreResize.call(this);
       }, 0);
-      bind(window, 'resize', () => {
+      bindGlobal(this, window, 'resize', () => {
         moreResize.call(this);
       });
     }

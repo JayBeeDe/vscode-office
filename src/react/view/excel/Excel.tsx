@@ -356,6 +356,8 @@ function ExcelViewer() {
             csvFormatRef.current = csvFormat;
             const viewRowLen = Math.max(maxLength ?? 0, MIN_VIEW_ROWS);
             const viewColLen = Math.max(maxCols ?? 0, MIN_VIEW_COLS);
+            // the previous instance must stop listening to the window (keys, paste...)
+            spreadSheetRef.current?.destroy();
             container.innerHTML = '';
             const spreadSheet = new Spreadsheet(container, {
                 mode: fileReadOnly ? 'read' : 'edit',
@@ -474,6 +476,7 @@ function ExcelViewer() {
         themeObserver.observe(document.head, { childList: true, subtree: true });
 
         return () => {
+            spreadSheetRef.current?.destroy();
             spreadSheetRef.current = null;
             setActiveSpreadsheet(null);
             setBottombarEl(null);
