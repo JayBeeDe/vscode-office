@@ -153,9 +153,26 @@ export function isColumnEditable(type: string): boolean {
     return true;
 }
 
-export function parseCellInput(text: string, type: string): unknown {
+export type ParsedCell = { ok: true; value: unknown } | { ok: false };
+
+const INT32_MIN = -(2 ** 31);
+const INT32_MAX = 2 ** 31 - 1;
+
+/** The typed text as a value of the column's type, or not ok when it can't be one. */
+export function parseCellInput(text: string, column: ParquetColumnInfo): ParsedCell {
     const trimmed = text.trim();
-    if (!trimmed) return null;
+    if (!trimmed) return { ok: true, value: null };
+    const physical = column.element.type;
+    if (physical === 'INT32' && !column.element.converted_type?.startsWith('DATE')) {
+        // the file stores 32-bit integers: a larger number can't be written
+        const number = Number(trimmed);
+        if (!Number.isInteger(number) || number < INT32_MIN || number > INT32_MAX) return { ok: false };
+        return { ok: true, value: number };
+    }
+    return { ok: true, value: parseLooseCellInput(trimmed, column.type) };
+}
+
+function parseLooseCellInput(trimmed: string, type: string): unknown {
     const upper = `${type}`.toUpperCase();
     if (upper.includes('BOOL')) {
         if (/^(true|1|yes)$/i.test(trimmed)) return true;

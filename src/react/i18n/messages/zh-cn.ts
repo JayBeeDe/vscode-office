@@ -32,5 +32,6 @@ export default {
         save: '保存',
         saveSuccess: 'Parquet 文件已保存',
         unsaved: '有未保存的更改',
+        invalidValue: '“{value}”不是有效的 {type} 值',
     },
 };

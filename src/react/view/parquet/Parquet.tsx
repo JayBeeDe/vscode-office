@@ -167,7 +167,13 @@ function ParquetViewer() {
             cancelEdit();
             return;
         }
-        const nextValue = parseCellInput(editValue, column.type);
+        const parsed = parseCellInput(editValue, column);
+        if (!parsed.ok) {
+            // a value the column's type can't hold would fail the save
+            message.error($t('parquet.invalidValue', { value: editValue.trim(), type: column.type }));
+            return;
+        }
+        const nextValue = parsed.value;
         if (formatCellValue(row[column.name]) === formatCellValue(nextValue)) {
             cancelEdit();
             return;
@@ -177,7 +183,7 @@ function ParquetViewer() {
         setAllRows(rows);
         cancelEdit();
         markDirty();
-    }, [cancelEdit, editValue, editingColumn, editingRow, markDirty]);
+    }, [cancelEdit, editValue, editingColumn, editingRow, markDirty, message]);
 
     const loadGenerationRef = useRef(0);
 
