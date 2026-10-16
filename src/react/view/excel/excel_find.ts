@@ -112,11 +112,14 @@ export function replaceCellText(
     replaceText: string,
     options: FindOptions,
 ): boolean {
-    const sheet = sheets[sheetIndexSafe(sheets, match.sheetIndex)];
+    const sheet = sheetIndexSafe(sheets, match.sheetIndex);
     const row = sheet?.rows?.[match.ri];
     if (!row || typeof row !== 'object' || !('cells' in row)) return false;
     const cell = row.cells?.[match.ci];
     if (!cell) return false;
+    // locked cells of a protected sheet, like the editor
+    const editable = sheet.sheetProtection ? cell.editable === true : cell.editable !== false;
+    if (!editable) return false;
     const current = cell.text ?? '';
     let next = current;
     if (options.wholeCell && cellMatches(current, findText, options)) {
@@ -124,7 +127,8 @@ export function replaceCellText(
     } else {
         const flags = options.matchCase ? 'g' : 'gi';
         const escaped = findText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        next = current.replace(new RegExp(escaped, flags), replaceText);
+        // a function, so that $& or $$ in the replacement are not patterns
+        next = current.replace(new RegExp(escaped, flags), () => replaceText);
     }
     if (next === current) return false;
     cell.text = next;
