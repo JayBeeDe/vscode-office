@@ -511,13 +511,38 @@ export async function loadEpubBook(buffer: ArrayBuffer) {
     return book;
 }
 
-export async function ensureLocations(book: Book, chars = 1650) {
-    const key = `${book.key()}:locations-${chars}`;
-    const stored = localStorage.getItem(key);
+/** localStorage can throw (quota, blocked storage): reading positions is a convenience only. */
+export function readStored(key: string): string | null {
+    try {
+        return localStorage.getItem(key);
+    } catch {
+        return null;
+    }
+}
+
+export function writeStored(key: string, value: string) {
+    try {
+        localStorage.setItem(key, value);
+    } catch {
+        // full or blocked: the book still opens, its position just isn't remembered
+    }
+}
+
+/**
+ * Storage key of a book: its file (documentCacheId) and content size, not only its identifier,
+ * which books without one share and a new edition keeps.
+ */
+export function bookStorageKey(book: Book, documentCacheId: string | undefined, size: number): string {
+    return `${documentCacheId || book.key()}:${size}`;
+}
+
+export async function ensureLocations(book: Book, storageKey: string, chars = 1650) {
+    const key = `${storageKey}:locations-${chars}`;
+    const stored = readStored(key);
     if (stored) {
         book.locations.load(stored);
         return;
     }
     await book.locations.generate(chars);
-    localStorage.setItem(key, book.locations.save());
+    writeStored(key, book.locations.save());
 }
