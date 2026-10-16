@@ -21,7 +21,8 @@ const infixExprToSuffixExpr = (src) => {
         subStrs.push(c);
       } else if (c === '"') {
         i += 1;
-        while (src.charAt(i) !== '"') {
+        // stop at the end of the text: an unclosed string (=IF(A1=") must not loop forever
+        while (i < src.length && src.charAt(i) !== '"') {
           subStrs.push(src.charAt(i));
           i += 1;
         }
