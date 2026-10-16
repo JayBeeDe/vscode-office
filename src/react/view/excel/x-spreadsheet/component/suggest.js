@@ -119,7 +119,8 @@ export default class Suggest {
     if (!/^\s*$/.test(word)) {
       items = items.filter((it) => {
         if (isDividerItem(it)) return true;
-        return (it.key || it).startsWith(word.toUpperCase());
+        // case-insensitive: list items keep their case, formula names are upper case
+        return String(it.key || it).toUpperCase().startsWith(word.toUpperCase());
       });
     }
     items = stripOrphanDividers(items);
