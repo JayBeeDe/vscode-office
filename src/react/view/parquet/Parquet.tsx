@@ -128,14 +128,14 @@ function ParquetViewer() {
         const info = fileInfoRef.current;
         if (!info) return;
         if (backup) {
-            handler.emit('save', [...new Uint8Array(writeParquetBuffer(info.columns, allRowsRef.current))]);
+            handler.emit('save', [...new Uint8Array(writeParquetBuffer(info, allRowsRef.current))]);
             return;
         }
         if (!dirtyRef.current || savingRef.current || readOnlyRef.current) return;
         savingRef.current = true;
         setSaving(true);
         try {
-            const buffer = writeParquetBuffer(info.columns, allRowsRef.current);
+            const buffer = writeParquetBuffer(info, allRowsRef.current);
             handler.emit('save', [...new Uint8Array(buffer)]);
         } catch (e) {
             savingRef.current = false;
@@ -147,7 +147,7 @@ function ParquetViewer() {
     }, [message]);
 
     const startEdit = useCallback((rowIndex: number, column: ParquetColumnInfo, value: unknown) => {
-        if (readOnlyRef.current || !isColumnEditable(column.type)) return;
+        if (readOnlyRef.current || column.nested || !isColumnEditable(column.type)) return;
         setEditingRow(rowIndex);
         setEditingColumn(column.name);
         setEditValue(formatCellValue(value));
@@ -259,7 +259,7 @@ function ParquetViewer() {
                     }
                     return (
                         <span
-                            className={`parquet-viewer__cell${!readOnly && isColumnEditable(column.type) ? ' parquet-viewer__cell--editable' : ''}`}
+                            className={`parquet-viewer__cell${!readOnly && !column.nested && isColumnEditable(column.type) ? ' parquet-viewer__cell--editable' : ''}`}
                             title={formatCellValue(value)}
                             onDoubleClick={() => startEdit(rowIndex, column, value)}
                         >
