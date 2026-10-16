@@ -158,41 +158,61 @@ export type ParsedCell = { ok: true; value: unknown } | { ok: false };
 const INT32_MIN = -(2 ** 31);
 const INT32_MAX = 2 ** 31 - 1;
 
-/** The typed text as a value of the column's type, or not ok when it can't be one. */
+/**
+ * The typed text as a value of the column's type, or not ok when it can't be one: a text left in
+ * a number or date column would not be writable with the file's schema.
+ */
 export function parseCellInput(text: string, column: ParquetColumnInfo): ParsedCell {
     const trimmed = text.trim();
     if (!trimmed) return { ok: true, value: null };
-    const physical = column.element.type;
-    if (physical === 'INT32' && !column.element.converted_type?.startsWith('DATE')) {
-        // the file stores 32-bit integers: a larger number can't be written
-        const number = Number(trimmed);
-        if (!Number.isInteger(number) || number < INT32_MIN || number > INT32_MAX) return { ok: false };
-        return { ok: true, value: number };
-    }
-    return { ok: true, value: parseLooseCellInput(trimmed, column.type) };
-}
+    const { type: physical, converted_type: converted, logical_type: logical } = column.element;
+    const fail: ParsedCell = { ok: false };
 
-function parseLooseCellInput(trimmed: string, type: string): unknown {
-    const upper = `${type}`.toUpperCase();
-    if (upper.includes('BOOL')) {
-        if (/^(true|1|yes)$/i.test(trimmed)) return true;
-        if (/^(false|0|no)$/i.test(trimmed)) return false;
-        return trimmed;
+    if (converted === 'DATE' || logical?.type === 'DATE') {
+        // a day; the ISO text the cell shows (2024-01-15T00:00:00.000Z) is accepted too
+        if (!/^\d{4}-\d{2}-\d{2}(T.*)?$/.test(trimmed)) return fail;
+        const date = new Date(`${trimmed.slice(0, 10)}T00:00:00Z`);
+        return Number.isNaN(date.getTime()) ? fail : { ok: true, value: date };
     }
-    if (upper.includes('INT') || upper.includes('FLOAT') || upper.includes('DOUBLE') || upper.includes('DECIMAL') || upper.includes('NUM')) {
+    if (converted?.startsWith('TIMESTAMP') || logical?.type === 'TIMESTAMP') {
+        const date = new Date(trimmed);
+        return Number.isNaN(date.getTime()) ? fail : { ok: true, value: date };
+    }
+    switch (physical) {
+        case 'BOOLEAN':
+            if (/^(true|1|yes)$/i.test(trimmed)) return { ok: true, value: true };
+            if (/^(false|0|no)$/i.test(trimmed)) return { ok: true, value: false };
+            return fail;
+        case 'INT32': {
+            // the file stores 32-bit integers: a larger number can't be written
+            const number = Number(trimmed);
+            if (!Number.isInteger(number) || number < INT32_MIN || number > INT32_MAX) return fail;
+            return { ok: true, value: number };
+        }
+        case 'INT64': {
+            if (!/^-?\d+$/.test(trimmed)) return fail;
+            return { ok: true, value: Number(trimmed) };
+        }
+        case 'FLOAT':
+        case 'DOUBLE': {
+            const number = Number(trimmed);
+            return Number.isFinite(number) ? { ok: true, value: number } : fail;
+        }
+        default:
+            break;
+    }
+    if (converted === 'DECIMAL' || logical?.type === 'DECIMAL') {
         const number = Number(trimmed);
-        if (isNaN(number)) return trimmed;
-        if (upper.includes('INT') && !upper.includes('INTERVAL')) return Math.trunc(number);
-        return number;
+        return Number.isFinite(number) ? { ok: true, value: number } : fail;
     }
-    if (upper.includes('JSON') || trimmed.startsWith('{') || trimmed.startsWith('[')) {
+    if (converted === 'JSON' || logical?.type === 'JSON') {
         try {
-            return JSON.parse(trimmed);
+            return { ok: true, value: JSON.parse(trimmed) };
         } catch {
-            return trimmed;
+            return fail;
         }
     }
-    return trimmed;
+    return { ok: true, value: trimmed };
 }
 
 export function formatCellValue(value: unknown): string {
