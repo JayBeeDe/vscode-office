@@ -129,7 +129,20 @@ export function writeParquetBuffer(info: ParquetFileInfo, rows: Record<string, u
             return column.nested ? value : normalizeFlatValue(value, column.element);
         }) as ColumnSource['data'],
     }));
-    return parquetWriteBuffer({ columnData, schema: info.metadata.schema });
+    const { metadata } = info;
+    // the codec of the file when the writer has it (it ships snappy only), else snappy
+    const fileCodec = metadata.row_groups[0]?.columns[0]?.meta_data?.codec;
+    const codec = fileCodec === 'UNCOMPRESSED' || fileCodec === 'SNAPPY' ? fileCodec : 'SNAPPY';
+    // the same row groups as the file (the last size repeats)
+    const rowGroupSize = metadata.row_groups.map(group => Number(group.num_rows)).filter(size => size > 0);
+    return parquetWriteBuffer({
+        columnData,
+        schema: metadata.schema,
+        codec,
+        ...(rowGroupSize.length ? { rowGroupSize } : {}),
+        // pandas, Arrow and Spark keep their own schemas there
+        ...(metadata.key_value_metadata?.length ? { kvMetadata: metadata.key_value_metadata } : {}),
+    });
 }
 
 export function isColumnEditable(type: string): boolean {
