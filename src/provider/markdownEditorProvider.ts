@@ -158,7 +158,6 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
             }
         });
 
-        let lastManualSaveTime: number;
         let documentSyncTimer: ReturnType<typeof setTimeout> | undefined;
         let pendingDocumentSync: string | undefined;
         const flushDocumentSync = async () => {
@@ -206,7 +205,8 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
             this.updateCount(content)
             this.countStatus.show()
         }).on("externalUpdate", e => {
-            if (lastManualSaveTime && Date.now() - lastManualSaveTime < 800) return;
+            // our own edits come back here with the same text; anything else (save participants
+            // trimming whitespace, other editors) is applied to the webview
             const updatedText = e.document.getText()?.replace(/\r/g, '');
             if (content == updatedText) return;
             content = updatedText;
@@ -283,10 +283,10 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
                 vscode.commands.executeCommand('revealFileInOS', uri);
             }
         }).on("save", (newContent) => {
-            if (lastManualSaveTime && Date.now() - lastManualSaveTime < 800) return;
+            // every edit counts, also those typed right after Ctrl+S
+            if (newContent === content && pendingDocumentSync === undefined) return;
             scheduleDocumentSync(newContent);
         }).on("doSave", async (saveContent) => {
-            lastManualSaveTime = Date.now();
             pendingDocumentSync = saveContent;
             content = saveContent;
             await flushDocumentSync();
