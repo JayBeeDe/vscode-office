@@ -1,4 +1,4 @@
-/* global document, window */
+/* global document */
 
 function normalizeColor(value) {
   if (!value) return null;
@@ -43,20 +43,20 @@ function borderFromCss(value) {
   return [style, color];
 }
 
-function styleFromCell(cell) {
-  const computed = window.getComputedStyle(cell);
+function styleFromCell(cell, base) {
+  const computed = cell.ownerDocument.defaultView.getComputedStyle(cell);
   const style = {};
   const font = {};
   const fontFamily = computed.fontFamily.split(',')[0]?.replace(/^["']|["']$/g, '').trim();
-  if (fontFamily) font.name = fontFamily;
+  if (fontFamily && computed.fontFamily !== base.fontFamily) font.name = fontFamily;
   const fontSize = parseFontSize(computed.fontSize);
-  if (fontSize) font.size = fontSize;
+  if (fontSize && computed.fontSize !== base.fontSize) font.size = fontSize;
   if (computed.fontWeight === 'bold' || Number.parseInt(computed.fontWeight, 10) >= 600) font.bold = true;
   if (computed.fontStyle === 'italic') font.italic = true;
   if (Object.keys(font).length > 0) style.font = font;
 
   const color = normalizeColor(computed.color);
-  if (color) style.color = color;
+  if (color && computed.color !== base.color) style.color = color;
   const bgcolor = normalizeColor(computed.backgroundColor);
   if (bgcolor && bgcolor !== '#ffffff') style.bgcolor = bgcolor;
   if (computed.textDecorationLine.includes('underline')) style.underline = true;
@@ -225,13 +225,25 @@ export function formatHtmlClipboard(data, range) {
 
 export function parseHtmlClipboard(html) {
   if (!html) return null;
-  const container = document.createElement('div');
-  container.style.cssText = 'position:fixed;left:-10000px;top:-10000px;visibility:hidden;pointer-events:none;';
-  container.innerHTML = html;
-  document.body.appendChild(container);
+  // Render the pasted markup in a sandboxed frame: no script or inline handler can run, and the
+  // computed styles are not inherited from the webview's theme.
+  const frame = document.createElement('iframe');
+  frame.setAttribute('sandbox', 'allow-same-origin');
+  frame.style.cssText = 'position:fixed;left:-10000px;top:-10000px;width:1000px;height:1000px;visibility:hidden;pointer-events:none;';
+  document.body.appendChild(frame);
   try {
-    const table = container.querySelector('table');
+    const doc = frame.contentDocument;
+    if (!doc) return null;
+    doc.open();
+    doc.write(html);
+    doc.close();
+    const table = doc.querySelector('table');
     if (!table) return null;
+    const probe = doc.createElement('div');
+    probe.style.cssText = 'all:initial';
+    doc.documentElement.appendChild(probe);
+    const probeStyle = frame.contentWindow.getComputedStyle(probe);
+    const base = { fontFamily: probeStyle.fontFamily, fontSize: probeStyle.fontSize, color: probeStyle.color };
     const rows = [];
     const merges = [];
     table.querySelectorAll('tr').forEach((tr, ri) => {
@@ -243,7 +255,7 @@ export function parseHtmlClipboard(html) {
         const colspan = Math.max(1, Number.parseInt(td.getAttribute('colspan') || '1', 10));
         row[ci] = {
           text: cellText(td),
-          style: styleFromCell(td),
+          style: styleFromCell(td, base),
           merge: rowspan > 1 || colspan > 1 ? [rowspan - 1, colspan - 1] : undefined,
         };
         if (rowspan > 1 || colspan > 1) {
@@ -266,6 +278,6 @@ export function parseHtmlClipboard(html) {
     });
     return rows.some(row => row && row.length > 0) ? { rows, merges } : null;
   } finally {
-    document.body.removeChild(container);
+    document.body.removeChild(frame);
   }
 }
