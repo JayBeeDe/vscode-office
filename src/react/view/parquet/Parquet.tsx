@@ -179,7 +179,11 @@ function ParquetViewer() {
         markDirty();
     }, [cancelEdit, editValue, editingColumn, editingRow, markDirty]);
 
+    const loadGenerationRef = useRef(0);
+
     const loadParquet = useCallback(async (payload: { path?: string; buffer?: number[]; readOnly?: boolean }) => {
+        // `open` can arrive again while a load is running: only the latest one is applied
+        const generation = ++loadGenerationRef.current;
         setLoading(true);
         setError(null);
         setFileInfo(null);
@@ -199,15 +203,19 @@ function ParquetViewer() {
             const buffer = await loadOfficeBuffer(payload);
             const info = await openParquetFile(buffer);
             const rows = await readAllParquetRows(info.file, info.metadata);
+            if (generation !== loadGenerationRef.current) return;
             const nextInfo = { ...info, rowCount: rows.length };
             fileInfoRef.current = nextInfo;
             setFileInfo(nextInfo);
             allRowsRef.current = rows;
             setAllRows(rows);
         } catch (e) {
+            if (generation !== loadGenerationRef.current) return;
             setError(e instanceof Error ? e.message : 'Failed to load parquet file');
         } finally {
-            setLoading(false);
+            if (generation === loadGenerationRef.current) {
+                setLoading(false);
+            }
         }
     }, [cancelEdit]);
 

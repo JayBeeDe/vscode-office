@@ -328,13 +328,19 @@ function ExcelViewer() {
     useEffect(() => {
         const container = document.getElementById('container');
 
-        const initSpreadsheet = async (buffer: ArrayBuffer, payload: any) => {
+        // `open` can arrive again while a load is running: only the latest one is applied
+        let loadGeneration = 0;
+
+        const initSpreadsheet = async (buffer: ArrayBuffer, payload: any, generation: number) => {
             const fileReadOnly = payload.readOnly === true;
+            const { sheets, maxLength, maxCols, csvDelimiter } = await loadSheets(buffer, payload.ext);
+            if (generation !== loadGeneration) {
+                return;
+            }
             if (payload.ext?.match(/csv/i)) {
                 csvEncodingRef.current = detectCsvEncoding(buffer);
             }
             sourceBufferRef.current = buffer;
-            const { sheets, maxLength, maxCols, csvDelimiter } = await loadSheets(buffer, payload.ext);
             if (csvDelimiter) {
                 csvDelimiterRef.current = csvDelimiter;
             }
@@ -427,9 +433,13 @@ function ExcelViewer() {
             const fileReadOnly = payload.readOnly === true;
             readOnlyRef.current = fileReadOnly;
             setReadOnly(fileReadOnly);
+            const generation = ++loadGeneration;
             loadOfficeBuffer(payload).then(async (buffer) => {
+                if (generation !== loadGeneration) {
+                    return;
+                }
                 try {
-                    await initSpreadsheet(buffer, payload);
+                    await initSpreadsheet(buffer, payload, generation);
                 } catch (e) {
                     const msg = (e as Error).message || String(e);
                     console.error(`Failed to load Excel file: ${msg}`, e);
