@@ -1022,10 +1022,14 @@ function dataSetCellText(text, state = 'finished') {
   if (data.settings.mode === 'read') return;
   const target = this.formulaEditTarget;
   const { ri, ci } = target || data.selector;
+  const snapshot = this.editSnapshot;
+  const originalText = state === 'finished' && snapshot && snapshot.ri === ri && snapshot.ci === ci
+    ? snapshot.text
+    : undefined;
   if (target) {
-    data.setCellText(ri, ci, text, state);
+    data.setCellText(ri, ci, text, state, originalText);
   } else {
-    data.setSelectedCellText(text, state);
+    data.setSelectedCellText(text, state, originalText);
   }
   if (state === 'finished') {
     finishFormulaReferenceSelection(this);
