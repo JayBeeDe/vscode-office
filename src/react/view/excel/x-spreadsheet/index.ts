@@ -160,6 +160,8 @@ export interface SheetData {
     sheetProtection?: Record<string, unknown>;
     /** 宏工作簿 (xlsm/xltm) 中关联 VBA 工作表模块的 codeName */
     codeName?: string;
+    /** id of the worksheet this sheet was loaded from, so a save updates that worksheet in place */
+    sourceSheetId?: number;
     images?: SheetImage[];
     backgroundImage?: SheetBackgroundImage;
     styles?: CellStyle[];
@@ -345,6 +347,7 @@ export class Spreadsheet {
         sheetData.name = copyName;
         // 副本没有对应的 VBA 工作表模块
         delete sheetData.codeName;
+        delete sheetData.sourceSheetId;
 
         const nd = new DataProxy(copyName, this.options);
         nd.change = (...args: any[]) => {
