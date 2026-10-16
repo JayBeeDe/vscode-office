@@ -339,7 +339,7 @@ function ExcelViewer() {
             if (generation !== loadGeneration) {
                 return;
             }
-            if (payload.ext?.match(/csv/i)) {
+            if (payload.ext?.match(/csv|tsv/i)) {
                 csvEncodingRef.current = detectCsvEncoding(buffer);
             }
             sourceBufferRef.current = buffer;
