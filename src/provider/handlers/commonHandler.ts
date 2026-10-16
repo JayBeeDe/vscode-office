@@ -99,7 +99,8 @@ async function saveContentAs(document: OfficeDocument, content: Uint8Array, targ
     fileSaveTimes[target.toString()] = Date.now();
     await writeOrReport(document, target, content);
     fileSaveTimes[target.toString()] = Date.now();
-    handler?.emit("saveDone");
+    // the document itself is not saved by a Save As
+    handler?.emit("saveAsDone");
     await vscode.commands.executeCommand('vscode.openWith', target, 'cweijan.officeViewer');
     return true;
 }
@@ -122,6 +123,7 @@ async function writeDocument(document: OfficeDocument, content: Uint8Array) {
             throw new vscode.CancellationError();
         }
         document.dirty = false;
+        handler?.emit('saveDone');
         return;
     }
     fileSaveTimes[uri.toString()] = Date.now();
