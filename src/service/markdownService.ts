@@ -141,32 +141,39 @@ export class MarkdownService {
             return
         }
 
-        const uri = document.uri;
+        const markdown = await this.saveClipboardImage(document.uri);
+        const editor = vscode.window.activeTextEditor;
+        if (markdown && editor) {
+            editor.edit(edit => {
+                const current = editor.selection;
+                if (current.isEmpty) {
+                    edit.insert(current.start, markdown);
+                } else {
+                    edit.replace(current, markdown);
+                }
+            });
+        }
+    }
+
+    /** Save the clipboard image next to the document; returns the markdown that shows it. */
+    public saveClipboardImage(uri: vscode.Uri): Promise<string | undefined> {
         const info = adjustImgPath(uri, 'png'), { fullPath } = info;
         let { relPath } = info;
         const imagePath = isAbsolute(fullPath) ? fullPath : `${dirname(uri.fsPath)}/${relPath}`.replace(/\\/g, "/");
         this.createImgDir(imagePath);
-        this.saveClipboardImageToFileAndGetPath(imagePath, async (savedImagePath) => {
-            if (!savedImagePath) return;
-            if (savedImagePath === 'no image') {
-                vscode.window.showErrorMessage(i18n('ext.markdown.noClipboardImage'));
-                return;
-            }
-            this.copyFromPath(savedImagePath, imagePath);
-            const editor = vscode.window.activeTextEditor;
-            const imgName = parse(relPath).name;
-            relPath = await MarkdownService.imgExtGuide(imagePath, relPath);
-            if (editor) {
-                editor?.edit(edit => {
-                    const current = editor.selection;
-                    if (current.isEmpty) {
-                        edit.insert(current.start, `![${imgName}](${relPath})`);
-                    } else {
-                        edit.replace(current, `![${imgName}](${relPath})`);
-                    }
-                });
-            }
-        })
+        return new Promise((resolvePromise) => {
+            this.saveClipboardImageToFileAndGetPath(imagePath, async (savedImagePath) => {
+                if (!savedImagePath) return resolvePromise(undefined);
+                if (savedImagePath === 'no image') {
+                    vscode.window.showErrorMessage(i18n('ext.markdown.noClipboardImage'));
+                    return resolvePromise(undefined);
+                }
+                this.copyFromPath(savedImagePath, imagePath);
+                const imgName = parse(relPath).name;
+                relPath = await MarkdownService.imgExtGuide(imagePath, relPath);
+                resolvePromise(`![${imgName}](${relPath})`);
+            })
+        });
     }
 
     /** Fix the extension of a saved image from its content; the link is kept when unsure. */

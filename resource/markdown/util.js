@@ -199,8 +199,8 @@ export const createContextMenu = (editor) => {
                 copyPlainText(getSelectedPlainText() || htmlToPlainText(editor.getHTML()))
                 break
             case 'paste':
-                if (document.getSelection()?.toString()) { document.execCommand('delete') }
-                vscodeEvent.emit('command', 'office.markdown.paste')
+                // the selection is replaced once the host has sent what to paste
+                vscodeEvent.emit('pasteFromClipboard')
                 break
             case 'exportPdf':
                 vscodeEvent.emit('export', { type: 'pdf' })

@@ -215,6 +215,17 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
             handler.emit("update", updatedText)
         }).on("command", (command) => {
             vscode.commands.executeCommand(command)
+        }).on("pasteFromClipboard", async () => {
+            // the context menu Paste: text, or else an image saved next to the document
+            const text = await vscode.env.clipboard.readText();
+            if (text) {
+                handler.emit('pasteText', text);
+                return;
+            }
+            const markdown = await new MarkdownService(this.context).saveClipboardImage(uri);
+            if (markdown) {
+                handler.emit('pasteText', markdown);
+            }
         }).on("searchTag", (tag: string) => {
             if (!tag) return;
             void vscode.commands.executeCommand('workbench.action.findInFiles', {

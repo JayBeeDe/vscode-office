@@ -176,6 +176,10 @@ handler.on("open", async (md) => {
       handler.on("insertImageMarkdown", (markdown) => {
         editor.insertMarkdown(markdown);
       })
+      handler.on("pasteText", (text) => {
+        if (document.getSelection()?.toString()) { document.execCommand('delete') }
+        editor.insertMarkdown(text);
+      })
       handler.on("gotoBlock", (fragment) => {
         if (fragment) {
           editor.scrollToBlock(fragment);
