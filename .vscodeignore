@@ -1,4 +1,6 @@
 .vscode/**
+.claude/**
+shortcut.md
 .vscode-test/**
 .github/**
 .idea/**
