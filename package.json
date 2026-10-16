@@ -233,7 +233,7 @@
 			"editor/title": [
 				{
 					"command": "office.markdown.switch",
-					"when": "resourceExtname == '.md'",
+					"when": "resourceExtname == '.md' || resourceExtname == '.markdown'",
 					"group": "navigation@-2"
 				},
 				{
