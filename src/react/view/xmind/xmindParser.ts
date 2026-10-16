@@ -281,6 +281,45 @@ function mindDataToXmindSheet(original: Sheet, sheet: XmindSheet, restoreImageUr
     };
 }
 
+/** Parts of the XMind 8 format, which content.json replaces: left in the file they would be stale. */
+const LEGACY_PARTS = /^(content\.xml|meta\.xml|styles\.xml|comments\.xml|META-INF\/|Revisions\/|Thumbnails\/)/;
+
+async function readJson(zip: JSZip, path: string): Promise<Record<string, any> | null> {
+    try {
+        const text = await zip.file(path)?.async('string');
+        return text ? JSON.parse(text) : null;
+    } catch {
+        return null;
+    }
+}
+
+/**
+ * Write the sheets as an XMind (Zen) package: content.json, with the existing metadata and a
+ * manifest listing every part, resources included. An XMind 8 file is converted, so that no
+ * outdated content.xml is left for its readers.
+ */
+async function writeZenPackage(zip: JSZip, content: Sheet[]) {
+    for (const path of Object.keys(zip.files)) {
+        if (LEGACY_PARTS.test(path)) zip.remove(path);
+    }
+    zip.file('content.json', JSON.stringify(content));
+
+    const metadata = (await readJson(zip, 'metadata.json')) ?? { creator: { name: 'Office Viewer' } };
+    if (metadata.activeSheetId && !content.some(sheet => sheet.id === metadata.activeSheetId)) {
+        metadata.activeSheetId = content[0]?.id;
+    }
+    zip.file('metadata.json', JSON.stringify(metadata));
+
+    const manifest = (await readJson(zip, 'manifest.json')) ?? {};
+    const entries: Record<string, unknown> = {};
+    for (const [path, entry] of Object.entries(zip.files)) {
+        if (entry.dir || path === 'manifest.json') continue;
+        entries[path] = manifest['file-entries']?.[path] ?? {};
+    }
+    entries['manifest.json'] = manifest['file-entries']?.['manifest.json'] ?? {};
+    zip.file('manifest.json', JSON.stringify({ ...manifest, 'file-entries': entries }));
+}
+
 function createXmindDocument(
     sourceSheets: Sheet[],
     zip: JSZip,
@@ -310,14 +349,7 @@ function createXmindDocument(
                 const source = sourceById.get(sheet.id) ?? sourceSheets[0];
                 return mindDataToXmindSheet(source, sheet, restoreImageUrl);
             });
-            zip.file('content.json', JSON.stringify(content));
-            zip.file('metadata.json', JSON.stringify({ creator: { name: 'Office Viewer' } }));
-            zip.file('manifest.json', JSON.stringify({
-                'file-entries': {
-                    'content.json': {},
-                    'metadata.json': {},
-                },
-            }));
+            await writeZenPackage(zip, content);
             return zip.generateAsync({ type: 'uint8array', compression: 'DEFLATE' });
         },
         dispose: () => {
