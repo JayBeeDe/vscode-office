@@ -82,12 +82,20 @@ function obsidianTagPlugin(md) {
     if (state.pos + 1 >= max || !isTagChar(state.src.charCodeAt(state.pos + 1))) {
       return false
     }
+    // like Obsidian: a tag starts the text or follows a space (not C#5, issue#123 or a URL #frag)
+    if (state.pos > 0 && !/\s/.test(state.src.charAt(state.pos - 1))) {
+      return false
+    }
 
     let pos = state.pos + 1
     while (pos < max && isTagChar(state.src.charCodeAt(pos))) {
       pos++
     }
     if (pos === state.pos + 1) {
+      return false
+    }
+    // #123 is not a tag: a tag needs at least one non-digit
+    if (/^\d+$/.test(state.src.slice(state.pos + 1, pos))) {
       return false
     }
 
