@@ -10,10 +10,11 @@ export interface CustomAIRequestOptions {
     signal?: AbortSignal;
 }
 
+/** used when the model setting is empty; the previous Claude and Gemini defaults were retired */
 const DEFAULT_MODELS: Record<Exclude<CustomAIApiFormat, "auto">, string> = {
     openai: "gpt-4o",
-    anthropic: "claude-3-5-sonnet-20241022",
-    gemini: "gemini-1.5-flash",
+    anthropic: "claude-opus-5-5",
+    gemini: "gemini-2.5-flash",
     ollama: "llama3.2",
 };
 
