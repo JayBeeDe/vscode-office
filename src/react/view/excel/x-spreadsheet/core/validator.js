@@ -28,7 +28,11 @@ export default class Validator {
   parseValue(v) {
     const { type } = this;
     if (type === 'date') {
-      return new Date(v);
+      // a time value, so that equal and not equal compare dates and not Date objects;
+      // a number is an Excel serial date, as validations read from a file have
+      const text = String(v).trim();
+      if (/^\d+(\.\d+)?$/.test(text)) return Date.UTC(1899, 11, 30) + Number(text) * 86400000;
+      return new Date(text).getTime();
     }
     if (type === 'number') {
       return Number(v);
