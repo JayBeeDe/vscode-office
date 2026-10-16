@@ -68,12 +68,12 @@ function getStageTransform(zoom: number, pan: { x: number; y: number }) {
 type RenderQueue = <T>(task: () => Promise<T>) => Promise<T>;
 
 /** Each thumbnail is its own queued render, so slide changes are drawn in between. */
-async function generateThumbnails(viewer: PPTXViewer, count: number, queueRender: RenderQueue): Promise<string[]> {
+async function generateThumbnails(viewer: PPTXViewer, count: number, queueRender: RenderQueue, isCurrent: () => boolean): Promise<string[]> {
     const offscreen = document.createElement('canvas');
     offscreen.width = THUMB_WIDTH;
     offscreen.height = THUMB_HEIGHT;
     const urls: string[] = [];
-    for (let i = 0; i < count; i++) {
+    for (let i = 0; i < count && isCurrent(); i++) {
         urls.push(await queueRender(async () => {
             await viewer.renderSlide(i, offscreen);
             return offscreen.toDataURL('image/jpeg', 0.85);
@@ -92,6 +92,8 @@ export default function PowerPoint() {
     const renderQueueRef = useRef<Promise<unknown>>(Promise.resolve());
     // the slide shown, ours: the viewer's own index moves while thumbnails are drawn
     const currentIndexRef = useRef(0);
+    // `open` can arrive again while a deck loads: only the latest load may touch the view
+    const loadGenerationRef = useRef(0);
     const thumbRefs = useRef<(HTMLDivElement | null)[]>([]);
     const wheelNavLockRef = useRef(0);
     const pinchStartRef = useRef<{ distance: number; zoom: number } | null>(null);
@@ -204,6 +206,8 @@ export default function PowerPoint() {
     }, [rerenderSlide, resetView]);
 
     const loadPresentation = useCallback(async (payload: { path?: string; buffer?: number[]; error?: string }) => {
+        const generation = ++loadGenerationRef.current;
+        const isCurrent = () => generation === loadGenerationRef.current;
         setLoading(true);
         setThumbsLoading(false);
         setError(null);
@@ -211,31 +215,41 @@ export default function PowerPoint() {
         setCurrentIndex(0);
         setSlideCount(0);
         resetView();
-        viewerRef.current?.destroy();
+        // destroyed once its queued renders are done, never in the middle of one
+        const previous = viewerRef.current;
         viewerRef.current = null;
+        if (previous) void queueRender(async () => previous.destroy());
 
+        let viewer: PPTXViewer | null = null;
         try {
             const buffer = await loadOfficeBuffer(payload);
             const canvas = canvasRef.current;
             const wrap = canvasWrapRef.current;
-            if (!canvas || !wrap) {
+            if (!canvas || !wrap || !isCurrent()) {
                 return;
             }
 
             setLoading(false);
             await waitForCanvasContainer(wrap);
+            if (!isCurrent()) return;
             applyCanvasSize(canvas, wrap.clientWidth, wrap.clientHeight);
 
-            const viewer = new PPTXViewer({
+            const created = new PPTXViewer({
                 canvas,
                 slideSizeMode: 'fit',
                 backgroundColor: '#ffffff',
             });
+            viewer = created;
             await queueRender(async () => {
-                await viewer.loadFile(buffer);
-                await loadMasterImages(viewer);
-                await viewer.render(canvas);
+                if (!isCurrent()) return;
+                await created.loadFile(buffer);
+                await loadMasterImages(created);
+                await created.render(canvas);
             });
+            if (!isCurrent()) {
+                void queueRender(async () => created.destroy());
+                return;
+            }
 
             const count = viewer.getSlideCount();
             currentIndexRef.current = viewer.getCurrentSlideIndex();
@@ -244,15 +258,18 @@ export default function PowerPoint() {
             setCurrentIndex(currentIndexRef.current);
 
             setThumbsLoading(true);
-            const urls = await generateThumbnails(viewer, count, queueRender);
+            const urls = await generateThumbnails(viewer, count, queueRender, isCurrent);
+            if (!isCurrent()) return;
             setThumbnails(urls);
             // the slide the user is on now, not the one shown when loading started
             await rerenderSlide();
         } catch (e) {
+            // a load replaced by a newer one doesn't report errors over the new deck
+            if (!isCurrent()) return;
             setError(e instanceof Error ? e.message : 'Failed to load presentation');
             setLoading(false);
         } finally {
-            setThumbsLoading(false);
+            if (isCurrent()) setThumbsLoading(false);
         }
     }, [resetView, queueRender, rerenderSlide]);
 
