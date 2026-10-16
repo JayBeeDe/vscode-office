@@ -323,8 +323,13 @@ function mindDataToXmindSheet(original: Sheet, sheet: XmindSheet, restoreImageUr
     const originals = indexTopics(original.rootTopic);
     const rootTopic = mindNodeToXmindTopic(data.nodeData, restoreImageUrl, originals);
     collectSummaryTopics(rootTopic, data.summaries, originals);
+    // an XMind 8 sheet names its theme by a style id: content.json expects a theme object
+    const theme = typeof (original.theme as unknown) === 'string'
+        ? { id: original.theme as unknown as string, title: '' }
+        : original.theme;
     return {
         ...original,
+        theme,
         id: sheet.id,
         title: sheet.title || data.nodeData.topic || original.title || 'Sheet',
         rootTopic,
