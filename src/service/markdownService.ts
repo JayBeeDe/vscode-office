@@ -49,7 +49,8 @@ export class MarkdownService {
             "styles": [],
             withoutOutline,
             // chromium path
-            "executablePath": this.getChromiumPath(),
+            // PDF needs Chromium; DOCX only uses it, when found, to turn math and diagrams into images
+            "executablePath": type === 'pdf' ? this.getChromiumPath() : type === 'docx' ? this.findChromiumPath() : undefined,
             // puppeteer launch args (useful for Linux servers running as root)
             "puppeteerArgs": this.getPuppeteerArgs(),
             // Set `true` to convert `\n` in paragraphs into `<br>`.
@@ -99,6 +100,14 @@ export class MarkdownService {
         "/snap/bin/chromium",
         "/usr/bin/microsoft-edge",
     ]
+
+    private findChromiumPath(): string | undefined {
+        try {
+            return this.getChromiumPath();
+        } catch {
+            return undefined;
+        }
+    }
 
     private getChromiumPath() {
         const chromiumPath = Global.getConfig<string>("chromiumPath")
