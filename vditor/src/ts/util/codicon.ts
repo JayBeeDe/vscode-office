@@ -38,7 +38,6 @@ const TOOLBAR_CODICONS: Record<string, string> = {
     "ai-settings": "sparkle",
     settings: "settings-gear",
     info: "info",
-    help: "question",
     find: "search",
 };
 

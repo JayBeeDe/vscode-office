@@ -30,12 +30,8 @@ export class ReactApp {
 
     public static async view(webview: vscode.Webview, option: ViewOption) {
         const html = await this.readContent();
-        const sponsorBaseUrl = webview.asWebviewUri(
-            extensionResource(this.context, 'resource', 'sponsor')
-        ).toString();
         const configs = JSON.stringify({
             ...option,
-            sponsorBaseUrl,
             language: vscode.env.language,
             config: vscode.workspace.getConfiguration('vscode-office')
         });
