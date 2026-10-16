@@ -21,7 +21,8 @@ async function convertMarkdown(inputMarkdownFile, config) {
 
   const type = config.type
   const uri = URI.file(inputMarkdownFile)
-  const text = fs.readFileSync(inputMarkdownFile).toString()
+  // without the UTF-8 BOM, or the front matter is not recognised
+  const text = fs.readFileSync(inputMarkdownFile).toString().replace(/^\uFEFF/, "")
   const content = convertMarkdownToHtml(inputMarkdownFile, type, text, config)
   const html = mergeHtml(content, uri, type)
 
