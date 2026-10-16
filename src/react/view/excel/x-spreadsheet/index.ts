@@ -141,14 +141,14 @@ export interface SheetImageAnchor {
 export interface SheetImage {
     id: string;
     imageId: number;
-    extension: 'jpeg' | 'png' | 'gif';
+    extension: 'jpeg' | 'png' | 'gif' | 'bmp' | 'tiff' | 'svg' | 'emf' | 'wmf';
     base64: string;
     anchor: SheetImageAnchor;
 }
 
 export interface SheetBackgroundImage {
     imageId: number;
-    extension: 'jpeg' | 'png' | 'gif';
+    extension: 'jpeg' | 'png' | 'gif' | 'bmp' | 'tiff' | 'svg' | 'emf' | 'wmf';
     base64: string;
 }
 

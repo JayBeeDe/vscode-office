@@ -1,5 +1,7 @@
 import type * as ExcelJS from '@cweijan/exceljs';
 
+export type SheetImageExtension = 'jpeg' | 'png' | 'gif' | 'bmp' | 'tiff' | 'svg' | 'emf' | 'wmf';
+
 export interface SheetImageAnchor {
     /** 0-based，可为小数（表示在单元格内的偏移） */
     col: number;
@@ -16,25 +18,33 @@ export interface SheetImageAnchor {
 export interface SheetImage {
     id: string;
     imageId: number;
-    extension: 'jpeg' | 'png' | 'gif';
+    extension: SheetImageExtension;
     base64: string;
     anchor: SheetImageAnchor;
 }
 
 export interface SheetBackgroundImage {
     imageId: number;
-    extension: 'jpeg' | 'png' | 'gif';
+    extension: SheetImageExtension;
     base64: string;
 }
 
 type ImageMedia = ExcelJS.Image;
 
-function normalizeExtension(ext?: string): 'jpeg' | 'png' | 'gif' {
+const KNOWN_EXTENSIONS: SheetImageExtension[] = ['jpeg', 'png', 'gif', 'bmp', 'tiff', 'svg', 'emf', 'wmf'];
+
+/** The image's real type, so that a save doesn't label an emf or a bmp as png. */
+function normalizeExtension(ext?: string): SheetImageExtension {
     const lower = (ext || 'png').toLowerCase();
     if (lower === 'jpg' || lower === 'jpeg') return 'jpeg';
-    if (lower === 'gif') return 'gif';
-    return 'png';
+    if (lower === 'tif') return 'tiff';
+    if (lower === 'svg+xml') return 'svg';
+    if (lower === 'x-emf') return 'emf';
+    if (lower === 'x-wmf') return 'wmf';
+    return (KNOWN_EXTENSIONS as string[]).includes(lower) ? lower as SheetImageExtension : 'png';
 }
+
+const DATA_URL_TYPES: Partial<Record<SheetImageExtension, string>> = { svg: 'svg+xml', emf: 'x-emf', wmf: 'x-wmf' };
 
 function bytesToBase64(bytes: Uint8Array): string {
     let binary = '';
@@ -53,7 +63,7 @@ function base64ToBytes(base64: string): Uint8Array {
     return bytes;
 }
 
-export function mediaToSheetImageData(media: ImageMedia): { extension: 'jpeg' | 'png' | 'gif'; base64: string } | null {
+export function mediaToSheetImageData(media: ImageMedia): { extension: SheetImageExtension; base64: string } | null {
     if (media.base64) {
         const dataUrl = media.base64.match(/^data:image\/(\w+);base64,(.+)$/i);
         if (dataUrl) {
@@ -180,7 +190,8 @@ export function writeWorksheetImages(
         const bgBuffer = base64ToBytes(backgroundImage.base64);
         const bgId = workbook.addImage({
             buffer: bgBuffer,
-            extension: backgroundImage.extension,
+            // ExcelJS types only list jpeg, png and gif, but it writes any media type
+            extension: backgroundImage.extension as 'png',
         });
         worksheet.addBackgroundImage(bgId);
     }
@@ -190,12 +201,12 @@ export function writeWorksheetImages(
         const buffer = base64ToBytes(img.base64);
         const imageId = workbook.addImage({
             buffer,
-            extension: img.extension,
+            extension: img.extension as 'png',
         });
         worksheet.addImage(imageId, buildExcelJsImageRange(img.anchor));
     }
 }
 
 export function sheetImageDataUrl(image: Pick<SheetImage, 'extension' | 'base64'>): string {
-    return `data:image/${image.extension};base64,${image.base64}`;
+    return `data:image/${DATA_URL_TYPES[image.extension] ?? image.extension};base64,${image.base64}`;
 }
