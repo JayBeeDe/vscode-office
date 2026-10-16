@@ -5,6 +5,20 @@ export function bind(target, name, fn) {
 export function unbind(target, name, fn) {
   target.removeEventListener(name, fn);
 }
+/** A listener on window or document, removed by unbindGlobals(owner) when the owner goes away. */
+export function bindGlobal(owner, target, name, fn) {
+  const o = owner;
+  if (!o.globalListeners) o.globalListeners = [];
+  o.globalListeners.push([target, name, fn]);
+  bind(target, name, fn);
+}
+
+export function unbindGlobals(owner) {
+  const o = owner;
+  (o.globalListeners || []).forEach(([target, name, fn]) => unbind(target, name, fn));
+  o.globalListeners = [];
+}
+
 export function unbindClickoutside(el) {
   if (el.xclickoutside) {
     unbind(window.document.body, 'click', el.xclickoutside);

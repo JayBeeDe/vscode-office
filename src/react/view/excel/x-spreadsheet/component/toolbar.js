@@ -1,6 +1,6 @@
 /* global window */
 import { h } from './element';
-import { bind } from './event';
+import { bindGlobal } from './event';
 import tooltip, { shouldShowToolbarTooltip } from './tooltip';
 import DropdownFont from './dropdown_font';
 import DropdownFontSize from './dropdown_fontsize';
@@ -177,7 +177,7 @@ export default class Toolbar {
       initBtns2.call(this);
       moreResize.call(this);
     }, 0);
-    bind(window, 'resize', () => {
+    bindGlobal(this, window, 'resize', () => {
       moreResize.call(this);
     });
   }

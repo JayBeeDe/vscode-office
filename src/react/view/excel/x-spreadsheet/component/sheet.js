@@ -1,7 +1,8 @@
 /* global window */
 import { h } from './element';
 import {
-  bind,
+  bindGlobal,
+  unbindGlobals,
   mouseMoveUp,
   bindTouch,
   createEventEmitter,
@@ -1303,7 +1304,7 @@ function sheetInitEvents() {
   });
   if (!this._horizontalScrollReleaseBound) {
     this._horizontalScrollReleaseBound = true;
-    bind(window, 'mouseup', () => {
+    bindGlobal(this, window, 'mouseup', () => {
       if (!this._horizontalScrollInteracting) return;
       this._horizontalScrollInteracting = false;
       expandColsOnHorizontalRelease(this);
@@ -1359,15 +1360,15 @@ function sheetInitEvents() {
     }
   };
 
-  bind(window, 'resize', () => {
+  bindGlobal(this, window, 'resize', () => {
     this.reload();
   });
 
-  bind(window, 'click', (evt) => {
+  bindGlobal(this, window, 'click', (evt) => {
     this.focusing = overlayerEl.contains(evt.target);
   });
 
-  bind(window, 'paste', (evt) => {
+  bindGlobal(this, window, 'paste', (evt) => {
     if (!this.focusing) return;
     if (this.skipNextPaste) {
       this.skipNextPaste = false;
@@ -1380,7 +1381,7 @@ function sheetInitEvents() {
     evt.preventDefault();
   });
 
-  bind(window, 'copy', (evt) => {
+  bindGlobal(this, window, 'copy', (evt) => {
     if (!this.focusing) return;
     if (this.editor.cell !== null) return;
     copy.call(this, evt);
@@ -1388,7 +1389,7 @@ function sheetInitEvents() {
   });
 
   // for selector
-  bind(window, 'keydown', (evt) => {
+  bindGlobal(this, window, 'keydown', (evt) => {
     if (!this.focusing) return;
     const keyCode = evt.keyCode || evt.which;
     const {
@@ -1673,5 +1674,11 @@ export default class Sheet {
     selectorSet.call(this, false, ri, ci);
     scrollbarMove.call(this);
     sheetReset.call(this);
+  }
+
+  /** Remove the window listeners, so that a replaced spreadsheet no longer receives input. */
+  destroy() {
+    unbindGlobals(this);
+    if (this.toolbar) unbindGlobals(this.toolbar);
   }
 }

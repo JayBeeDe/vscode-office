@@ -616,6 +616,11 @@ export class Spreadsheet {
         return this;
     }
 
+    /** Detach from the page before this spreadsheet is replaced by another one. */
+    destroy(): void {
+        (this.sheet as any).destroy();
+    }
+
     on(eventName: string, func: (...args: any[]) => void): this {
         this.sheet.on(eventName, func);
         return this;
