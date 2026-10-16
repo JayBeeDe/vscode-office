@@ -112,8 +112,13 @@ function normalizeGitRef(ref: string): string {
 }
 
 function buildGitObjectSpec(ref: string, relativePath: string): string {
-    if (!ref) {
+    // VS Code uses `~` for the staged version and `~N` for merge stage N
+    if (!ref || ref === '~') {
         return `:${relativePath}`;
+    }
+    const stage = /^~(\d)$/.exec(ref);
+    if (stage) {
+        return `:${stage[1]}:${relativePath}`;
     }
     return `${normalizeGitRef(ref)}:${relativePath}`;
 }
@@ -130,10 +135,12 @@ async function readGitUriBytes(uri: Uri): Promise<Uint8Array> {
     return spawnGitBinary(gitPath, repoRoot, ['show', buildGitObjectSpec(ref, relativePath)]);
 }
 
+/** csv and tsv are text: their textconv output is fine */
+const TEXT_EXTENSIONS = ['.csv', '.tsv'];
+
 export async function readUriBytes(uri: Uri): Promise<Uint8Array> {
-    if (uri.scheme === 'git' && !isWebExtensionHost() && process.platform === 'win32' && (
-        ['.pdf', '.docx', '.docm', '.dotm'].includes(extname(uri.fsPath).toLowerCase())
-    )) {
+    if (uri.scheme === 'git' && !isWebExtensionHost() && process.platform === 'win32'
+        && !TEXT_EXTENSIONS.includes(extname(uri.fsPath).toLowerCase())) {
         try {
             return await readGitUriBytes(uri);
         } catch {
