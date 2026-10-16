@@ -424,11 +424,14 @@ function createXmindDocument(
 }
 
 /**
- * The import parses XMind 8 XML with number conversion: a title "1.10" becomes 1.1 and "007"
- * becomes 7. Put back the exact text from content.xml, and make every title a string.
+ * What the import loses from XMind 8 content.xml:
+ * - it parses the XML with number conversion: a title "1.10" becomes 1.1 and "007" becomes 7;
+ *   put back the exact text, and make every title a string;
+ * - it ignores pictures (xhtml:img): map them to the topic image, so they show and are saved.
  */
-async function restoreXmind8Titles(zip: JSZip, sheets: Sheet[]) {
+async function restoreXmind8Details(zip: JSZip, sheets: Sheet[]) {
     const titles = new Map<string, string>();
+    const images = new Map<string, Topic['image']>();
     const xml = zip.file('content.json') ? undefined : await zip.file('content.xml')?.async('string');
     if (xml && typeof DOMParser !== 'undefined') {
         const doc = new DOMParser().parseFromString(xml, 'application/xml');
@@ -437,6 +440,17 @@ async function restoreXmind8Titles(zip: JSZip, sheets: Sheet[]) {
             const id = element.getAttribute('id');
             const title = Array.from(element.children).find(child => child.localName === 'title');
             if (id && title) titles.set(id, title.textContent ?? '');
+            const img = Array.from(element.children).find(child => child.localName === 'img');
+            const src = img?.getAttribute('xhtml:src') ?? img?.getAttribute('src');
+            if (id && img && src) {
+                const width = Number(img.getAttribute('svg:width') ?? img.getAttribute('width'));
+                const height = Number(img.getAttribute('svg:height') ?? img.getAttribute('height'));
+                images.set(id, {
+                    src,
+                    ...(width ? { width } : {}),
+                    ...(height ? { height } : {}),
+                } as Topic['image']);
+            }
         }
     }
     const fix = (item: { id: string; title?: unknown }) => {
@@ -446,7 +460,11 @@ async function restoreXmind8Titles(zip: JSZip, sheets: Sheet[]) {
     };
     for (const sheet of sheets) {
         fix(sheet as { id: string; title?: unknown });
-        for (const topic of indexTopics(sheet.rootTopic).values()) fix(topic as { id: string; title?: unknown });
+        for (const topic of indexTopics(sheet.rootTopic).values()) {
+            fix(topic as { id: string; title?: unknown });
+            const image = images.get(topic.id);
+            if (image && !topic.image) topic.image = image;
+        }
     }
 }
 
@@ -464,6 +482,6 @@ export async function parseXmind(buffer: ArrayBuffer, fileName = 'document.xmind
     const { map, reverseMap, blobUrls, zip } = await buildImageResourceMap(buffer);
     const file = new File([buffer], fileName, { type: 'application/vnd.xmind.workbook' });
     const sourceSheets = await importXMindFile(file);
-    await restoreXmind8Titles(zip, sourceSheets);
+    await restoreXmind8Details(zip, sourceSheets);
     return createXmindDocument(sourceSheets, zip, map, reverseMap, blobUrls);
 }
