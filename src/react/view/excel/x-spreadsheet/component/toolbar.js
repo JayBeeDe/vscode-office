@@ -135,7 +135,8 @@ export default class Toolbar {
     this.btnChildren = [
       this.undoEl = buildButtonWithIcon(`${t('toolbar.undo')} (Ctrl+Z)`, 'undo', () => this.change('undo')),
       this.redoEl = buildButtonWithIcon(`${t('toolbar.undo')} (Ctrl+Y)`, 'redo', () => this.change('redo')),
-      // this.printEl = buildButtonWithIcon('Print (Ctrl+P)', 'print', () => this.change('print')),
+      // no Ctrl+P shortcut: VS Code uses it for Quick Open
+      this.printEl = buildButtonWithIcon(`${t('toolbar.print')}`, 'print', () => this.change('print')),
       this.paintformatEl = buildButtonWithIcon(`${t('toolbar.paintformat')}`, 'paintformat', () => toggleChange.call(this, 'paintformat')),
       this.clearformatEl = buildButtonWithIcon(`${t('toolbar.clearformat')}`, 'clearformat', () => this.change('clearformat')),
       buildDivider(),
