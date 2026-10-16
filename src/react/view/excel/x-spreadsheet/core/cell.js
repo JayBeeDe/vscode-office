@@ -192,14 +192,15 @@ const evalSuffixExpr = (srcStack, formulaMap, cellRender, cellList) => {
       const formulaRenderer = formulaMap[formula];
       stack.push(formulaRenderer ? formulaRenderer.render(params.reverse()) : `#NAME?`);
     } else {
-      if (cellList.includes(expr)) {
+      // cells being evaluated: a reference back to one of them is circular
+      const ref = expr.replace(/^-/, '');
+      const isRef = (ref[0] >= 'a' && ref[0] <= 'z') || (ref[0] >= 'A' && ref[0] <= 'Z');
+      if (isRef && cellList.includes(ref)) {
         return 0;
       }
-      if ((fc >= 'a' && fc <= 'z') || (fc >= 'A' && fc <= 'Z')) {
-        cellList.push(expr);
-      }
+      if (isRef) cellList.push(ref);
       stack.push(evalSubExpr(expr, cellRender));
-      cellList.pop();
+      if (isRef) cellList.pop();
     }
     // console.log('stack:', stack);
   }
