@@ -6,11 +6,9 @@ import { MarkdownService } from './service/markdownService';
 import { switchCsvEditor } from './service/csvService';
 import { FileUtil } from './common/fileUtil';
 import { ReactApp } from './common/reactApp';
-import { autoClearCacheStorage } from './service/autoClearCacheStorage';
 
 export async function activate(context: vscode.ExtensionContext) {
 	await Global.init(context);
-	autoClearCacheStorage(context);
 	const viewOption = { webviewOptions: { retainContextWhenHidden: true } };
 	FileUtil.init(context)
 	ReactApp.init(context)
