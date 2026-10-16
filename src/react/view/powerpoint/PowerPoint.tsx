@@ -67,6 +67,25 @@ function getStageTransform(zoom: number, pan: { x: number; y: number }) {
 
 type RenderQueue = <T>(task: () => Promise<T>) => Promise<T>;
 
+/**
+ * destroy() alone keeps the slide images: revoke their blob URLs, and drop the globals the
+ * library sets for charts, which would keep the old deck in memory.
+ */
+function disposeViewer(viewer: PPTXViewer) {
+    const processor = (viewer as unknown as { processor?: unknown }).processor;
+    try {
+        (viewer as unknown as { clearCaches?: () => void }).clearCaches?.();
+    } catch {
+        // already torn down
+    }
+    viewer.destroy();
+    const globals = window as unknown as { currentProcessor?: { processor?: unknown }; currentZipData?: unknown };
+    if (processor && globals.currentProcessor?.processor === processor) {
+        delete globals.currentProcessor;
+        delete globals.currentZipData;
+    }
+}
+
 /** Each thumbnail is its own queued render, so slide changes are drawn in between. */
 async function generateThumbnails(viewer: PPTXViewer, count: number, queueRender: RenderQueue, isCurrent: () => boolean): Promise<string[]> {
     const offscreen = document.createElement('canvas');
@@ -218,7 +237,7 @@ export default function PowerPoint() {
         // destroyed once its queued renders are done, never in the middle of one
         const previous = viewerRef.current;
         viewerRef.current = null;
-        if (previous) void queueRender(async () => previous.destroy());
+        if (previous) void queueRender(async () => disposeViewer(previous));
 
         let viewer: PPTXViewer | null = null;
         try {
@@ -247,7 +266,7 @@ export default function PowerPoint() {
                 await created.render(canvas);
             });
             if (!isCurrent()) {
-                void queueRender(async () => created.destroy());
+                void queueRender(async () => disposeViewer(created));
                 return;
             }
 
@@ -279,7 +298,7 @@ export default function PowerPoint() {
         }).emit('init');
 
         return () => {
-            viewerRef.current?.destroy();
+            if (viewerRef.current) disposeViewer(viewerRef.current);
         };
     }, [loadPresentation]);
 
