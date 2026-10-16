@@ -223,12 +223,18 @@ export default function XmindViewer() {
 
     const selected = sheets.find(sheet => sheet.id === selectedId) ?? null;
 
+    // the theme follows `dark` through changeTheme below: rendering the sheet again on a theme
+    // change would replace the edits with the loaded data
+    const darkRef = useRef(dark);
+    useEffect(() => {
+        darkRef.current = dark;
+    }, [dark]);
     useEffect(() => {
         if (!selected || loading || !documentRef.current) {
             return;
         }
-        renderSheet(selected.data, documentRef.current.resolveImageUrl, dark);
-    }, [selected, loading, renderSheet, dark]);
+        renderSheet(selected.data, documentRef.current.resolveImageUrl, darkRef.current);
+    }, [selected, loading, renderSheet]);
 
     useEffect(() => {
         mindRef.current?.changeTheme(buildMindElixirTheme(dark));
