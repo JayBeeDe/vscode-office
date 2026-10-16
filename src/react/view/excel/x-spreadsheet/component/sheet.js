@@ -387,6 +387,11 @@ function finishFormulaReferenceSelection(sheet) {
   sheet.editor.setFormulaTargetActive(false);
 }
 
+function selectedCellText(data) {
+  const cell = data.getSelectedCell();
+  return (cell && cell.text) || '';
+}
+
 function setEditSnapshot(sheet, ri, ci, text) {
   sheet.editSnapshot = { ri, ci, text };
 }
@@ -925,20 +930,24 @@ function editorSetOffset() {
   editor.setOffset(sOffset, sPosition);
 }
 
-function editorSet() {
+// originalText: the cell text before a key typed over the cell was written into it
+function editorSet(originalText) {
   const { editor, data, selector } = this;
   if (data.settings.mode === 'read') return;
   const { ri, ci } = data.selector;
   if (!data.canEditCell(ri, ci)) return;
   const cell = data.getSelectedCell();
   const cellText = (cell && cell.text) || '';
-  setEditSnapshot(this, ri, ci, cellText);
+  setEditSnapshot(this, ri, ci, originalText !== undefined ? originalText : cellText);
   editorSetOffset.call(this);
   editor.setCell(
     cell,
     data.getSelectedValidator(),
     data.getSelectedCellStyle(),
   );
+  if (originalText !== undefined) {
+    editor.originalText = originalText;
+  }
   clearClipboard.call(this);
   selector.hideArea();
   if (!restoreFormulaReferenceSelection(this, ri, ci, cellText)) {
@@ -1245,8 +1254,9 @@ function sheetInitEvents() {
     });
 
   selector.inputChange = (v) => {
+    const originalText = selectedCellText(this.data);
     dataSetCellText.call(this, v, 'input');
-    editorSet.call(this);
+    editorSet.call(this, originalText);
   };
 
   // slide on mobile
@@ -1488,8 +1498,9 @@ function sheetInitEvents() {
         || (keyCode >= 96 && keyCode <= 105)
         || evt.key === '='
       )) {
+        const originalText = selectedCellText(this.data);
         dataSetCellText.call(this, evt.key, 'input');
-        editorSet.call(this);
+        editorSet.call(this, originalText);
       } else if (keyCode === 113) {
         // F2
         editorSet.call(this);
