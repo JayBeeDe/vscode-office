@@ -188,6 +188,12 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
             if (documentSyncTimer) {
                 clearTimeout(documentSyncTimer);
             }
+            // the first edit of a clean document is written at once: VS Code then knows it is
+            // dirty and asks before closing, even right after typing
+            if (!document.isDirty && !appliedTexts.size) {
+                void flushDocumentSync();
+                return;
+            }
             // Debounce to avoid triggering VS Code built-in mermaid-markdown-features
             // re-parsing on every keystroke (ANTLR token recognition errors in console).
             documentSyncTimer = setTimeout(() => void flushDocumentSync(), 400);
