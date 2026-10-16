@@ -1025,13 +1025,14 @@ function colResizerFinished(cRect, distance) {
   sheetImagesUpdate.call(this);
 }
 
-function dataSetCellText(text, state = 'finished') {
+// barTarget: the cell the formula bar was editing ({ ri, ci, text }), whatever is selected now
+function dataSetCellText(text, state = 'finished', barTarget = null) {
   const { data, table } = this;
   // const [ri, ci] = selector.indexes;
   if (data.settings.mode === 'read') return;
-  const target = this.formulaEditTarget;
+  const target = barTarget || this.formulaEditTarget;
   const { ri, ci } = target || data.selector;
-  const snapshot = this.editSnapshot;
+  const snapshot = barTarget || this.editSnapshot;
   const originalText = state === 'finished' && snapshot && snapshot.ri === ri && snapshot.ci === ci
     ? snapshot.text
     : undefined;
@@ -1044,16 +1045,20 @@ function dataSetCellText(text, state = 'finished') {
     finishFormulaReferenceSelection(this);
     clearEditSnapshot(this);
   }
+  // the bar shows the selected cell, which may no longer be the edited one
+  const barText = barTarget && (barTarget.ri !== data.selector.ri || barTarget.ci !== data.selector.ci)
+    ? undefined
+    : text;
   if (state === 'finished') {
     table.render();
-    this.formulaBar.update(text);
+    this.formulaBar.update(barText);
     const err = data.getValidationError(ri, ci);
     if (err) {
       this.trigger('validation-error', err);
     }
   } else {
     table.render();
-    this.formulaBar.update(text);
+    this.formulaBar.update(barText);
     this.trigger('cell-edited', text, ri, ci);
   }
 }
@@ -1522,8 +1527,8 @@ export default class Sheet {
     this.toolbar = new Toolbar(data, view.width, !showToolbar);
     this.formulaBar = new FormulaBar(
       data,
-      text => dataSetCellText.call(this, text, 'finished'),
-      text => dataSetCellText.call(this, text, 'input'),
+      (text, target) => dataSetCellText.call(this, text, 'finished', target),
+      (text, target) => dataSetCellText.call(this, text, 'input', target),
       (ri, ci) => this.scrollToCell(ri, ci),
     );
     this.print = new Print(data);
