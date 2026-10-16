@@ -2,7 +2,8 @@ import * as vscode from 'vscode';
 import { Handler } from '@/common/handler';
 
 const pendingBlockScroll = new Map<string, string>();
-const webviewHandlers = new Map<string, Handler>();
+/** every open panel of each file: a file can be open in two split panels */
+const webviewHandlers = new Map<string, Set<Handler>>();
 
 /** 按文件路径缓存 webview，忽略 query / fragment */
 export function markdownUriKey(uri: vscode.Uri): string {
@@ -10,15 +11,24 @@ export function markdownUriKey(uri: vscode.Uri): string {
 }
 
 export function registerMarkdownWebview(uri: vscode.Uri, handler: Handler): void {
-    webviewHandlers.set(markdownUriKey(uri), handler);
+    const key = markdownUriKey(uri);
+    const handlers = webviewHandlers.get(key) ?? new Set<Handler>();
+    handlers.add(handler);
+    webviewHandlers.set(key, handlers);
 }
 
-export function unregisterMarkdownWebview(uri: vscode.Uri): void {
-    webviewHandlers.delete(markdownUriKey(uri));
+export function unregisterMarkdownWebview(uri: vscode.Uri, handler: Handler): void {
+    const key = markdownUriKey(uri);
+    const handlers = webviewHandlers.get(key);
+    if (!handlers) return;
+    handlers.delete(handler);
+    if (handlers.size === 0) webviewHandlers.delete(key);
 }
 
+/** The most recently opened panel of the file. */
 export function getMarkdownWebviewHandler(uri: vscode.Uri): Handler | undefined {
-    return webviewHandlers.get(markdownUriKey(uri));
+    const handlers = webviewHandlers.get(markdownUriKey(uri));
+    return handlers ? Array.from(handlers).pop() : undefined;
 }
 
 export function setPendingBlockScroll(uri: vscode.Uri, fragment: string): void {
@@ -46,7 +56,9 @@ export function notifyBlockScroll(uri: vscode.Uri, fragment: string): void {
 }
 
 export function broadcastToMarkdownWebviews(event: string, content?: unknown): void {
-    for (const handler of webviewHandlers.values()) {
-        handler.emit(event, content);
+    for (const handlers of webviewHandlers.values()) {
+        for (const handler of handlers) {
+            handler.emit(event, content);
+        }
     }
 }
