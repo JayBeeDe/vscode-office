@@ -483,7 +483,7 @@ function ExcelViewer() {
             themeObserver.disconnect();
             clearTimeout(themeTimer);
         };
-    }, [message, handleSave, handleSaveAs])
+    }, [message, handleSave, handleSaveAs, handleAutoFitColumns])
 
     return (
         <div className='excel-viewer'>
