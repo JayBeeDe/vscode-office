@@ -8,7 +8,7 @@ import { loadOfficeBuffer } from "../../util/loadOfficeContent.ts";
 import SponsorBar from '../components/SponsorBar';
 import './Excel.less';
 import { MIN_VIEW_COLS, MIN_VIEW_ROWS } from "./excel_meta.ts";
-import { detectCsvEncoding } from "./csvEncoding.ts";
+import { detectCsvEncoding, type CsvEncoding } from "./csvEncoding.ts";
 import { loadSheets } from "./excel_reader.ts";
 import { export_xlsx, exportSaveAs, buildFormattingSnapshot, hasFormattingChanged } from "./excel_writer.ts";
 import Spreadsheet from './x-spreadsheet/index';
@@ -119,7 +119,7 @@ function ExcelViewer() {
     const documentCacheIdRef = useRef('')
     const readOnlyRef = useRef(false)
     const spreadSheetRef = useRef<Spreadsheet | null>(null)
-    const csvEncodingRef = useRef<'utf8' | 'gbk'>('utf8')
+    const csvEncodingRef = useRef<CsvEncoding>('utf8')
     const csvDelimiterRef = useRef(',')
     const initialFormattingRef = useRef('')
 
