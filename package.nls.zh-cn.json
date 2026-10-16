@@ -1,6 +1,8 @@
 {
 	"ext.common.yes": "是",
 	"ext.common.no": "否",
+	"ext.office.openLink": "打开",
+	"ext.office.confirmOpenLink": "打开“$1”？此链接并非指向网页，可能会打开文件或运行程序。",
 	"ext.markdown.exportStart": "正在开始导出 Markdown 为 $1。",
 	"ext.markdown.exportSuccess": "导出 Markdown 为 $1 成功！",
 	"ext.markdown.noChromium": "未找到 Chromium，导出失败。",

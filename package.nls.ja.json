@@ -1,6 +1,8 @@
 {
 	"ext.common.yes": "はい",
 	"ext.common.no": "いいえ",
+	"ext.office.openLink": "開く",
+	"ext.office.confirmOpenLink": "「$1」を開きますか？このリンクは Web 以外を指しており、ファイルを開いたりプログラムを実行したりする可能性があります。",
 	"ext.markdown.exportStart": "Markdown を $1 にエクスポートしています...",
 	"ext.markdown.exportSuccess": "Markdown の $1 へのエクスポートに成功しました！",
 	"ext.markdown.noChromium": "Chromium が見つかりません。エクスポートに失敗しました。",

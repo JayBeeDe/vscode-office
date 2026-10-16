@@ -1,6 +1,8 @@
 {
 	"ext.common.yes": "JA",
 	"ext.common.no": "NEIN",
+	"ext.office.openLink": "Öffnen",
+	"ext.office.confirmOpenLink": "\"$1\" öffnen? Dieser Link verweist nicht ins Web und kann eine Datei öffnen oder ein Programm ausführen.",
 	"ext.markdown.exportStart": "Markdown wird nach $1 exportiert...",
 	"ext.markdown.exportSuccess": "Markdown erfolgreich nach $1 exportiert!",
 	"ext.markdown.noChromium": "Chromium nicht gefunden, Export fehlgeschlagen.",

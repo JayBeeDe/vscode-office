@@ -3,6 +3,7 @@ import { basename, join, parse } from 'path';
 import { Handler } from "@/common/handler";
 import { isUriReadOnly } from '@/common/fileReadOnly';
 import { Uri, workspace } from 'vscode';
+import { i18n } from '@/common/global';
 import { emitFileOfficeOpen, emitVirtualOfficeOpen, isVirtualUri } from '@/provider/handlers/officeContent';
 
 const fileSaveTimes: Record<string, number> = {};
@@ -15,6 +16,42 @@ function buildDefaultXlsxUri(uri: Uri): Uri {
         return Uri.file(join(dir, fileName));
     }
     return Uri.joinPath(uri, '..', fileName);
+}
+
+const SAFE_LINK_SCHEME = /^(https?|mailto):/i;
+const LINK_SCHEME = /^[a-z][a-z0-9+.-]+:/i;
+const WINDOWS_PATH = /^[a-z]:[\\/]/i;
+
+async function openLink(documentUri: Uri, link: string) {
+    const url = link.trim();
+    if (!url) {
+        return;
+    }
+    if (SAFE_LINK_SCHEME.test(url)) {
+        await vscode.env.openExternal(Uri.parse(url));
+        return;
+    }
+    if (!LINK_SCHEME.test(url) && !WINDOWS_PATH.test(url) && !url.startsWith('\\\\')) {
+        // relative link: resolve it against the document's folder and open it in the editor
+        const path = url.replace(/[#?].*$/, '').replace(/\\/g, '/');
+        if (path) {
+            let decoded = path;
+            try {
+                decoded = decodeURIComponent(path);
+            } catch {
+                // keep the raw path
+            }
+            await vscode.commands.executeCommand('vscode.open', Uri.joinPath(documentUri, '..', decoded));
+        }
+        return;
+    }
+    const open = i18n('ext.office.openLink');
+    const choice = await vscode.window.showWarningMessage(i18n('ext.office.confirmOpenLink', url), { modal: true }, open);
+    if (choice !== open) {
+        return;
+    }
+    const target = LINK_SCHEME.test(url) && !WINDOWS_PATH.test(url) ? Uri.parse(url) : Uri.file(url);
+    await vscode.env.openExternal(target);
 }
 
 export function shouldSkipFileChange(uri: Uri): boolean {
@@ -117,7 +154,7 @@ export function handleCommonEvent(uri: Uri, handler: Handler) {
         })
         .on('openExternal', (url: string) => {
             if (url) {
-                vscode.env.openExternal(vscode.Uri.parse(url));
+                void openLink(uri, url);
             }
         })
         .on('dispose', () => {
