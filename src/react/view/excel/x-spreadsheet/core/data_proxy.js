@@ -15,6 +15,9 @@ import { Cols } from './col';
 import { Validations } from './validation';
 import { CellRange } from './cell_range';
 import { expr2xy, xy2expr } from './alphabet';
+import {
+  deleteAxisMap, insertAxisMap, mapAnchor, remapAxisMap, remapFormula, remapRangeRef,
+} from './ref_remap';
 import { t } from '../locale/locale';
 import { baseFonts } from './font';
 
@@ -520,20 +523,97 @@ export default class DataProxy {
     this.setHyperlink(ri, ci, '');
   }
 
-  remapHyperlinks(rowRemap, colRemap) {
-    const links = this.hyperlinks;
-    if (!links || !Object.keys(links).length) return;
-    const next = {};
-    for (const key of Object.keys(links)) {
-      const parts = key.split('_');
-      const ri = Number(parts[0]);
-      const ci = Number(parts[1]);
-      if (Number.isNaN(ri) || Number.isNaN(ci)) continue;
-      const nri = rowRemap ? (rowRemap[ri] ?? ri) : ri;
-      const nci = colRemap ? (colRemap[ci] ?? ci) : ci;
-      next[`${nri}_${nci}`] = links[key];
+  /**
+   * After rows or columns were inserted, deleted or moved: update every reference to them
+   * (formulas of all sheets, hyperlinks, images, validations, autofilter, freeze).
+   * maps: { row?: axisMap, col?: axisMap }, see ref_remap.js
+   */
+  remapReferences(maps) {
+    const rowMap = maps.row || (i => i);
+    const colMap = maps.col || (i => i);
+    const ownName = String(this.name || '').toLowerCase();
+    const remapCells = (sheet, appliesTo) => {
+      sheet.rows.each((ri) => {
+        sheet.rows.eachCells(ri, (ci, cell) => {
+          if (cell && typeof cell.text === 'string' && cell.text[0] === '=') {
+            const next = remapFormula(cell.text, maps, appliesTo);
+            if (next !== cell.text) {
+              cell.text = next;
+              delete cell.cached;
+            }
+          }
+        });
+      });
+    };
+    remapCells(this, sheet => sheet === null || sheet.toLowerCase() === ownName);
+    // formulas of the other sheets that point to this one
+    const others = (this.getAllSheets && this.getAllSheets()) || [];
+    others.forEach((other) => {
+      if (other !== this) remapCells(other, sheet => sheet !== null && sheet.toLowerCase() === ownName);
+    });
+
+    if (this.hyperlinks && Object.keys(this.hyperlinks).length) {
+      const next = {};
+      Object.keys(this.hyperlinks).forEach((key) => {
+        const [ri, ci] = key.split('_').map(Number);
+        const nri = rowMap(ri);
+        const nci = colMap(ci);
+        if (nri !== null && nci !== null) next[`${nri}_${nci}`] = this.hyperlinks[key];
+      });
+      this.hyperlinks = next;
     }
-    this.hyperlinks = next;
+
+    (this.images || []).forEach((image) => {
+      const { anchor } = image;
+      const moveAxis = (value, map) => {
+        if (value == null) return value;
+        const base = Math.floor(value);
+        return mapAnchor(base, map) + (value - base);
+      };
+      anchor.row = moveAxis(anchor.row, rowMap);
+      anchor.col = moveAxis(anchor.col, colMap);
+      if (anchor.brRow != null) anchor.brRow = moveAxis(anchor.brRow, rowMap);
+      if (anchor.brCol != null) anchor.brCol = moveAxis(anchor.brCol, colMap);
+    });
+
+    this.validations._ = this.validations._.filter((validation) => {
+      const v = validation;
+      v.refs = v.refs.map(ref => remapRangeRef(ref, maps)).filter(Boolean);
+      return v.refs.length > 0;
+    });
+
+    const { autoFilter } = this;
+    if (autoFilter.active()) {
+      const ref = remapRangeRef(autoFilter.ref, maps);
+      if (!ref) {
+        autoFilter.clear();
+      } else {
+        autoFilter.ref = ref;
+        autoFilter.filters = autoFilter.filters.filter((filter) => {
+          const f = filter;
+          const ci = colMap(f.ci);
+          if (ci === null) return false;
+          f.ci = ci;
+          return true;
+        });
+        if (autoFilter.sort) {
+          const ci = colMap(autoFilter.sort.ci);
+          if (ci === null) autoFilter.sort = null;
+          else autoFilter.sort.ci = ci;
+        }
+      }
+    }
+
+    // freeze: [rows, cols] frozen; the last frozen row (or column) keeps its place
+    const [fr, fc] = this.freeze;
+    const lastKept = (count, map) => {
+      for (let i = count - 1; i >= 0; i -= 1) {
+        const mapped = map(i);
+        if (mapped !== null) return mapped + 1;
+      }
+      return 0;
+    };
+    this.freeze = [fr > 0 ? lastKept(fr, rowMap) : fr, fc > 0 ? lastKept(fc, colMap) : fc];
   }
 
   remapMerges(rowRemap, colRemap) {
@@ -553,8 +633,8 @@ export default class DataProxy {
     this.changeData(() => {
       const rowRemap = this.rows.moveRange(sri, eri, insertAt);
       if (!rowRemap) return;
-      this.remapHyperlinks(rowRemap, null);
       this.remapMerges(rowRemap, null);
+      this.remapReferences({ row: remapAxisMap(rowRemap) });
       const { selector } = this;
       if (selector.ri >= 0) {
         selector.ri = rowRemap[selector.ri] ?? selector.ri;
@@ -593,8 +673,8 @@ export default class DataProxy {
         if (newCi !== undefined) ncol[newCi] = cols._[ci];
       }
       cols._ = ncol;
-      this.remapHyperlinks(null, colRemap);
       this.remapMerges(null, colRemap);
+      this.remapReferences({ col: remapAxisMap(colRemap) });
       const { selector } = this;
       const { sri, eri, sci: sc, eci: ec } = selector.range;
       selector.range = new CellRange(
@@ -1267,6 +1347,7 @@ export default class DataProxy {
         cell.merge[0] += rn;
         cell.merge[1] += cn;
       });
+      this.remapReferences(type === 'row' ? { row: insertAxisMap(si, n) } : { col: insertAxisMap(si, n) });
     });
   }
 
@@ -1301,6 +1382,8 @@ export default class DataProxy {
       // merges inside the deleted block go away, the others shrink or move up/left
       merges.deleteSpan(type, si, si + size - 1);
       syncCellMergesFromRanges.call(this);
+      const deleted = deleteAxisMap(si, si + size - 1);
+      this.remapReferences(type === 'row' ? { row: deleted } : { col: deleted });
     });
   }
 
