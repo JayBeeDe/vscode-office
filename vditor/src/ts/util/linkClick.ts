@@ -126,7 +126,10 @@ export const resolveLinkClickFromTarget = (
     if (aElement) {
         const rawHref = aElement.getAttribute("href") || "";
         if (rawHref && rawHref !== "#") {
-            const href = rawHref.startsWith("#") ? rawHref : aElement.href;
+            // a relative link is sent as written: the host resolves it against the document, while
+            // aElement.href is resolved against <base href> (the workspace root for images)
+            const isRelative = !/^[a-z][a-z0-9+.-]*:/i.test(rawHref) && !rawHref.startsWith("/");
+            const href = rawHref.startsWith("#") || isRelative ? rawHref : aElement.href;
             return {
                 type: "link",
                 href,

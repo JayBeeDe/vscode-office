@@ -356,8 +356,9 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
             await ViewerSettingsService.createAndOpen(settings);
         })
 
-        const basePath = Global.getConfig('workspacePathAsImageBasePath') ?
-            vscode.Uri.file(getWorkspacePath(folderPath)) : folderPath;
+        // without a workspace folder the document's folder stays the base, not the disk root
+        const workspacePath = Global.getConfig('workspacePathAsImageBasePath') ? getWorkspacePath(folderPath) : '';
+        const basePath = workspacePath ? vscode.Uri.file(workspacePath) : folderPath;
         const baseUrl = webview.asWebviewUri(basePath).toString().replace(/\?.+$/, '').replace('https://git', 'https://file');
         const indexHtml = await readExtensionText(this.context, 'resource', 'markdown', 'index.html');
         webview.html = Util.buildPath(
