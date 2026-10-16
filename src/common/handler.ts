@@ -41,7 +41,9 @@ export class Handler {
 
         const fileWatcher = Handler.createFileWatcher(uri);
         fileWatcher?.onDidChange(e => {
-            eventEmitter.emit("fileChange", e)
+            if (e.toString() === uri.toString()) {
+                eventEmitter.emit("fileChange", e)
+            }
         })
 
         const changeDocumentSubscription = vscode.workspace.onDidChangeTextDocument(e => {
@@ -65,17 +67,13 @@ export class Handler {
     }
 
     private static createFileWatcher(uri: vscode.Uri): vscode.FileSystemWatcher | undefined {
-        const folder = vscode.workspace.getWorkspaceFolder(uri);
-        if (folder) {
-            const relativePath = vscode.workspace.asRelativePath(uri, false);
-            return vscode.workspace.createFileSystemWatcher(
-                new vscode.RelativePattern(folder, relativePath)
-            );
+        if (uri.scheme !== 'file' && !vscode.workspace.getWorkspaceFolder(uri)) {
+            return undefined;
         }
-        if (uri.scheme === 'file') {
-            return vscode.workspace.createFileSystemWatcher(uri.fsPath);
-        }
-        return undefined;
+        // watch the file's own folder, so files outside the workspace are covered too; the file
+        // name is not used as a glob (it may contain [] or {}): events are filtered by uri instead
+        const folder = vscode.Uri.joinPath(uri, '..');
+        return vscode.workspace.createFileSystemWatcher(new vscode.RelativePattern(folder, '*'), true, false, true);
     }
 
 }
