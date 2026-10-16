@@ -163,15 +163,31 @@ handler.on("open", async (md) => {
           editor.switchEditMode(update.editMode);
         }
       });
-      handler.on("update", content => {
-        if (document.querySelector("[data-type='yaml-front-matter'].vditor-code-block--cm .cm-editor.cm-focused")) {
-          return;
-        }
+      // an update that arrives while the front-matter editor has focus is applied when it loses
+      // it: replacing the content would steal the focus, dropping it would lose the update
+      let pendingUpdate = null;
+      const applyUpdate = (content) => {
         if (getMarkdownValue() === content) {
           return;
         }
         editor.setValue(content);
         editor.markSaved();
+      };
+      handler.on("update", content => {
+        const focusedFrontMatter = document.querySelector("[data-type='yaml-front-matter'].vditor-code-block--cm .cm-editor.cm-focused");
+        if (focusedFrontMatter) {
+          if (pendingUpdate === null) {
+            focusedFrontMatter.addEventListener('focusout', () => {
+              const latest = pendingUpdate;
+              pendingUpdate = null;
+              if (latest !== null) applyUpdate(latest);
+            }, { once: true });
+          }
+          pendingUpdate = content;
+          return;
+        }
+        pendingUpdate = null;
+        applyUpdate(content);
       })
       handler.on("insertImageMarkdown", (markdown) => {
         editor.insertMarkdown(markdown);
