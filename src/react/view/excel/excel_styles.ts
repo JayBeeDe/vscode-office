@@ -68,7 +68,7 @@ const NUMFMT_PATTERNS: { pattern: RegExp; format: string }[] = [
     { pattern: /#|0\.0/, format: 'number_plain' },
 ];
 
-function numFmtToSpreadsheetFormat(numFmt?: string): string | undefined {
+export function numFmtToSpreadsheetFormat(numFmt?: string): string | undefined {
     if (!numFmt || numFmt === 'General') return undefined;
     for (let i = 0; i < NUMFMT_PATTERNS.length; i += 1) {
         if (NUMFMT_PATTERNS[i].pattern.test(numFmt)) {
@@ -78,7 +78,7 @@ function numFmtToSpreadsheetFormat(numFmt?: string): string | undefined {
     return undefined;
 }
 
-function spreadsheetFormatToNumFmt(format?: string): string | undefined {
+export function spreadsheetFormatToNumFmt(format?: string): string | undefined {
     if (!format || format === 'normal') return undefined;
     return FORMAT_TO_NUMFMT[format];
 }

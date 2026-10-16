@@ -29,6 +29,16 @@ export function formatExcelDate(date: Date, format?: string): string {
     return hasTime ? `${day} ${time}` : day;
 }
 
+/** Date of an Excel serial number (1900 date system unless `date1904`). */
+export function serialToDate(serial: number, date1904 = false): Date {
+    return new Date(EXCEL_EPOCH + (serial + (date1904 ? 1462 : 0)) * 24 * HOUR_MS);
+}
+
+/** Excel serial number (1900 date system) of a date. */
+export function dateToSerial(date: Date): number {
+    return (date.getTime() - EXCEL_EPOCH) / (24 * HOUR_MS);
+}
+
 /** Parse the text of a date-formatted cell back into a date; null when it isn't a date. */
 export function parseExcelDateText(text: string, format?: string): Date | null {
     if (!isDateFormat(format)) return null;

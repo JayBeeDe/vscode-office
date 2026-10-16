@@ -5,7 +5,7 @@ import { inferSchema, initParser } from 'udsv';
 import { decodeCsvBuffer } from './csvEncoding';
 import { DEFAULT_ROW_HEIGHT_PX, excelFreezeToExpr, excelRowHeightToPx, readAutofilterRef } from './excel_meta';
 import { readWorksheetSortStateXml } from './excel_sort_state';
-import { excelJsCellToStyle, StyleRegistry } from './excel_styles';
+import { excelJsCellToStyle, numFmtToSpreadsheetFormat, StyleRegistry } from './excel_styles';
 import { mergeHyperlinkMaps, readCellHyperlink } from './excel_hyperlink';
 import { readWorksheetBackgroundImage, readWorksheetImages } from './excel_images';
 import { readWorksheetValidations } from './excel_validation';
@@ -16,7 +16,7 @@ import {
 } from './excel_protection';
 import type { CellData, SheetData } from './x-spreadsheet/index';
 import { readSheetCodeNames } from './spreadsheet_vba';
-import { formatExcelDate } from './excel_dates';
+import { formatExcelDate, isDateFormat, serialToDate } from './excel_dates';
 
 type RowMap = NonNullable<SheetData['rows']>;
 
@@ -335,15 +335,21 @@ const buildColsFromSheetJsWorksheet = (worksheet: XLSX.WorkSheet, colCount: numb
     return cols;
 };
 
-const formatSheetJsCell = (cell: XLSX.CellObject) => {
-    if (cell.w) return cell.w;
+/** Raw cell content (formula, number, date) instead of the formatted text, so that a save keeps it. */
+const formatSheetJsCell = (cell: XLSX.CellObject, format: string | undefined, date1904: boolean) => {
+    if (cell.f) return `=${cell.f}`;
     if (cell.v == null) return '';
-    if (cell.v instanceof Date) return cell.v.toISOString().slice(0, 10);
+    if (cell.t === 'n' && typeof cell.v === 'number') {
+        return isDateFormat(format) ? formatExcelDate(serialToDate(cell.v, date1904), format) : String(cell.v);
+    }
+    if (cell.t === 'b') return cell.v ? 'TRUE' : 'FALSE';
+    if (cell.t === 'e') return cell.w ?? '';
     return String(cell.v);
 };
 
-const convertSheetJsWorksheet = (worksheet: XLSX.WorkSheet): Pick<SheetData, 'rows' | 'cols' | 'merges'> => {
+const convertSheetJsWorksheet = (worksheet: XLSX.WorkSheet, date1904: boolean): Pick<SheetData, 'rows' | 'cols' | 'merges' | 'styles'> => {
     const rows: RowMap = {};
+    const styleRegistry = new StyleRegistry();
     let maxCols = 0;
     let maxRow = 0;
     const ref = worksheet['!ref'];
@@ -359,9 +365,11 @@ const convertSheetJsWorksheet = (worksheet: XLSX.WorkSheet): Pick<SheetData, 'ro
             const addr = XLSX.utils.encode_cell({ r: ri, c: ci });
             const cell = worksheet[addr];
             if (!cell) continue;
-            const text = formatSheetJsCell(cell);
+            const format = typeof cell.z === 'string' ? numFmtToSpreadsheetFormat(cell.z) : undefined;
+            const text = formatSheetJsCell(cell, format, date1904);
             if (!text) continue;
-            cells[ci] = { text };
+            const styleIndex = styleRegistry.add(format ? { format } : null);
+            cells[ci] = styleIndex != null ? { text, style: styleIndex } : { text };
             hasContent = true;
             if (ci + 1 > maxCols) maxCols = ci + 1;
             if (ri + 1 > maxRow) maxRow = ri + 1;
@@ -382,6 +390,7 @@ const convertSheetJsWorksheet = (worksheet: XLSX.WorkSheet): Pick<SheetData, 'ro
         rows: { len: maxRow, ...rows },
         cols: { len: colCount, ...buildColsFromSheetJsWorksheet(worksheet, colCount) },
         merges: merges.length > 0 ? merges : undefined,
+        styles: styleRegistry.getStyles(),
     };
 };
 
@@ -390,8 +399,9 @@ const convertSheetJsWorkbook = (workbook: XLSX.WorkBook): ExcelData => {
     let maxLength = 0;
     let maxCols = 26;
 
+    const date1904 = !!workbook.Workbook?.WBProps?.date1904;
     for (const sheetName of workbook.SheetNames) {
-        const converted = convertSheetJsWorksheet(workbook.Sheets[sheetName]);
+        const converted = convertSheetJsWorksheet(workbook.Sheets[sheetName], date1904);
         const rowCount = converted.rows?.len ?? 0;
         if (maxLength < rowCount) maxLength = rowCount;
 
@@ -402,6 +412,7 @@ const convertSheetJsWorkbook = (workbook: XLSX.WorkBook): ExcelData => {
             name: sheetName,
             rows: converted.rows,
             cols: converted.cols,
+            ...(converted.styles?.length ? { styles: converted.styles } : {}),
             ...(converted.merges ? { merges: converted.merges } : {}),
         });
     }
@@ -410,7 +421,7 @@ const convertSheetJsWorkbook = (workbook: XLSX.WorkBook): ExcelData => {
 };
 
 const loadWithSheetJs = (buffer: ArrayBuffer): ExcelData => {
-    const workbook = XLSX.read(buffer, { type: 'array', cellDates: true });
+    const workbook = XLSX.read(buffer, { type: 'array', cellNF: true });
     return convertSheetJsWorkbook(workbook);
 };
 
