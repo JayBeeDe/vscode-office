@@ -13,7 +13,8 @@ import { writeWorksheetValidations } from './excel_validation';
 import { writeWorksheetProtection } from './excel_protection';
 import { writeWorksheetImages } from './excel_images';
 import { extractVbaParts, injectVbaParts, type VbaParts } from './spreadsheet_vba';
-import { parseExcelDateText } from './excel_dates';
+import { dateToSerial, parseExcelDateText } from './excel_dates';
+import { spreadsheetFormatToNumFmt } from './excel_styles';
 
 const DEFAULT_COL_WIDTH = 100;
 
@@ -207,6 +208,52 @@ function applyColWidths(ws: XLSX.WorkSheet, xws: SheetData) {
     ws['!cols'] = colWidths;
 }
 
+/** Typed SheetJS cell for a spreadsheet cell: formulas, numbers and dates keep their type. */
+function toSheetJsCell(text: string, format?: string): XLSX.CellObject {
+    const numFmt = spreadsheetFormatToNumFmt(format);
+    const withFormat = (cell: XLSX.CellObject): XLSX.CellObject => (numFmt ? { ...cell, z: numFmt } : cell);
+    if (text.startsWith('=') && text.length > 1) {
+        return withFormat({ t: 'n', f: text.slice(1) });
+    }
+    const date = parseExcelDateText(text, format);
+    if (date) {
+        return withFormat({ t: 'n', v: dateToSerial(date) });
+    }
+    const num = Number(text);
+    if (text.trim() !== '' && !Number.isNaN(num) && String(num) === text.trim()) {
+        return withFormat({ t: 'n', v: num });
+    }
+    return { t: 's', v: text };
+}
+
+function dataToTypedSheetJs(xws: SheetData) {
+    const ws: XLSX.WorkSheet = {};
+    const rowobj = xws.rows;
+    let maxRow = 0;
+    let maxCol = 0;
+    for (let ri = 0; ri < (rowobj?.len ?? 0); ri += 1) {
+        const row = rowobj[ri];
+        if (!isRowData(row)) continue;
+        for (const ciKey of Object.keys(row.cells ?? {})) {
+            const ci = Number(ciKey);
+            if (Number.isNaN(ci)) continue;
+            const cellData = row.cells[ci];
+            if (!cellData.text) continue;
+            const format = cellData.style != null ? xws.styles?.[cellData.style]?.format : undefined;
+            ws[XLSX.utils.encode_cell({ r: ri, c: ci })] = toSheetJsCell(cellData.text, format);
+            maxRow = Math.max(maxRow, ri);
+            maxCol = Math.max(maxCol, ci);
+        }
+    }
+    ws['!ref'] = XLSX.utils.encode_range({ s: { r: 0, c: 0 }, e: { r: maxRow, c: maxCol } });
+    if (xws.merges?.length) {
+        ws['!merges'] = xws.merges.map(merge => XLSX.utils.decode_range(merge));
+    }
+    applyColWidths(ws, xws);
+    return ws;
+}
+
+/** Plain-text sheet, used for CSV/TSV where every cell is written as it is shown. */
 function dataToSheetJs(xws: SheetData) {
     const aoa: string[][] = [];
     const rowobj = xws.rows;
@@ -251,7 +298,7 @@ async function writeWithSheetJs(sheets: SheetData[], ext: string) {
     const workbook = XLSX.utils.book_new();
     for (let i = 0; i < sheets.length; i += 1) {
         const sheetData = sheets[i];
-        XLSX.utils.book_append_sheet(workbook, dataToSheetJs(sheetData), sheetData.name || `Sheet${i + 1}`);
+        XLSX.utils.book_append_sheet(workbook, dataToTypedSheetJs(sheetData), sheetData.name || `Sheet${i + 1}`);
     }
     const buffer = new Uint8Array(XLSX.write(workbook, { bookType: SHEETJS_BOOK_TYPES[ext], type: 'array' }));
     return ext === 'ots' ? toOdsTemplate(buffer) : buffer;
