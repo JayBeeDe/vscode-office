@@ -160,6 +160,9 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
 
         let documentSyncTimer: ReturnType<typeof setTimeout> | undefined;
         let pendingDocumentSync: string | undefined;
+        // texts we are writing to the document: their change events are our own echo, even when
+        // newer keystrokes have arrived meanwhile
+        const appliedTexts = new Set<string>();
         const flushDocumentSync = async () => {
             if (documentSyncTimer) {
                 clearTimeout(documentSyncTimer);
@@ -171,7 +174,12 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
             const nextContent = pendingDocumentSync;
             pendingDocumentSync = undefined;
             content = nextContent;
-            await this.updateTextDocument(document, nextContent);
+            appliedTexts.add(nextContent);
+            try {
+                await this.updateTextDocument(document, nextContent);
+            } finally {
+                setTimeout(() => appliedTexts.delete(nextContent), 0);
+            }
         };
         const scheduleDocumentSync = (newContent: string) => {
             pendingDocumentSync = newContent;
@@ -209,7 +217,7 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
             // our own edits come back here with the same text; anything else (save participants
             // trimming whitespace, other editors) is applied to the webview
             const updatedText = e.document.getText()?.replace(/\r/g, '');
-            if (content == updatedText) return;
+            if (content == updatedText || appliedTexts.has(updatedText)) return;
             content = updatedText;
             this.updateCount(content)
             handler.emit("update", updatedText)
