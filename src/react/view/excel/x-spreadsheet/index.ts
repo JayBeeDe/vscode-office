@@ -124,6 +124,8 @@ export interface SheetValidationData {
     required?: boolean;
     operator?: string;
     value?: string | string[] | number;
+    /** original definition from the file (JSON) */
+    source?: string;
 }
 
 export interface SheetImageAnchor {
@@ -162,6 +164,8 @@ export interface SheetData {
     codeName?: string;
     /** id of the worksheet this sheet was loaded from, so a save updates that worksheet in place */
     sourceSheetId?: number;
+    /** validations the viewer doesn't support (text length, time, custom...), written back as they were */
+    extraValidations?: { ref: string; source: string }[];
     images?: SheetImage[];
     backgroundImage?: SheetBackgroundImage;
     styles?: CellStyle[];
