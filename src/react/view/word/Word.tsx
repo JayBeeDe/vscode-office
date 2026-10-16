@@ -3,7 +3,7 @@ import { Alert, Spin } from "antd";
 import { DocxEditor, type DocxEditorRef } from "@eigenpal/docx-editor-react";
 import "@eigenpal/docx-editor-react/styles.css";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { handler, vscodeApi } from "../../util/vscode";
+import { handler, onSaveRequest, vscodeApi } from "../../util/vscode";
 import { loadOfficeBuffer } from "../../util/loadOfficeContent";
 import SponsorBar from "../components/SponsorBar";
 import "./Word.css";
@@ -117,14 +117,8 @@ export default function Word() {
     }, [loadDocument]);
 
     useEffect(() => {
-        const onKeyDown = (e: KeyboardEvent) => {
-            if ((e.ctrlKey || e.metaKey) && e.code === "KeyS") {
-                e.preventDefault();
-                void handleSave();
-            }
-        };
-        window.addEventListener("keydown", onKeyDown);
-        return () => window.removeEventListener("keydown", onKeyDown);
+        // Ctrl+S goes through VS Code, which asks for the content
+        onSaveRequest(() => handleSave());
     }, [handleSave]);
 
     return (

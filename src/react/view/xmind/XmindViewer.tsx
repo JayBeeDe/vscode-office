@@ -2,7 +2,7 @@ import { MinusOutlined, MoonOutlined, PlusOutlined, SaveOutlined, SunOutlined } 
 import { Alert, Button, Layout, Spin, message } from 'antd';
 import MindElixir, { type MindElixirData, type MindElixirInstance } from 'mind-elixir';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { handler } from '../../util/vscode';
+import { handler, onSaveRequest } from '../../util/vscode';
 import { loadOfficeBuffer } from '../../util/loadOfficeContent';
 import { observeVscodeThemeChange } from '../../util/vscodeTheme';
 import SponsorBar from '../components/SponsorBar';
@@ -173,9 +173,16 @@ export default function XmindViewer() {
         }
     }, [destroyMind]);
 
-    const handleSave = useCallback(async () => {
+    const handleSave = useCallback(async (backup = false) => {
         const doc = documentRef.current;
-        if (!doc || saving) {
+        if (!doc) {
+            return;
+        }
+        if (backup) {
+            handler.emit('save', [...await doc.export(syncCurrentSheet())]);
+            return;
+        }
+        if (saving) {
             return;
         }
         try {
@@ -205,14 +212,8 @@ export default function XmindViewer() {
     }, [loadXmind, destroyMind]);
 
     useEffect(() => {
-        const onKeyDown = (event: KeyboardEvent) => {
-            if ((event.metaKey || event.ctrlKey) && event.code === 'KeyS') {
-                event.preventDefault();
-                void handleSave();
-            }
-        };
-        window.addEventListener('keydown', onKeyDown, true);
-        return () => window.removeEventListener('keydown', onKeyDown, true);
+        // Ctrl+S goes through VS Code, which asks for the content
+        onSaveRequest((backup) => handleSave(backup));
     }, [handleSave]);
 
     const selected = sheets.find(sheet => sheet.id === selectedId) ?? null;

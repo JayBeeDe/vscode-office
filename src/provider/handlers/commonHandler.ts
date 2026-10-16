@@ -1,10 +1,11 @@
 import * as vscode from 'vscode';
-import { basename, join, parse } from 'path';
+import { join, parse } from 'path';
 import { Handler } from "@/common/handler";
 import { isUriReadOnly } from '@/common/fileReadOnly';
 import { Uri, workspace } from 'vscode';
 import { i18n } from '@/common/global';
 import { emitFileOfficeOpen, emitVirtualOfficeOpen, isVirtualUri } from '@/provider/handlers/officeContent';
+import { OfficeDocument } from '@/provider/handlers/officeDocument';
 
 const fileSaveTimes: Record<string, number> = {};
 const INTERNAL_SAVE_CHANGE_WINDOW_MS = 1500;
@@ -59,24 +60,67 @@ export function shouldSkipFileChange(uri: Uri): boolean {
     return !!(lastSaveTime && Date.now() - lastSaveTime < INTERNAL_SAVE_CHANGE_WINDOW_MS);
 }
 
-function setDirty(handler: Handler, uri: Uri, dirty: boolean) {
-    const panel = handler.panel;
-    const fileName = basename(uri.fsPath);
-    panel.title = dirty ? `${fileName}*` : fileName;
-    if (dirty) {
-        void vscode.commands.executeCommand('workbench.action.keepEditor');
+async function writeDocument(document: OfficeDocument, content: Uint8Array) {
+    const { uri, handler } = document;
+    if (document.readOnly) {
+        handler?.emit('saveAs', { content: [...content] });
+        throw new vscode.CancellationError();
     }
+    fileSaveTimes[uri.toString()] = Date.now();
+    await workspace.fs.writeFile(uri, content);
+    fileSaveTimes[uri.toString()] = Date.now();
+    document.dirty = false;
+    handler?.emit('saveDone');
 }
 
-export function handleCommonEvent(uri: Uri, handler: Handler) {
-    let readOnly = false;
-    const send = async () => {
-        if (shouldSkipFileChange(uri)) {
+/** Called by VS Code when it saves the document (Ctrl+S, save on close, auto save). */
+export async function saveOfficeDocument(document: OfficeDocument) {
+    const content = document.pendingContent ?? await document.requestContent(false);
+    document.pendingContent = undefined;
+    await writeDocument(document, content);
+}
+
+/** Called by VS Code for File > Save As. */
+export async function saveOfficeDocumentAs(document: OfficeDocument, target: Uri) {
+    const content = await document.requestContent(false);
+    fileSaveTimes[target.toString()] = Date.now();
+    await workspace.fs.writeFile(target, content);
+}
+
+export async function revertOfficeDocument(document: OfficeDocument) {
+    document.dirty = false;
+    document.pendingContent = undefined;
+    await document.reload?.(true);
+}
+
+/** Run the save through VS Code so that it knows the document is no longer dirty. */
+async function saveInEditor(document: OfficeDocument, handler: Handler) {
+    const save = (workspace as { save?: (uri: Uri) => Thenable<Uri | undefined> }).save;
+    if (typeof save === 'function') {
+        await save(document.uri);
+        return;
+    }
+    handler.panel.reveal();
+    await vscode.commands.executeCommand('workbench.action.files.save');
+}
+
+export function handleCommonEvent(document: OfficeDocument, handler: Handler) {
+    const uri = document.uri;
+    document.handler = handler;
+    let restoreBackup = !!document.backupUri;
+    const send = async (force = false) => {
+        if (!force && (shouldSkipFileChange(uri) || document.dirty)) {
+            // keep unsaved edits when the file changes on disk
             return;
         }
-        readOnly = await isUriReadOnly(uri);
+        document.readOnly = await isUriReadOnly(uri);
         // the panel may have been closed while awaiting
         if (handler.disposed) {
+            return;
+        }
+        if (restoreBackup && document.backupUri) {
+            restoreBackup = false;
+            void emitVirtualOfficeOpen(handler, uri, document.backupUri);
             return;
         }
         if (isVirtualUri(uri)) {
@@ -85,6 +129,7 @@ export function handleCommonEvent(uri: Uri, handler: Handler) {
         }
         await emitFileOfficeOpen(handler, uri, handler.panel.webview);
     }
+    document.reload = send;
     handler
         .on("editInVSCode", (full: boolean) => {
             const side = full ? vscode.ViewColumn.Active : vscode.ViewColumn.Beside;
@@ -93,21 +138,28 @@ export function handleCommonEvent(uri: Uri, handler: Handler) {
         .on("init", () => { void send(); })
         .on("fileChange", () => { void send(); })
         .on("change", () => {
-            setDirty(handler, uri, true);
+            document.markDirty();
         })
         .on("save", async (content) => {
             const res = Array.isArray(content) ? new Uint8Array(content) : new TextEncoder().encode(content)
-            if (readOnly) {
-                handler.emit('saveAs', { content: [...res] });
+            if (document.resolveRequest(res)) {
                 return;
             }
-            fileSaveTimes[uri.toString()] = Date.now();
-            await workspace.fs.writeFile(uri, res)
-            fileSaveTimes[uri.toString()] = Date.now();
-            setDirty(handler, uri, false);
-            handler.emit("saveDone")
+            // the webview saved on its own (a toolbar button): let VS Code run the save
+            document.pendingContent = res;
+            await saveInEditor(document, handler);
+            if (document.pendingContent) {
+                // VS Code did not save it, because the document was not dirty
+                document.pendingContent = undefined;
+                await writeDocument(document, res);
+            }
+        })
+        .on("saveRequestDone", () => {
+            // the webview finished without sending content: the user cancelled, or chose Save As
+            document.cancelRequest();
         })
         .on("saveAs", async (payload: { content: number[], ext?: string }) => {
+            document.cancelRequest();
             const res = new Uint8Array(payload.content);
             const ext = (payload.ext ?? 'xlsx').toLowerCase();
             const { dir, name } = parse(uri.fsPath);
@@ -140,7 +192,6 @@ export function handleCommonEvent(uri: Uri, handler: Handler) {
             fileSaveTimes[target.toString()] = Date.now();
             await workspace.fs.writeFile(target, res);
             fileSaveTimes[target.toString()] = Date.now();
-            setDirty(handler, uri, false);
             handler.emit("saveDone");
             await vscode.commands.executeCommand('vscode.openWith', target, 'cweijan.officeViewer');
         })

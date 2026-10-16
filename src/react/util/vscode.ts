@@ -60,6 +60,22 @@ const getVscodeEvent = () => {
 }
 export const handler = getVscodeEvent();
 
+/**
+ * Answer the host's save requests (Ctrl+S, save on close, hot-exit backup). `save` must emit
+ * `save` with the content; `backup` asks for the content without any dialog.
+ */
+export function onSaveRequest(save: (backup: boolean) => unknown) {
+    handler.on('saveRequest', async (request?: { backup?: boolean }) => {
+        try {
+            await save(!!request?.backup);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            handler.emit('saveRequestDone');
+        }
+    });
+}
+
 export function isCompose(e) {
     return e.metaKey || e.ctrlKey;
 }

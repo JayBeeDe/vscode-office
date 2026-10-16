@@ -2,7 +2,7 @@ import { MoonOutlined, SunOutlined } from "@ant-design/icons";
 import { App, Button, Modal, Radio, Spin } from "antd";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { handler, vscodeApi } from "../../util/vscode.ts";
+import { handler, onSaveRequest, vscodeApi } from "../../util/vscode.ts";
 import { isVscodeEditorDark, observeVscodeThemeChange } from "../../util/vscodeTheme.ts";
 import { loadOfficeBuffer } from "../../util/loadOfficeContent.ts";
 import SponsorBar from '../components/SponsorBar';
@@ -280,16 +280,25 @@ function ExcelViewer() {
     }, []);
 
     useEffect(() => {
-        const onKeyDown = (e: KeyboardEvent) => {
-            if ((e.ctrlKey || e.metaKey) && e.code === 'KeyS') {
-                e.preventDefault();
-                if (readOnlyRef.current) {
-                    void handleSaveAs();
-                } else {
-                    void handleSave();
+        // Ctrl+S goes through VS Code, which asks for the content
+        onSaveRequest(async (backup) => {
+            const spreadSheet = spreadSheetRef.current;
+            if (backup) {
+                if (spreadSheet) {
+                    await export_xlsx(spreadSheet, extRef.current, csvEncodingRef.current, { vbaSource: sourceBufferRef.current ?? undefined }, csvDelimiterRef.current);
                 }
                 return;
             }
+            if (readOnlyRef.current) {
+                await handleSaveAs();
+            } else {
+                await handleSave();
+            }
+        });
+    }, [handleSave, handleSaveAs]);
+
+    useEffect(() => {
+        const onKeyDown = (e: KeyboardEvent) => {
             if ((e.ctrlKey || e.metaKey) && e.code === 'KeyF') {
                 e.preventDefault();
                 if (findPanelRef.current) {
@@ -314,7 +323,7 @@ function ExcelViewer() {
         };
         window.addEventListener('keydown', onKeyDown);
         return () => window.removeEventListener('keydown', onKeyDown);
-    }, [handleAutoFitColumns, handleSave, handleSaveAs]);
+    }, [handleAutoFitColumns]);
 
     useEffect(() => {
         const container = document.getElementById('container');
