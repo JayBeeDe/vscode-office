@@ -1,7 +1,8 @@
 const fs = require("fs")
 const path = require("path")
 const url = require("url")
-const URI = require("vscode").Uri
+const vscode = require("vscode")
+const URI = vscode.Uri
 const markdownIt = require("markdown-it")
 const markdownItCheckbox = require("markdown-it-checkbox")
 const markdownItKatex = require("./ext/markdown-it-katex")
@@ -104,6 +105,9 @@ function convertMarkdownToHtml(filename, type, text, config) {
       // console.log("original href: " + href)
       if (type === "html") {
         href = decodeURIComponent(href).replace(/("|")/g, "")
+        // the html file is written next to the markdown file
+        const workspacePath = resolveWorkspaceRootPath(href, filename)
+        if (workspacePath) href = path.relative(path.dirname(filename), workspacePath).replace(/\\/g, "/")
       } else {
         href = convertImgPath(href, filename)
       }
@@ -200,8 +204,22 @@ function readFile(filename, encode = "utf-8") {
   }
 }
 
+/**
+ * "/image/x.png" is relative to the workspace root (as the editor shows it), unless such a file
+ * exists at the root of the disk.
+ */
+function resolveWorkspaceRootPath(href, filename) {
+  if (!href || !href.startsWith("/") || href.startsWith("//") || isExistsPath(href)) return null
+  const folder = vscode.workspace.getWorkspaceFolder(URI.file(filename))
+  if (!folder || folder.uri.scheme !== "file") return null
+  const resolved = path.join(folder.uri.fsPath, href)
+  return isExistsPath(resolved) ? resolved : null
+}
+
 function convertImgPath(src, filename) {
   try {
+    const workspacePath = resolveWorkspaceRootPath(decodeURIComponent(src).replace(/\\/g, "/"), filename)
+    if (workspacePath) return url.pathToFileURL(workspacePath).href
     let href = decodeURIComponent(src)
     href = href.replace(/("|")/g, "")
       .replace(/\\/g, "/")
