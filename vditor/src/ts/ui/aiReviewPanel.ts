@@ -107,13 +107,14 @@ export class AIReviewPanel {
         }, STREAM_RENDER_INTERVAL_MS);
     }
 
-    public endStream() {
+    public endStream(failed = false) {
         this.streaming = false;
         if (this.streamTimer !== null) {
             window.clearTimeout(this.streamTimer);
             this.streamTimer = null;
         }
-        this.modified = this.streamBuffer;
+        // a failed or empty answer leaves the text as it was: Accept must not replace it with nothing
+        this.modified = failed || !this.streamBuffer.trim() ? this.original : this.streamBuffer;
         this.renderComplete();
     }
 
