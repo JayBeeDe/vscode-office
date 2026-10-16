@@ -7,12 +7,15 @@ import {
     type SchemaElement,
     type SchemaTree,
 } from 'hyparquet';
-import { getPhysicalColumns } from 'hyparquet/src/schema.js';
-import { parquetWriteBuffer, type BasicType, type ColumnSource } from 'hyparquet-writer';
+import { parquetWriteBuffer, type ColumnSource } from 'hyparquet-writer';
 
 export interface ParquetColumnInfo {
     name: string;
     type: string;
+    /** schema element of the top-level field */
+    element: SchemaElement;
+    /** a group (struct, list, map): shown as JSON, not editable */
+    nested: boolean;
 }
 
 export interface ParquetFileInfo {
@@ -48,32 +51,31 @@ function formatSchemaType(element: SchemaElement): string {
     return element.type ?? 'UNKNOWN';
 }
 
-function findLeafElement(tree: SchemaTree, pathParts: string[]): SchemaElement | null {
-    if (pathParts.length == 0) {
-        return tree.element.type ? tree.element : null;
-    }
-    const [head, ...rest] = pathParts;
-    for (const child of tree.children) {
-        if (child.element.name == head) {
-            return findLeafElement(child, rest);
-        }
-    }
-    return null;
+function nestedTypeName(tree: SchemaTree): string {
+    const { element } = tree;
+    if (element.logical_type?.type === 'LIST' || element.converted_type === 'LIST') return 'LIST';
+    if (element.logical_type?.type === 'MAP' || element.converted_type === 'MAP' || element.converted_type === 'MAP_KEY_VALUE') return 'MAP';
+    if (element.repetition_type === 'REPEATED') return 'LIST';
+    return 'STRUCT';
 }
 
+/**
+ * One column per top-level field, as the rows are keyed: a struct, list or map is one column
+ * (its leaf paths such as lst.list.element match no row key).
+ */
 export async function openParquetFile(buffer: ArrayBuffer): Promise<ParquetFileInfo> {
     const file = asyncBufferFromArrayBuffer(buffer);
     const metadata = await parquetMetadataAsync(file);
     const schemaTree = parquetSchema(metadata);
-    const columnNames = getPhysicalColumns(schemaTree);
-    const columns: ParquetColumnInfo[] = [];
-    for (const name of columnNames) {
-        const element = findLeafElement(schemaTree, name.split('.'));
-        columns.push({
-            name,
-            type: element ? formatSchemaType(element) : 'UNKNOWN',
-        });
-    }
+    const columns: ParquetColumnInfo[] = schemaTree.children.map((child) => {
+        const nested = child.children.length > 0;
+        return {
+            name: child.element.name,
+            type: nested ? nestedTypeName(child) : formatSchemaType(child.element),
+            element: child.element,
+            nested,
+        };
+    });
     return {
         file,
         metadata,
@@ -97,86 +99,37 @@ export async function readAllParquetRows(file: AsyncBuffer, metadata: FileMetaDa
     });
 }
 
-function inferColumnType(values: unknown[]): BasicType {
-    let hasFloat = false;
-    let hasBigInt = false;
-    let hasDate = false;
-    let hasBoolean = false;
-    let hasNumber = false;
-    let nonNullCount = 0;
-
-    for (const value of values) {
-        if (value == null) continue;
-        nonNullCount++;
-        if (typeof value === 'boolean') {
-            hasBoolean = true;
-            continue;
-        }
-        if (typeof value === 'bigint') {
-            hasBigInt = true;
-            continue;
-        }
-        if (value instanceof Date) {
-            hasDate = true;
-            continue;
-        }
-        if (typeof value === 'number') {
-            hasNumber = true;
-            if (!Number.isInteger(value)) hasFloat = true;
-            continue;
-        }
-        return 'STRING';
-    }
-
-    if (nonNullCount == 0) return 'STRING';
-    if (hasBoolean && !hasNumber && !hasBigInt && !hasDate) return 'BOOLEAN';
-    if (hasDate && !hasNumber && !hasBigInt && !hasBoolean) return 'TIMESTAMP';
-    if (hasBigInt && !hasFloat && !hasDate && !hasBoolean) return 'INT64';
-    if (hasNumber && !hasFloat && !hasBigInt && !hasDate && !hasBoolean) return 'INT32';
-    if (hasNumber && !hasBigInt && !hasDate && !hasBoolean) return 'DOUBLE';
-    return 'STRING';
-}
-
-function normalizeParquetValue(value: unknown, type: BasicType): unknown {
+/** A flat value in the JavaScript type the writer expects for the column's physical type. */
+function normalizeFlatValue(value: unknown, element: SchemaElement): unknown {
     if (value == null) return null;
-    if (type == 'STRING' || type == 'JSON') {
-        if (typeof value === 'object') {
-            if (value instanceof Date) return value.toISOString();
-            return JSON.stringify(value);
+    switch (element.type) {
+        case 'BOOLEAN':
+            return typeof value === 'boolean' ? value : /^(true|1|yes)$/i.test(String(value));
+        case 'INT32':
+            return typeof value === 'bigint' ? Number(value) : value;
+        case 'INT64': {
+            if (typeof value === 'bigint' || value instanceof Date) return value;
+            if (typeof value === 'number') return BigInt(Math.trunc(value));
+            return value;
         }
-        return String(value);
+        case 'FLOAT':
+        case 'DOUBLE':
+            return typeof value === 'bigint' ? Number(value) : value;
+        default:
+            return value;
     }
-    if (type == 'BOOLEAN') return Boolean(value);
-    if (type == 'TIMESTAMP') {
-        if (value instanceof Date) return value;
-        const date = new Date(value as string | number);
-        return isNaN(date.getTime()) ? null : date;
-    }
-    if (type == 'INT64') {
-        if (typeof value === 'bigint') return value;
-        return BigInt(Math.trunc(Number(value)));
-    }
-    if (type == 'INT32' || type == 'FLOAT' || type == 'DOUBLE') {
-        const number = Number(value);
-        return isNaN(number) ? null : number;
-    }
-    return String(value);
 }
 
-export function writeParquetBuffer(columns: ParquetColumnInfo[], rows: Record<string, unknown>[]): ArrayBuffer {
-    const columnData: ColumnSource[] = [];
-    for (const column of columns) {
-        const values = rows.map(row => row[column.name]);
-        const type = inferColumnType(values);
-        const data = values.map(value => normalizeParquetValue(value, type));
-        columnData.push({
-            name: column.name,
-            data,
-            type,
-            nullable: true,
-        });
-    }
-    return parquetWriteBuffer({ columnData });
+/** Write the rows with the file's own schema, so nested columns and types are kept. */
+export function writeParquetBuffer(info: ParquetFileInfo, rows: Record<string, unknown>[]): ArrayBuffer {
+    const columnData: ColumnSource[] = info.columns.map(column => ({
+        name: column.name,
+        data: rows.map((row) => {
+            const value = row[column.name] ?? null;
+            return column.nested ? value : normalizeFlatValue(value, column.element);
+        }) as ColumnSource['data'],
+    }));
+    return parquetWriteBuffer({ columnData, schema: info.metadata.schema });
 }
 
 export function isColumnEditable(type: string): boolean {
