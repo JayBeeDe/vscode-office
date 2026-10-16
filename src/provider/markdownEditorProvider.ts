@@ -202,7 +202,7 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
         registerMarkdownWebview(uri, handler);
         handler.panel.onDidDispose(() => {
             void flushDocumentSync();
-            unregisterMarkdownWebview(uri);
+            unregisterMarkdownWebview(uri, handler);
             this.cancelAIPolish(handler);
         });
         handler.on("init", async () => {
