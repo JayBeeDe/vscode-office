@@ -150,14 +150,6 @@ export async function readUriBytes(uri: Uri): Promise<Uint8Array> {
     return workspace.fs.readFile(uri);
 }
 
-export function bytesToPayloadBuffer(data: Uint8Array): number[] {
-    const buffer: number[] = new Array(data.length);
-    for (let i = 0; i < data.length; i++) {
-        buffer[i] = data[i];
-    }
-    return buffer;
-}
-
 /** Send the bytes of `source` (by default the document itself) to the webview. */
 export async function emitVirtualOfficeOpen(handler: Handler, uri: Uri, source: Uri = uri): Promise<void> {
     const now = Date.now();
@@ -174,7 +166,8 @@ export async function emitVirtualOfficeOpen(handler: Handler, uri: Uri, source: 
             readOnly,
             nonce: now,
         };
-        payload.buffer = bytesToPayloadBuffer(data);
+        // a typed array is sent to the webview as binary; a number[] is JSON, many times the file size
+        payload.buffer = data;
         handler.emit('open', payload);
     } catch (error) {
         handler.emit('open', {

@@ -1,6 +1,7 @@
 export interface OfficeOpenPayload {
     path?: string;
-    buffer?: number[];
+    /** the file bytes: binary from the host, or a number array from older payloads */
+    buffer?: number[] | Uint8Array | ArrayBuffer;
     error?: string;
 }
 
@@ -8,12 +9,21 @@ export function arrayBufferFromPayload(payload: OfficeOpenPayload): ArrayBuffer 
     if (payload.error) {
         throw new Error(payload.error);
     }
-    if (!payload.buffer?.length) {
+    const { buffer } = payload;
+    if (buffer instanceof ArrayBuffer) {
+        if (!buffer.byteLength) throw new Error('Empty file content');
+        return buffer;
+    }
+    if (buffer instanceof Uint8Array) {
+        if (!buffer.byteLength) throw new Error('Empty file content');
+        return buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength) as ArrayBuffer;
+    }
+    if (!buffer?.length) {
         throw new Error('Empty file content');
     }
-    const bytes = new Uint8Array(payload.buffer.length);
-    for (let i = 0; i < payload.buffer.length; i++) {
-        bytes[i] = payload.buffer[i];
+    const bytes = new Uint8Array(buffer.length);
+    for (let i = 0; i < buffer.length; i++) {
+        bytes[i] = buffer[i];
     }
     return bytes.buffer;
 }
