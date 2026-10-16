@@ -177,8 +177,8 @@ handler.on("open", async (md) => {
       handler.on('aiPolishChunk', (chunk) => {
         editor.streamAIChunk(chunk)
       })
-      handler.on('aiPolishEnd', () => {
-        editor.endAIStream()
+      handler.on('aiPolishEnd', (result) => {
+        editor.endAIStream(!!result?.failed)
       })
       editor.restoreDocumentSession(true, !!shouldRestoreFocus)
       if (pendingFragment) {

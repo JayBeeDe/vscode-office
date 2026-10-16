@@ -517,9 +517,9 @@ class Vditor {
         this.aiReviewPanel.stream(chunk);
     }
 
-    /** AI 流结束，启用 Accept 按钮 */
-    public endAIStream() {
-        this.aiReviewPanel.endStream();
+    /** AI 流结束，启用 Accept 按钮；failed: the request failed, there is nothing to accept */
+    public endAIStream(failed = false) {
+        this.aiReviewPanel.endStream(failed);
     }
 
     /** 接收 AI 润色结果：退出 loading 状态，将 markdown 并入正文 */
