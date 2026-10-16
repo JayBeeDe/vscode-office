@@ -2,10 +2,12 @@ import Validator from './validator';
 import { CellRange } from './cell_range';
 
 class Validation {
-  constructor(mode, refs, validator) {
+  constructor(mode, refs, validator, source) {
     this.refs = refs;
     this.mode = mode; // cell
     this.validator = validator;
+    // original definition from the file (JSON), written back by the save while unchanged
+    this.source = source;
   }
 
   includes(ri, ci) {
@@ -37,19 +39,23 @@ class Validation {
   }
 
   getData() {
-    const { refs, mode, validator } = this;
+    const {
+      refs, mode, validator, source,
+    } = this;
     const {
       type, required, operator, value,
     } = validator;
-    return {
+    const data = {
       refs, mode, type, required, operator, value,
     };
+    if (source) data.source = source;
+    return data;
   }
 
   static valueOf({
-    refs, mode, type, required, operator, value,
+    refs, mode, type, required, operator, value, source,
   }) {
-    return new Validation(mode, refs, new Validator(type, required, value, operator));
+    return new Validation(mode, refs, new Validator(type, required, value, operator), source);
   }
 }
 class Validations {

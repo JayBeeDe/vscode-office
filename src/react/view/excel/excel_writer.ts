@@ -286,7 +286,7 @@ async function writeSheetToExcelJs(worksheet: ExcelJS.Worksheet, workbook: Excel
 
     applySheetMeta(worksheet, sheetData);
     writeRowHeights(worksheet, rows);
-    writeWorksheetValidations(worksheet, validations);
+    writeWorksheetValidations(worksheet, validations, sheetData.extraValidations);
 
     if (!rows) return;
 

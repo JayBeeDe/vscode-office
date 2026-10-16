@@ -1720,7 +1720,7 @@ export default class DataProxy {
   getData() {
     const {
       name, freeze, styles, merges, rows, cols, validations, autoFilter, hyperlinks, sheetProtection,
-      images, backgroundImage, codeName, sourceSheetId,
+      images, backgroundImage, codeName, sourceSheetId, extraValidations,
     } = this;
     const data = {
       name,
@@ -1749,6 +1749,9 @@ export default class DataProxy {
     }
     if (sourceSheetId != null) {
       data.sourceSheetId = sourceSheetId;
+    }
+    if (extraValidations && extraValidations.length > 0) {
+      data.extraValidations = extraValidations;
     }
     return data;
   }

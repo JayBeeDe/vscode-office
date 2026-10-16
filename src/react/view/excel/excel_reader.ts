@@ -8,7 +8,7 @@ import { readWorksheetSortStateXml } from './excel_sort_state';
 import { excelJsCellToStyle, numFmtToSpreadsheetFormat, StyleRegistry } from './excel_styles';
 import { mergeHyperlinkMaps, readCellHyperlink } from './excel_hyperlink';
 import { readWorksheetBackgroundImage, readWorksheetImages } from './excel_images';
-import { readWorksheetValidations } from './excel_validation';
+import { readWorksheetExtraValidations, readWorksheetValidations } from './excel_validation';
 import {
     isWorksheetProtected,
     readCellEditableFromExcel,
@@ -206,7 +206,7 @@ const readWorkbookSortStateXml = async (buffer: ArrayBuffer) => {
     return entries;
 };
 
-const convertExcelJsWorksheet = (worksheet: ExcelJS.Worksheet, workbook: ExcelJS.Workbook): Pick<SheetData, 'rows' | 'cols' | 'styles' | 'merges' | 'freeze' | 'autofilter' | 'hyperlinks' | 'validations' | 'sheetProtection' | 'images' | 'backgroundImage'> => {
+const convertExcelJsWorksheet = (worksheet: ExcelJS.Worksheet, workbook: ExcelJS.Workbook): Pick<SheetData, 'rows' | 'cols' | 'styles' | 'merges' | 'freeze' | 'autofilter' | 'hyperlinks' | 'validations' | 'extraValidations' | 'sheetProtection' | 'images' | 'backgroundImage'> => {
     const rows: RowMap = {};
     const styleRegistry = new StyleRegistry();
     const hyperlinkParts: Record<string, { link: string; tooltip?: string }>[] = [];
@@ -265,6 +265,7 @@ const convertExcelJsWorksheet = (worksheet: ExcelJS.Worksheet, workbook: ExcelJS
     const sheetExtras = readSheetExtras(worksheet);
     const hyperlinks = mergeHyperlinkMaps(...hyperlinkParts);
     const validations = readWorksheetValidations(worksheet);
+    const extraValidations = readWorksheetExtraValidations(worksheet);
     const images = readWorksheetImages(worksheet, workbook);
     const backgroundImage = readWorksheetBackgroundImage(worksheet, workbook);
 
@@ -275,6 +276,7 @@ const convertExcelJsWorksheet = (worksheet: ExcelJS.Worksheet, workbook: ExcelJS
         merges: merges.length > 0 ? merges : undefined,
         ...(Object.keys(hyperlinks).length ? { hyperlinks } : {}),
         ...(validations.length ? { validations } : {}),
+        ...(extraValidations.length ? { extraValidations } : {}),
         ...(sheetProtection ? { sheetProtection } : {}),
         ...(images.length ? { images } : {}),
         ...(backgroundImage ? { backgroundImage } : {}),
@@ -313,6 +315,7 @@ const convertExcelJsWorkbook = (
             ...(converted.autofilter ? { autofilter: converted.autofilter } : {}),
             ...(converted.hyperlinks ? { hyperlinks: converted.hyperlinks } : {}),
             ...(converted.validations ? { validations: converted.validations } : {}),
+            ...(converted.extraValidations ? { extraValidations: converted.extraValidations } : {}),
             ...(converted.sheetProtection ? { sheetProtection: converted.sheetProtection } : {}),
             ...(converted.images ? { images: converted.images } : {}),
             ...(converted.backgroundImage ? { backgroundImage: converted.backgroundImage } : {}),
