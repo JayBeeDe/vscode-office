@@ -30,6 +30,8 @@ export function readCellEditableFromExcel(cell: ExcelJS.Cell, sheetProtected: bo
     return false;
 }
 
+const PASSWORD_HASH_KEYS = ['algorithmName', 'hashValue', 'saltValue', 'spinCount'] as const;
+
 function protectionOptionsFromStored(stored: StoredSheetProtection): Partial<ExcelJS.WorksheetProtection> {
     const {
         password,
@@ -87,4 +89,13 @@ export async function writeWorksheetProtection(
         ? protectionOptionsFromStored(sheetProtection)
         : DEFAULT_PROTECT_OPTIONS;
     await worksheet.protect('', options);
+    // protect('') drops the password: put the original hash back, so the sheet keeps its password
+    if (sheetProtection?.hashValue) {
+        const ws = worksheet as ExcelJS.Worksheet & { sheetProtection?: StoredSheetProtection };
+        const hash: StoredSheetProtection = {};
+        for (const key of PASSWORD_HASH_KEYS) {
+            if (sheetProtection[key] != null) hash[key] = sheetProtection[key];
+        }
+        ws.sheetProtection = { ...(ws.sheetProtection ?? {}), ...hash };
+    }
 }
