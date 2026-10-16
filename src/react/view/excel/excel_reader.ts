@@ -38,7 +38,6 @@ export interface ExcelData {
 
 const MIN_COL_WIDTH = 70;
 const MAX_COL_WIDTH = 300;
-const DEFAULT_COL_WIDTH = 100;
 const CHAR_WIDTH = 8;
 const MAX_ROWS_TO_CHECK = 10;
 
@@ -107,11 +106,18 @@ const buildCsvCols = (rows: any[][], colCount: number) => {
     return cols;
 };
 
+type ColEntry = { width?: number; hide?: boolean };
+
+/** Only the widths the file sets, unclamped, so that a save writes them back unchanged. */
 const buildColsFromWorksheet = (worksheet: ExcelJS.Worksheet, colCount: number) => {
-    const cols: Record<number, { width: number }> = {};
+    const cols: Record<number, ColEntry> = {};
     for (let i = 1; i <= colCount; i += 1) {
-        const width = excelColWidthToPx(worksheet.getColumn(i).width) ?? DEFAULT_COL_WIDTH;
-        cols[i - 1] = { width: clampColWidth(width) };
+        const column = worksheet.getColumn(i);
+        const entry: ColEntry = {};
+        const width = excelColWidthToPx(column.width);
+        if (width != null) entry.width = Math.max(1, width);
+        if (column.hidden) entry.hide = true;
+        if (Object.keys(entry).length > 0) cols[i - 1] = entry;
     }
     return cols;
 };
@@ -332,11 +338,14 @@ const sheetJsColWidthToPx = (col?: XLSX.ColInfo) => {
 };
 
 const buildColsFromSheetJsWorksheet = (worksheet: XLSX.WorkSheet, colCount: number) => {
-    const cols: Record<number, { width: number }> = {};
+    const cols: Record<number, ColEntry> = {};
     const sheetCols = worksheet['!cols'];
     for (let i = 0; i < colCount; i += 1) {
-        const width = sheetJsColWidthToPx(sheetCols?.[i]) ?? DEFAULT_COL_WIDTH;
-        cols[i] = { width: clampColWidth(width) };
+        const entry: ColEntry = {};
+        const width = sheetJsColWidthToPx(sheetCols?.[i]);
+        if (width != null) entry.width = Math.max(1, Math.round(width));
+        if (sheetCols?.[i]?.hidden) entry.hide = true;
+        if (Object.keys(entry).length > 0) cols[i] = entry;
     }
     return cols;
 };

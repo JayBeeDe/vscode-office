@@ -16,7 +16,6 @@ import { extractVbaParts, injectVbaParts, type VbaParts } from './spreadsheet_vb
 import { dateToSerial, parseExcelDateText } from './excel_dates';
 import { formatCellText } from './excel_reader';
 
-const DEFAULT_COL_WIDTH = 100;
 
 export { buildFormattingSnapshot, hasFormattingChanged } from './excel_meta';
 
@@ -48,10 +47,15 @@ function isRowData(row: RowData | number | undefined): row is RowData {
     return row != null && typeof row === 'object';
 }
 
-function getColWidth(cols: SheetData['cols'], ci: number) {
+/** Width set on the column, or undefined when it uses the sheet default. */
+function getExplicitColWidth(cols: SheetData['cols'], ci: number): number | undefined {
     const col = cols?.[ci];
-    if (col && typeof col === 'object' && col.width != null) return col.width;
-    return DEFAULT_COL_WIDTH;
+    return col && typeof col === 'object' && col.width != null ? col.width : undefined;
+}
+
+function isColHidden(cols: SheetData['cols'], ci: number): boolean {
+    const col = cols?.[ci] as { hide?: boolean } | number | undefined;
+    return !!col && typeof col === 'object' && col.hide === true;
 }
 
 function pxToExcelColWidth(px: number) {
@@ -266,10 +270,14 @@ async function prepareWorkbook(sheets: SheetData[], source?: ArrayBuffer) {
 async function writeSheetToExcelJs(worksheet: ExcelJS.Worksheet, workbook: ExcelJS.Workbook, sheetData: SheetData, originals?: OriginalCells) {
     const { rows, cols, styles = [], merges = [], hyperlinks = {}, validations } = sheetData;
 
-    if (cols?.len) {
-        for (let ci = 0; ci < cols.len; ci += 1) {
-            worksheet.getColumn(ci + 1).width = pxToExcelColWidth(getColWidth(cols, ci));
-        }
+    // only widths that are set: the others keep the sheet default
+    const colCount = Math.max(cols?.len ?? 0, worksheet.columnCount);
+    for (let ci = 0; ci < colCount; ci += 1) {
+        const width = getExplicitColWidth(cols, ci);
+        const column = worksheet.getColumn(ci + 1);
+        if (width != null) column.width = pxToExcelColWidth(width);
+        const hidden = isColHidden(cols, ci);
+        if (hidden || column.hidden) column.hidden = hidden;
     }
 
     for (let i = 0; i < merges.length; i += 1) {
@@ -394,9 +402,12 @@ async function exportWithExcelJs(sheets: SheetData[], options?: ExportOptions) {
 function applyColWidths(ws: XLSX.WorkSheet, xws: SheetData) {
     const cols = xws.cols;
     if (!cols?.len) return;
-    const colWidths = [];
+    const colWidths: XLSX.ColInfo[] = [];
     for (let ci = 0; ci < cols.len; ci += 1) {
-        colWidths.push({ wpx: getColWidth(cols, ci) });
+        const width = getExplicitColWidth(cols, ci);
+        const info: XLSX.ColInfo = width != null ? { wpx: width } : {};
+        if (isColHidden(cols, ci)) info.hidden = true;
+        colWidths.push(info);
     }
     ws['!cols'] = colWidths;
 }
