@@ -156,6 +156,17 @@ export const formatCellText = (cell: ExcelJS.Cell, format?: string) => {
     return String(cell.value);
 };
 
+/** Result of a formula as saved by the application that wrote the file. */
+const formatCachedResult = (cell: ExcelJS.Cell, format?: string): string | undefined => {
+    const value = cell.value as { result?: unknown } | null;
+    const result = value && typeof value === 'object' ? value.result : undefined;
+    if (result == null) return undefined;
+    if (result instanceof Date) return formatExcelDate(result, format);
+    if (typeof result === 'boolean') return result ? 'TRUE' : 'FALSE';
+    if (typeof result === 'object' && 'error' in (result as object)) return String((result as { error: unknown }).error);
+    return String(result);
+};
+
 const readFreezeFromWorksheet = (worksheet: ExcelJS.Worksheet): string | undefined => {
     const views = worksheet.views;
     if (!views?.length) return undefined;
@@ -248,6 +259,8 @@ const convertExcelJsWorksheet = (worksheet: ExcelJS.Worksheet, workbook: ExcelJS
 
             const styleIndex = styleRegistry.add(cellStyle);
             const cellData: CellData = { text };
+            const cached = text.startsWith('=') ? formatCachedResult(cell, cellStyle?.format) : undefined;
+            if (cached !== undefined) cellData.cached = cached;
             if (styleIndex != null) cellData.style = styleIndex;
             if (editable !== undefined) cellData.editable = editable;
             cells[ci] = cellData;

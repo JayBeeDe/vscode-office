@@ -92,6 +92,8 @@ export interface CellData {
     merge?: CellMerge;
     /** false 表示不可编辑（对应 Excel 锁定单元格） */
     editable?: boolean;
+    /** formula result saved in the file, shown when the viewer can't compute the formula */
+    cached?: string;
 }
 
 export interface RowData {
@@ -274,12 +276,18 @@ export class Spreadsheet {
         }
     }
 
+    /** Formulas such as Sheet2!A1 read the other sheets of the workbook. */
+    private bindSheetLookup(d: DataProxy) {
+        (d as any).getSheetByName = (name: string) => this.datas.find(it => it.name.toLowerCase() === name.toLowerCase());
+    }
+
     addSheet(name?: string, active = true): DataProxy {
         const n = name || `sheet${this.sheetIndex}`;
         const d = new DataProxy(n, this.options);
         d.change = (...args: any[]) => {
             this.sheet.trigger('change', ...args);
         };
+        this.bindSheetLookup(d);
         this.datas.push(d);
 
         if (this.bottombar !== null) {
@@ -358,6 +366,7 @@ export class Spreadsheet {
         delete sheetData.sourceSheetId;
 
         const nd = new DataProxy(copyName, this.options);
+        this.bindSheetLookup(nd);
         nd.change = (...args: any[]) => {
             this.sheet.trigger('change', ...args);
         };

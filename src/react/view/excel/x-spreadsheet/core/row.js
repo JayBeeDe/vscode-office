@@ -119,7 +119,11 @@ class Rows {
 
   setCellText(ri, ci, text) {
     const cell = this.getCellOrNew(ri, ci);
-    if (cell.editable !== false) cell.text = text;
+    if (cell.editable !== false) {
+      // the result saved in the file no longer applies to a new text
+      if (cell.text !== text) delete cell.cached;
+      cell.text = text;
+    }
   }
 
   // what: all | format | text
