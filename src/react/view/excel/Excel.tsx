@@ -9,6 +9,7 @@ import SponsorBar from '../components/SponsorBar';
 import './Excel.less';
 import { MIN_VIEW_COLS, MIN_VIEW_ROWS } from "./excel_meta.ts";
 import { detectCsvEncoding, type CsvEncoding } from "./csvEncoding.ts";
+import type { CsvFormat } from "./csvFormat.ts";
 import { loadSheets } from "./excel_reader.ts";
 import { export_xlsx, exportSaveAs, buildFormattingSnapshot, hasFormattingChanged } from "./excel_writer.ts";
 import Spreadsheet from './x-spreadsheet/index';
@@ -121,6 +122,7 @@ function ExcelViewer() {
     const spreadSheetRef = useRef<Spreadsheet | null>(null)
     const csvEncodingRef = useRef<CsvEncoding>('utf8')
     const csvDelimiterRef = useRef(',')
+    const csvFormatRef = useRef<CsvFormat | undefined>(undefined)
     const initialFormattingRef = useRef('')
 
     useEffect(() => {
@@ -224,7 +226,7 @@ function ExcelViewer() {
                                     void (async () => {
                                         dialog.destroy();
                                         try {
-                                            await export_xlsx(spreadSheet, extRef.current, csvEncoding, { vbaSource: sourceBufferRef.current ?? undefined }, csvDelimiter);
+                                            await export_xlsx(spreadSheet, extRef.current, csvEncoding, { vbaSource: sourceBufferRef.current ?? undefined, csvFormat: csvFormatRef.current }, csvDelimiter);
                                         } catch (error) {
                                             console.error(`Failed to save Excel file: ${(error as Error).message}`);
                                         }
@@ -258,7 +260,7 @@ function ExcelViewer() {
         }
 
         try {
-            await export_xlsx(spreadSheet, extRef.current, csvEncoding, { vbaSource: sourceBufferRef.current ?? undefined }, csvDelimiter);
+            await export_xlsx(spreadSheet, extRef.current, csvEncoding, { vbaSource: sourceBufferRef.current ?? undefined, csvFormat: csvFormatRef.current }, csvDelimiter);
             spreadSheet.setSaveEnabled(false);
         } catch (error) {
             console.error(`Failed to save Excel file: ${(error as Error).message}`);
@@ -285,7 +287,7 @@ function ExcelViewer() {
             const spreadSheet = spreadSheetRef.current;
             if (backup) {
                 if (spreadSheet) {
-                    await export_xlsx(spreadSheet, extRef.current, csvEncodingRef.current, { vbaSource: sourceBufferRef.current ?? undefined }, csvDelimiterRef.current);
+                    await export_xlsx(spreadSheet, extRef.current, csvEncodingRef.current, { vbaSource: sourceBufferRef.current ?? undefined, csvFormat: csvFormatRef.current }, csvDelimiterRef.current);
                 }
                 return;
             }
@@ -333,7 +335,7 @@ function ExcelViewer() {
 
         const initSpreadsheet = async (buffer: ArrayBuffer, payload: any, generation: number) => {
             const fileReadOnly = payload.readOnly === true;
-            const { sheets, maxLength, maxCols, csvDelimiter } = await loadSheets(buffer, payload.ext);
+            const { sheets, maxLength, maxCols, csvDelimiter, csvFormat } = await loadSheets(buffer, payload.ext);
             if (generation !== loadGeneration) {
                 return;
             }
@@ -344,6 +346,7 @@ function ExcelViewer() {
             if (csvDelimiter) {
                 csvDelimiterRef.current = csvDelimiter;
             }
+            csvFormatRef.current = csvFormat;
             const viewRowLen = Math.max(maxLength ?? 0, MIN_VIEW_ROWS);
             const viewColLen = Math.max(maxCols ?? 0, MIN_VIEW_COLS);
             container.innerHTML = '';
