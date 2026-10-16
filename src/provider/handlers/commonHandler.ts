@@ -92,13 +92,26 @@ async function saveContentAs(document: OfficeDocument, content: Uint8Array, targ
         defaultUri,
         filters: { [info.label]: info.exts },
     });
-    if (!target) return false;
+    if (!target) {
+        handler?.emit('saveFailed');
+        return false;
+    }
     fileSaveTimes[target.toString()] = Date.now();
-    await workspace.fs.writeFile(target, content);
+    await writeOrReport(document, target, content);
     fileSaveTimes[target.toString()] = Date.now();
     handler?.emit("saveDone");
     await vscode.commands.executeCommand('vscode.openWith', target, 'cweijan.officeViewer');
     return true;
+}
+
+/** Write the file; on failure tell the webview, so it doesn't stay in a saving state. */
+async function writeOrReport(document: OfficeDocument, target: Uri, content: Uint8Array) {
+    try {
+        await workspace.fs.writeFile(target, content);
+    } catch (error) {
+        document.handler?.emit('saveFailed', { message: error instanceof Error ? error.message : String(error) });
+        throw error;
+    }
 }
 
 async function writeDocument(document: OfficeDocument, content: Uint8Array) {
@@ -112,7 +125,7 @@ async function writeDocument(document: OfficeDocument, content: Uint8Array) {
         return;
     }
     fileSaveTimes[uri.toString()] = Date.now();
-    await workspace.fs.writeFile(uri, content);
+    await writeOrReport(document, uri, content);
     fileSaveTimes[uri.toString()] = Date.now();
     document.dirty = false;
     handler?.emit('saveDone');
@@ -129,7 +142,7 @@ export async function saveOfficeDocument(document: OfficeDocument) {
 export async function saveOfficeDocumentAs(document: OfficeDocument, target: Uri) {
     const content = await document.requestContent(false);
     fileSaveTimes[target.toString()] = Date.now();
-    await workspace.fs.writeFile(target, content);
+    await writeOrReport(document, target, content);
 }
 
 export async function revertOfficeDocument(document: OfficeDocument) {

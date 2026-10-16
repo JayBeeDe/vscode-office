@@ -202,6 +202,11 @@ export default function XmindViewer() {
             setSaving(false);
             setDirty(false);
             message.success({ duration: 1.5, content: '保存成功' });
+        }).on('saveFailed', (payload?: { message?: string }) => {
+            setSaving(false);
+            if (payload?.message) {
+                message.error(payload.message);
+            }
         }).emit('init');
 
         return () => {
