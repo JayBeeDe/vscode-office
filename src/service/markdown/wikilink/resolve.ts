@@ -1,3 +1,4 @@
+import { sep } from 'path';
 import * as vscode from 'vscode';
 import { pickBestUri } from './fileMatch';
 import { findMarkdownInScope, findMarkdownRecursive, statMarkdownAt } from './fileSearch';
@@ -33,7 +34,7 @@ export async function resolveWikiLinkFile(
 
     // 2. 各祖先目录内 findFiles 精确匹配（处理 stat 权限等边缘情况）
     for (const root of roots) {
-        if (!root.fsPath.startsWith(workspacePath)) {
+        if (root.fsPath !== workspacePath && !root.fsPath.startsWith(workspacePath.endsWith(sep) ? workspacePath : workspacePath + sep)) {
             continue;
         }
         const scoped = await findMarkdownInScope(workspaceFolder, root.fsPath, normalized);
