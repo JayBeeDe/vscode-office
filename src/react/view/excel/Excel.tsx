@@ -181,6 +181,13 @@ function ExcelViewer() {
         setSaveAsVisible(true);
     }, []);
 
+    // e.g. a sheet name that the file format rejects
+    const reportSaveError = useCallback((error: unknown) => {
+        const msg = error instanceof Error ? error.message : String(error);
+        console.error(`Failed to save Excel file: ${msg}`);
+        message.error({ duration: 5, content: msg });
+    }, [message]);
+
     const handleSave = useCallback(async () => {
         const spreadSheet = spreadSheetRef.current;
         if (!spreadSheet) return;
@@ -209,7 +216,7 @@ function ExcelViewer() {
                         try {
                             await export_xlsx(spreadSheet, 'xlsx', csvEncoding, { saveAs: true }, csvDelimiter);
                         } catch (error) {
-                            console.error(`Failed to save Excel file: ${(error as Error).message}`);
+                            reportSaveError(error);
                             throw error;
                         }
                     },
@@ -230,7 +237,7 @@ function ExcelViewer() {
                                         try {
                                             await export_xlsx(spreadSheet, extRef.current, csvEncoding, { vbaSource: sourceBufferRef.current ?? undefined, csvFormat: csvFormatRef.current }, csvDelimiter);
                                         } catch (error) {
-                                            console.error(`Failed to save Excel file: ${(error as Error).message}`);
+                                            reportSaveError(error);
                                         }
                                     })();
                                 }}
@@ -246,7 +253,7 @@ function ExcelViewer() {
                                             dialog.destroy();
                                             await export_xlsx(spreadSheet, 'xlsx', csvEncoding, { saveAs: true }, csvDelimiter);
                                         } catch (error) {
-                                            console.error(`Failed to save Excel file: ${(error as Error).message}`);
+                                            reportSaveError(error);
                                         }
                                     })();
                                 }}
@@ -265,9 +272,9 @@ function ExcelViewer() {
             await export_xlsx(spreadSheet, extRef.current, csvEncoding, { vbaSource: sourceBufferRef.current ?? undefined, csvFormat: csvFormatRef.current }, csvDelimiter);
             spreadSheet.setSaveEnabled(false);
         } catch (error) {
-            console.error(`Failed to save Excel file: ${(error as Error).message}`);
+            reportSaveError(error);
         }
-    }, [modal, handleSaveAs]);
+    }, [modal, handleSaveAs, reportSaveError]);
 
     const confirmSaveAs = useCallback(async (fmt: string) => {
         const spreadSheet = spreadSheetRef.current;
@@ -279,9 +286,9 @@ function ExcelViewer() {
                 spreadSheet.setSaveEnabled(false);
             }
         } catch (error) {
-            console.error(`Failed to save Excel file: ${(error as Error).message}`);
+            reportSaveError(error);
         }
-    }, []);
+    }, [reportSaveError]);
 
     useEffect(() => {
         // Ctrl+S goes through VS Code, which asks for the content
