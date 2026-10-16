@@ -95,10 +95,13 @@ export function renderCell(draw, data, rindex, cindex, yoffset = 0) {
     // render text
     let cellText = '';
     if (!data.settings.evalPaused) {
-      cellText = _cell.render(cell.text || '', formulam, (y, x) => {
-        const refCell = data.rows.getCell(x, y);
+      cellText = _cell.render(cell.text || '', formulam, (col, row, sheetName) => {
+        // Sheet2!A1: another sheet of the workbook
+        const source = sheetName ? data.getSheetByName?.(sheetName) : data;
+        if (!source) return undefined;
+        const refCell = source.rows.getCell(row, col);
         return (refCell && refCell.text) ? refCell.text : '';
-      });
+      }, cell.cached);
     } else {
       cellText = cell.text || '';
     }
