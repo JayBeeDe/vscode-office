@@ -25,6 +25,7 @@ import {
     loadEpubSettings,
     resetEpubSettings,
     resolveEpubAuthor,
+    sanitizeEpubDescription,
     saveEpubSetting,
     searchEpubBook,
     SearchHit,
@@ -588,7 +589,7 @@ export default function Epub() {
                                         ) : null}
                                         {meta.author ? <div className="author">{meta.author}</div> : null}
                                         {meta.description ? (
-                                            <div className="description" dangerouslySetInnerHTML={{ __html: meta.description }} />
+                                            <div className="description" dangerouslySetInnerHTML={{ __html: sanitizeEpubDescription(meta.description) }} />
                                         ) : null}
                                     </>
                                 ) : null}

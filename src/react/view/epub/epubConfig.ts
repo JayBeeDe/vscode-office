@@ -66,6 +66,36 @@ export function resolveEpubAuthor(creator: unknown): string {
     return text;
 }
 
+const DESCRIPTION_TAGS = new Set(['p', 'br', 'b', 'strong', 'i', 'em', 'u', 'ul', 'ol', 'li', 'blockquote', 'div', 'span']);
+
+/** Keep only basic formatting tags, without attributes, from EPUB description HTML. */
+export function sanitizeEpubDescription(html: string): string {
+    const source = new DOMParser().parseFromString(html, 'text/html');
+    const target = document.implementation.createHTMLDocument('');
+    const copy = (from: Node, to: Node) => {
+        for (const child of Array.from(from.childNodes)) {
+            if (child.nodeType === Node.TEXT_NODE) {
+                to.appendChild(target.createTextNode(child.textContent || ''));
+            } else if (child.nodeType === Node.ELEMENT_NODE) {
+                const tag = (child as Element).tagName.toLowerCase();
+                if (tag === 'script' || tag === 'style') {
+                    continue;
+                }
+                if (DESCRIPTION_TAGS.has(tag)) {
+                    const el = target.createElement(tag);
+                    to.appendChild(el);
+                    copy(child, el);
+                } else {
+                    copy(child, to);
+                }
+            }
+        }
+    };
+    const container = target.createElement('div');
+    copy(source.body, container);
+    return container.innerHTML;
+}
+
 export function loadEpubSettings(): EpubSettings {
     const read = (storageKey: string, fallback: string) =>
         localStorage.getItem(`${STORAGE_PREFIX}${storageKey}`) ?? fallback;
