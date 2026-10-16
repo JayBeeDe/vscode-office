@@ -186,6 +186,18 @@ function compareSortCellText(aText, bText, order = 'asc') {
   return order === 'desc' ? -result : result;
 }
 
+// getData leaves out empty hyperlinks, images and protection; a snapshot taken before the
+// first one was added must still clear it when it is restored
+function withEmptyOptionalKeys(d) {
+  return {
+    hyperlinks: {},
+    images: [],
+    backgroundImage: null,
+    sheetProtection: null,
+    ...d,
+  };
+}
+
 function getDataRowIndex(dataProxy, ri) {
   if (ri < 0) return ri;
   if (dataProxy.sortedRowMap.has(ri)) {
@@ -701,13 +713,13 @@ export default class DataProxy {
 
   undo() {
     this.history.undo(this.getData(), (d) => {
-      this.setData(d);
+      this.setData(withEmptyOptionalKeys(d));
     });
   }
 
   redo() {
     this.history.redo(this.getData(), (d) => {
-      this.setData(d);
+      this.setData(withEmptyOptionalKeys(d));
     });
   }
 
