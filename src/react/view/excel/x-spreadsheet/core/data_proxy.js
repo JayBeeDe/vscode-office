@@ -630,16 +630,24 @@ export default class DataProxy {
   }
 
   remapMerges(rowRemap, colRemap) {
-    this.merges.forEach((cr) => {
-      if (rowRemap) {
-        cr.sri = rowRemap[cr.sri] ?? cr.sri;
-        cr.eri = rowRemap[cr.eri] ?? cr.eri;
+    // a merge that straddles the moved block covers the new places of all its rows (or
+    // columns), so it is never inverted
+    const span = (start, end, remap) => {
+      let min = Infinity;
+      let max = -Infinity;
+      for (let i = start; i <= end; i += 1) {
+        const mapped = remap[i] ?? i;
+        if (mapped < min) min = mapped;
+        if (mapped > max) max = mapped;
       }
-      if (colRemap) {
-        cr.sci = colRemap[cr.sci] ?? cr.sci;
-        cr.eci = colRemap[cr.eci] ?? cr.eci;
-      }
+      return [min, max];
+    };
+    this.merges.forEach((range) => {
+      const cr = range;
+      if (rowRemap) [cr.sri, cr.eri] = span(cr.sri, cr.eri, rowRemap);
+      if (colRemap) [cr.sci, cr.eci] = span(cr.sci, cr.eci, colRemap);
     });
+    syncCellMergesFromRanges.call(this);
   }
 
   moveRows(sri, eri, insertAt) {
