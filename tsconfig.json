@@ -15,10 +15,23 @@
                 "./src/*"
             ]
         },
+		// the host runs in node: resolve packages such as file-type to their node entry
+		"moduleResolution": "bundler",
+		"customConditions": [
+			"node"
+		],
+		"types": [
+			"node",
+			"vscode"
+		],
 		"resolveJsonModule": true,
         "esModuleInterop": true,
 		"strict": false 
 	},
+	// the extension host only: vditor/ and the React webview have their own tsconfig
+	"include": [
+		"src"
+	],
 	"exclude": [
 		"src/react",
 		"node_modules",
