@@ -1,13 +1,13 @@
 import mermaid from 'mermaid'
 
-const mermaidChart = (code) => {
-  try {
-    mermaid.parse(code)
-    return `<div class="mermaid">${code}</div>`
-  } catch ({ str, hash }) {
-    return `<pre>${str}</pre>`
-  }
-}
+const escapeHtml = text => text
+  .replace(/&/g, '&amp;')
+  .replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;')
+
+// mermaid reads the text of the div when the page renders it, and shows its own message for an
+// invalid diagram; parse() is async, so checking here only produced unhandled rejections
+const mermaidChart = code => `<div class="mermaid">${escapeHtml(code)}</div>`
 
 const MermaidPlugin = (md) => {
   md.mermaid = mermaid
