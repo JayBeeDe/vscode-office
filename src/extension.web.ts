@@ -29,7 +29,6 @@ export async function activate(context: vscode.ExtensionContext) {
 		vscode.commands.registerCommand('office.markdown.switch', (uri) => { markdownService.switchEditor(uri); }),
 		vscode.commands.registerCommand('office.csv.switch', (uri) => { switchCsvEditor(uri); }),
 		vscode.window.registerCustomEditorProvider('cweijan.markdownViewer', markdownEditorProvider, viewOption),
-		vscode.window.registerCustomEditorProvider('cweijan.markdownPreview', markdownEditorProvider, viewOption),
 		...viewerInstance.bindCustomEditors(viewOption),
 	);
 }

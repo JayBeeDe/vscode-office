@@ -22,7 +22,6 @@ export async function activate(context: vscode.ExtensionContext) {
 		vscode.commands.registerCommand('office.csv.switch', (uri) => { switchCsvEditor(uri) }),
 		vscode.commands.registerCommand('office.markdown.paste', () => { markdownService.loadClipboardImage() }),
 		vscode.window.registerCustomEditorProvider("cweijan.markdownViewer", markdownEditorProvider, viewOption),
-		vscode.window.registerCustomEditorProvider("cweijan.markdownPreview", markdownEditorProvider, viewOption),
 		...viewerInstance.bindCustomEditors(viewOption)
 	);
 }
