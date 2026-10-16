@@ -86,6 +86,46 @@ function disposeViewer(viewer: PPTXViewer) {
     }
 }
 
+/**
+ * The slide is fitted into the 16:9 canvas: crop to the drawn area, so a 4:3 deck has no bands
+ * (transparent bands turn black in a JPEG), and paint it on white.
+ */
+function thumbnailDataUrl(canvas: HTMLCanvasElement): string {
+    const context = canvas.getContext('2d');
+    const { width, height } = canvas;
+    let left = width;
+    let top = height;
+    let right = -1;
+    let bottom = -1;
+    if (context) {
+        const { data } = context.getImageData(0, 0, width, height);
+        for (let y = 0; y < height; y++) {
+            for (let x = 0; x < width; x++) {
+                if (data[(y * width + x) * 4 + 3] === 0) continue;
+                if (x < left) left = x;
+                if (x > right) right = x;
+                if (y < top) top = y;
+                if (y > bottom) bottom = y;
+            }
+        }
+    }
+    if (right < left || bottom < top) {
+        left = 0;
+        top = 0;
+        right = width - 1;
+        bottom = height - 1;
+    }
+    const cropped = document.createElement('canvas');
+    cropped.width = right - left + 1;
+    cropped.height = bottom - top + 1;
+    const target = cropped.getContext('2d');
+    if (!target) return canvas.toDataURL('image/jpeg', 0.85);
+    target.fillStyle = '#ffffff';
+    target.fillRect(0, 0, cropped.width, cropped.height);
+    target.drawImage(canvas, left, top, cropped.width, cropped.height, 0, 0, cropped.width, cropped.height);
+    return cropped.toDataURL('image/jpeg', 0.85);
+}
+
 /** Each thumbnail is its own queued render, so slide changes are drawn in between. */
 async function generateThumbnails(viewer: PPTXViewer, count: number, queueRender: RenderQueue, isCurrent: () => boolean): Promise<string[]> {
     const offscreen = document.createElement('canvas');
@@ -94,8 +134,10 @@ async function generateThumbnails(viewer: PPTXViewer, count: number, queueRender
     const urls: string[] = [];
     for (let i = 0; i < count && isCurrent(); i++) {
         urls.push(await queueRender(async () => {
+            const context = offscreen.getContext('2d');
+            context?.clearRect(0, 0, offscreen.width, offscreen.height);
             await viewer.renderSlide(i, offscreen);
-            return offscreen.toDataURL('image/jpeg', 0.85);
+            return thumbnailDataUrl(offscreen);
         }));
     }
     return urls;
