@@ -10,15 +10,14 @@ const alphabets = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', '
  * @returns {string}
  */
 export function stringAt(index) {
+  // 0 => A, 25 => Z, 26 => AA, 728 => ABA
   let str = '';
-  let cindex = index;
-  while (cindex >= alphabets.length) {
-    cindex /= alphabets.length;
-    cindex -= 1;
-    str += alphabets[parseInt(cindex, 10) % alphabets.length];
+  let n = index + 1;
+  while (n > 0) {
+    const rest = (n - 1) % alphabets.length;
+    str = alphabets[rest] + str;
+    n = Math.floor((n - 1) / alphabets.length);
   }
-  const last = index % alphabets.length;
-  str += alphabets[last];
   return str;
 }
 
