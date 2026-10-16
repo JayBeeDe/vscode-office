@@ -16,8 +16,9 @@ export function matchesWikiPage(fullPath: string, page: string): boolean {
         return posix.endsWith(`/${target}`);
     }
 
+    // a note without its extension, or an attachment by its full name (img.png)
     const fileBase = basename(posix, extname(posix));
-    return fileBase === target;
+    return fileBase === target || basename(posix) === target;
 }
 
 /** 多个命中时取路径最短（最接近笔记库根） */
