@@ -116,7 +116,8 @@ const buildColsFromWorksheet = (worksheet: ExcelJS.Worksheet, colCount: number) 
     return cols;
 };
 
-const formatCellText = (cell: ExcelJS.Cell, format?: string) => {
+/** Text shown and edited for a cell; the writer compares it to keep values that weren't edited. */
+export const formatCellText = (cell: ExcelJS.Cell, format?: string) => {
     const raw = cell.value;
     if (raw && typeof raw === 'object' && 'hyperlink' in raw) {
         const hv = raw as ExcelJS.CellHyperlinkValue;
@@ -132,6 +133,10 @@ const formatCellText = (cell: ExcelJS.Cell, format?: string) => {
     // checked before cell.text, which is Date.toString() for dates
     if (cell.value instanceof Date) {
         return formatExcelDate(cell.value, format);
+    }
+    if (typeof cell.value === 'boolean') return cell.value ? 'TRUE' : 'FALSE';
+    if (typeof cell.value === 'object' && 'error' in cell.value) {
+        return String((cell.value as ExcelJS.CellErrorValue).error ?? '');
     }
     if (cell.text) return cell.text;
     return String(cell.value);
