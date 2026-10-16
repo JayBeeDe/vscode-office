@@ -13,6 +13,9 @@ import { loadOfficeBuffer } from '../../util/loadOfficeContent';
 import Sponsor from '../components/Sponsor';
 import {
     applyEpubTheme,
+    bookStorageKey,
+    readStored,
+    writeStored,
     bindReaderMetaKeyRelay,
     buildTocPageMap,
     ensureLocations,
@@ -107,6 +110,7 @@ export default function Epub() {
     const readerRef = useRef<HTMLDivElement>(null);
     const bookRef = useRef<Book | null>(null);
     const loadGenerationRef = useRef(0);
+    const storageKeyRef = useRef('');
     const renditionRef = useRef<Rendition | null>(null);
     const settingsRef = useRef<EpubSettings>(loadEpubSettings());
     const wheelNavLockRef = useRef(0);
@@ -205,7 +209,7 @@ export default function Epub() {
 
         setAtStart(!!location.atStart);
         setAtEnd(!!location.atEnd);
-        localStorage.setItem(`${book.key()}:pos`, location.start.cfi);
+        writeStored(`${storageKeyRef.current || book.key()}:pos`, location.start.cfi);
     }, []);
 
     const updateSetting = useCallback((key: keyof EpubSettings, value: string) => {
@@ -279,7 +283,7 @@ export default function Epub() {
         });
     }, [bindWheel, onRelocated, openSidebar]);
 
-    const loadDocument = useCallback(async (payload: { path?: string; buffer?: number[]; error?: string }) => {
+    const loadDocument = useCallback(async (payload: { path?: string; buffer?: number[]; error?: string; documentCacheId?: string }) => {
         const host = readerRef.current;
         if (!host) {
             return;
@@ -306,6 +310,7 @@ export default function Epub() {
                 return;
             }
             bookRef.current = book;
+            storageKeyRef.current = bookStorageKey(book, payload.documentCacheId, buffer.byteLength);
 
             const [metadata, navigation, coverUrl] = await Promise.all([
                 book.loaded.metadata,
@@ -338,9 +343,9 @@ export default function Epub() {
             bindRendition(rendition);
             applyEpubTheme(rendition, settingsRef.current, appRef.current);
 
-            const storedPos = localStorage.getItem(`${book.key()}:pos`);
+            const storedPos = readStored(`${storageKeyRef.current}:pos`);
             await rendition.display(storedPos || undefined);
-            await ensureLocations(book);
+            await ensureLocations(book, storageKeyRef.current);
             if (!isCurrent()) return;
             // relocated fired before the locations existed: show the location bar now
             const located = (rendition as unknown as { currentLocation?: () => unknown }).currentLocation?.();
