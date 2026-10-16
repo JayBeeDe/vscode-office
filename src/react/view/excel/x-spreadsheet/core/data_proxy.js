@@ -493,8 +493,9 @@ export default class DataProxy {
     return ret;
   }
 
+  // ri is a view row: hyperlinks are stored by data row, so they follow their record under a sort
   getHyperlink(ri, ci) {
-    return this.hyperlinks[`${ri}_${ci}`] || null;
+    return this.hyperlinks[`${getDataRowIndex(this, ri)}_${ci}`] || null;
   }
 
   getSelectedHyperlink() {
@@ -503,7 +504,7 @@ export default class DataProxy {
   }
 
   setHyperlink(ri, ci, link, tooltip) {
-    const key = `${ri}_${ci}`;
+    const key = `${getDataRowIndex(this, ri)}_${ci}`;
     this.changeData(() => {
       if (!link) {
         delete this.hyperlinks[key];
