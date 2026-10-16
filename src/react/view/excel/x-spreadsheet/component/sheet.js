@@ -646,8 +646,17 @@ function paste(what, evt) {
       this.trigger('pasted-clipboard', rows);
     };
     data.pasteFromSystemClipboard(resetSheet, eventTrigger);
-  } else if (data.paste(what, msg => xtoast('Tip', msg))) {
+    return;
+  }
+  let refused = false;
+  const pasted = data.paste(what, (msg) => {
+    refused = true;
+    xtoast('Tip', msg);
+  });
+  if (pasted) {
     sheetReset.call(this);
+  } else if (refused) {
+    // refused (merged cells in the way): don't paste the system clipboard instead
   } else if (evt) {
     const html = what === 'all' ? evt.clipboardData.getData('text/html') : '';
     if (html && this.data.pasteFromHtml(html)) {
