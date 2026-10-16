@@ -269,8 +269,8 @@ function ExcelViewer() {
         }
 
         try {
+            // the save button is disabled once the host confirms the write (saveDone)
             await export_xlsx(spreadSheet, extRef.current, csvEncoding, { vbaSource: sourceBufferRef.current ?? undefined, csvFormat: csvFormatRef.current }, csvDelimiter);
-            spreadSheet.setSaveEnabled(false);
         } catch (error) {
             reportSaveError(error);
         }
@@ -281,10 +281,8 @@ function ExcelViewer() {
         if (!spreadSheet) return;
         setSaveAsVisible(false);
         try {
+            // a copy is written elsewhere: this document keeps its unsaved changes
             await exportSaveAs(spreadSheet, fmt, csvEncodingRef.current, csvDelimiterRef.current);
-            if (!readOnlyRef.current) {
-                spreadSheet.setSaveEnabled(false);
-            }
         } catch (error) {
             reportSaveError(error);
         }
@@ -465,6 +463,7 @@ function ExcelViewer() {
                 setLoading(false);
             });
         }).on("saveDone", () => {
+            spreadSheetRef.current?.setSaveEnabled(false);
         }).emit("init")
 
         let themeTimer: ReturnType<typeof setTimeout>;
