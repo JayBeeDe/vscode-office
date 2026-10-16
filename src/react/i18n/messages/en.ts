@@ -32,5 +32,6 @@ export default {
         save: 'Save',
         saveSuccess: 'Parquet file saved',
         unsaved: 'Unsaved changes',
+        invalidValue: '"{value}" is not a valid {type} value',
     },
 };
