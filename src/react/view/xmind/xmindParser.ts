@@ -423,6 +423,33 @@ function createXmindDocument(
     };
 }
 
+/**
+ * The import parses XMind 8 XML with number conversion: a title "1.10" becomes 1.1 and "007"
+ * becomes 7. Put back the exact text from content.xml, and make every title a string.
+ */
+async function restoreXmind8Titles(zip: JSZip, sheets: Sheet[]) {
+    const titles = new Map<string, string>();
+    const xml = zip.file('content.json') ? undefined : await zip.file('content.xml')?.async('string');
+    if (xml && typeof DOMParser !== 'undefined') {
+        const doc = new DOMParser().parseFromString(xml, 'application/xml');
+        for (const element of Array.from(doc.getElementsByTagName('*'))) {
+            if (element.localName !== 'topic' && element.localName !== 'sheet') continue;
+            const id = element.getAttribute('id');
+            const title = Array.from(element.children).find(child => child.localName === 'title');
+            if (id && title) titles.set(id, title.textContent ?? '');
+        }
+    }
+    const fix = (item: { id: string; title?: unknown }) => {
+        const exact = titles.get(item.id);
+        if (exact !== undefined) item.title = exact;
+        else if (item.title != null && typeof item.title !== 'string') item.title = String(item.title);
+    };
+    for (const sheet of sheets) {
+        fix(sheet as { id: string; title?: unknown });
+        for (const topic of indexTopics(sheet.rootTopic).values()) fix(topic as { id: string; title?: unknown });
+    }
+}
+
 export async function parseXmind(buffer: ArrayBuffer, fileName = 'document.xmind'): Promise<XmindDocument> {
     if (buffer.byteLength === 0) {
         return createXmindDocument(
@@ -437,5 +464,6 @@ export async function parseXmind(buffer: ArrayBuffer, fileName = 'document.xmind
     const { map, reverseMap, blobUrls, zip } = await buildImageResourceMap(buffer);
     const file = new File([buffer], fileName, { type: 'application/vnd.xmind.workbook' });
     const sourceSheets = await importXMindFile(file);
+    await restoreXmind8Titles(zip, sourceSheets);
     return createXmindDocument(sourceSheets, zip, map, reverseMap, blobUrls);
 }
