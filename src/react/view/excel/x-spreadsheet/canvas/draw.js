@@ -200,6 +200,12 @@ class Draw {
     return this;
   }
 
+  /** clearRect in sheet pixels (scaled for the device pixel ratio like the other drawing) */
+  clearArea(x, y, w, h) {
+    this.ctx.clearRect(npx(x), npx(y), npx(w), npx(h));
+    return this;
+  }
+
   fillRect(x, y, w, h) {
     this.ctx.fillRect(npx(x) - 0.5, npx(y) - 0.5, npx(w), npx(h));
     return this;

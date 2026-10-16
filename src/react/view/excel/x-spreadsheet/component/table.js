@@ -371,6 +371,12 @@ class Table {
     renderFixedLeftTopCell.call(this, fw, fh);
     const [fri, fci] = data.freeze;
     if (fri > 0 || fci > 0) {
+      // the frozen panes are drawn over the scrolled content: clear them first, or the
+      // content scrolled under them shows through their empty cells
+      const viewWidth = data.viewWidth();
+      const viewHeight = data.viewHeight();
+      if (fri > 0) this.draw.clearArea(fw, fh, viewWidth - fw, ty);
+      if (fci > 0) this.draw.clearArea(fw, fh, tx, viewHeight - fh);
       // 2
       if (fri > 0) {
         const vr = viewRange.clone();
