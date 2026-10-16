@@ -279,6 +279,13 @@ function ParquetViewer() {
                 setDirty(false);
                 message.success($t('parquet.saveSuccess'));
             })
+            .on('saveFailed', (payload?: { message?: string }) => {
+                savingRef.current = false;
+                setSaving(false);
+                if (payload?.message) {
+                    message.error(payload.message);
+                }
+            })
             .emit('init');
     }, [loadParquet, message]);
 
