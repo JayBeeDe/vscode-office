@@ -19,6 +19,15 @@ function splitPathQueryFragment(linkUri: string): { path: string; query: string;
     return { path, query, fragment };
 }
 
+/** Link paths are URL-encoded in IR mode (my%20file.md) */
+function decodeSegment(segment: string): string {
+    try {
+        return decodeURIComponent(segment);
+    } catch {
+        return segment;
+    }
+}
+
 function isLocalRelativePath(linkUri: string): boolean {
     const { path } = splitPathQueryFragment(linkUri);
     if (!path) {
@@ -50,7 +59,7 @@ function resolveWorkspaceAbsoluteUri(linkUri: string, workspaceUri: vscode.Uri):
             resolved = vscode.Uri.joinPath(resolved, '..');
             continue;
         }
-        resolved = vscode.Uri.joinPath(resolved, segment);
+        resolved = vscode.Uri.joinPath(resolved, decodeSegment(segment));
     }
 
     return resolved.with({ query, fragment });
@@ -73,7 +82,7 @@ function resolveRelativeUri(linkUri: string, baseUri: vscode.Uri): vscode.Uri | 
             resolved = vscode.Uri.joinPath(resolved, '..');
             continue;
         }
-        resolved = vscode.Uri.joinPath(resolved, segment);
+        resolved = vscode.Uri.joinPath(resolved, decodeSegment(segment));
     }
 
     return resolved.with({ query, fragment });
@@ -129,6 +138,12 @@ export function parseWebviewResourceUri(
     const fromWebview = parseWebviewCdnUri(linkUri);
     if (fromWebview) {
         return fromWebview;
+    }
+
+    // a Windows absolute path (C:\notes\x.md): "C:" is no URI scheme
+    const windowsPath = /^[a-zA-Z]:[\\/]/.test(linkUri) ? splitPathQueryFragment(linkUri) : undefined;
+    if (windowsPath) {
+        return vscode.Uri.file(decodeSegment(windowsPath.path)).with({ fragment: windowsPath.fragment });
     }
 
     if (linkUri.startsWith('file:')) {
