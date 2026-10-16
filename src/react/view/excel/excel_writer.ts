@@ -3,11 +3,11 @@ import JSZip from 'jszip';
 import { handler } from "../../util/vscode";
 import * as XLSX from 'xlsx';
 import Spreadsheet from './x-spreadsheet/index';
-import type { RowData, SheetData } from './x-spreadsheet/index';
+import type { CellStyle, RowData, SheetData } from './x-spreadsheet/index';
 import { CsvEncoding, encodeCsvText } from './csvEncoding';
 import { DEFAULT_ROW_HEIGHT_PX, freezeExprToExcelView, pxToExcelRowHeight } from './excel_meta';
 import { patchWorksheetSortStateXml } from './excel_sort_state';
-import { applySpreadsheetStyle, excelJsCellToStyle, spreadsheetFormatToNumFmt } from './excel_styles';
+import { applySpreadsheetStyle, excelJsCellToStyle, resolveStyleNumFmt } from './excel_styles';
 import { hyperlinkKey, writeCellHyperlink, type SpreadsheetHyperlink } from './excel_hyperlink';
 import { writeWorksheetValidations } from './excel_validation';
 import { writeWorksheetProtection } from './excel_protection';
@@ -413,8 +413,9 @@ function applyColWidths(ws: XLSX.WorkSheet, xws: SheetData) {
 }
 
 /** Typed SheetJS cell for a spreadsheet cell: formulas, numbers and dates keep their type. */
-function toSheetJsCell(text: string, format?: string): XLSX.CellObject {
-    const numFmt = spreadsheetFormatToNumFmt(format);
+function toSheetJsCell(text: string, style?: CellStyle): XLSX.CellObject {
+    const format = style?.format;
+    const numFmt = resolveStyleNumFmt(style);
     const withFormat = (cell: XLSX.CellObject): XLSX.CellObject => (numFmt ? { ...cell, z: numFmt } : cell);
     if (isFormulaText(text, format)) {
         return withFormat({ t: 'n', f: text.slice(1) });
@@ -443,8 +444,8 @@ function dataToTypedSheetJs(xws: SheetData) {
             if (Number.isNaN(ci)) continue;
             const cellData = row.cells[ci];
             if (!cellData.text) continue;
-            const format = cellData.style != null ? xws.styles?.[cellData.style]?.format : undefined;
-            ws[XLSX.utils.encode_cell({ r: ri, c: ci })] = toSheetJsCell(cellData.text, format);
+            const style = cellData.style != null ? xws.styles?.[cellData.style] : undefined;
+            ws[XLSX.utils.encode_cell({ r: ri, c: ci })] = toSheetJsCell(cellData.text, style);
             maxRow = Math.max(maxRow, ri);
             maxCol = Math.max(maxCol, ci);
         }

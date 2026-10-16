@@ -179,6 +179,8 @@ export interface SpreadsheetData {
 }
 
 export interface CellStyle {
+    /** number format of the file, kept so that a save writes it back unchanged */
+    numFmt?: string;
     align?: 'left' | 'center' | 'right';
     valign?: 'top' | 'middle' | 'bottom';
     font?: {
