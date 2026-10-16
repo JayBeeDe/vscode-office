@@ -106,6 +106,7 @@ export default function Epub() {
     const appRef = useRef<HTMLDivElement>(null);
     const readerRef = useRef<HTMLDivElement>(null);
     const bookRef = useRef<Book | null>(null);
+    const loadGenerationRef = useRef(0);
     const renditionRef = useRef<Rendition | null>(null);
     const settingsRef = useRef<EpubSettings>(loadEpubSettings());
     const wheelNavLockRef = useRef(0);
@@ -284,13 +285,26 @@ export default function Epub() {
             return;
         }
 
+        // `open` can arrive again while a book loads: a replaced load stops and destroys its book,
+        // instead of rendering a second rendition into the same host
+        const generation = ++loadGenerationRef.current;
+        const isCurrent = () => generation === loadGenerationRef.current;
         setLoading(true);
         setError(null);
         destroyBook();
 
+        let book: Awaited<ReturnType<typeof loadEpubBook>> | null = null;
+        const abandon = () => {
+            if (book && bookRef.current !== book) book.destroy();
+        };
         try {
             const buffer = await loadOfficeBuffer(payload);
-            const book = await loadEpubBook(buffer);
+            if (!isCurrent()) return;
+            book = await loadEpubBook(buffer);
+            if (!isCurrent()) {
+                abandon();
+                return;
+            }
             bookRef.current = book;
 
             const [metadata, navigation, coverUrl] = await Promise.all([
@@ -298,6 +312,10 @@ export default function Epub() {
                 book.loaded.navigation,
                 book.coverUrl(),
             ]);
+            if (!isCurrent()) {
+                abandon();
+                return;
+            }
 
             const metaRecord = metadata as Record<string, string | undefined>;
             setMeta({
@@ -323,18 +341,21 @@ export default function Epub() {
             const storedPos = localStorage.getItem(`${book.key()}:pos`);
             await rendition.display(storedPos || undefined);
             await ensureLocations(book);
+            if (!isCurrent()) return;
             // relocated fired before the locations existed: show the location bar now
             const located = (rendition as unknown as { currentLocation?: () => unknown }).currentLocation?.();
             if (located && typeof located === 'object' && 'start' in located) {
                 onRelocated(located as Parameters<typeof onRelocated>[0]);
             }
             const pageMap = await buildTocPageMap(book, navigation.toc ?? []);
+            if (!isCurrent()) return;
             setTocPageByHref(pageMap);
             setBookReady(true);
         } catch (e) {
+            if (!isCurrent()) return;
             setError(e instanceof Error ? e.message : 'Failed to load EPUB');
         } finally {
-            setLoading(false);
+            if (isCurrent()) setLoading(false);
         }
     }, [bindRendition, destroyBook, onRelocated]);
 
