@@ -5,6 +5,7 @@
 	"ext.office.confirmOpenLink": "Открыть «$1»? Эта ссылка ведёт не в веб и может открыть файл или запустить программу.",
 	"ext.markdown.exportStart": "Начало экспорта Markdown в $1.",
 	"ext.markdown.exportSuccess": "Экспорт Markdown в $1 выполнен успешно!",
+	"ext.markdown.exportFailed": "Не удалось экспортировать Markdown в $1: $2",
 	"ext.markdown.noChromium": "Chromium не найден, экспорт не удался.",
 	"ext.markdown.noClipboardImage": "В буфере обмена нет изображения.",
 	"ext.markdown.noPasteDirectory": "Вставка каталогов не поддерживается.",

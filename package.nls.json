@@ -5,6 +5,7 @@
 	"ext.office.confirmOpenLink": "Open \"$1\"? This link points outside the web and may open a file or run a program.",
 	"ext.markdown.exportStart": "Starting export markdown to $1.",
 	"ext.markdown.exportSuccess": "Export markdown to $1 success!",
+	"ext.markdown.exportFailed": "Export markdown to $1 failed: $2",
 	"ext.markdown.noChromium": "Not chromium found, export fail.",
 	"ext.markdown.noClipboardImage": "There is not an image in the clipboard.",
 	"ext.markdown.noPasteDirectory": "Not support paste directory.",

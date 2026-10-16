@@ -5,6 +5,7 @@
 	"ext.office.confirmOpenLink": "Ouvrir « $1 » ? Ce lien ne pointe pas vers le web et peut ouvrir un fichier ou lancer un programme.",
 	"ext.markdown.exportStart": "Exportation du Markdown vers $1...",
 	"ext.markdown.exportSuccess": "Exportation du Markdown vers $1 réussie !",
+	"ext.markdown.exportFailed": "Échec de l’exportation du Markdown en $1 : $2",
 	"ext.markdown.noChromium": "Chromium introuvable, échec de l'exportation.",
 	"ext.markdown.noClipboardImage": "Aucune image dans le presse-papiers.",
 	"ext.markdown.noPasteDirectory": "Le collage de répertoires n'est pas pris en charge.",
