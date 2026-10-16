@@ -219,6 +219,14 @@ class Element {
     return this.el.innerHTML;
   }
 
+  text(content) {
+    if (content !== undefined) {
+      this.el.textContent = content;
+      return this;
+    }
+    return this.el.textContent;
+  }
+
   val(v) {
     if (v !== undefined) {
       this.el.value = v;
