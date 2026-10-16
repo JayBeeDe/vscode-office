@@ -51,7 +51,8 @@ export function parseTsvRows(text) {
       continue;
     }
 
-    if (ch === '"') {
+    // only a quote at the start of a field opens a quoted field: 5" screen stays as typed
+    if (ch === '"' && field === '' && (i === 0 || text[i - 1] === '\t' || text[i - 1] === '\n' || text[i - 1] === '\r')) {
       inQuotes = true;
       i += 1;
       continue;
