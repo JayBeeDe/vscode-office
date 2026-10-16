@@ -195,7 +195,8 @@ export default function Epub() {
         const navItem = getNavItem(book, location, false) || getNavItem(book, location, true);
         setActiveTocHref(navItem?.href ?? null);
 
-        const current = location.start.location ?? 0;
+        // shown from 1 to N: epubjs locations count from 0
+        const current = (location.start.location ?? 0) + 1;
         const total = book.locations.length();
         setLocationCurrent(current);
         setLocationTotal(total);
@@ -322,6 +323,11 @@ export default function Epub() {
             const storedPos = localStorage.getItem(`${book.key()}:pos`);
             await rendition.display(storedPos || undefined);
             await ensureLocations(book);
+            // relocated fired before the locations existed: show the location bar now
+            const located = (rendition as unknown as { currentLocation?: () => unknown }).currentLocation?.();
+            if (located && typeof located === 'object' && 'start' in located) {
+                onRelocated(located as Parameters<typeof onRelocated>[0]);
+            }
             const pageMap = await buildTocPageMap(book, navigation.toc ?? []);
             setTocPageByHref(pageMap);
             setBookReady(true);
@@ -330,7 +336,7 @@ export default function Epub() {
         } finally {
             setLoading(false);
         }
-    }, [bindRendition, destroyBook]);
+    }, [bindRendition, destroyBook, onRelocated]);
 
     const goPrev = useCallback(() => {
         renditionRef.current?.prev();
@@ -372,12 +378,12 @@ export default function Epub() {
             setLocationDraft(String(locationCurrent));
             return;
         }
-        const cfi = book.locations.cfiFromLocation(parsed);
+        const cfi = book.locations.cfiFromLocation(parsed - 1);
         if (cfi === -1) {
             setLocationDraft(String(locationCurrent));
             return;
         }
-        goToLocation(parsed);
+        goToLocation(parsed - 1);
     }, [goToLocation, locationCurrent, locationDraft]);
 
     const runSearch = useCallback(async () => {
