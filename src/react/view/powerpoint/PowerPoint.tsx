@@ -71,6 +71,20 @@ type RenderQueue = <T>(task: () => Promise<T>) => Promise<T>;
  * destroy() alone keeps the slide images: revoke their blob URLs, and drop the globals the
  * library sets for charts, which would keep the old deck in memory.
  */
+const MAX_CANVAS_PIXELS = 8192;
+
+/** Render resolution of the slide canvas (device pixels per CSS pixel). */
+function setRenderPixelRatio(viewer: PPTXViewer, ratio: number) {
+    const wrapper = (viewer as unknown as { processor?: Record<string, any> }).processor;
+    for (const target of [wrapper, wrapper?.processor]) {
+        if (typeof target?.setPixelRatio === 'function') {
+            target.setPixelRatio(ratio);
+        } else if (target?.renderContext) {
+            target.renderContext.pixelRatio = ratio;
+        }
+    }
+}
+
 function disposeViewer(viewer: PPTXViewer) {
     const processor = (viewer as unknown as { processor?: unknown }).processor;
     try {
@@ -189,6 +203,7 @@ export default function PowerPoint() {
         zoomRef.current = zoom;
     }, [zoom]);
 
+
     useEffect(() => {
         panRef.current = pan;
     }, [pan]);
@@ -253,6 +268,20 @@ export default function PowerPoint() {
         }
         await viewer.goToSlide(currentIndexRef.current, canvas);
     }), [queueRender, syncCanvasSize]);
+
+    // zoom is a CSS scale: draw the slide again at the zoomed resolution so it stays sharp
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            const viewer = viewerRef.current;
+            const canvas = canvasRef.current;
+            if (!viewer || !canvas) return;
+            const cssWidth = parseFloat(canvas.style.width) || canvas.clientWidth || 1;
+            const wanted = (window.devicePixelRatio || 1) * Math.max(1, zoom);
+            setRenderPixelRatio(viewer, Math.min(wanted, MAX_CANVAS_PIXELS / cssWidth));
+            void rerenderSlide();
+        }, 150);
+        return () => clearTimeout(timer);
+    }, [zoom, rerenderSlide]);
 
     const selectSlide = useCallback(async (index: number) => {
         const viewer = viewerRef.current;
