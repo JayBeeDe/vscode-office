@@ -50,6 +50,8 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
     private static legacyGlobalStatePurged = false;
 
     private countStatus: vscode.StatusBarItem;
+    /** the panel whose line and character count is shown */
+    private countOwner: Handler | undefined;
     /** running AI request of each panel: starting one in a panel doesn't cancel another's */
     private aiRequests = new Map<Handler, { cancellation: vscode.CancellationTokenSource; abort: AbortController }>();
 
@@ -57,6 +59,7 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
         private context: vscode.ExtensionContext, private options: MarkdownEditorProviderOptions = {}
     ) {
         this.countStatus = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
+        this.context.subscriptions.push(this.countStatus);
         this.purgeLegacyGlobalState();
         MarkdownEditorProvider.registerConfigSync(this.context);
     }
@@ -150,10 +153,12 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
         Holder.activeDocument = document;
         handler.panel.onDidChangeViewState(e => {
             Holder.activeDocument = e.webviewPanel.visible ? document : Holder.activeDocument
-            if (e.webviewPanel.visible) {
-                this.updateCount(content)
+            if (e.webviewPanel.active) {
+                this.countOwner = handler;
+                this.updateCount(content, handler)
                 this.countStatus.show()
-            } else {
+            } else if (this.countOwner === handler) {
+                this.countOwner = undefined;
                 this.countStatus.hide()
             }
         });
@@ -184,7 +189,7 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
         const scheduleDocumentSync = (newContent: string) => {
             pendingDocumentSync = newContent;
             content = newContent;
-            this.updateCount(content);
+            this.updateCount(content, handler);
             if (documentSyncTimer) {
                 clearTimeout(documentSyncTimer);
             }
@@ -203,6 +208,10 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
         handler.panel.onDidDispose(() => {
             void flushDocumentSync();
             unregisterMarkdownWebview(uri, handler);
+            if (this.countOwner === handler) {
+                this.countOwner = undefined;
+                this.countStatus.hide();
+            }
             this.cancelAIPolish(handler);
         });
         handler.on("init", async () => {
@@ -217,7 +226,8 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
                 config: this.getMarkdownWebviewConfig(config),
                 viewerSettings,
             })
-            this.updateCount(content)
+            this.countOwner = handler;
+            this.updateCount(content, handler)
             this.countStatus.show()
         }).on("externalUpdate", e => {
             // our own edits come back here with the same text; anything else (save participants
@@ -225,7 +235,7 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
             const updatedText = e.document.getText()?.replace(/\r/g, '');
             if (content == updatedText || appliedTexts.has(updatedText)) return;
             content = updatedText;
-            this.updateCount(content)
+            this.updateCount(content, handler)
             handler.emit("update", updatedText)
         }).on("command", (command) => {
             vscode.commands.executeCommand(command)
@@ -323,7 +333,7 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
             pendingDocumentSync = saveContent;
             content = saveContent;
             await flushDocumentSync();
-            this.updateCount(content);
+            this.updateCount(content, handler);
             vscode.commands.executeCommand('workbench.action.files.save');
         }).on("export", async (option) => {
             // the export reads the file: write the latest edits to it first
@@ -545,7 +555,9 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
         return `![${fileName}](${adjustRelPath})`;
     }
 
-    private updateCount(content: string) {
+    private updateCount(content: string, handler: Handler) {
+        // only the panel the count belongs to
+        if (this.countOwner && this.countOwner !== handler) return;
         this.countStatus.text = i18n('ext.markdown.statusBar', String(content.split(/\r\n|\r|\n/).length), String(content.length))
     }
 
