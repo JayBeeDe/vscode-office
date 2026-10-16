@@ -1,4 +1,4 @@
-import ExcelJS from '@cweijan/exceljs';
+import * as ExcelJS from '@cweijan/exceljs';
 import JSZip from 'jszip';
 import * as XLSX from 'xlsx';
 import { inferSchema } from 'udsv';

@@ -1,4 +1,4 @@
-import ExcelJS from '@cweijan/exceljs';
+import * as ExcelJS from '@cweijan/exceljs';
 import JSZip from 'jszip';
 import { handler } from "../../util/vscode";
 import * as XLSX from 'xlsx';

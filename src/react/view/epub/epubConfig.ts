@@ -1,4 +1,10 @@
-import ePub, { Book, NavItem, Rendition } from 'epubjs';
+import ePub, { Book, Contents, NavItem, Rendition } from 'epubjs';
+import type Section from 'epubjs/types/section';
+
+/** spineItems exists at runtime, the typings don't declare it */
+function spineItems(book: Book): Section[] {
+    return (book.spine as unknown as { spineItems: Section[] }).spineItems;
+}
 
 export const STORAGE_PREFIX = 'ePubViewer:';
 
@@ -170,7 +176,8 @@ export function bindReaderMetaKeyRelay(doc: Document) {
             return;
         }
         if (evt.metaKey && navigator.userAgent.includes('Mac OS')) {
-            const newEvent = new evt.constructor(evt.type, evt) as Event;
+            const EventType = evt.constructor as new (type: string, init: KeyboardEvent) => Event;
+            const newEvent = new EventType(evt.type, evt);
             window.parent.document.body.dispatchEvent(newEvent);
         }
     });
@@ -229,7 +236,7 @@ export function applyEpubTheme(rendition: Rendition, settings: EpubSettings, roo
         root.style.color = fg;
     }
     const css = themeRulesToCss(buildThemeRules(settings));
-    for (const content of rendition.getContents()) {
+    for (const content of rendition.getContents() as unknown as Contents[]) {
         content.addStylesheetCss(css, EPUB_THEME_STYLE_KEY);
     }
 }
@@ -308,7 +315,7 @@ function resolveSpineSection(book: Book, href: string) {
         return null;
     }
 
-    for (const section of book.spine.spineItems) {
+    for (const section of spineItems(book)) {
         const sectionHref = section.href ?? '';
         if (sectionHref === pathTail || sectionHref.endsWith(`/${pathTail}`)) {
             return section;
@@ -390,7 +397,7 @@ function buildSpineFirstLocationMap(book: Book): Map<number, number> {
 }
 
 function locationFromHref(book: Book, cfi: string): number {
-    const location = book.locations.locationFromCfi(cfi);
+    const location = book.locations.locationFromCfi(cfi) as unknown as number;
     if (location >= 0) {
         return location;
     }
@@ -491,9 +498,9 @@ export interface SearchHit {
 
 export async function searchEpubBook(book: Book, query: string, limit = 200): Promise<SearchHit[]> {
     const hits: SearchHit[] = [];
-    for (const item of book.spine.spineItems) {
+    for (const item of spineItems(book)) {
         await item.load(book.load.bind(book));
-        const results = item.find(query);
+        const results = item.find(query) as unknown as { cfi: string; excerpt: string }[];
         item.unload();
         for (const result of results) {
             hits.push({ cfi: result.cfi, excerpt: result.excerpt });

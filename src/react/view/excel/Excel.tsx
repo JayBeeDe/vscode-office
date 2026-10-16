@@ -12,7 +12,7 @@ import { detectCsvEncoding, type CsvEncoding } from "./csvEncoding.ts";
 import type { CsvFormat } from "./csvFormat.ts";
 import { loadSheets } from "./excel_reader.ts";
 import { export_xlsx, exportSaveAs, buildFormattingSnapshot, hasFormattingChanged } from "./excel_writer.ts";
-import Spreadsheet from './x-spreadsheet/index';
+import Spreadsheet, { type SheetData } from './x-spreadsheet/index';
 import FindReplacePanel, { type FindReplacePanelHandle } from './FindReplacePanel';
 import { parseSpreadsheetLink } from './excel_hyperlink';
 import { initExcelLocale, t } from './excel_i18n';
@@ -89,7 +89,7 @@ function restoreViewState(spreadSheet: Spreadsheet, saved: ExcelViewState) {
     const sheets = spreadSheet.getData();
     if (!sheets.length) return;
     const sheetIndex = Math.min(Math.max(0, saved.sheetIndex), sheets.length - 1);
-    const sheet = sheets[sheetIndex];
+    const sheet = sheets[sheetIndex] as SheetData;
     const maxRi = Math.max(0, (sheet.rows?.len ?? 1) - 1);
     const maxCi = Math.max(0, (sheet.cols?.len ?? 1) - 1);
     const ri = Math.min(Math.max(0, saved.ri), maxRi);

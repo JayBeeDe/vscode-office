@@ -59,7 +59,8 @@ export function decodeCsvBuffer(buffer: ArrayBuffer): string {
     if (encoding === 'utf8') {
         return new TextDecoder('utf-8').decode(stripUtf8Bom(toUint8Array(buffer)));
     }
-    return iconv.decode(toUint8Array(buffer), encoding);
+    // iconv-lite reads a Uint8Array like a Buffer
+    return iconv.decode(toUint8Array(buffer) as Buffer, encoding);
 }
 
 export function encodeCsvText(text: string, encoding: CsvEncoding): Uint8Array {

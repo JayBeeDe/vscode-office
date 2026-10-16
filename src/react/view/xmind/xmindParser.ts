@@ -40,8 +40,8 @@ function createEmptyXmindSheet(): Sheet {
         legend: {
             visibility: 'visible',
             position: { x: 0, y: 0 },
-            markers: {},
-            groups: {},
+            markers: {} as Sheet['legend']['markers'],
+            groups: {} as Sheet['legend']['groups'],
         },
         settings: {
             'infoItems/infoItem': [],
@@ -96,7 +96,7 @@ async function buildImageResourceMap(buffer: ArrayBuffer): Promise<{
 
         const mime = getMimeType(normalizedPath);
         const data = await entry.async('uint8array');
-        const blob = new Blob([data], { type: mime });
+        const blob = new Blob([data as BlobPart], { type: mime });
         const blobUrl = URL.createObjectURL(blob);
         blobUrls.push(blobUrl);
 
