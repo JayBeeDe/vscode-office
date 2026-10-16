@@ -154,6 +154,13 @@ export interface SheetBackgroundImage {
     base64: string;
 }
 
+/** Sheet name valid in xlsx: no []:*?/\, no leading or trailing ', at most 31 characters. */
+export function sanitizeSheetName(name: string): string {
+    let clean = name.replace(/[[\]:*?/\\]/g, '_').replace(/^'+|'+$/g, '').trim().slice(0, 31);
+    if (clean.toLowerCase() === 'history') clean = `${clean}_`;
+    return clean || 'Sheet';
+}
+
 export interface SheetData {
     name?: string;
     freeze?: string;
@@ -256,7 +263,11 @@ export class Spreadsheet {
                 this.handleSheetMenu(key);
             },
             (index: number, value: string) => {
-                this.datas[index].name = value;
+                // names that the file format accepts, and unique (without case)
+                const name = this.uniqueSheetName(sanitizeSheetName(value), index);
+                if (name !== value) this.bottombar?.setItemName(index, name);
+                if (this.datas[index].name === name) return;
+                this.datas[index].name = name;
                 this.sheet.trigger('change');
             },
             (from: number, to: number) => {
@@ -283,7 +294,7 @@ export class Spreadsheet {
     }
 
     addSheet(name?: string, active = true): DataProxy {
-        const n = name || `sheet${this.sheetIndex}`;
+        const n = name || this.uniqueSheetName(`Sheet${this.datas.length + 1}`);
         const d = new DataProxy(n, this.options);
         d.change = (...args: any[]) => {
             this.sheet.trigger('change', ...args);
@@ -315,15 +326,17 @@ export class Spreadsheet {
         }
     }
 
-    private uniqueSheetName(base: string): string {
-        const names = this.datas.map(d => d.name);
+    /** A name no other sheet uses, compared without case like Excel; exceptIndex is the renamed sheet. */
+    private uniqueSheetName(base: string, exceptIndex = -1): string {
+        const names = new Set(this.datas.filter((_, i) => i !== exceptIndex).map(d => d.name.toLowerCase()));
         const trimmed = base.trim() || 'Sheet';
-        if (!names.includes(trimmed)) return trimmed;
+        if (!names.has(trimmed.toLowerCase())) return trimmed;
         let i = 2;
-        while (names.includes(`${trimmed} (${i})`)) {
+        const suffixed = (n: number) => `${trimmed.slice(0, 31 - ` (${n})`.length)} (${n})`;
+        while (names.has(suffixed(i).toLowerCase())) {
             i += 1;
         }
-        return `${trimmed} (${i})`;
+        return suffixed(i);
     }
 
     handleSheetMenu(key: string): void {

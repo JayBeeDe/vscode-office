@@ -454,9 +454,14 @@ export default class Bottombar {
   }
 
   renameItem(index, value) {
+    this.setItemName(index, value);
+    this.updateFunc(index, value);
+  }
+
+  /** Show a name without notifying (the spreadsheet corrected the name it was given). */
+  setItemName(index, value) {
     this.dataNames.splice(index, 1, value);
     this.items[index].html('').child(value);
-    this.updateFunc(index, value);
   }
 
   clear() {
