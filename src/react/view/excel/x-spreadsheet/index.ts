@@ -279,6 +279,7 @@ export class Spreadsheet {
     /** Formulas such as Sheet2!A1 read the other sheets of the workbook. */
     private bindSheetLookup(d: DataProxy) {
         (d as any).getSheetByName = (name: string) => this.datas.find(it => it.name.toLowerCase() === name.toLowerCase());
+        (d as any).getAllSheets = () => this.datas;
     }
 
     addSheet(name?: string, active = true): DataProxy {
