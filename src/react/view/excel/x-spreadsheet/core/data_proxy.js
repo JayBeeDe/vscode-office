@@ -1298,16 +1298,9 @@ export default class DataProxy {
           }
         });
       }
-      // console.log('type:', type, ', si:', si, ', size:', size);
-      merges.shift(type, si, -size, (ri, ci, rn, cn) => {
-        // console.log('ri:', ri, ', ci:', ci, ', rn:', rn, ', cn:', cn);
-        const cell = rows.getCell(ri, ci);
-        cell.merge[0] += rn;
-        cell.merge[1] += cn;
-        if (cell.merge[0] === 0 && cell.merge[1] === 0) {
-          delete cell.merge;
-        }
-      });
+      // merges inside the deleted block go away, the others shrink or move up/left
+      merges.deleteSpan(type, si, si + size - 1);
+      syncCellMergesFromRanges.call(this);
     });
   }
 

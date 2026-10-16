@@ -80,6 +80,37 @@ class Merges {
     });
   }
 
+  // type: row | column; the rows (or columns) start..end are deleted
+  deleteSpan(type, start, end) {
+    const n = end - start + 1;
+    const next = [];
+    this._.forEach((range) => {
+      const it = range;
+      const [s, e] = type === 'row' ? [it.sri, it.eri] : [it.sci, it.eci];
+      let ns = s;
+      let ne = e;
+      if (s > end) {
+        ns -= n;
+        ne -= n;
+      } else if (e >= start) {
+        // the merge overlaps the deleted block: keep what is outside it
+        ns = Math.min(s, start);
+        ne = e > end ? e - n : start - 1;
+      }
+      if (ne < ns) return; // entirely deleted
+      if (type === 'row') {
+        it.sri = ns;
+        it.eri = ne;
+      } else {
+        it.sci = ns;
+        it.eci = ne;
+      }
+      if (it.sri === it.eri && it.sci === it.eci) return; // a single cell is no merge
+      next.push(it);
+    });
+    this._ = next;
+  }
+
   move(cellRange, rn, cn) {
     this._.forEach((it1) => {
       const it = it1;
