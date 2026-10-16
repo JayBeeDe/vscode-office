@@ -111,6 +111,9 @@ class Validations {
     const validator = new Validator(
       type, required, value, operator,
     );
+    // the new rule replaces whatever rule the range had
+    this.remove(CellRange.valueOf(ref));
+    this._ = this._.filter(it => it.refs.length > 0);
     const v = this.getByValidator(validator);
     if (v !== null) {
       v.addRef(ref);
