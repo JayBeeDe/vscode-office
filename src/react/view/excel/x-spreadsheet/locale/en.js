@@ -144,6 +144,7 @@ export default {
     readonlyBanner: 'Read-only — browse and find; use Save As to save changes',
     formatCannotPreserveTitle: 'Formatting cannot be preserved',
     formatCannotPreserveContent: '{} cannot preserve styles, merges, formulas, etc. Save as xlsx instead?',
+    onlyFirstSheetContent: '{} keeps only the first sheet: the other sheets will be lost. Save as xlsx instead?',
     saveAsXlsx: 'Save as xlsx',
     saveAsOriginal: 'Save as original',
     chooseExportFormat: 'Choose export format',

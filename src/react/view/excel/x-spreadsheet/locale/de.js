@@ -86,6 +86,7 @@ export default {
     readonlyBanner: 'Schreibgeschützt — durchsuchen und suchen; zum Speichern „Speichern unter“ verwenden',
     formatCannotPreserveTitle: 'Formatierung kann nicht beibehalten werden',
     formatCannotPreserveContent: '{} kann Stile, Zusammenführungen, Formeln usw. nicht beibehalten. Als xlsx speichern?',
+    onlyFirstSheetContent: '{} speichert nur das erste Blatt: die anderen Blätter gehen verloren. Als xlsx speichern?',
     saveAsXlsx: 'Als xlsx speichern',
     saveAsOriginal: 'Im Originalformat speichern',
     chooseExportFormat: 'Exportformat wählen',

@@ -144,6 +144,7 @@ export default {
     readonlyBanner: '唯讀模式 — 可瀏覽與尋找，請使用「另存新檔」儲存變更',
     formatCannotPreserveTitle: '格式將無法保留',
     formatCannotPreserveContent: '{} 格式不支援儲存樣式、合併儲存格、公式等豐富格式內容。是否另存為 xlsx？',
+    onlyFirstSheetContent: '{} 格式只儲存第一個工作表，其他工作表將遺失。是否另存為 xlsx？',
     saveAsXlsx: '另存為 xlsx',
     saveAsOriginal: '仍以原格式儲存',
     chooseExportFormat: '選擇匯出格式',

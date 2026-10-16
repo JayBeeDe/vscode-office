@@ -194,11 +194,13 @@ function ExcelViewer() {
         const csvEncoding = csvEncodingRef.current;
         const csvDelimiter = csvDelimiterRef.current;
 
-        if (ext !== 'xlsx' && ext !== 'xlsm' && ext !== 'xltx' && ext !== 'xltm' && hasFormattingChanged(initialFormattingRef.current, sheets)) {
+        // csv and tsv hold a single sheet
+        const extraSheets = (ext === 'csv' || ext === 'tsv') && sheets.length > 1;
+        if (ext !== 'xlsx' && ext !== 'xlsm' && ext !== 'xltx' && ext !== 'xltm' && (extraSheets || hasFormattingChanged(initialFormattingRef.current, sheets))) {
             await new Promise<void>((resolve) => {
                 const dialog = modal.confirm({
                     title: t('viewer.formatCannotPreserveTitle'),
-                    content: t('viewer.formatCannotPreserveContent', ext.toUpperCase()),
+                    content: t(extraSheets ? 'viewer.onlyFirstSheetContent' : 'viewer.formatCannotPreserveContent', ext.toUpperCase()),
                     okText: t('viewer.saveAsXlsx'),
                     cancelText: t('button.cancel'),
                     centered: true,

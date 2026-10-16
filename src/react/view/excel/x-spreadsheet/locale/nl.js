@@ -86,6 +86,7 @@ export default {
     readonlyBanner: 'Alleen-lezen — bladeren en zoeken; gebruik Opslaan als om wijzigingen op te slaan',
     formatCannotPreserveTitle: 'Opmaak kan niet behouden blijven',
     formatCannotPreserveContent: '{} kan stijlen, samenvoegingen, formules enz. niet behouden. Opslaan als xlsx?',
+    onlyFirstSheetContent: '{} bewaart alleen het eerste blad: de andere bladen gaan verloren. Opslaan als xlsx?',
     saveAsXlsx: 'Opslaan als xlsx',
     saveAsOriginal: 'Opslaan in origineel formaat',
     chooseExportFormat: 'Exportformaat kiezen',
