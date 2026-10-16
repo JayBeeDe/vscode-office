@@ -65,14 +65,19 @@ function getStageTransform(zoom: number, pan: { x: number; y: number }) {
     return `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`;
 }
 
-async function generateThumbnails(viewer: PPTXViewer, count: number): Promise<string[]> {
+type RenderQueue = <T>(task: () => Promise<T>) => Promise<T>;
+
+/** Each thumbnail is its own queued render, so slide changes are drawn in between. */
+async function generateThumbnails(viewer: PPTXViewer, count: number, queueRender: RenderQueue): Promise<string[]> {
     const offscreen = document.createElement('canvas');
     offscreen.width = THUMB_WIDTH;
     offscreen.height = THUMB_HEIGHT;
     const urls: string[] = [];
     for (let i = 0; i < count; i++) {
-        await viewer.renderSlide(i, offscreen);
-        urls.push(offscreen.toDataURL('image/jpeg', 0.85));
+        urls.push(await queueRender(async () => {
+            await viewer.renderSlide(i, offscreen);
+            return offscreen.toDataURL('image/jpeg', 0.85);
+        }));
     }
     return urls;
 }
@@ -83,6 +88,10 @@ export default function PowerPoint() {
     const mainPanelRef = useRef<HTMLDivElement>(null);
     const thumbListRef = useRef<HTMLDivElement>(null);
     const viewerRef = useRef<PPTXViewer | null>(null);
+    // pptxviewjs draws every canvas with one shared drawing state: renders must never overlap
+    const renderQueueRef = useRef<Promise<unknown>>(Promise.resolve());
+    // the slide shown, ours: the viewer's own index moves while thumbnails are drawn
+    const currentIndexRef = useRef(0);
     const thumbRefs = useRef<(HTMLDivElement | null)[]>([]);
     const wheelNavLockRef = useRef(0);
     const pinchStartRef = useRef<{ distance: number; zoom: number } | null>(null);
@@ -167,26 +176,32 @@ export default function PowerPoint() {
         return true;
     }, []);
 
-    const rerenderSlide = useCallback(async () => {
+    const queueRender = useCallback(<T,>(task: () => Promise<T>): Promise<T> => {
+        const run = renderQueueRef.current.then(task, task);
+        renderQueueRef.current = run.catch(() => undefined);
+        return run;
+    }, []);
+
+    const rerenderSlide = useCallback(() => queueRender(async () => {
         const viewer = viewerRef.current;
         const canvas = canvasRef.current;
         if (!viewer || !canvas || !syncCanvasSize()) {
             return;
         }
-        await viewer.render(canvas);
-    }, [syncCanvasSize]);
+        await viewer.goToSlide(currentIndexRef.current, canvas);
+    }), [queueRender, syncCanvasSize]);
 
     const selectSlide = useCallback(async (index: number) => {
         const viewer = viewerRef.current;
-        const canvas = canvasRef.current;
-        if (!viewer || !canvas || index < 0 || index >= viewer.getSlideCount()) {
+        if (!viewer || index < 0 || index >= viewer.getSlideCount()) {
             return;
         }
-        syncCanvasSize();
-        await viewer.goToSlide(index, canvas);
+        // set at once, so that quick arrow presses move from the last requested slide
+        currentIndexRef.current = index;
         setCurrentIndex(index);
         resetView();
-    }, [syncCanvasSize, resetView]);
+        await rerenderSlide();
+    }, [rerenderSlide, resetView]);
 
     const loadPresentation = useCallback(async (payload: { path?: string; buffer?: number[]; error?: string }) => {
         setLoading(true);
@@ -216,30 +231,30 @@ export default function PowerPoint() {
                 slideSizeMode: 'fit',
                 backgroundColor: '#ffffff',
             });
-            await viewer.loadFile(buffer);
-            await loadMasterImages(viewer);
-            await viewer.render(canvas);
+            await queueRender(async () => {
+                await viewer.loadFile(buffer);
+                await loadMasterImages(viewer);
+                await viewer.render(canvas);
+            });
 
             const count = viewer.getSlideCount();
-            const activeIndex = viewer.getCurrentSlideIndex();
+            currentIndexRef.current = viewer.getCurrentSlideIndex();
             viewerRef.current = viewer;
             setSlideCount(count);
-            setCurrentIndex(activeIndex);
+            setCurrentIndex(currentIndexRef.current);
 
             setThumbsLoading(true);
-            const urls = await generateThumbnails(viewer, count);
+            const urls = await generateThumbnails(viewer, count, queueRender);
             setThumbnails(urls);
-            applyCanvasSize(canvas, wrap.clientWidth, wrap.clientHeight);
-            await viewer.goToSlide(activeIndex, canvas);
-            await viewer.render(canvas);
-            setCurrentIndex(activeIndex);
+            // the slide the user is on now, not the one shown when loading started
+            await rerenderSlide();
         } catch (e) {
             setError(e instanceof Error ? e.message : 'Failed to load presentation');
             setLoading(false);
         } finally {
             setThumbsLoading(false);
         }
-    }, [resetView]);
+    }, [resetView, queueRender, rerenderSlide]);
 
     useEffect(() => {
         handler.on('open', (payload) => {
@@ -263,11 +278,11 @@ export default function PowerPoint() {
             }
             if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === 'PageDown') {
                 e.preventDefault();
-                const next = Math.min(viewer.getCurrentSlideIndex() + 1, viewer.getSlideCount() - 1);
+                const next = Math.min(currentIndexRef.current + 1, viewer.getSlideCount() - 1);
                 await selectSlide(next);
             } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp') {
                 e.preventDefault();
-                const prev = Math.max(viewer.getCurrentSlideIndex() - 1, 0);
+                const prev = Math.max(currentIndexRef.current - 1, 0);
                 await selectSlide(prev);
             }
         };
@@ -358,7 +373,7 @@ export default function PowerPoint() {
             }
             wheelNavLockRef.current = now;
 
-            const current = viewer.getCurrentSlideIndex();
+            const current = currentIndexRef.current;
             if (e.deltaY > 0) {
                 void selectSlide(Math.min(current + 1, viewer.getSlideCount() - 1));
             } else if (e.deltaY < 0) {
