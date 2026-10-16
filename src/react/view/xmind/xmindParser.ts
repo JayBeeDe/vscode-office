@@ -176,11 +176,15 @@ function cloneNodeWithoutParent(node: NodeObj): NodeObj {
     };
 }
 
-function normalizeTags(tags: NodeObj['tags']): string | undefined {
+/** Labels as content.json stores them: an array of strings (an XMind 8 import nests them in an array). */
+function normalizeTags(tags: NodeObj['tags']): string[] | undefined {
     if (!tags?.length) {
         return undefined;
     }
-    return tags.map(tag => typeof tag === 'string' ? tag : tag.text).filter(Boolean).join(',');
+    const labels = (tags as unknown[]).flat(2)
+        .map(tag => (typeof tag === 'string' ? tag : (tag as { text?: string })?.text))
+        .filter((tag): tag is string => !!tag);
+    return labels.length ? labels : undefined;
 }
 
 /** Every topic of a sheet by id: attached, detached, callout and summary topics. */
@@ -214,7 +218,7 @@ function mindNodeToXmindTopic(node: NodeObj, restoreImageUrl: (url: string) => s
     }
     const labels = normalizeTags(node.tags);
     if (labels) {
-        topic.labels = labels;
+        topic.labels = labels as unknown as Topic['labels'];
     } else {
         delete topic.labels;
     }
