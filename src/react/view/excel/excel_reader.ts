@@ -446,8 +446,16 @@ const loadCsv = (buffer: ArrayBuffer): ExcelData => {
         }
         let parseInput = csvToParse;
         if (!parseInput.includes('\n')) parseInput += '\n';
-        const schema = inferSchema(parseInput, { header: () => [] });
-        const rows = initParser(schema).stringArrs(parseInput);
+        let schema = inferSchema(parseInput, { header: () => [] });
+        if (!schema.col) {
+            // no delimiter found: a single-column file, parsed as comma separated (it has no comma)
+            schema = inferSchema(parseInput, { header: () => [], col: ',' });
+        }
+        const rows: string[][] = initParser(schema).stringArrs(parseInput);
+        // the parser returns the final line break as an extra empty row
+        while (rows.length > 0 && rows[rows.length - 1].length <= 1 && !rows[rows.length - 1][0]) {
+            rows.pop();
+        }
         const colCount = rows.reduce((max, row) => Math.max(max, row.length), 0);
 
         const processedRows: RowMap = {};
