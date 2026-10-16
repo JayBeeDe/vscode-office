@@ -13,6 +13,7 @@ import { writeWorksheetValidations } from './excel_validation';
 import { writeWorksheetProtection } from './excel_protection';
 import { writeWorksheetImages } from './excel_images';
 import { extractVbaParts, injectVbaParts, type VbaParts } from './spreadsheet_vba';
+import { parseExcelDateText } from './excel_dates';
 
 const DEFAULT_COL_WIDTH = 100;
 
@@ -56,9 +57,14 @@ function pxToExcelColWidth(px: number) {
     return Math.max((px - 5) / 7, 0);
 }
 
-function setCellValue(cell: ExcelJS.Cell, text: string) {
+function setCellValue(cell: ExcelJS.Cell, text: string, format?: string) {
     if (!text) {
         cell.value = null;
+        return;
+    }
+    const date = parseExcelDateText(text, format);
+    if (date) {
+        cell.value = date;
         return;
     }
     if (text.startsWith('=')) {
@@ -134,7 +140,7 @@ async function writeSheetToExcelJs(worksheet: ExcelJS.Worksheet, workbook: Excel
             if (hl?.link) {
                 writeCellHyperlink(excelCell, cellData.text ?? '', hl);
             } else {
-                setCellValue(excelCell, cellData.text ?? '');
+                setCellValue(excelCell, cellData.text ?? '', cellData.style != null ? styles[cellData.style]?.format : undefined);
             }
             if (cellData.style != null && styles[cellData.style]) {
                 applySpreadsheetStyle(excelCell, styles[cellData.style]);
