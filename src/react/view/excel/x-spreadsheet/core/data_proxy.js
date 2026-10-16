@@ -1706,27 +1706,32 @@ export default class DataProxy {
       .forEach(it => cb(it));
   }
 
+  // an edit like any other: undo step, change event (the document becomes dirty)
   hideRowsOrCols() {
     const { rows, cols, selector } = this;
     const [rlen, clen] = selector.size();
     const {
       sri, sci, eri, eci,
     } = selector.range;
-    if (rlen === rows.len) {
-      for (let ci = sci; ci <= eci; ci += 1) {
-        cols.setHide(ci, true);
+    this.changeData(() => {
+      if (rlen === rows.len) {
+        for (let ci = sci; ci <= eci; ci += 1) {
+          cols.setHide(ci, true);
+        }
+      } else if (clen === cols.len) {
+        for (let ri = sri; ri <= eri; ri += 1) {
+          rows.setHide(ri, true);
+        }
       }
-    } else if (clen === cols.len) {
-      for (let ri = sri; ri <= eri; ri += 1) {
-        rows.setHide(ri, true);
-      }
-    }
+    });
   }
 
   // type: row | col
   // index row-index | col-index
   unhideRowsOrCols(type, index) {
-    this[`${type}s`].unhide(index);
+    this.changeData(() => {
+      this[`${type}s`].unhide(index);
+    });
   }
 
   rowEach(min, max, cb) {
