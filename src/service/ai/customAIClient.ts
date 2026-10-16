@@ -328,9 +328,9 @@ export interface StreamCustomAIOptions extends CustomAIRequestOptions {
 
 /** 从 SSE 行中提取 delta 文本，兼容 OpenAI / Anthropic / Ollama / Gemini 流格式 */
 const parseStreamChunk = (format: Exclude<CustomAIApiFormat, "auto">, line: string): string => {
-    const dataPrefix = "data: ";
-    if (line.startsWith(dataPrefix)) {
-        const raw = line.slice(dataPrefix.length).trim();
+    // "data:" with or without the space after it
+    if (line.startsWith("data:")) {
+        const raw = line.slice("data:".length).trim();
         if (raw === "[DONE]") return "";
         try {
             const obj = JSON.parse(raw);
@@ -372,9 +372,12 @@ const buildStreamBody = (
     }
 };
 
-/** 将 Gemini URL 从 generateContent 换为 streamGenerateContent */
-const toGeminiStreamUrl = (url: string): string =>
-    url.replace(/:generateContent(\?|$)/, ":streamGenerateContent$1");
+/** 将 Gemini URL 从 generateContent 换为 streamGenerateContent；alt=sse 让它以 SSE 行返回，而非一个 JSON 数组 */
+const toGeminiStreamUrl = (url: string): string => {
+    const streamUrl = url.replace(/:generateContent(\?|$)/, ":streamGenerateContent$1");
+    if (/[?&]alt=sse\b/.test(streamUrl)) return streamUrl;
+    return `${streamUrl}${streamUrl.includes("?") ? "&" : "?"}alt=sse`;
+};
 
 /** 流式调用自定义 AI，每个 token 通过 onChunk 回调，全部结束后 resolve */
 export const streamCustomAI = async (options: StreamCustomAIOptions): Promise<void> => {
