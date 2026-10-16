@@ -89,6 +89,8 @@ export default function XmindViewer() {
         handler.emit('change');
     }, []);
 
+    const readOnlyRef = useRef(false);
+
     const renderSheet = useCallback((data: MindElixirData, resolveImageUrl: (url: string) => string, adaptive: boolean) => {
         const el = mapRef.current;
         if (!el) {
@@ -107,7 +109,8 @@ export default function XmindViewer() {
         const mind = new MindElixir({
             el,
             direction: MindElixir.SIDE,
-            editable: true,
+            // a read-only file (a git revision...) can be viewed, not edited
+            editable: !readOnlyRef.current,
             contextMenu: true,
             toolBar: true,
             keypress: true,
@@ -143,7 +146,8 @@ export default function XmindViewer() {
         setDark(prev => !prev);
     }, []);
 
-    const loadXmind = useCallback(async (payload: { path?: string; buffer?: number[]; error?: string; fileName?: string }) => {
+    const loadXmind = useCallback(async (payload: { path?: string; buffer?: number[]; error?: string; fileName?: string; readOnly?: boolean }) => {
+        readOnlyRef.current = payload.readOnly === true;
         setLoading(true);
         setSaving(false);
         setDirty(false);
