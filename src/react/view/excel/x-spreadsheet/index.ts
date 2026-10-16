@@ -181,6 +181,8 @@ export interface SpreadsheetData {
 export interface CellStyle {
     /** number format of the file, kept so that a save writes it back unchanged */
     numFmt?: string;
+    /** font, fill and alignment of the file (JSON), written back under the viewer's changes */
+    source?: string;
     align?: 'left' | 'center' | 'right';
     valign?: 'top' | 'middle' | 'bottom';
     font?: {

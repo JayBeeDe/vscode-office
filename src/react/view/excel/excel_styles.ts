@@ -115,7 +115,8 @@ function borderSideToSpreadsheet(side?: Partial<ExcelJS.Border>): string[] | und
     if (!side?.style) return undefined;
     const style = BORDER_FROM_EXCEL[side.style] ?? 'thin';
     const color = colorToHex(side.color) ?? '#000000';
-    return [style, color];
+    // the third item keeps the original side (hair, mediumDashed, theme colours...) for the save
+    return [style, color, JSON.stringify(side)];
 }
 
 function bordersToSpreadsheet(borders?: Partial<ExcelJS.Borders>): CellStyle['border'] | undefined {
@@ -134,6 +135,17 @@ function bordersToSpreadsheet(borders?: Partial<ExcelJS.Borders>): CellStyle['bo
 
 function borderSideToExcelJs(side?: string[]): Partial<ExcelJS.Border> | undefined {
     if (!side?.[0]) return undefined;
+    if (side[2]) {
+        try {
+            const original = JSON.parse(side[2]) as Partial<ExcelJS.Border>;
+            const unchanged = borderSideToSpreadsheet(original);
+            if (unchanged && unchanged[0] === side[0] && unchanged[1] === side[1]) {
+                return original;
+            }
+        } catch {
+            // fall back to the mapped style
+        }
+    }
     const style = BORDER_TO_EXCEL[side[0]] ?? 'thin';
     const argb = hexToArgb(side[1]);
     return {
@@ -245,10 +257,37 @@ export function excelJsCellToStyle(cell: ExcelJS.Cell): CellStyle | null {
         hasStyle = true;
     }
 
+    // what the viewer can't show (theme colours, tints, justify, indent, rotation...), written
+    // back under the viewer's own changes
+    const source: ExcelStyleSource = {};
+    if (cell.font && Object.keys(cell.font).length > 0) source.font = cell.font;
+    if (cell.fill) source.fill = cell.fill;
+    if (cell.alignment && Object.keys(cell.alignment).length > 0) source.alignment = cell.alignment;
+    if (Object.keys(source).length > 0) {
+        style.source = JSON.stringify(source);
+        hasStyle = true;
+    }
+
     return hasStyle ? style : null;
 }
 
+type ExcelStyleSource = Pick<Partial<ExcelJS.Style>, 'font' | 'fill' | 'alignment'>;
+
+function applyStyleSource(cell: ExcelJS.Cell, source?: string) {
+    if (!source) return;
+    let parsed: ExcelStyleSource;
+    try {
+        parsed = JSON.parse(source) as ExcelStyleSource;
+    } catch {
+        return;
+    }
+    if (parsed.font && !(cell.font && Object.keys(cell.font).length > 0)) cell.font = parsed.font as ExcelJS.Font;
+    if (parsed.fill && !cell.fill) cell.fill = parsed.fill;
+    if (parsed.alignment && !(cell.alignment && Object.keys(cell.alignment).length > 0)) cell.alignment = parsed.alignment;
+}
+
 export function applySpreadsheetStyle(cell: ExcelJS.Cell, style: CellStyle) {
+    applyStyleSource(cell, style.source);
     const font: Partial<ExcelJS.Font> = { ...(cell.font ?? {}) };
 
     if (style.font) {
