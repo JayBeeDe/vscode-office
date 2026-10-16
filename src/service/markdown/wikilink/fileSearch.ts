@@ -1,7 +1,14 @@
 import { relative } from 'path';
 import * as vscode from 'vscode';
 import { FIND_FILES_EXCLUDE, FIND_FILES_LIMIT } from './constants';
-import { directFileNames, recursiveFindPatterns } from './pagePattern';
+import { directFileNames, nameToGlob, recursiveFindPatterns } from './pagePattern';
+
+/** The search globs ignore case and glob characters: keep the files whose path really matches. */
+function matchesName(file: vscode.Uri, expected: string): boolean {
+    const path = file.path.toLowerCase();
+    const name = expected.replace(/\\/g, '/').toLowerCase();
+    return path === name || path.endsWith(`/${name}`);
+}
 
 /** 直接路径探测：祖先目录 + 文件名，走 fs.stat，避免索引查询 */
 export async function statMarkdownAt(baseDir: vscode.Uri, page: string): Promise<vscode.Uri | null> {
@@ -39,10 +46,10 @@ export async function findMarkdownInScope(
 ): Promise<vscode.Uri[]> {
     const results: vscode.Uri[] = [];
     for (const fileName of directFileNames(page)) {
-        const pattern = toRelativePattern(workspaceFolder, scopeDir, fileName);
+        const pattern = toRelativePattern(workspaceFolder, scopeDir, nameToGlob(fileName));
         const files = await vscode.workspace.findFiles(pattern, FIND_FILES_EXCLUDE, FIND_FILES_LIMIT);
         for (const file of files) {
-            results.push(file);
+            if (matchesName(file, fileName)) results.push(file);
         }
     }
     return results;
@@ -61,14 +68,15 @@ export async function findMarkdownRecursive(
     const seen = new Set<string>();
 
     for (const recursivePattern of recursiveFindPatterns(page)) {
+        const name = recursivePattern.replace(/^\*\*\//, '');
         const pattern = new vscode.RelativePattern(
             workspaceFolder,
-            `${prefix}${recursivePattern}`,
+            `${prefix}**/${nameToGlob(name)}`,
         );
         const files = await vscode.workspace.findFiles(pattern, FIND_FILES_EXCLUDE, FIND_FILES_LIMIT);
         for (const file of files) {
             const key = file.fsPath;
-            if (!seen.has(key)) {
+            if (matchesName(file, name) && !seen.has(key)) {
                 seen.add(key);
                 results.push(file);
             }
