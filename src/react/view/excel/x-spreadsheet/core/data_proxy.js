@@ -901,13 +901,13 @@ export default class DataProxy {
   }
 
   // state: input | finished
-  setSelectedCellText(text, state = 'input') {
+  setSelectedCellText(text, state = 'input', originalText) {
     const { autoFilter, selector, rows } = this;
     const { ri, ci } = selector;
     const nri = getDataRowIndex(this, ri);
     const oldCell = rows.getCell(nri, ci);
     const oldText = oldCell ? oldCell.text : '';
-    this.setCellText(ri, ci, text, state);
+    this.setCellText(ri, ci, text, state, originalText);
     // replace filter.value
     if (autoFilter.active()) {
       const filter = autoFilter.getFilter(ci);
@@ -1407,13 +1407,19 @@ export default class DataProxy {
   }
 
   // state: input | finished
-  setCellText(ri, ci, text, state) {
+  // originalText: the text before the edit; while typing, 'input' already wrote the new text
+  setCellText(ri, ci, text, state, originalText) {
     if (!this.canEditCell(ri, ci)) return;
     const nri = getDataRowIndex(this, ri);
     const { rows, history, validations } = this;
     if (state === 'finished') {
-      rows.setCellText(nri, ci, '');
-      history.add(this.getData());
+      const current = rows.getCell(nri, ci)?.text ?? '';
+      const before = originalText !== undefined ? originalText : current;
+      if (before !== text) {
+        // the undo step holds the text from before the edit
+        rows.setCellText(nri, ci, before);
+        history.add(this.getData());
+      }
       rows.setCellText(nri, ci, text);
     } else {
       rows.setCellText(nri, ci, text);

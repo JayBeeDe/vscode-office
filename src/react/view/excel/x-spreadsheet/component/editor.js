@@ -261,9 +261,11 @@ export default class Editor {
   clear() {
     // const { cell } = this;
     // const cellText = (cell && cell.text) || '';
-    if (this.inputText !== '') {
+    // also when the text was cleared, so that the change gets an undo step and is validated
+    if (this.inputText !== '' || (this.originalText ?? '') !== '') {
       this.change('finished', this.inputText);
     }
+    this.originalText = '';
     this.cell = null;
     this.areaOffset = null;
     this.inputText = '';
@@ -278,6 +280,7 @@ export default class Editor {
 
   cancel() {
     this.cell = null;
+    this.originalText = '';
     this.areaOffset = null;
     this.inputText = '';
     this.referenceRange = null;
@@ -331,6 +334,7 @@ export default class Editor {
     el.show();
     this.cell = cell;
     const text = (cell && cell.text) || '';
+    this.originalText = text;
     this.setText(text);
     if (cellStyle) {
       this.applyCellStyle(cellStyle);
