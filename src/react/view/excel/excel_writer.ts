@@ -27,7 +27,7 @@ export interface ExportOptions {
     saveAsExt?: string;
     /** 目标扩展名，决定 [Content_Types].xml 中工作簿主部件的类型 (xltx/xlsm/xltm) */
     targetExt?: string;
-    /** 当前打开文件的原始内容；保存为 xlsm 时从中带回宏 (vbaProject.bin) */
+    /** 当前打开文件的原始内容；保存为 xlsm 时从中带回宏 (vbaProject.bin)，xlsx 系列在其基础上原地更新 */
     vbaSource?: ArrayBuffer;
 }
 
@@ -109,6 +109,128 @@ function writeRowHeights(worksheet: ExcelJS.Worksheet, rows: SheetData['rows']) 
     }
 }
 
+type ExcelJsWorksheetInternals = ExcelJS.Worksheet & {
+    _merges?: Record<string, { range?: string } | string>;
+    _media?: unknown[];
+    dataValidations?: { model?: Record<string, unknown> };
+};
+
+/**
+ * Prepare a worksheet loaded from the original file for a rewrite: everything the viewer edits
+ * is cleared, while what it doesn't read (notes, conditional formatting, print setup, sheet
+ * state, tab colour...) is kept.
+ */
+function resetWorksheetForRewrite(worksheet: ExcelJS.Worksheet, sheetData: SheetData) {
+    const ws = worksheet as ExcelJsWorksheetInternals;
+    const existingMerges = Object.values(ws._merges ?? {}) as ({ range?: string } | string)[];
+    for (const merge of existingMerges) {
+        const range = typeof merge === 'string' ? merge : merge?.range;
+        if (range) worksheet.unMergeCells(range);
+    }
+    const rows = sheetData.rows;
+    worksheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
+        row.eachCell({ includeEmpty: false }, (cell, colNumber) => {
+            const rowData = rows?.[rowNumber - 1];
+            const kept = isRowData(rowData) && rowData.cells?.[colNumber - 1] != null;
+            cell.value = null;
+            if (!kept) {
+                cell.style = {};
+            }
+        });
+    });
+    if (ws.dataValidations) {
+        ws.dataValidations.model = {};
+    }
+    ws._media = [];
+    if (!sheetData.freeze && worksheet.views?.some(view => view.state === 'frozen')) {
+        worksheet.views = worksheet.views.map(view => (view.state === 'frozen'
+            ? { ...view, state: 'normal', xSplit: undefined, ySplit: undefined, topLeftCell: undefined } as ExcelJS.WorksheetView
+            : view));
+    }
+    if (!sheetData.autofilter?.ref) {
+        (worksheet as { autoFilter?: unknown }).autoFilter = undefined;
+    }
+}
+
+function quoteSheetName(name: string) {
+    return /^[A-Za-z_][A-Za-z0-9_.]*$/.test(name) ? name : `'${name.replace(/'/g, "''")}'`;
+}
+
+/** Point defined names at the new names of renamed sheets. */
+function renameSheetsInDefinedNames(workbook: ExcelJS.Workbook, renamed: Map<string, string>) {
+    const definedNames = workbook.definedNames as unknown as { model: { name: string; ranges: string[] }[] };
+    definedNames.model = definedNames.model.map(entry => ({
+        ...entry,
+        ranges: entry.ranges.map((range) => {
+            const match = /^(?:'((?:[^']|'')+)'|([^!]+))!(.*)$/.exec(range);
+            if (!match) return range;
+            const sheetName = match[1] != null ? match[1].replace(/''/g, "'") : match[2];
+            const next = renamed.get(sheetName);
+            return next ? `${quoteSheetName(next)}!${match[3]}` : range;
+        }),
+    }));
+}
+
+/** Workbook to write: the original one when available, so that what isn't edited is kept. */
+async function prepareWorkbook(sheets: SheetData[], source?: ArrayBuffer) {
+    const workbook = new ExcelJS.Workbook();
+    let loaded = false;
+    if (source) {
+        try {
+            await workbook.xlsx.load(source);
+            loaded = true;
+        } catch {
+            loaded = false;
+        }
+    }
+    const targets: { worksheet: ExcelJS.Worksheet; reused: boolean }[] = [];
+    if (!loaded) {
+        const fresh = new ExcelJS.Workbook();
+        sheets.forEach((sheetData, i) => {
+            targets.push({ worksheet: fresh.addWorksheet(sheetData.name || `Sheet${i + 1}`), reused: false });
+        });
+        return { workbook: fresh, targets };
+    }
+
+    const claimed = new Map<number, ExcelJS.Worksheet>();
+    const claims = sheets.map((sheetData) => {
+        const id = sheetData.sourceSheetId;
+        const worksheet = id != null && !claimed.has(id) ? workbook.getWorksheet(id) : undefined;
+        if (worksheet) claimed.set(worksheet.id, worksheet);
+        return worksheet;
+    });
+    for (const worksheet of workbook.worksheets) {
+        if (!claimed.has(worksheet.id)) workbook.removeWorksheet(worksheet.id);
+    }
+    const renamed = new Map<string, string>();
+    claims.forEach((worksheet, i) => {
+        const name = sheets[i].name || `Sheet${i + 1}`;
+        if (worksheet && worksheet.name !== name) renamed.set(worksheet.name, name);
+    });
+    // temporary names first, so that renames and new sheets never collide
+    claims.forEach((worksheet, i) => { if (worksheet) worksheet.name = `__office_tmp_${i}`; });
+    sheets.forEach((sheetData, i) => {
+        const name = sheetData.name || `Sheet${i + 1}`;
+        const worksheet = claims[i] ?? workbook.addWorksheet(`__office_new_${i}`);
+        targets.push({ worksheet, reused: !!claims[i] });
+        worksheet.name = name;
+    });
+    // number the sheets in display order: sheet files and VBA modules follow that order
+    const internals = workbook as unknown as { _worksheets: (ExcelJS.Worksheet | undefined)[] };
+    internals._worksheets = [undefined];
+    targets.forEach(({ worksheet }, i) => {
+        (worksheet as unknown as { id: number; orderNo: number }).id = i + 1;
+        (worksheet as unknown as { id: number; orderNo: number }).orderNo = i + 1;
+        internals._worksheets[i + 1] = worksheet;
+    });
+    if (renamed.size > 0) {
+        renameSheetsInDefinedNames(workbook, renamed);
+    }
+    // images are written again from the sheet data
+    (workbook as unknown as { media: unknown[] }).media = [];
+    return { workbook, targets };
+}
+
 async function writeSheetToExcelJs(worksheet: ExcelJS.Worksheet, workbook: ExcelJS.Workbook, sheetData: SheetData) {
     const { rows, cols, styles = [], merges = [], hyperlinks = {}, validations } = sheetData;
 
@@ -162,8 +284,41 @@ async function emitSave(buffer: Uint8Array, options?: ExportOptions) {
     handler.emit('save', content);
 }
 
-async function patchWorkbookSortStates(buffer: Uint8Array, sheets: SheetData[], targetExt?: string, vba?: VbaParts | null) {
+const CUSTOM_PROPERTIES_PATH = 'docProps/custom.xml';
+const CUSTOM_PROPERTIES_TYPE = 'application/vnd.openxmlformats-officedocument.custom-properties+xml';
+const CUSTOM_PROPERTIES_REL = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/custom-properties';
+
+/** ExcelJS drops the custom document properties: copy them back from the original file. */
+async function restoreCustomProperties(zip: JSZip, source: ArrayBuffer) {
+    if (zip.file(CUSTOM_PROPERTIES_PATH)) return;
+    let sourceZip: JSZip;
+    try {
+        sourceZip = await JSZip.loadAsync(source);
+    } catch {
+        return;
+    }
+    const custom = await sourceZip.file(CUSTOM_PROPERTIES_PATH)?.async('uint8array');
+    const contentTypes = await zip.file('[Content_Types].xml')?.async('string');
+    const rels = await zip.file('_rels/.rels')?.async('string');
+    if (!custom || !contentTypes || !rels) return;
+    zip.file(CUSTOM_PROPERTIES_PATH, custom);
+    if (!contentTypes.includes(`/${CUSTOM_PROPERTIES_PATH}`)) {
+        zip.file('[Content_Types].xml', contentTypes.replace('</Types>',
+            `<Override PartName="/${CUSTOM_PROPERTIES_PATH}" ContentType="${CUSTOM_PROPERTIES_TYPE}"/></Types>`));
+    }
+    if (!rels.includes(CUSTOM_PROPERTIES_REL)) {
+        let id = 1;
+        while (rels.includes(`Id="rId${id}"`)) id += 1;
+        zip.file('_rels/.rels', rels.replace('</Relationships>',
+            `<Relationship Id="rId${id}" Type="${CUSTOM_PROPERTIES_REL}" Target="${CUSTOM_PROPERTIES_PATH}"/></Relationships>`));
+    }
+}
+
+async function patchWorkbookSortStates(buffer: Uint8Array, sheets: SheetData[], targetExt?: string, vba?: VbaParts | null, source?: ArrayBuffer) {
     const zip = await JSZip.loadAsync(buffer);
+    if (source) {
+        await restoreCustomProperties(zip, source);
+    }
     for (let i = 0; i < sheets.length; i += 1) {
         const file = zip.file(`xl/worksheets/sheet${i + 1}.xml`);
         if (!file) continue;
@@ -185,16 +340,18 @@ async function patchWorkbookSortStates(buffer: Uint8Array, sheets: SheetData[], 
 }
 
 async function exportWithExcelJs(sheets: SheetData[], options?: ExportOptions) {
-    const workbook = new ExcelJS.Workbook();
+    const { workbook, targets } = await prepareWorkbook(sheets, options?.saveAs ? undefined : options?.vbaSource);
     for (let i = 0; i < sheets.length; i += 1) {
-        const sheetData = sheets[i];
-        const worksheet = workbook.addWorksheet(sheetData.name || `Sheet${i + 1}`);
-        await writeSheetToExcelJs(worksheet, workbook, sheetData);
+        const { worksheet, reused } = targets[i];
+        if (reused) {
+            resetWorksheetForRewrite(worksheet, sheets[i]);
+        }
+        await writeSheetToExcelJs(worksheet, workbook, sheets[i]);
     }
     const buffer = new Uint8Array(await workbook.xlsx.writeBuffer());
     const keepsMacros = options?.targetExt === 'xlsm' || options?.targetExt === 'xltm';
     const vba = keepsMacros && options?.vbaSource ? await extractVbaParts(options.vbaSource) : null;
-    const patched = await patchWorkbookSortStates(buffer, sheets, options?.targetExt, vba);
+    const patched = await patchWorkbookSortStates(buffer, sheets, options?.targetExt, vba, options?.saveAs ? undefined : options?.vbaSource);
     await emitSave(patched, options);
 }
 

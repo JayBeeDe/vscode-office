@@ -293,6 +293,7 @@ const convertExcelJsWorkbook = (
 
         sheets.push({
             name: worksheet.name,
+            sourceSheetId: worksheet.id,
             rows: converted.rows,
             cols: converted.cols,
             ...(converted.styles ? { styles: converted.styles } : {}),
