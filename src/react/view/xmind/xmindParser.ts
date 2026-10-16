@@ -183,85 +183,136 @@ function normalizeTags(tags: NodeObj['tags']): string | undefined {
     return tags.map(tag => typeof tag === 'string' ? tag : tag.text).filter(Boolean).join(',');
 }
 
-function mindNodeToXmindTopic(node: NodeObj, restoreImageUrl: (url: string) => string): Topic {
+/** Every topic of a sheet by id: attached, detached, callout and summary topics. */
+function indexTopics(topic: Topic | undefined, map = new Map<string, Topic>()): Map<string, Topic> {
+    if (!topic) return map;
+    map.set(topic.id, topic);
+    const children = topic.children as Record<string, Topic[] | undefined> | undefined;
+    for (const list of Object.values(children ?? {})) {
+        for (const child of list ?? []) indexTopics(child, map);
+    }
+    return map;
+}
+
+/**
+ * The saved topic is the original one with what the viewer edits written over it, so that what
+ * it doesn't show (style, markers, boundaries, numbering, structure, position, detached topics,
+ * callouts, rich notes, extensions...) is kept.
+ */
+function mindNodeToXmindTopic(node: NodeObj, restoreImageUrl: (url: string) => string, originals: Map<string, Topic>): Topic {
+    const original = originals.get(node.id);
+    const { children: originalChildren, ...originalRest } = (original ?? {}) as Topic;
     const topic: Topic = {
+        ...originalRest,
         id: node.id,
         title: node.topic ?? 'Untitled',
     };
     if (node.expanded === false) {
         topic.branch = 'folded';
+    } else {
+        delete topic.branch;
     }
     const labels = normalizeTags(node.tags);
     if (labels) {
         topic.labels = labels;
+    } else {
+        delete topic.labels;
     }
     if (node.hyperLink) {
         topic.href = node.hyperLink;
+    } else {
+        delete topic.href;
     }
-    if (node.note) {
+    const originalNote = original?.notes?.plain?.content;
+    if (node.note && node.note !== originalNote) {
         topic.notes = {
             plain: { content: node.note },
             html: { content: { paragraphs: [] } },
         };
+    } else if (!node.note) {
+        delete topic.notes;
     }
     if (node.image?.url) {
         topic.image = {
+            ...(original?.image ?? {}),
             src: restoreImageUrl(node.image.url),
             width: node.image.width,
             height: node.image.height,
-            align: 'center',
+            align: original?.image?.align ?? 'center',
         };
+    } else {
+        delete topic.image;
     }
+    // detached topics, callouts... are not shown: keep them; attached ones are the edited children
+    const children: Record<string, unknown> = { ...(originalChildren ?? {}) };
+    delete children.attached;
+    delete children.summary;
     if (node.children?.length) {
-        topic.children = {
-            attached: node.children.map(child => mindNodeToXmindTopic(child, restoreImageUrl)),
-        };
+        children.attached = node.children.map(child => mindNodeToXmindTopic(child, restoreImageUrl, originals));
     }
+    if (Object.keys(children).length) {
+        topic.children = children as Topic['children'];
+    } else {
+        delete topic.children;
+    }
+    delete topic.summaries;
     return topic;
 }
 
-function mindArrowsToXmindRelationships(arrows: MindArrow[] | undefined) {
+function mindArrowsToXmindRelationships(arrows: MindArrow[] | undefined, original: Sheet['relationships'] = []) {
     if (!arrows?.length) {
         return [];
     }
-    return arrows.map(arrow => ({
-        id: arrow.id,
-        title: arrow.label || '',
-        style: { id: '', type: '', properties: {} },
-        class: '',
-        end1Id: arrow.from,
-        end2Id: arrow.to,
-        controlPoints: {
-            0: arrow.delta1 ?? { x: 50, y: 50 },
-            1: arrow.delta2 ?? { x: 50, y: 50 },
-        },
-    }));
+    const originalById = new Map((original ?? []).map(relationship => [relationship.id, relationship]));
+    return arrows.map(arrow => {
+        const source = originalById.get(arrow.id);
+        const title = arrow.label || '';
+        return {
+            style: { id: '', type: '', properties: {} },
+            class: '',
+            ...(source ?? {}),
+            id: arrow.id,
+            title,
+            end1Id: arrow.from,
+            end2Id: arrow.to,
+            controlPoints: {
+                0: arrow.delta1 ?? { x: 50, y: 50 },
+                1: arrow.delta2 ?? { x: 50, y: 50 },
+            },
+        };
+    });
 }
 
-function collectSummaryTopics(topic: Topic, summaries: MindSummary[] | undefined): void {
+function collectSummaryTopics(topic: Topic, summaries: MindSummary[] | undefined, originals: Map<string, Topic>): void {
     if (!summaries?.length) {
         return;
     }
     const topicSummaries = summaries.filter(summary => summary.parent === topic.id);
     if (topicSummaries.length) {
+        const originalSummaries = originals.get(topic.id)?.summaries ?? [];
         topic.summaries = topicSummaries.map(summary => {
-            const topicId = `${summary.id}-topic`;
+            const source = originalSummaries.find(item => item.id === summary.id);
+            // the original summary topic (title, style, children) when it still exists
+            const originalTopic = source?.topicId ? originals.get(source.topicId) : undefined;
+            const topicId = originalTopic?.id ?? `${summary.id}-topic`;
             const summaryTopic: Topic = {
+                ...(originalTopic ?? {}),
                 id: topicId,
-                title: summary.label || 'summary',
+                title: summary.label || originalTopic?.title || 'summary',
             };
             topic.children = topic.children ?? {};
             topic.children.summary = [...(topic.children.summary ?? []), summaryTopic];
             return {
-                id: summary.id,
                 style: { id: '', type: '', properties: {} },
                 class: '',
+                ...(source ?? {}),
+                id: summary.id,
                 range: `(${summary.start},${summary.end})`,
                 topicId,
             };
         });
     }
-    topic.children?.attached?.forEach(child => collectSummaryTopics(child, summaries));
+    topic.children?.attached?.forEach(child => collectSummaryTopics(child, summaries, originals));
 }
 
 function mindDataToXmindSheet(original: Sheet, sheet: XmindSheet, restoreImageUrl: (url: string) => string): Sheet {
@@ -269,14 +320,15 @@ function mindDataToXmindSheet(original: Sheet, sheet: XmindSheet, restoreImageUr
         ...sheet.data,
         nodeData: cloneNodeWithoutParent(sheet.data.nodeData),
     };
-    const rootTopic = mindNodeToXmindTopic(data.nodeData, restoreImageUrl);
-    collectSummaryTopics(rootTopic, data.summaries);
+    const originals = indexTopics(original.rootTopic);
+    const rootTopic = mindNodeToXmindTopic(data.nodeData, restoreImageUrl, originals);
+    collectSummaryTopics(rootTopic, data.summaries, originals);
     return {
         ...original,
         id: sheet.id,
         title: sheet.title || data.nodeData.topic || original.title || 'Sheet',
         rootTopic,
-        relationships: mindArrowsToXmindRelationships(data.arrows),
+        relationships: mindArrowsToXmindRelationships(data.arrows, original.relationships),
         topicPositioning: data.direction === 2 ? (original.topicPositioning || 'balanced') : original.topicPositioning,
     };
 }
