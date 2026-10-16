@@ -14,7 +14,7 @@ function isRowData(row: unknown): row is { cells: Record<number, CellData> } {
 
 export function readWorksheetProtection(worksheet: ExcelJS.Worksheet): StoredSheetProtection | undefined {
     const ws = worksheet as ExcelJS.Worksheet & { sheetProtection?: StoredSheetProtection };
-    const sp = ws.sheetProtection ?? worksheet.model?.sheetProtection;
+    const sp = ws.sheetProtection ?? (worksheet.model as { sheetProtection?: StoredSheetProtection } | undefined)?.sheetProtection;
     if (!sp || typeof sp !== 'object') return undefined;
     return { ...sp };
 }

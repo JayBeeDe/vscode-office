@@ -205,7 +205,7 @@ export function excelJsCellToStyle(cell: ExcelJS.Cell): CellStyle | null {
             style.strike = true;
             hasStyle = true;
         }
-        if (font.underline && font.underline !== 'none' && font.underline !== false) {
+        if (font.underline && font.underline !== 'none') {
             style.underline = true;
             hasStyle = true;
         }

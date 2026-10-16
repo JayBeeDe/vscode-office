@@ -189,7 +189,7 @@ export function writeWorksheetImages(
     if (backgroundImage) {
         const bgBuffer = base64ToBytes(backgroundImage.base64);
         const bgId = workbook.addImage({
-            buffer: bgBuffer,
+            buffer: bgBuffer as unknown as ExcelJS.Image["buffer"],
             // ExcelJS types only list jpeg, png and gif, but it writes any media type
             extension: backgroundImage.extension as 'png',
         });
@@ -200,10 +200,10 @@ export function writeWorksheetImages(
         const img = images[i];
         const buffer = base64ToBytes(img.base64);
         const imageId = workbook.addImage({
-            buffer,
+            buffer: buffer as unknown as ExcelJS.Image["buffer"],
             extension: img.extension as 'png',
         });
-        worksheet.addImage(imageId, buildExcelJsImageRange(img.anchor));
+        worksheet.addImage(imageId, buildExcelJsImageRange(img.anchor) as Parameters<ExcelJS.Worksheet['addImage']>[1]);
     }
 }
 

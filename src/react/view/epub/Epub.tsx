@@ -263,12 +263,11 @@ export default function Epub() {
                 if (target.parentElement?.tagName.toLowerCase() === 'a') {
                     return;
                 }
-                const manager = rendition.manager as { container?: HTMLElement; getContents?: () => { window: Window }[] };
+                const manager = (rendition as unknown as { manager: unknown }).manager as { container?: HTMLElement; getContents?: () => { window: Window }[] };
                 const container = manager.container;
                 if (!container) {
                     return;
                 }
-                const third = container.clientWidth / 3;
                 const x = event.pageX - container.scrollLeft;
                 if (x > container.clientWidth - 20) {
                     event.preventDefault();
@@ -322,7 +321,7 @@ export default function Epub() {
                 return;
             }
 
-            const metaRecord = metadata as Record<string, string | undefined>;
+            const metaRecord = metadata as unknown as Record<string, string | undefined>;
             setMeta({
                 title: metadata.title?.trim() || 'Untitled',
                 author: resolveEpubAuthor(metadata.creator),
@@ -386,7 +385,8 @@ export default function Epub() {
         if (!book || !rendition) {
             return;
         }
-        const cfi = book.locations.cfiFromLocation(value);
+        // -1 when the location doesn't exist (the typings only say string)
+        const cfi = book.locations.cfiFromLocation(value) as string | number;
         if (cfi && cfi !== -1) {
             rendition.display(String(cfi));
         }
@@ -404,7 +404,7 @@ export default function Epub() {
             setLocationDraft(String(locationCurrent));
             return;
         }
-        const cfi = book.locations.cfiFromLocation(parsed - 1);
+        const cfi = book.locations.cfiFromLocation(parsed - 1) as string | number;
         if (cfi === -1) {
             setLocationDraft(String(locationCurrent));
             return;
