@@ -29,7 +29,7 @@ const MERMAID_BASE_CONFIG = {
         leftPadding: 75,
         rightPadding: 20,
     },
-    securityLevel: "loose",
+    securityLevel: "strict",
     sequence: {
         boxMargin: 8,
         diagramMarginX: 8,
