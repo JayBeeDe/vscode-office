@@ -193,24 +193,33 @@ const applyRowHeight = (rows: RowMap, ri: number, excelRow: ExcelJS.Row) => {
     }
 };
 
+/** Worksheet part of each tab, in tab order, from workbook.xml and its relationships. */
+const readWorksheetPartsInTabOrder = async (zip: JSZip): Promise<string[]> => {
+    const workbookXml = await zip.file('xl/workbook.xml')?.async('string');
+    const relsXml = await zip.file('xl/_rels/workbook.xml.rels')?.async('string');
+    if (!workbookXml || !relsXml) return [];
+    const targets = new Map<string, string>();
+    for (const rel of relsXml.match(/<Relationship\b[^>]*>/g) ?? []) {
+        const id = /\bId="([^"]+)"/.exec(rel)?.[1];
+        const target = /\bTarget="([^"]+)"/.exec(rel)?.[1];
+        if (id && target) {
+            targets.set(id, target.startsWith('/') ? target.slice(1) : `xl/${target}`);
+        }
+    }
+    return (workbookXml.match(/<sheet\b[^>]*>/g) ?? [])
+        .map(sheet => targets.get(/\br:id="([^"]+)"/.exec(sheet)?.[1] ?? '') ?? '');
+};
+
 const readWorkbookSortStateXml = async (buffer: ArrayBuffer) => {
     const zip = await JSZip.loadAsync(buffer);
     const entries = new Map<number, ReturnType<typeof readWorksheetSortStateXml>>();
-    const worksheetFiles = Object.keys(zip.files)
-        .map((name) => {
-            const match = /^xl\/worksheets\/sheet(\d+)\.xml$/i.exec(name);
-            return match ? { index: Number(match[1]) - 1, name } : null;
-        })
-        .filter((it): it is { index: number; name: string } => Boolean(it))
-        .sort((a, b) => a.index - b.index);
-
-    for (let i = 0; i < worksheetFiles.length; i += 1) {
-        const file = worksheetFiles[i];
-        const xml = await zip.file(file.name)?.async('string');
+    // tab N is not necessarily sheetN.xml once tabs have been reordered
+    const parts = await readWorksheetPartsInTabOrder(zip);
+    for (let index = 0; index < parts.length; index += 1) {
+        const xml = parts[index] ? await zip.file(parts[index])?.async('string') : undefined;
         if (!xml) continue;
-        entries.set(file.index, readWorksheetSortStateXml(xml));
+        entries.set(index, readWorksheetSortStateXml(xml));
     }
-
     return entries;
 };
 
