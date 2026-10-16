@@ -142,6 +142,8 @@ function convertMarkdownToHtml(filename, type, text, config) {
 
   } catch (error) {
     showErrorMessage("convertMarkdownToHtml()", error)
+    // an empty export must not be reported as a success
+    throw error
   }
 }
 
@@ -158,6 +160,7 @@ function mergeHtml(content, uri, type) {
     return mustache.render(readFile(templatePath), { title, style, content })
   } catch (error) {
     showErrorMessage("makeHtml()", error)
+    throw error
   }
 }
 

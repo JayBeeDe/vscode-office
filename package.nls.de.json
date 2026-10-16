@@ -5,6 +5,7 @@
 	"ext.office.confirmOpenLink": "\"$1\" öffnen? Dieser Link verweist nicht ins Web und kann eine Datei öffnen oder ein Programm ausführen.",
 	"ext.markdown.exportStart": "Markdown wird nach $1 exportiert...",
 	"ext.markdown.exportSuccess": "Markdown erfolgreich nach $1 exportiert!",
+	"ext.markdown.exportFailed": "Export von Markdown nach $1 fehlgeschlagen: $2",
 	"ext.markdown.noChromium": "Chromium nicht gefunden, Export fehlgeschlagen.",
 	"ext.markdown.noClipboardImage": "Kein Bild in der Zwischenablage.",
 	"ext.markdown.noPasteDirectory": "Einfügen von Verzeichnissen wird nicht unterstützt.",

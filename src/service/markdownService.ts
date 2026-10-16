@@ -37,6 +37,7 @@ export class MarkdownService {
             vscode.window.showInformationMessage(i18n('ext.markdown.exportSuccess', type))
         } catch (error) {
             Output.log(error)
+            vscode.window.showErrorMessage(i18n('ext.markdown.exportFailed', type, error instanceof Error ? error.message : String(error)))
         }
     }
 

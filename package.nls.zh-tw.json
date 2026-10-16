@@ -5,6 +5,7 @@
 	"ext.office.confirmOpenLink": "開啟「$1」？此連結並非指向網頁，可能會開啟檔案或執行程式。",
 	"ext.markdown.exportStart": "正在開始匯出 Markdown 為 $1。",
 	"ext.markdown.exportSuccess": "匯出 Markdown 為 $1 成功！",
+	"ext.markdown.exportFailed": "匯出 Markdown 為 $1 失敗：$2",
 	"ext.markdown.noChromium": "未找到 Chromium，匯出失敗。",
 	"ext.markdown.noClipboardImage": "剪貼簿中沒有圖片。",
 	"ext.markdown.noPasteDirectory": "不支援貼上目錄。",
