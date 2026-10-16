@@ -2,15 +2,15 @@ import type { CellStyle, SheetData } from './x-spreadsheet/index';
 
 const COL_LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
+/** Column letters of a 0-based index: 0 → A, 25 → Z, 26 → AA, 728 → ABA. */
 function stringAt(index: number): string {
     let str = '';
-    let cindex = index;
-    while (cindex >= COL_LETTERS.length) {
-        cindex = Math.floor(cindex / COL_LETTERS.length);
-        cindex -= 1;
-        str += COL_LETTERS[cindex % COL_LETTERS.length];
+    let n = index + 1;
+    while (n > 0) {
+        const rest = (n - 1) % COL_LETTERS.length;
+        str = COL_LETTERS[rest] + str;
+        n = Math.floor((n - 1) / COL_LETTERS.length);
     }
-    str += COL_LETTERS[index % COL_LETTERS.length];
     return str;
 }
 
