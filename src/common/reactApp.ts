@@ -7,6 +7,15 @@ interface ViewOption {
     fileName?: string;
 }
 
+function escapeHtmlAttribute(value: string): string {
+    return value
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
 export class ReactApp {
 
     private static context: vscode.ExtensionContext;
@@ -24,13 +33,15 @@ export class ReactApp {
         const sponsorBaseUrl = webview.asWebviewUri(
             extensionResource(this.context, 'resource', 'sponsor')
         ).toString();
+        const configs = JSON.stringify({
+            ...option,
+            sponsorBaseUrl,
+            language: vscode.env.language,
+            config: vscode.workspace.getConfiguration('vscode-office')
+        });
+        // the configs go into a quoted attribute: escape them, and use a replacer function so `$` patterns are not expanded
         webview.html = this.buildPath(html, webview)
-            .replace(`{{configs}}`, JSON.stringify({
-                ...option,
-                sponsorBaseUrl,
-                language: vscode.env.language,
-                config: vscode.workspace.getConfiguration('vscode-office')
-            }));
+            .replace(`{{configs}}`, () => escapeHtmlAttribute(configs));
     }
 
     private static async readContent(): Promise<string> {
@@ -44,7 +55,7 @@ export class ReactApp {
 
     private static buildPath(data: string, webview: vscode.Webview): string {
         const baseUrl = ReactApp.getBaseUrl(webview);
-        return data.replace('<base href="/">', `<base href="${baseUrl}/">`);
+        return data.replace('<base href="/">', () => `<base href="${escapeHtmlAttribute(baseUrl)}/">`);
     }
 
     private static getBaseUrl(webview: vscode.Webview) {
