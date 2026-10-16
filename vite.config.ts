@@ -38,12 +38,13 @@ export default defineConfig(({ command, mode }) => ({
   },
   server: {
     cors: {
-      origin: true,
+      // only the extension's webviews load the dev server
+      origin: /^vscode-webview:\/\//,
     },
     host: '127.0.0.1',
     port: 5739,
     fs: {
-      allow: ['..'],
+      allow: ['.'],
     },
   },
   base: '',
