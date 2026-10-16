@@ -7,14 +7,14 @@ import type { RowData, SheetData } from './x-spreadsheet/index';
 import { CsvEncoding, encodeCsvText } from './csvEncoding';
 import { DEFAULT_ROW_HEIGHT_PX, freezeExprToExcelView, pxToExcelRowHeight } from './excel_meta';
 import { patchWorksheetSortStateXml } from './excel_sort_state';
-import { applySpreadsheetStyle } from './excel_styles';
+import { applySpreadsheetStyle, excelJsCellToStyle, spreadsheetFormatToNumFmt } from './excel_styles';
 import { hyperlinkKey, writeCellHyperlink, type SpreadsheetHyperlink } from './excel_hyperlink';
 import { writeWorksheetValidations } from './excel_validation';
 import { writeWorksheetProtection } from './excel_protection';
 import { writeWorksheetImages } from './excel_images';
 import { extractVbaParts, injectVbaParts, type VbaParts } from './spreadsheet_vba';
 import { dateToSerial, parseExcelDateText } from './excel_dates';
-import { spreadsheetFormatToNumFmt } from './excel_styles';
+import { formatCellText } from './excel_reader';
 
 const DEFAULT_COL_WIDTH = 100;
 
@@ -73,12 +73,28 @@ function setCellValue(cell: ExcelJS.Cell, text: string, format?: string) {
         return;
     }
     const num = Number(text);
-    if (text.trim() !== '' && !Number.isNaN(num) && String(num) === text.trim()) {
+    // compared untrimmed: " 42 " stays text
+    if (text.trim() !== '' && !Number.isNaN(num) && String(num) === text) {
         cell.value = num;
+        return;
+    }
+    if (/^(TRUE|FALSE)$/i.test(text)) {
+        cell.value = text.toUpperCase() === 'TRUE';
+        return;
+    }
+    if (EXCEL_ERRORS.has(text)) {
+        cell.value = { error: text } as ExcelJS.CellErrorValue;
         return;
     }
     cell.value = text;
 }
+
+const EXCEL_ERRORS = new Set(['#N/A', '#DIV/0!', '#VALUE!', '#REF!', '#NAME?', '#NUM!', '#NULL!', '#SPILL!', '#CALC!', '#GETTING_DATA']);
+
+/** Original cell values of a reused worksheet, with the text the viewer showed for them. */
+type OriginalCells = Map<string, { value: ExcelJS.CellValue; text: string }>;
+
+const cellKey = (ri: number, ci: number) => `${ri}:${ci}`;
 
 function applySheetMeta(worksheet: ExcelJS.Worksheet, sheetData: SheetData) {
     if (sheetData.freeze) {
@@ -120,8 +136,9 @@ type ExcelJsWorksheetInternals = ExcelJS.Worksheet & {
  * is cleared, while what it doesn't read (notes, conditional formatting, print setup, sheet
  * state, tab colour...) is kept.
  */
-function resetWorksheetForRewrite(worksheet: ExcelJS.Worksheet, sheetData: SheetData) {
+function resetWorksheetForRewrite(worksheet: ExcelJS.Worksheet, sheetData: SheetData): OriginalCells {
     const ws = worksheet as ExcelJsWorksheetInternals;
+    const originals: OriginalCells = new Map();
     const existingMerges = Object.values(ws._merges ?? {}) as ({ range?: string } | string)[];
     for (const merge of existingMerges) {
         const range = typeof merge === 'string' ? merge : merge?.range;
@@ -132,6 +149,12 @@ function resetWorksheetForRewrite(worksheet: ExcelJS.Worksheet, sheetData: Sheet
         row.eachCell({ includeEmpty: false }, (cell, colNumber) => {
             const rowData = rows?.[rowNumber - 1];
             const kept = isRowData(rowData) && rowData.cells?.[colNumber - 1] != null;
+            if (kept && cell.value != null) {
+                originals.set(cellKey(rowNumber - 1, colNumber - 1), {
+                    value: cell.value,
+                    text: formatCellText(cell, excelJsCellToStyle(cell)?.format),
+                });
+            }
             cell.value = null;
             if (!kept) {
                 cell.style = {};
@@ -150,6 +173,7 @@ function resetWorksheetForRewrite(worksheet: ExcelJS.Worksheet, sheetData: Sheet
     if (!sheetData.autofilter?.ref) {
         (worksheet as { autoFilter?: unknown }).autoFilter = undefined;
     }
+    return originals;
 }
 
 function quoteSheetName(name: string) {
@@ -231,7 +255,7 @@ async function prepareWorkbook(sheets: SheetData[], source?: ArrayBuffer) {
     return { workbook, targets };
 }
 
-async function writeSheetToExcelJs(worksheet: ExcelJS.Worksheet, workbook: ExcelJS.Workbook, sheetData: SheetData) {
+async function writeSheetToExcelJs(worksheet: ExcelJS.Worksheet, workbook: ExcelJS.Workbook, sheetData: SheetData, originals?: OriginalCells) {
     const { rows, cols, styles = [], merges = [], hyperlinks = {}, validations } = sheetData;
 
     if (cols?.len) {
@@ -263,7 +287,13 @@ async function writeSheetToExcelJs(worksheet: ExcelJS.Worksheet, workbook: Excel
             if (hl?.link) {
                 writeCellHyperlink(excelCell, cellData.text ?? '', hl);
             } else {
-                setCellValue(excelCell, cellData.text ?? '', cellData.style != null ? styles[cellData.style]?.format : undefined);
+                const original = originals?.get(cellKey(ri, ci));
+                if (original && original.text === (cellData.text ?? '')) {
+                    // not edited: keep the value as it was (rich text, formula result, type)
+                    excelCell.value = original.value;
+                } else {
+                    setCellValue(excelCell, cellData.text ?? '', cellData.style != null ? styles[cellData.style]?.format : undefined);
+                }
             }
             if (cellData.style != null && styles[cellData.style]) {
                 applySpreadsheetStyle(excelCell, styles[cellData.style]);
@@ -343,10 +373,8 @@ async function exportWithExcelJs(sheets: SheetData[], options?: ExportOptions) {
     const { workbook, targets } = await prepareWorkbook(sheets, options?.saveAs ? undefined : options?.vbaSource);
     for (let i = 0; i < sheets.length; i += 1) {
         const { worksheet, reused } = targets[i];
-        if (reused) {
-            resetWorksheetForRewrite(worksheet, sheets[i]);
-        }
-        await writeSheetToExcelJs(worksheet, workbook, sheets[i]);
+        const originals = reused ? resetWorksheetForRewrite(worksheet, sheets[i]) : undefined;
+        await writeSheetToExcelJs(worksheet, workbook, sheets[i], originals);
     }
     const buffer = new Uint8Array(await workbook.xlsx.writeBuffer());
     const keepsMacros = options?.targetExt === 'xlsm' || options?.targetExt === 'xltm';
