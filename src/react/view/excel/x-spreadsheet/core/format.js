@@ -45,7 +45,8 @@ const baseFormats = [
     title: tf('format.percent'),
     type: 'number',
     label: '10.12%',
-    render: v => `${v}%`,
+    // the cell holds the fraction: 0.1 shows as 10.00%
+    render: v => (/^-?\d*\.?\d+(?:[eE][+-]?\d+)?$/.test(String(v).trim()) ? `${(Number(v) * 100).toFixed(2)}%` : v),
   },
   {
     key: 'rmb',
