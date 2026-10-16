@@ -383,7 +383,8 @@ const convertSheetJsWorksheet = (worksheet: XLSX.WorkSheet, date1904: boolean): 
             const format = typeof cell.z === 'string' ? numFmtToSpreadsheetFormat(cell.z) : undefined;
             const text = formatSheetJsCell(cell, format, date1904);
             if (!text) continue;
-            const styleIndex = styleRegistry.add(format ? { format } : null);
+            const numFmt = typeof cell.z === 'string' && cell.z !== 'General' ? cell.z : undefined;
+            const styleIndex = styleRegistry.add(format || numFmt ? { ...(format ? { format } : {}), ...(numFmt ? { numFmt } : {}) } : null);
             cells[ci] = styleIndex != null ? { text, style: styleIndex } : { text };
             hasContent = true;
             if (ci + 1 > maxCols) maxCols = ci + 1;

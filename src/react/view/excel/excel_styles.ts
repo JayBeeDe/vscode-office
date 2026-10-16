@@ -83,6 +83,18 @@ export function spreadsheetFormatToNumFmt(format?: string): string | undefined {
     return FORMAT_TO_NUMFMT[format];
 }
 
+/**
+ * Number format to write for a style: the file's own format while the viewer's format category
+ * hasn't been changed, otherwise the category's default format.
+ */
+export function resolveStyleNumFmt(style?: { format?: string; numFmt?: string }): string | undefined {
+    if (!style) return undefined;
+    if (style.numFmt && numFmtToSpreadsheetFormat(style.numFmt) === style.format) {
+        return style.numFmt;
+    }
+    return spreadsheetFormatToNumFmt(style.format);
+}
+
 export function colorToHex(color?: Partial<ExcelJS.Color>): string | undefined {
     if (!color?.argb) return undefined;
     const argb = color.argb.replace(/^#/, '');
@@ -227,6 +239,11 @@ export function excelJsCellToStyle(cell: ExcelJS.Cell): CellStyle | null {
         style.format = format;
         hasStyle = true;
     }
+    if (numFmt && numFmt !== 'General') {
+        // the exact format, written back as long as the format category is unchanged
+        style.numFmt = numFmt;
+        hasStyle = true;
+    }
 
     return hasStyle ? style : null;
 }
@@ -270,7 +287,7 @@ export function applySpreadsheetStyle(cell: ExcelJS.Cell, style: CellStyle) {
     const border = bordersToExcelJs(style.border);
     if (border) cell.border = border;
 
-    const numFmt = spreadsheetFormatToNumFmt(style.format);
+    const numFmt = resolveStyleNumFmt(style);
     if (numFmt) cell.numFmt = numFmt;
 }
 
