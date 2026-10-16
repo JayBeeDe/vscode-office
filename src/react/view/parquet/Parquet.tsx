@@ -6,7 +6,6 @@ import '@vscode/codicons/dist/codicon.css';
 import { $t } from '../../i18n/i18nConfig.ts';
 import { handler, onSaveRequest, vscodeApi } from '../../util/vscode.ts';
 import { loadOfficeBuffer } from '../../util/loadOfficeContent.ts';
-import SponsorBar from '../components/SponsorBar.tsx';
 import {
     formatCellValue,
     getPageSize,
@@ -454,9 +453,6 @@ function ParquetViewer() {
                         </>
                     ) : null}
                 </main>
-            </div>
-            <div className="parquet-viewer__corner-actions">
-                {!loading && <SponsorBar placement="left" />}
             </div>
         </div>
     );

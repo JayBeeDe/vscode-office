@@ -224,13 +224,6 @@ export function handleCommonEvent(document: OfficeDocument, handler: Handler) {
             await saveContentAs(document, new Uint8Array(payload.content), payload.ext);
         })
         .on('developerTool', () => vscode.commands.executeCommand('workbench.action.toggleDevTools'))
-        .on('sponsorClick', () => { })
-        .on('openSponsor', () => {
-            vscode.commands.executeCommand(
-                'workbench.extensions.action.showExtensionsWithIds',
-                ['cweijan.vscode-database-client2'],
-            );
-        })
         .on('openExternal', (url: string) => {
             if (url) {
                 void openLink(uri, url);

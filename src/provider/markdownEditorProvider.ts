@@ -342,12 +342,6 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
             await new MarkdownService(this.context).exportMarkdown(uri, option)
         }).on('developerTool', () => {
             vscode.commands.executeCommand('workbench.action.toggleDevTools')
-        }).on('openAbout', () => {
-        }).on('openSponsor', () => {
-            vscode.commands.executeCommand(
-                'workbench.extensions.action.showExtensionsWithIds',
-                ['cweijan.vscode-database-client2'],
-            );
         }).on('openExternal', (url: string) => {
             if (url) {
                 vscode.env.openExternal(vscode.Uri.parse(url));
