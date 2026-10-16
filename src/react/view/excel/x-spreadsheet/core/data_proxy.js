@@ -1325,7 +1325,9 @@ export default class DataProxy {
   // type: row | column
   insert(type, n = 1) {
     this.changeData(() => {
-      const { sri, sci } = this.selector.range;
+      const { sci } = this.selector.range;
+      // under an autofilter sort the selected (view) row is not the data row
+      const sri = getDataRowIndex(this, this.selector.range.sri);
       const { rows, merges, cols } = this;
       let si = sri;
       if (type === 'row') {
@@ -1348,6 +1350,8 @@ export default class DataProxy {
         cell.merge[1] += cn;
       });
       this.remapReferences(type === 'row' ? { row: insertAxisMap(si, n) } : { col: insertAxisMap(si, n) });
+      // the filtered and sorted rows are computed again on the moved data
+      this.resetAutoFilter();
     });
   }
 
@@ -1364,6 +1368,20 @@ export default class DataProxy {
       const [rsize, csize] = selector.range.size();
       let si = sri;
       let size = rsize;
+      if (type === 'row' && this.sortedRowMap.size > 0) {
+        // under an autofilter sort the selected rows are scattered data rows: delete each one,
+        // from the bottom up so that the indexes still to delete don't move
+        const dataRows = [];
+        for (let ri = sri; ri <= eri; ri += 1) dataRows.push(getDataRowIndex(this, ri));
+        dataRows.sort((a, b) => b - a).forEach((dri) => {
+          rows.delete(dri, dri);
+          merges.deleteSpan('row', dri, dri);
+          this.remapReferences({ row: deleteAxisMap(dri, dri) });
+        });
+        syncCellMergesFromRanges.call(this);
+        this.resetAutoFilter();
+        return;
+      }
       if (type === 'row') {
         rows.delete(sri, eri);
       } else if (type === 'column') {
@@ -1384,6 +1402,7 @@ export default class DataProxy {
       syncCellMergesFromRanges.call(this);
       const deleted = deleteAxisMap(si, si + size - 1);
       this.remapReferences(type === 'row' ? { row: deleted } : { col: deleted });
+      this.resetAutoFilter();
     });
   }
 
