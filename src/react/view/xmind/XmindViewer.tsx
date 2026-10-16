@@ -146,7 +146,13 @@ export default function XmindViewer() {
         setDark(prev => !prev);
     }, []);
 
+    const loadGenerationRef = useRef(0);
+
     const loadXmind = useCallback(async (payload: { path?: string; buffer?: number[]; error?: string; fileName?: string; readOnly?: boolean }) => {
+        // `open` can arrive again while a file is parsed: only the latest parse is shown, the
+        // others are disposed (their blob URLs revoked)
+        const generation = ++loadGenerationRef.current;
+        const isCurrent = () => generation === loadGenerationRef.current;
         readOnlyRef.current = payload.readOnly === true;
         setLoading(true);
         setSaving(false);
@@ -163,6 +169,10 @@ export default function XmindViewer() {
             const buffer = await loadOfficeBuffer(payload);
             const fileName = payload.fileName ?? payload.path?.split('/').pop() ?? 'document.xmind';
             const parsed = await parseXmind(buffer, fileName);
+            if (!isCurrent()) {
+                parsed.dispose();
+                return;
+            }
             if (!parsed.sheets.length) {
                 throw new Error('No sheets found in XMind file');
             }
@@ -171,9 +181,10 @@ export default function XmindViewer() {
             setSheets(parsed.sheets);
             setSelectedId(parsed.sheets[0].id);
         } catch (e) {
+            if (!isCurrent()) return;
             setError(e instanceof Error ? e.message : 'Failed to load XMind file');
         } finally {
-            setLoading(false);
+            if (isCurrent()) setLoading(false);
         }
     }, [destroyMind]);
 
