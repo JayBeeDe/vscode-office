@@ -78,13 +78,11 @@ export default function Word() {
         handler.emit("save", content);
     }, []);
 
+    // the editor's save() already hands the buffer to onSave (emitSave): emitting it here as well
+    // wrote the file twice
     const handleSave = useCallback(async () => {
-        const buffer = await editorRef.current?.save();
-        if (!buffer) {
-            return;
-        }
-        emitSave(buffer);
-    }, [emitSave]);
+        await editorRef.current?.save();
+    }, []);
 
     const loadGenerationRef = useRef(0);
 
