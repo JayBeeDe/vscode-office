@@ -1,8 +1,9 @@
 import ExcelJS from '@cweijan/exceljs';
 import JSZip from 'jszip';
 import * as XLSX from 'xlsx';
-import { inferSchema, initParser } from 'udsv';
+import { inferSchema } from 'udsv';
 import { decodeCsvBuffer } from './csvEncoding';
+import { detectCsvFormat, parseCsv, type CsvFormat } from './csvFormat';
 import { DEFAULT_ROW_HEIGHT_PX, excelFreezeToExpr, excelRowHeightToPx, readAutofilterRef } from './excel_meta';
 import { readWorksheetSortStateXml } from './excel_sort_state';
 import { excelJsCellToStyle, numFmtToSpreadsheetFormat, StyleRegistry } from './excel_styles';
@@ -34,6 +35,8 @@ export interface ExcelData {
     maxLength?: number;
     /** Detected column delimiter when loading CSV/TSV */
     csvDelimiter?: string;
+    /** Layout of the CSV/TSV file (BOM, line endings), written back on save */
+    csvFormat?: CsvFormat;
 }
 
 const MIN_COL_WIDTH = 70;
@@ -445,64 +448,38 @@ const loadWithSheetJs = (buffer: ArrayBuffer): ExcelData => {
 };
 
 const loadCsv = (buffer: ArrayBuffer): ExcelData => {
-    let maxCols = 26;
+    const maxCols = 26;
     const emptySheet = { maxCols, sheets: [{ name: 'Sheet1', rows: { len: 0 } }] };
-    let csvStr = decodeCsvBuffer(buffer);
-    if (!csvStr) return emptySheet;
+    const csvStr = decodeCsvBuffer(buffer);
+    const bytes = new Uint8Array(buffer);
+    const csvFormat = detectCsvFormat(csvStr, bytes[0] === 0xef && bytes[1] === 0xbb && bytes[2] === 0xbf);
+    if (!csvStr) return { ...emptySheet, csvFormat };
 
     try {
-        const leadingEmptyRows = csvStr.match(/^(?:\r\n|\n|\r)+/)?.[0].match(/\r\n|\n|\r/g)?.length ?? 0;
-        const csvToParse = leadingEmptyRows > 0 ? csvStr.replace(/^(?:\r\n|\n|\r)+/, '') : csvStr;
-        if (!csvToParse) {
-            return {
-                maxCols,
-                maxLength: leadingEmptyRows,
-                sheets: [{
-                    name: 'Sheet1',
-                    rows: { len: leadingEmptyRows },
-                }],
-            };
-        }
-        let parseInput = csvToParse;
-        if (!parseInput.includes('\n')) parseInput += '\n';
-        let schema = inferSchema(parseInput, { header: () => [] });
-        if (!schema.col) {
-            // no delimiter found: a single-column file, parsed as comma separated (it has no comma)
-            schema = inferSchema(parseInput, { header: () => [], col: ',' });
-        }
-        const rows: string[][] = initParser(schema).stringArrs(parseInput);
-        // the parser returns the final line break as an extra empty row
-        while (rows.length > 0 && rows[rows.length - 1].length <= 1 && !rows[rows.length - 1][0]) {
-            rows.pop();
-        }
+        // udsv only detects the delimiter; the rows come from a parser that keeps blank lines
+        const sample = csvStr.replace(/^(?:\r\n|\n|\r)+/, '');
+        const schema = sample ? inferSchema(sample.includes('\n') ? sample : `${sample}\n`, { header: () => [] }) : null;
+        // no delimiter found: a single-column file, parsed as comma separated (it has no comma)
+        const delimiter = schema?.col || ',';
+        const rows = parseCsv(csvStr, delimiter);
         const colCount = rows.reduce((max, row) => Math.max(max, row.length), 0);
 
         const processedRows: RowMap = {};
-        for (let i = 0; i < leadingEmptyRows; i += 1) {
-            processedRows[i] = { cells: {} };
-        }
         for (let i = 0; i < rows.length; i += 1) {
-            const row = rows[i];
             const cells: Record<number, CellData> = {};
-            for (let j = 0; j < row.length; j += 1) {
-                cells[j] = { text: row[j] == null ? '' : String(row[j]) };
-                if (j + 1 > maxCols) maxCols = j + 1;
-            }
-            processedRows[i + leadingEmptyRows] = { cells };
+            rows[i].forEach((text, j) => { cells[j] = { text }; });
+            processedRows[i] = { cells };
         }
-        const csvRows = [
-            ...Array.from({ length: leadingEmptyRows }, () => [] as string[]),
-            ...rows,
-        ];
 
         return {
-            maxCols,
-            maxLength: csvRows.length,
-            csvDelimiter: schema.col,
+            maxCols: Math.max(maxCols, colCount),
+            maxLength: rows.length,
+            csvDelimiter: delimiter,
+            csvFormat,
             sheets: [{
                 name: 'Sheet1',
-                rows: { len: csvRows.length, ...processedRows },
-                cols: { len: colCount, ...buildCsvCols(csvRows, colCount) },
+                rows: { len: rows.length, ...processedRows },
+                cols: { len: colCount, ...buildCsvCols(rows, colCount) },
             }],
         };
     } catch (error) {

@@ -5,6 +5,7 @@ import * as XLSX from 'xlsx';
 import Spreadsheet from './x-spreadsheet/index';
 import type { CellStyle, RowData, SheetData } from './x-spreadsheet/index';
 import { CsvEncoding, encodeCsvText } from './csvEncoding';
+import { DEFAULT_CSV_FORMAT, serializeCsv, type CsvFormat } from './csvFormat';
 import { DEFAULT_ROW_HEIGHT_PX, freezeExprToExcelView, pxToExcelRowHeight } from './excel_meta';
 import { patchWorksheetSortStateXml } from './excel_sort_state';
 import { applySpreadsheetStyle, excelJsCellToStyle, resolveStyleNumFmt } from './excel_styles';
@@ -28,6 +29,8 @@ export interface ExportOptions {
     targetExt?: string;
     /** 当前打开文件的原始内容；保存为 xlsm 时从中带回宏 (vbaProject.bin)，xlsx 系列在其基础上原地更新 */
     vbaSource?: ArrayBuffer;
+    /** layout of the CSV/TSV file being saved (BOM, line endings, final line break) */
+    csvFormat?: CsvFormat;
 }
 
 const WORKBOOK_CONTENT_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml';
@@ -477,28 +480,35 @@ function dataToTypedSheetJs(xws: SheetData) {
     return ws;
 }
 
-/** Plain-text sheet, used for CSV/TSV where every cell is written as it is shown. */
-function dataToSheetJs(xws: SheetData) {
-    const aoa: string[][] = [];
+/** Rows of a sheet as text, up to the last row with content; blank rows stay blank. */
+function sheetToTextRows(xws: SheetData): string[][] {
+    const rows: string[][] = [];
     const rowobj = xws.rows;
-    if (!rowobj?.len) {
-        const ws = XLSX.utils.aoa_to_sheet(aoa);
-        applyColWidths(ws, xws);
-        return ws;
-    }
-    for (let ri = 0; ri < rowobj.len; ri += 1) {
+    let lastRow = -1;
+    for (let ri = 0; ri < (rowobj?.len ?? 0); ri += 1) {
         const row = rowobj[ri];
-        if (!isRowData(row)) continue;
-        aoa[ri] = [];
-        for (const ciKey of Object.keys(row.cells ?? {})) {
-            const ci = Number(ciKey);
-            if (Number.isNaN(ci)) continue;
-            aoa[ri][ci] = row.cells[ci].text;
+        const values: string[] = [];
+        if (isRowData(row)) {
+            for (const ciKey of Object.keys(row.cells ?? {})) {
+                const ci = Number(ciKey);
+                if (Number.isNaN(ci)) continue;
+                values[ci] = row.cells[ci].text ?? '';
+            }
         }
+        const filled = Array.from(values, value => value ?? '');
+        rows.push(filled);
+        if (filled.some(value => value !== '')) lastRow = ri;
     }
-    const ws = XLSX.utils.aoa_to_sheet(aoa);
-    applyColWidths(ws, xws);
-    return ws;
+    return rows.slice(0, lastRow + 1);
+}
+
+function encodeCsvSheet(xws: SheetData, delimiter: string, encoding: CsvEncoding, format: CsvFormat): Uint8Array {
+    const bytes = encodeCsvText(serializeCsv(sheetToTextRows(xws), delimiter, format), encoding);
+    if (!format.bom || encoding !== 'utf8') return bytes;
+    const withBom = new Uint8Array(bytes.length + 3);
+    withBom.set([0xef, 0xbb, 0xbf]);
+    withBom.set(bytes, 3);
+    return withBom;
 }
 
 /** ots = ods 改写 mimetype 与 manifest；mimetype 须为首个且不压缩的条目 */
@@ -545,9 +555,7 @@ export async function exportSaveAs(
         return;
     }
     if (ext === 'csv' || ext === 'tsv') {
-        const fs = ext === 'tsv' ? '\t' : csvDelimiter;
-        const csvContent = XLSX.utils.sheet_to_csv(dataToSheetJs(sheets[0]), { FS: fs });
-        const bytes = encodeCsvText(csvContent, csvEncoding);
+        const bytes = encodeCsvSheet(sheets[0], ext === 'tsv' ? '\t' : csvDelimiter, csvEncoding, DEFAULT_CSV_FORMAT);
         handler.emit('saveAs', { content: [...bytes], ext });
     }
 }
@@ -571,9 +579,7 @@ export async function export_xlsx(
         return;
     }
     if (ext === 'csv' || ext === 'tsv') {
-        const fs = ext === 'tsv' ? '\t' : csvDelimiter;
-        const csvContent = XLSX.utils.sheet_to_csv(dataToSheetJs(sheets[0]), { FS: fs });
-        const bytes = encodeCsvText(csvContent, csvEncoding);
+        const bytes = encodeCsvSheet(sheets[0], ext === 'tsv' ? '\t' : csvDelimiter, csvEncoding, options?.csvFormat ?? DEFAULT_CSV_FORMAT);
         handler.emit('save', [...bytes]);
     }
 }
