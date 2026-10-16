@@ -233,12 +233,15 @@ export default function XmindViewer() {
     useEffect(() => {
         darkRef.current = dark;
     }, [dark]);
+    // drawn when another sheet is selected or a file is loaded, not when a save stores the current
+    // sheet's data: that would clear the undo history and reset the zoom
     useEffect(() => {
-        if (!selected || loading || !documentRef.current) {
+        const sheet = sheetsRef.current.find(item => item.id === selectedId);
+        if (!sheet || loading || !documentRef.current) {
             return;
         }
-        renderSheet(selected.data, documentRef.current.resolveImageUrl, darkRef.current);
-    }, [selected, loading, renderSheet]);
+        renderSheet(sheet.data, documentRef.current.resolveImageUrl, darkRef.current);
+    }, [selectedId, loading, renderSheet]);
 
     useEffect(() => {
         mindRef.current?.changeTheme(buildMindElixirTheme(dark));
