@@ -4,7 +4,7 @@ import type { ColumnsType } from 'antd/es/table';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import '@vscode/codicons/dist/codicon.css';
 import { $t } from '../../i18n/i18nConfig.ts';
-import { handler, vscodeApi } from '../../util/vscode.ts';
+import { handler, onSaveRequest, vscodeApi } from '../../util/vscode.ts';
 import { loadOfficeBuffer } from '../../util/loadOfficeContent.ts';
 import SponsorBar from '../components/SponsorBar.tsx';
 import {
@@ -124,9 +124,14 @@ function ParquetViewer() {
         handler.emit('change');
     }, []);
 
-    const handleSave = useCallback(() => {
+    const handleSave = useCallback((backup = false) => {
         const info = fileInfoRef.current;
-        if (!info || !dirtyRef.current || savingRef.current || readOnlyRef.current) return;
+        if (!info) return;
+        if (backup) {
+            handler.emit('save', [...new Uint8Array(writeParquetBuffer(info.columns, allRowsRef.current))]);
+            return;
+        }
+        if (!dirtyRef.current || savingRef.current || readOnlyRef.current) return;
         savingRef.current = true;
         setSaving(true);
         try {
@@ -260,13 +265,8 @@ function ParquetViewer() {
     }, [cancelEdit, commitEdit, editValue, editingColumn, editingRow, fileInfo, page, readOnly, startEdit]);
 
     useEffect(() => {
-        const onKeyDown = (event: KeyboardEvent) => {
-            if (!(event.ctrlKey || event.metaKey) || event.key.toLowerCase() !== 's') return;
-            event.preventDefault();
-            handleSave();
-        };
-        window.addEventListener('keydown', onKeyDown);
-        return () => window.removeEventListener('keydown', onKeyDown);
+        // Ctrl+S goes through VS Code, which asks for the content
+        onSaveRequest((backup) => handleSave(backup));
     }, [handleSave]);
 
     useEffect(() => {
@@ -364,7 +364,7 @@ function ParquetViewer() {
                                         type="button"
                                         className="parquet-viewer__save-btn"
                                         disabled={!dirty || saving || readOnly}
-                                        onClick={handleSave}
+                                        onClick={() => handleSave()}
                                     >
                                         <span className={`codicon ${saving ? 'codicon-loading codicon-modifier-spin' : 'codicon-save'}`} />
                                         {$t('parquet.save')}

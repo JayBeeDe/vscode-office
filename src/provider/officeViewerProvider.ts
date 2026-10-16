@@ -2,13 +2,17 @@ import { ReactApp } from '@/common/reactApp';
 import { getFileSuffix } from '@/common/fileSuffix';
 import * as vscode from 'vscode';
 import { Handler } from '../common/handler';
-import { handleCommonEvent } from './handlers/commonHandler';
+import { handleCommonEvent, revertOfficeDocument, saveOfficeDocument, saveOfficeDocumentAs } from './handlers/commonHandler';
+import { OfficeDocument } from './handlers/officeDocument';
 import { extensionResource, getExtensionResourceRoots, readExtensionText } from '@/common/extensionResource';
 
 /**
  * support view office files
  */
-export class OfficeViewerProvider implements vscode.CustomReadonlyEditorProvider {
+export class OfficeViewerProvider implements vscode.CustomEditorProvider<OfficeDocument> {
+
+	private readonly changeEmitter = new vscode.EventEmitter<vscode.CustomDocumentContentChangeEvent<OfficeDocument>>();
+	public readonly onDidChangeCustomDocument = this.changeEmitter.event;
 
 	constructor(private context: vscode.ExtensionContext) { }
 
@@ -19,10 +23,34 @@ export class OfficeViewerProvider implements vscode.CustomReadonlyEditorProvider
 		];
 	}
 
-	public openCustomDocument(uri: vscode.Uri, openContext: vscode.CustomDocumentOpenContext, token: vscode.CancellationToken): vscode.CustomDocument | Thenable<vscode.CustomDocument> {
-		return { uri, dispose: (): void => { } };
+	public openCustomDocument(uri: vscode.Uri, openContext: vscode.CustomDocumentOpenContext, token: vscode.CancellationToken): OfficeDocument {
+		const backupUri = openContext.backupId ? vscode.Uri.parse(openContext.backupId) : undefined;
+		return new OfficeDocument(uri, backupUri, (document) => this.changeEmitter.fire({ document }));
 	}
-	public resolveCustomEditor(document: vscode.CustomDocument, webviewPanel: vscode.WebviewPanel, token: vscode.CancellationToken): void | Thenable<void> {
+
+	public saveCustomDocument(document: OfficeDocument, cancellation: vscode.CancellationToken): Thenable<void> {
+		return saveOfficeDocument(document);
+	}
+
+	public saveCustomDocumentAs(document: OfficeDocument, destination: vscode.Uri, cancellation: vscode.CancellationToken): Thenable<void> {
+		return saveOfficeDocumentAs(document, destination);
+	}
+
+	public revertCustomDocument(document: OfficeDocument, cancellation: vscode.CancellationToken): Thenable<void> {
+		return revertOfficeDocument(document);
+	}
+
+	public async backupCustomDocument(document: OfficeDocument, context: vscode.CustomDocumentBackupContext, cancellation: vscode.CancellationToken): Promise<vscode.CustomDocumentBackup> {
+		await document.writeBackup(context.destination);
+		return {
+			id: context.destination.toString(),
+			delete: () => {
+				vscode.workspace.fs.delete(context.destination).then(undefined, () => undefined);
+			},
+		};
+	}
+
+	public resolveCustomEditor(document: OfficeDocument, webviewPanel: vscode.WebviewPanel, token: vscode.CancellationToken): void | Thenable<void> {
 		const uri = document.uri;
 		const webview = webviewPanel.webview;
 		const folderPath = vscode.Uri.joinPath(uri, '..');
@@ -35,7 +63,7 @@ export class OfficeViewerProvider implements vscode.CustomReadonlyEditorProvider
 
 		let route: string;
 		const suffix = getFileSuffix(uri.fsPath);
-		handleCommonEvent(uri, handler);
+		handleCommonEvent(document, handler);
 		switch (suffix) {
 			case '.xlsx':
 			case '.xlsm':

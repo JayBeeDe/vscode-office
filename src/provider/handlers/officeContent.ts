@@ -151,12 +151,13 @@ export function bytesToPayloadBuffer(data: Uint8Array): number[] {
     return buffer;
 }
 
-export async function emitVirtualOfficeOpen(handler: Handler, uri: Uri): Promise<void> {
+/** Send the bytes of `source` (by default the document itself) to the webview. */
+export async function emitVirtualOfficeOpen(handler: Handler, uri: Uri, source: Uri = uri): Promise<void> {
     const now = Date.now();
     const ext = extname(uri.fsPath);
     const readOnly = await isUriReadOnly(uri);
     try {
-        const data = await readUriBytes(uri);
+        const data = await readUriBytes(source);
         const payload: Record<string, unknown> = {
             ext,
             path: getPayloadPath(uri),
