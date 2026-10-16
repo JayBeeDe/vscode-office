@@ -270,7 +270,8 @@ function mindArrowsToXmindRelationships(arrows: MindArrow[] | undefined, origina
     const originalById = new Map((original ?? []).map(relationship => [relationship.id, relationship]));
     return arrows.map(arrow => {
         const source = originalById.get(arrow.id);
-        const title = arrow.label || '';
+        // the import labels an untitled relationship "-": don't write that back as its title
+        const title = arrow.label === '-' && !source?.title ? '' : (arrow.label || '');
         return {
             style: { id: '', type: '', properties: {} },
             class: '',
