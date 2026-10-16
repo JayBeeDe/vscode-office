@@ -103,14 +103,6 @@ const resolveGeminiUrl = (rawUrl: string, model: string) => {
     return `${base}/models/${model}:generateContent`;
 };
 
-const appendQueryKey = (url: string, apiKey?: string) => {
-    if (!apiKey || /[?&]key=/.test(url)) {
-        return url;
-    }
-    const joiner = url.includes("?") ? "&" : "?";
-    return `${url}${joiner}key=${encodeURIComponent(apiKey)}`;
-};
-
 const buildRequest = (
     format: Exclude<CustomAIApiFormat, "auto">,
     prompt: string,
@@ -135,7 +127,7 @@ const buildRequest = (
             };
         case "gemini":
             return {
-                url: appendQueryKey(resolveGeminiUrl(rawUrl, model), apiKey),
+                url: resolveGeminiUrl(rawUrl, model),
                 headers: {
                     "Content-Type": "application/json",
                     ...(apiKey && !rawUrl.includes("key=") ? { "x-goog-api-key": apiKey } : {}),

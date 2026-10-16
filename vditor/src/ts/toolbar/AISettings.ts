@@ -11,7 +11,7 @@ import { MenuItem } from "./MenuItem";
 import { toggleSubMenu } from "./setToolbar";
 import {
     getAIPrompts, setAIPrompts,
-    getAIModels, setAIModels,
+    getAIModels, setAIModels, storeAIModelKey,
 } from "../util/globalLocalStorageSettings";
 import { showConfirm } from "../util/confirm";
 export class AISettings extends MenuItem {
@@ -149,7 +149,8 @@ export class AISettings extends MenuItem {
                 const formatEl = panelElement.querySelector<HTMLSelectElement>("[data-ai-add-model-format]");
                 if (nameEl) nameEl.value = m.name;
                 if (urlEl) urlEl.value = m.url;
-                if (keyEl) keyEl.value = m.key || "";
+                // the stored key is never sent back to the webview; leave it blank to keep it
+                if (keyEl) keyEl.value = "";
                 if (modelEl) modelEl.value = m.model || "";
                 if (formatEl) formatEl.value = m.format || "auto";
                 toggleAddRow(panelElement, "[data-ai-add-model-row]", "[data-ai-new-model]", true);
@@ -165,6 +166,7 @@ export class AISettings extends MenuItem {
                 showConfirm(`Delete model "${name}"?`).then(ok => {
                     if (!ok) return;
                     setAIModels(getAIModels().filter(m => m.id !== id));
+                    storeAIModelKey(id, "");
                     panelElement.querySelector("[data-ai-models]")!.outerHTML = buildAIModelsHTML();
                 });
                 return;

@@ -107,6 +107,9 @@ handler.on("open", async (md) => {
       },
       onCancelPolish() {
         handler.emit('aiPolishCancel')
+      },
+      onSetModelKey(modelId, key) {
+        handler.emit('aiSetModelKey', { modelId, key })
       }
     },
     preview: {

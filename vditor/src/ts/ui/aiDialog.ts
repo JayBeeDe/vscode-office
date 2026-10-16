@@ -735,7 +735,7 @@ export class AIDialog {
             const m = getAIModels().find(m => m.id === this.modelValue);
             if (m) {
                 options.customUrl = m.url;
-                options.customKey = m.key;
+                options.customModelId = m.id;
                 options.customModel = this.selectedModelName || m.model.split(",")[0].trim();
                 options.customApiFormat = m.format as IAIPolishOptions["customApiFormat"];
             }

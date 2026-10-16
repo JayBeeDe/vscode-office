@@ -27,6 +27,11 @@ const serializeGlobalSettingsForFile = (globalSettings: Record<string, unknown>)
             }
         }
     }
+    // API keys live in the editor's secret storage, never in the shared settings file
+    if (Array.isArray(result[AI_MODELS_KEY])) {
+        result[AI_MODELS_KEY] = (result[AI_MODELS_KEY] as Record<string, unknown>[])
+            .map(model => (model && typeof model === 'object' ? { ...model, key: '' } : model));
+    }
     return result;
 };
 
