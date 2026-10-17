@@ -346,8 +346,6 @@ class DefaultExternalServices {
 
   static fallback(data, callback) {}
 
-  static reportTelemetry(data) {}
-
   static createDownloadManager(options) {
     throw new Error("Not implemented: createDownloadManager");
   }
@@ -1287,41 +1285,6 @@ const PDFViewerApplication = {
         console.warn("Warning: AcroForm/XFA is not supported");
         this.fallback(_pdfjsLib.UNSUPPORTED_FEATURES.forms);
       }
-
-      let versionId = "other";
-      const KNOWN_VERSIONS = ["1.0", "1.1", "1.2", "1.3", "1.4", "1.5", "1.6", "1.7", "1.8", "1.9", "2.0", "2.1", "2.2", "2.3"];
-
-      if (KNOWN_VERSIONS.includes(info.PDFFormatVersion)) {
-        versionId = `v${info.PDFFormatVersion.replace(".", "_")}`;
-      }
-
-      let generatorId = "other";
-      const KNOWN_GENERATORS = ["acrobat distiller", "acrobat pdfwriter", "adobe livecycle", "adobe pdf library", "adobe photoshop", "ghostscript", "tcpdf", "cairo", "dvipdfm", "dvips", "pdftex", "pdfkit", "itext", "prince", "quarkxpress", "mac os x", "microsoft", "openoffice", "oracle", "luradocument", "pdf-xchange", "antenna house", "aspose.cells", "fpdf"];
-
-      if (info.Producer) {
-        const producer = info.Producer.toLowerCase();
-        KNOWN_GENERATORS.some(function (generator) {
-          if (!producer.includes(generator)) {
-            return false;
-          }
-
-          generatorId = generator.replace(/[ .\-]/g, "_");
-          return true;
-        });
-      }
-
-      let formType = null;
-
-      if (info.IsAcroFormPresent) {
-        formType = info.IsXFAPresent ? "xfa" : "acroform";
-      }
-
-      this.externalServices.reportTelemetry({
-        type: "documentInfo",
-        version: versionId,
-        generator: generatorId,
-        formType
-      });
     });
   },
 
@@ -1442,9 +1405,6 @@ const PDFViewerApplication = {
     this.printService = printService;
     this.forceRendering();
     printService.layout();
-    this.externalServices.reportTelemetry({
-      type: "print"
-    });
   },
 
   afterPrint() {
@@ -1902,18 +1862,6 @@ function webViewerPageRendered(evt) {
     });
   }
 
-  PDFViewerApplication.externalServices.reportTelemetry({
-    type: "pageInfo",
-    timestamp: evt.timestamp
-  });
-  if (typeof PDFViewerApplication.pdfDocument.getStats === "function") {
-    PDFViewerApplication.pdfDocument.getStats().then(function (stats) {
-      PDFViewerApplication.externalServices.reportTelemetry({
-        type: "documentStats",
-        stats
-      });
-    });
-  }
 }
 
 function webViewerPageMode({
