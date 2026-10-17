@@ -216,6 +216,7 @@ const FindReplacePanel = forwardRef<FindReplacePanelHandle, FindReplacePanelProp
 
             {/* Options */}
             <div className="frp-options">
+                {/* eslint-disable-next-line no-restricted-syntax -- "Aa" is the usual match-case symbol */}
                 <OptionChip checked={matchCase} onChange={setMatchCase} label="Aa" />
                 <OptionChip checked={wholeCell} onChange={setWholeCell} label={t('findReplace.wholeCell')} />
                 <OptionChip checked={allSheets} onChange={setAllSheets} label={t('findReplace.allSheets')} />
