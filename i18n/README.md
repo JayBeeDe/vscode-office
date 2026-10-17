@@ -9,7 +9,7 @@ host and the webviews import these files through `src/i18n/index.ts`.
 | `viewer` | the React viewers: documents, presentations, EPUB, XMind, Parquet | `$t('parquet.totalRows', { count })` in `src/react/i18n/i18nConfig.ts` |
 | `spreadsheet` | the spreadsheet editor | `t('findReplace.replacedCount', { count })` in `src/react/view/excel/excel_i18n.ts` |
 | `markdown` | the markdown editor (Vditor), its context menu and AI dialogs | sent by the host; the Vditor scripts in `vditor/src/js/i18n` are generated at build |
-| `pdf` | the extension's own buttons in the PDF viewer | injected by the host; PDF.js keeps its own `resource/pdf/locale` |
+| `pdf` | the PDF viewer: the extension's buttons and PDF.js's interface | injected by the host (`src/provider/pdfViewerStrings.ts`) |
 
 ## Rules
 
@@ -18,6 +18,12 @@ host and the webviews import these files through `src/i18n/index.ts`.
 - Placeholders are named, `{count}`, never positional, and a translation uses the same ones
   as English.
 - Lists (the spreadsheet's month and weekday names) keep the same length as in English.
+- `pdf.viewer` keeps PDF.js's names: `previous.title` is the `title` of the element whose
+  `data-l10n-id` is `previous` (a plain string is its text). A plural is a macro and one key per
+  form, as in PDF.js: `find_match_count` is `{[ plural(total) ]}` and `find_match_count[one]`,
+  `find_match_count[other]`... hold the texts; a language only needs the forms it uses.
+- When upgrading PDF.js, compare its new `en-US/viewer.properties` with `pdf.viewer` in
+  `en.json` (its `{{name}}` placeholders are written `{name}` here).
 
 ## Adding a language
 

@@ -35,7 +35,17 @@ const USAGE = {
         calls: [/window\.VditorI18n\.(\w+)/g, /window\.VditorI18n\[\s*['"]([^'"]+)['"]\s*\]/g, /\bi18n\.(\w+)/g],
         mentions: true,
     },
-    pdf: { files: ['resource/pdf/main.js'], calls: [/\bstrings\.(\w+)/g] },
+    pdf: {
+        files: ['resource/pdf/main.js', 'resource/pdf/viewer.html', 'resource/pdf/viewer.js', 'resource/pdf/pdf.js'],
+        calls: [/\bstrings\.(\w+)/g],
+        // l10n.get("document_properties_linearized_" + ...)
+        prefixes: [/\bl10n\.get\(\s*"(\w+_)"\s*\+/g],
+        mentions: true,
+        // PDF.js names a string by its id, the path joined with _ without the attributes (@title)
+        // and plural forms ([one]): pdf.find.input.@title and pdf.find.match.count.[one] are
+        // find_input and find_match_count
+        mentionName: key => key.split('.').slice(1).filter(part => !/^[@[]/.test(part)).join('_'),
+    },
 };
 
 // Plain JS and host code that ESLint's hard-coded string rules do not cover.
@@ -85,7 +95,12 @@ const withoutBlockComments = text => text.replace(/\/\*[\s\S]*?\*\//g, comment =
 const isSentence = text => (text.replace(PLACEHOLDER, '').replace(/\([^)]*\)/g, '').match(/\p{L}{3,}/gu) ?? []).length >= 2;
 
 const strings = value => (Array.isArray(value) ? value : [value]).filter(v => typeof v === 'string');
-const placeholders = value => [...new Set(strings(value).flatMap(s => [...s.matchAll(PLACEHOLDER)].map(m => m[1])))].sort().join(', ');
+// PDF.js picks a plural form with a macro: find_match_count={[ plural(total) ]}
+const MACRO = /\{\[\s*(\w+)\(\s*(\w+)\s*\)\s*\]\}/g;
+const placeholders = value => [...new Set(strings(value).flatMap(s => [
+    ...[...s.matchAll(PLACEHOLDER)].map(m => m[1]),
+    ...[...s.matchAll(MACRO)].map(m => `[ ${m[1]}(${m[2]}) ]`),
+]))].sort().join(', ');
 const kind = value => (Array.isArray(value) ? `list of ${value.length}` : typeof value);
 
 export function checkI18n() {
@@ -194,7 +209,7 @@ export function checkI18n() {
             const id = usage.mentionName ? `${section}.${usage.mentionName(key)}` : key;
             if ([...prefixes].some(p => id.startsWith(p))) continue;
             // keys built at run time (toolbar names, actions...) are found by their last part
-            const name = key.split('.').pop();
+            const name = usage.mentionName ? usage.mentionName(key) : key.split('.').pop();
             if (usage.mentions && new RegExp(String.raw`['"\`.]${name.replace(/[-\\^$*+?.()|[\]{}]/g, '\\$&')}\b`).test(sources)) continue;
             warnings.push(`i18n/en.json: ${key} is not used`);
         }
