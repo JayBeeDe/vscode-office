@@ -28,8 +28,6 @@
   },
   "viewer": {
     "common": {
-      "copied": "Copiado",
-      "close": "Cerrar",
       "officeViewer": "Visor de Office",
       "switchToLight": "Cambiar al modo claro",
       "switchToDark": "Cambiar al modo oscuro adaptativo",
