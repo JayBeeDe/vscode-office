@@ -72,7 +72,7 @@ export const isElementVisibleInEditorViewport = (editorElement: HTMLElement, ele
         elementRect.left < viewportRight;
 };
 
-/** 退出链接/图片编辑弹窗，光标回到元素后（与 Alt+Enter 一致） */
+/** Close the link/image edit popup and put the caret back after the element (same as Alt+Enter) */
 export const exitLinkPopoverToElement = (vditor: IVditor, element: HTMLElement) => {
     hideLinkPopover(vditor);
     const editorElement = getModeEditorElement(vditor);
@@ -135,7 +135,7 @@ export const highlightToolbarWYSIWYG = (vditor: IVditor) => {
             return;
         }
 
-        // 工具栏高亮和禁用
+        // Toolbar highlighting and disabling
         const liElement = hasClosestByMatchTag(typeElement, "LI");
         if (liElement) {
             if (liElement.classList.contains("vditor-task")) {
@@ -339,7 +339,7 @@ export const highlightToolbarWYSIWYG = (vditor: IVditor) => {
             vditor.wysiwyg.popover.style.display = "none";
         }
 
-        // 反斜杠特殊处理
+        // Special handling for backslash
         vditor.wysiwyg.element
             .querySelectorAll('span[data-type="backslash"] > span')
             .forEach((item: HTMLElement) => {

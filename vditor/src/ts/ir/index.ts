@@ -149,7 +149,7 @@ class IR {
                 return;
             }
             if (event.inputType === "deleteByDrag" || event.inputType === "insertFromDrop") {
-                // https://github.com/Vanessa219/vditor/issues/801 编辑器内容拖拽问题
+                // https://github.com/Vanessa219/vditor/issues/801 editor content drag-and-drop issue
                 return;
             }
             const recordInstantDelete = isDeleteInput(event);
@@ -236,7 +236,7 @@ class IR {
                 return;
             }
 
-            // 点击后光标落于预览区（仅特殊语言块）
+            // After a click the caret lands in the preview area (special-language blocks only)
             let previewElement = hasClosestByClassName(event.target, "vditor-ir__preview");
             if (!previewElement) {
                 previewElement = hasClosestByClassName(
@@ -271,7 +271,7 @@ class IR {
                 }
             }
 
-            // 点击图片光标选中图片地址
+            // Clicking an image selects its URL
             if (event.target.tagName === "IMG") {
                 const linkElement =
                     event.target.parentElement.querySelector<HTMLSpanElement>(".vditor-ir__marker--link");
@@ -299,7 +299,7 @@ class IR {
             if (range.toString() === "") {
                 expandMarkerWithMathSync(range, vditor);
             } else {
-                // https://github.com/Vanessa219/vditor/pull/681 当点击选中区域时 eventTarget 与 range 不一致，需延迟等待 range 发生变化
+                // https://github.com/Vanessa219/vditor/pull/681 When clicking a selected area, eventTarget and range disagree, so wait for the range to change
                 setTimeout(() => {
                     expandMarkerWithMathSync(getEditorRange(vditor), vditor);
                 });
@@ -323,7 +323,7 @@ class IR {
                 vditor.ir.element.firstElementChild && vditor.ir.element.firstElementChild.tagName === "P"
                 && vditor.ir.element.firstElementChild.childElementCount === 0
                 && (vditor.ir.element.textContent === "" || vditor.ir.element.textContent === "\n")) {
-                // 为空时显示 placeholder
+                // Show the placeholder when empty
                 vditor.ir.element.innerHTML = "";
                 return;
             }
@@ -334,7 +334,7 @@ class IR {
                     range.startContainer.textContent = "";
                     expandMarkerWithMathSync(range, vditor);
                 }
-                // 数学公式前是空块，空块前是 table，在空块前删除，数学公式会多一个 br
+                // Math formula preceded by an empty block preceded by a table: deleting before the empty block adds an extra br to the formula
                 this.element.querySelectorAll(".language-math").forEach((item) => {
                     const brElement = item.querySelector("br");
                     if (brElement) {
@@ -347,7 +347,7 @@ class IR {
                 }
                 expandMarkerWithMathSync(range, vditor);
             } else if (event.keyCode === 229 && event.code === "" && event.key === "Unidentified") {
-                // https://github.com/Vanessa219/vditor/issues/508 IR 删除到节点需展开
+                // https://github.com/Vanessa219/vditor/issues/508 IR: deleting into a node must expand it
                 expandMarkerWithMathSync(range, vditor);
             }
 
@@ -370,7 +370,7 @@ class IR {
                     if (previewRenderElement.previousElementSibling.firstElementChild) {
                         range.selectNodeContents(previewRenderElement.previousElementSibling.firstElementChild);
                     } else {
-                        // 行内数学公式/html entity
+                        // Inline math formula/html entity
                         range.selectNodeContents(previewRenderElement.previousElementSibling);
                     }
                     range.collapse(false);

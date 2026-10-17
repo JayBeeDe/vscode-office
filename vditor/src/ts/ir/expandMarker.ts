@@ -131,7 +131,7 @@ export const expandMarker = (range: Range, root: HTMLElement) => {
 
     const nodeElement = hasTopClosestByClassName(range.startContainer, "vditor-ir__node");
     const nodeElementEnd = !range.collapsed && hasTopClosestByClassName(range.endContainer, "vditor-ir__node");
-    // 选中文本为同一个 nodeElement 内时，需要展开
+    // Expand when the selected text is within the same nodeElement
     if (!range.collapsed && (!nodeElement || nodeElement !== nodeElementEnd)) {
         return;
     }
@@ -142,7 +142,7 @@ export const expandMarker = (range: Range, root: HTMLElement) => {
         }
         nodeElement.classList.add("vditor-ir__node--expand");
         nodeElement.classList.remove("vditor-ir__node--hidden");
-        // https://github.com/Vanessa219/vditor/issues/615 safari中光标位置跳动
+        // https://github.com/Vanessa219/vditor/issues/615 caret position jumps in Safari
         if (!focusExpandedInlineNode(nodeElement, range)) {
             if (escapeSpecialInlineNodeRange(nodeElement, range)) {
                 nodeElement.classList.remove("vditor-ir__node--expand");

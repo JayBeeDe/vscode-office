@@ -250,7 +250,7 @@ class WYSIWYG {
             });
         });
 
-        // 中文处理
+        // CJK input handling
         this.element.addEventListener("compositionstart", () => {
             this.composingLock = true;
         });
@@ -261,7 +261,7 @@ class WYSIWYG {
             }
             const headingElement = hasClosestByHeadings(getSelection().getRangeAt(0).startContainer);
             if (headingElement && headingElement.textContent === "") {
-                // heading 为空删除 https://github.com/Vanessa219/vditor/issues/150
+                // Delete empty heading https://github.com/Vanessa219/vditor/issues/150
                 scheduleRenderToc(vditor);
                 return;
             }
@@ -276,7 +276,7 @@ class WYSIWYG {
                 return;
             }
             if (event.inputType === "deleteByDrag" || event.inputType === "insertFromDrop") {
-                // https://github.com/Vanessa219/vditor/issues/801 编辑器内容拖拽问题
+                // https://github.com/Vanessa219/vditor/issues/801 editor content drag-and-drop issue
                 return;
             }
             const recordInstantDelete = isDeleteInput(event);
@@ -295,7 +295,7 @@ class WYSIWYG {
             const range = getSelection().getRangeAt(0);
             let blockElement = hasClosestBlock(range.startContainer);
             if (!blockElement) {
-                // 没有被块元素包裹
+                // Not wrapped in a block element
                 modifyPre(vditor, range);
                 blockElement = hasClosestBlock(range.startContainer);
             }
@@ -308,14 +308,14 @@ class WYSIWYG {
                 shouldFlushHistory = trackHistoryInputFromEvent(vditor, event);
             }
 
-            // 前后空格处理
+            // Handle leading and trailing spaces
             const startOffset = getSelectPosition(blockElement, vditor.wysiwyg.element, range).start;
 
-            // 开始可以输入空格
+            // Spaces can be typed at the start
             let startSpace = true;
             for (let i = startOffset - 1; i > blockElement.textContent.substr(0, startOffset).lastIndexOf("\n"); i--) {
                 if (blockElement.textContent.charAt(i) !== " " &&
-                    // 多个 tab 前删除不形成代码块 https://github.com/Vanessa219/vditor/issues/162 1
+                    // Deleting before multiple tabs must not create a code block https://github.com/Vanessa219/vditor/issues/162 1
                     blockElement.textContent.charAt(i) !== "\t") {
                     startSpace = false;
                     break;
@@ -325,7 +325,7 @@ class WYSIWYG {
                 startSpace = false;
             }
 
-            // 结尾可以输入空格
+            // Spaces can be typed at the end
             let endSpace = true;
             for (let i = startOffset - 1; i < blockElement.textContent.length; i++) {
                 if (blockElement.textContent.charAt(i) !== " " && blockElement.textContent.charAt(i) !== "\n") {
@@ -336,7 +336,7 @@ class WYSIWYG {
 
             const headingElement = hasClosestByHeadings(getSelection().getRangeAt(0).startContainer);
             if (headingElement && headingElement.textContent === "") {
-                // heading 为空删除 https://github.com/Vanessa219/vditor/issues/150
+                // Delete empty heading https://github.com/Vanessa219/vditor/issues/150
                 scheduleRenderToc(vditor);
                 headingElement.remove();
             } else if (headingElement && splitHeadingOnNewline(vditor, headingElement)) {
@@ -483,7 +483,7 @@ class WYSIWYG {
                 });
             }
 
-            // 点击后光标落于预览区，需展开代码块（仅特殊语言块）
+            // After a click the caret lands in the preview area, so expand the code block (special-language blocks only)
             if (previewElement) {
                 const blockElement = previewElement.closest(
                     "[data-type='code-block'], [data-type='math-block']",
@@ -508,7 +508,7 @@ class WYSIWYG {
                 vditor.wysiwyg.element.firstElementChild && vditor.wysiwyg.element.firstElementChild.tagName === "P"
                 && vditor.wysiwyg.element.firstElementChild.childElementCount === 0
                 && (vditor.wysiwyg.element.textContent === "" || vditor.wysiwyg.element.textContent === "\n")) {
-                // 为空时显示 placeholder
+                // Show the placeholder when empty
                 vditor.wysiwyg.element.innerHTML = "";
             }
             const range = getEditorRange(vditor);
@@ -519,7 +519,7 @@ class WYSIWYG {
                 }
             }
 
-            // 没有被块元素包裹
+            // Not wrapped in a block element
             modifyPre(vditor, range);
 
             if (event.key.indexOf("Arrow") > -1) {
@@ -537,10 +537,10 @@ class WYSIWYG {
                 vditor.hint.render(vditor);
             }
 
-            // 上下左右，删除遇到块预览的处理
+            // Handle arrow keys and delete when reaching a block preview
             let previewElement = hasClosestByClassName(range.startContainer, "vditor-wysiwyg__preview");
             if (!previewElement && range.startContainer.nodeType !== 3 && range.startOffset > 0) {
-                // table 前删除遇到代码块
+                // Deleting before a table reaches a code block
                 const blockRenderElement = range.startContainer as HTMLElement;
                 if (blockRenderElement.classList.contains("vditor-wysiwyg__block")) {
                     previewElement = blockRenderElement.lastElementChild as HTMLElement;

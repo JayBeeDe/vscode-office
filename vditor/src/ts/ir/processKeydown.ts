@@ -64,12 +64,12 @@ export const processKeydown = (vditor: IVditor, event: KeyboardEvent) => {
         return false;
     }
 
-    // 公式后 ZWSP：输入前先跳过，避免光标在 ZWSP 开头时字符跑到行首
+    // ZWSP after a formula: skip it before input so that characters do not jump to the line start when the caret is at the start of the ZWSP
     if (event.key.length === 1 || event.key === "Enter" || event.key === "Backspace" || event.key === "Delete") {
         skipZwspAfterInlineMath(getEditorRange(vditor), vditor);
     }
 
-    // 添加第一次记录 undo 的光标
+    // Record the caret for the first undo entry
     if (event.key.indexOf("Arrow") === -1 && event.key !== "Meta" && event.key !== "Control" && event.key !== "Alt" &&
         event.key !== "Shift" && event.key !== "CapsLock" && event.key !== "Escape" && !/^F\d{1,2}$/.test(event.key)) {
         vditor.undo.recordFirstPosition(vditor, event);
@@ -86,12 +86,12 @@ export const processKeydown = (vditor: IVditor, event: KeyboardEvent) => {
 
     fixHR(range);
 
-    // 仅处理以下快捷键操作
+    // Only handle the following shortcuts
     if (event.key !== "Enter" && event.key !== "Tab" && event.key !== "Backspace" && event.key.indexOf("Arrow") === -1
         && !isCtrl(event) && event.key !== "Escape" && event.key !== "Delete") {
         return false;
     }
-    // 斜体、粗体、内联代码块中换行
+    // Line break inside italic, bold or inline code
     const newlineElement = hasClosestByAttribute(startContainer, "data-newline", "1");
     if (!isCtrl(event) && !event.altKey && !event.shiftKey && event.key === "Enter" && newlineElement
         && range.startOffset < newlineElement.textContent.length) {
@@ -113,7 +113,7 @@ export const processKeydown = (vditor: IVditor, event: KeyboardEvent) => {
         return true;
     }
 
-    // md 处理
+    // Markdown handling
     if (fixMarkdown(event, vditor, pElement, range)) {
         return true;
     }
@@ -125,7 +125,7 @@ export const processKeydown = (vditor: IVditor, event: KeyboardEvent) => {
     if (fixBlockquote(vditor, range, event, pElement)) {
         return true;
     }
-    // 代码块
+    // Code block
     const preRenderElement = hasClosestByClassName(startContainer, "vditor-ir__marker--pre");
     if (preRenderElement && preRenderElement.tagName === "PRE") {
         const codeBlockElement = preRenderElement.parentElement;
@@ -136,14 +136,14 @@ export const processKeydown = (vditor: IVditor, event: KeyboardEvent) => {
         if (fixCodeBlock(vditor, event, preRenderElement, range)) {
             return true;
         }
-        // 数学公式上无元素，按上或左将添加新块
+        // No element above the math formula: pressing up or left adds a new block
         if ((codeRenderElement.getAttribute("data-type") === "math-block"
             || codeRenderElement.getAttribute("data-type") === "html-block") &&
             insertBeforeBlock(vditor, event, range, codeRenderElement, preRenderElement.parentElement)) {
             return true;
         }
 
-        // 代码块下无元素或者为代码块/table 元素，添加空块
+        // No element below the code block, or it is a code block/table: add an empty block
         if (insertAfterBlock(vditor, event, range, codeRenderElement, preRenderElement.parentElement)) {
             return true;
         }
@@ -171,7 +171,7 @@ export const processKeydown = (vditor: IVditor, event: KeyboardEvent) => {
         return true;
     }
 
-    // alt+enter: 打开 html / 链接 / 图片编辑弹窗
+    // alt+enter: open the html / link / image edit popup
     if (event.altKey && event.key === "Enter" && !isCtrl(event) && !event.shiftKey) {
         if (handleHtmlEditorAltEnter(vditor, range)) {
             event.preventDefault();
@@ -190,7 +190,7 @@ export const processKeydown = (vditor: IVditor, event: KeyboardEvent) => {
 
     const headingElement = hasClosestByHeadings(startContainer);
     if (headingElement) {
-        // enter++: 标题变大
+        // enter++: increase heading size
         if (matchHotKey("⌘=", event)) {
             const headingMarkerElement = headingElement.querySelector(".vditor-ir__marker--heading");
             if (headingMarkerElement && headingMarkerElement.textContent.trim().length > 1) {
@@ -200,7 +200,7 @@ export const processKeydown = (vditor: IVditor, event: KeyboardEvent) => {
             return true;
         }
 
-        // enter++: 标题变小
+        // enter++: decrease heading size
         if (matchHotKey("⌘-", event)) {
             const headingMarkerElement = headingElement.querySelector(".vditor-ir__marker--heading");
             if (headingMarkerElement && headingMarkerElement.textContent.trim().length < 6) {
@@ -211,8 +211,8 @@ export const processKeydown = (vditor: IVditor, event: KeyboardEvent) => {
         }
     }
 
-    // shift+enter：段落内硬换行（\n + ZWSP）；table 由上方 fixTable 处理
-    // 段末仅插 \n 时 pre-wrap 下光标不换行，需 ZWSP 占位 https://github.com/Vanessa219/vditor/issues/170
+    // shift+enter: hard line break inside a paragraph (\n + ZWSP); table is handled by fixTable above
+    // With pre-wrap, inserting only \n at the end of a paragraph does not move the caret to a new line, so a ZWSP placeholder is needed https://github.com/Vanessa219/vditor/issues/170
     if (!isCtrl(event) && event.shiftKey && !event.altKey && event.key === "Enter" && !headingElement) {
         const textNode = document.createTextNode("\n" + Constants.ZWSP);
         range.insertNode(textNode);
@@ -245,7 +245,7 @@ export const processKeydown = (vditor: IVditor, event: KeyboardEvent) => {
                     expandMarkerWithMathSync(range, vditor);
                 }
                 if (blockElement.textContent.trim().replace(Constants.ZWSP, "") === "") {
-                    // 当前块为空且不是最后一个时，需要删除
+                    // Delete the current block when it is empty and not the last one
                     blockElement.remove();
                     recordHistoryChange(vditor);
                 }
@@ -254,7 +254,7 @@ export const processKeydown = (vditor: IVditor, event: KeyboardEvent) => {
             }
         }
 
-        // 光标位于标题前，marker 后
+        // Caret is before the heading text, after the marker
         if (headingElement) {
             const headingLength = headingElement.firstElementChild.textContent.length;
             if (getSelectPosition(headingElement, vditor.ir.element).start === headingLength) {
