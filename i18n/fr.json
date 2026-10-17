@@ -1,0 +1,29 @@
+{
+  "host": {
+    "common": {
+      "yes": "OUI",
+      "no": "NON"
+    },
+    "office": {
+      "openLink": "Ouvrir",
+      "confirmOpenLink": "Ouvrir « {url} » ? Ce lien ne pointe pas vers le web et peut ouvrir un fichier ou lancer un programme."
+    },
+    "markdown": {
+      "exportStart": "Exportation du Markdown vers {type}...",
+      "exportSuccess": "Exportation du Markdown vers {type} réussie !",
+      "exportFailed": "Échec de l’exportation du Markdown en {type} : {error}",
+      "noChromium": "Chromium introuvable, échec de l'exportation.",
+      "noClipboardImage": "Aucune image dans le presse-papiers.",
+      "noPasteDirectory": "Le collage de répertoires n'est pas pris en charge.",
+      "installXclip": "Vous devez d'abord installer la commande xclip.",
+      "wikilinkNotFound": "Cible du wikilink introuvable : {target}",
+      "aiRequiresVscode": "Les fonctionnalités IA nécessitent VS Code 1.90+ avec une extension de modèle de langage installée.",
+      "noAiModel": "Aucun modèle de langage IA disponible. Veuillez installer une extension de modèle de langage (par ex. GitHub Copilot).",
+      "aiPolishFailed": "Échec de la correction IA : {error}",
+      "customAiUrlRequired": "IA personnalisée : l'URL de l'API est requise.",
+      "customAiPolishFailed": "Échec de la correction IA personnalisée : {error}",
+      "selectImage": "Sélectionner une image",
+      "statusBar": "Ligne {lines} Caractères {chars}"
+    }
+  }
+}
