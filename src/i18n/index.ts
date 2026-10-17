@@ -6,12 +6,9 @@ import de from '../../i18n/de.json';
 import es from '../../i18n/es.json';
 import fr from '../../i18n/fr.json';
 import ja from '../../i18n/ja.json';
-import ko from '../../i18n/ko.json';
-import nl from '../../i18n/nl.json';
 import ptBr from '../../i18n/pt-br.json';
 import ru from '../../i18n/ru.json';
 import zhCn from '../../i18n/zh-cn.json';
-import zhTw from '../../i18n/zh-tw.json';
 
 export type Messages = typeof en;
 
@@ -33,15 +30,12 @@ export type MessageVars = Record<string, string | number>;
 export const LANGUAGES = {
     en,
     'zh-cn': zhCn,
-    'zh-tw': zhTw,
     ja,
-    ko,
     ru,
     de,
     fr,
     es,
     'pt-br': ptBr,
-    nl,
 } as const;
 
 export type Language = keyof typeof LANGUAGES;
@@ -50,9 +44,6 @@ const ALIASES: Record<string, Language> = {
     zh: 'zh-cn',
     'zh-sg': 'zh-cn',
     'zh-hans': 'zh-cn',
-    'zh-hk': 'zh-tw',
-    'zh-mo': 'zh-tw',
-    'zh-hant': 'zh-tw',
     pt: 'pt-br',
 };
 

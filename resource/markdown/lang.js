@@ -4,9 +4,7 @@ const DEFAULT_VDITOR_LANG = 'en_US'
 const VSCODE_TO_VDITOR = new Map([
     ['en', 'en_US'],
     ['zh-cn', 'zh_CN'],
-    ['zh-tw', 'zh_TW'],
     ['ja', 'ja_JP'],
-    ['ko', 'ko_KR'],
     ['ru', 'ru_RU'],
 ])
 
