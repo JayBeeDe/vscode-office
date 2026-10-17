@@ -32,14 +32,26 @@
       "officeViewer": "Office Viewer",
       "switchToLight": "Switch to light mode",
       "switchToDark": "Switch to adaptive dark mode",
-      "editInVscode": "Edit In VS Code"
+      "editInVscode": "Edit In VS Code",
+      "switchToDarkHint": "Switch to dark mode (follows the VS Code theme)",
+      "previousPage": "Previous page",
+      "nextPage": "Next page",
+      "save": "Save",
+      "saved": "Saved successfully",
+      "zoomIn": "Zoom in",
+      "zoomOut": "Zoom out",
+      "readOnlyBadge": "Read-only"
     },
     "document": {
       "failedLoad": "Failed to load document"
     },
     "presentation": {
       "failedLoad": "Failed to load presentation",
-      "slides": "Slides"
+      "slides": "Slides",
+      "slide": "Slide {number}",
+      "status": "Slide {number} / {count}",
+      "slideCount": "{count} slides",
+      "loadingThumbnails": "loading…"
     },
     "epub": {
       "searchBook": "Search book...",
@@ -47,11 +59,24 @@
       "failedRender": "Failed to render EPUB page",
       "searchFailed": "Search failed",
       "untitled": "Untitled",
-      "error": "Error"
+      "error": "Error",
+      "cover": "Cover",
+      "themes": "Themes",
+      "font": "Font",
+      "systemFont": "System",
+      "fontSize": "Font Size",
+      "lineSpacing": "Line Spacing",
+      "reset": "Reset",
+      "resetAll": "Reset All",
+      "currentLocation": "Current location"
     },
     "xmind": {
       "loading": "Loading XMind...",
-      "sheets": "Sheets"
+      "sheets": "Sheets",
+      "failedLoad": "Failed to load XMind file",
+      "failedSave": "Failed to save XMind file",
+      "noSheets": "No sheets found in XMind file",
+      "noContent": "No content available"
     },
     "parquet": {
       "readOnly": "Read-only — changes are not saved to disk",
@@ -64,7 +89,8 @@
       "save": "Save",
       "saveSuccess": "Parquet file saved",
       "unsaved": "Unsaved changes",
-      "invalidValue": "\"{value}\" is not a valid {type} value"
+      "invalidValue": "\"{value}\" is not a valid {type} value",
+      "failedLoad": "Failed to load parquet file"
     }
   },
   "spreadsheet": {
