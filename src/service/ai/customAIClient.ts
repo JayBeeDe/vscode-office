@@ -1,4 +1,4 @@
-/** 主流 AI HTTP API 格式 */
+/** Common AI HTTP API formats */
 export type CustomAIApiFormat = "auto" | "openai" | "anthropic" | "gemini" | "ollama";
 
 export interface CustomAIRequestOptions {
@@ -20,7 +20,7 @@ const DEFAULT_MODELS: Record<Exclude<CustomAIApiFormat, "auto">, string> = {
 
 const trimTrailingSlash = (url: string) => url.replace(/\/+$/, "");
 
-/** 根据 URL 猜测 API 格式 */
+/** Guess the API format from the URL */
 export const detectCustomAIFormat = (url: string): Exclude<CustomAIApiFormat, "auto"> => {
     const lower = url.toLowerCase();
     if (lower.includes("anthropic.com") || lower.includes("/v1/messages")) {
@@ -327,7 +327,7 @@ export interface StreamCustomAIOptions extends CustomAIRequestOptions {
     onChunk: (chunk: string) => void;
 }
 
-/** 从 SSE 行中提取 delta 文本，兼容 OpenAI / Anthropic / Ollama / Gemini 流格式 */
+/** Extract the delta text from an SSE line; supports the OpenAI / Anthropic / Ollama / Gemini stream formats */
 const parseStreamChunk = (format: Exclude<CustomAIApiFormat, "auto">, line: string): string => {
     // "data:" with or without the space after it
     if (line.startsWith("data:")) {
@@ -355,7 +355,7 @@ const parseStreamChunk = (format: Exclude<CustomAIApiFormat, "auto">, line: stri
     return "";
 };
 
-/** 流式请求 body（在 non-stream body 上加 stream: true） */
+/** Streaming request body (the non-stream body plus stream: true) */
 const buildStreamBody = (
     format: Exclude<CustomAIApiFormat, "auto">,
     body: Record<string, unknown>,
@@ -364,7 +364,7 @@ const buildStreamBody = (
         case "anthropic":
             return { ...body, stream: true };
         case "gemini":
-            // Gemini 流式需要换用 streamGenerateContent 端点，URL 已在 resolveGeminiUrl 中处理
+            // Gemini streaming needs the streamGenerateContent endpoint; the URL is handled in resolveGeminiUrl
             return body;
         case "ollama":
             return { ...body, stream: true };
@@ -373,14 +373,14 @@ const buildStreamBody = (
     }
 };
 
-/** 将 Gemini URL 从 generateContent 换为 streamGenerateContent；alt=sse 让它以 SSE 行返回，而非一个 JSON 数组 */
+/** Switch the Gemini URL from generateContent to streamGenerateContent; alt=sse makes it return SSE lines instead of a JSON array */
 const toGeminiStreamUrl = (url: string): string => {
     const streamUrl = url.replace(/:generateContent(\?|$)/, ":streamGenerateContent$1");
     if (/[?&]alt=sse\b/.test(streamUrl)) return streamUrl;
     return `${streamUrl}${streamUrl.includes("?") ? "&" : "?"}alt=sse`;
 };
 
-/** 流式调用自定义 AI，每个 token 通过 onChunk 回调，全部结束后 resolve */
+/** Call the custom AI in streaming mode; each token is passed to onChunk, and the promise resolves when everything is done */
 export const streamCustomAI = async (options: StreamCustomAIOptions): Promise<void> => {
     const rawUrl = options.url?.trim();
     if (!rawUrl) throw new Error("API URL is required.");
@@ -429,7 +429,7 @@ export const streamCustomAI = async (options: StreamCustomAIOptions): Promise<vo
     }
 };
 
-/** 调用自定义 AI HTTP 接口，自动适配 OpenAI / Anthropic / Gemini / Ollama 等格式 */
+/** Call the custom AI HTTP API, adapting automatically to the OpenAI / Anthropic / Gemini / Ollama formats */
 export const callCustomAI = async (options: CustomAIRequestOptions): Promise<string> => {
     const rawUrl = options.url?.trim();
     if (!rawUrl) {

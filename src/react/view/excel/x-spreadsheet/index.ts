@@ -90,7 +90,7 @@ export interface CellData {
     text: string;
     style?: number;
     merge?: CellMerge;
-    /** false 表示不可编辑（对应 Excel 锁定单元格） */
+    /** false means not editable (matches an Excel locked cell) */
     editable?: boolean;
     /** formula result saved in the file, shown when the viewer can't compute the formula */
     cached?: string;
@@ -167,9 +167,9 @@ export interface SheetData {
     autofilter?: SheetAutofilterData;
     hyperlinks?: Record<string, SheetHyperlinkData>;
     validations?: SheetValidationData[];
-    /** Excel 工作表保护配置（不含密码） */
+    /** Excel worksheet protection settings (without the password) */
     sheetProtection?: Record<string, unknown>;
-    /** 宏工作簿 (xlsm/xltm) 中关联 VBA 工作表模块的 codeName */
+    /** codeName linking to the VBA worksheet module in macro workbooks (xlsm/xltm) */
     codeName?: string;
     /** id of the worksheet this sheet was loaded from, so a save updates that worksheet in place */
     sourceSheetId?: number;
@@ -375,7 +375,7 @@ export class Spreadsheet {
         const copyName = this.uniqueSheetName(source.name);
         const sheetData = JSON.parse(JSON.stringify(source.getData())) as SheetData;
         sheetData.name = copyName;
-        // 副本没有对应的 VBA 工作表模块
+        // The copy has no matching VBA worksheet module
         delete sheetData.codeName;
         delete sheetData.sourceSheetId;
 

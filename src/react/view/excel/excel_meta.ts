@@ -14,31 +14,31 @@ function stringAt(index: number): string {
     return str;
 }
 
-/** x-spreadsheet 默认行高（px），与 Excel.tsx 中 row.height 一致 */
+/** x-spreadsheet default row height (px), matches row.height in Excel.tsx */
 export const DEFAULT_ROW_HEIGHT_PX = 30;
 
-/** 视口最少列数（A–X，共 24 列） */
+/** Minimum number of viewport columns (A–X, 24 columns) */
 export const MIN_VIEW_COLS = 24;
 
-/** 视口最少行数 */
+/** Minimum number of viewport rows */
 export const MIN_VIEW_ROWS = 40;
 
-/** Excel 行高（磅）→ 像素 */
+/** Excel row height (points) → pixels */
 export function excelRowHeightToPx(pt: number): number {
     return Math.round(pt * 96 / 72);
 }
 
-/** 像素 → Excel 行高（磅） */
+/** Pixels → Excel row height (points) */
 export function pxToExcelRowHeight(px: number): number {
     return px * 72 / 96;
 }
 
-/** x-spreadsheet freeze 字符串，如 "B2" */
+/** x-spreadsheet freeze string, e.g. "B2" */
 export function freezeToExpr(rowIndex: number, colIndex: number): string {
     return `${stringAt(colIndex)}${rowIndex + 1}`;
 }
 
-/** 从 Excel views 的 xSplit/ySplit 转为 x-spreadsheet freeze 字符串 */
+/** Convert Excel views xSplit/ySplit to an x-spreadsheet freeze string */
 export function excelFreezeToExpr(xSplit = 0, ySplit = 0): string | undefined {
     if (xSplit <= 0 && ySplit <= 0) return undefined;
     return freezeToExpr(ySplit, xSplit);
@@ -116,18 +116,18 @@ function buildSheetFormattingSnapshot(sheet: SheetData): FormattingSheetSnapshot
     };
 }
 
-/** 提取与工具栏相关的格式快照，用于对比是否发生过样式变更 */
+/** Extract a snapshot of the toolbar-related formatting, used to detect style changes */
 export function buildFormattingSnapshot(sheets: SheetData[]): string {
     return JSON.stringify(sheets.map(buildSheetFormattingSnapshot));
 }
 
-/** 相对初始快照是否发生过格式变更 */
+/** Whether the formatting changed relative to the initial snapshot */
 export function hasFormattingChanged(initialSnapshot: string, sheets: SheetData[]): boolean {
     if (!initialSnapshot) return false;
     return buildFormattingSnapshot(sheets) !== initialSnapshot;
 }
 
-/** 从 x-spreadsheet freeze 字符串解析 Excel views 参数 */
+/** Parse Excel views parameters from an x-spreadsheet freeze string */
 export function freezeExprToExcelView(freeze: string): { xSplit: number; ySplit: number } | undefined {
     let colPart = '';
     let rowPart = '';

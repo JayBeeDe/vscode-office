@@ -3,13 +3,13 @@ import type * as ExcelJS from '@cweijan/exceljs';
 export type SheetImageExtension = 'jpeg' | 'png' | 'gif' | 'bmp' | 'tiff' | 'svg' | 'emf' | 'wmf';
 
 export interface SheetImageAnchor {
-    /** 0-based，可为小数（表示在单元格内的偏移） */
+    /** 0-based, may be fractional (offset within the cell) */
     col: number;
     row: number;
-    /** oneCell + ext 锚点的宽高（像素，96dpi） */
+    /** Width and height of a oneCell + ext anchor (pixels, 96 dpi) */
     width?: number;
     height?: number;
-    /** twoCell 锚点右下角 */
+    /** Bottom-right corner of a twoCell anchor */
     brCol?: number;
     brRow?: number;
     editAs?: string;

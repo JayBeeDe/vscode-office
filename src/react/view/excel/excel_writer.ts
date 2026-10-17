@@ -21,20 +21,20 @@ import { formatCellText } from './excel_reader';
 export { buildFormattingSnapshot, hasFormattingChanged } from './excel_meta';
 
 export interface ExportOptions {
-    /** 通过另存为对话框保存，而非覆盖当前文件 */
+    /** Save through the Save As dialog instead of overwriting the current file */
     saveAs?: boolean;
-    /** saveAs 时指定目标格式 */
+    /** Target format for saveAs */
     saveAsExt?: string;
-    /** 目标扩展名，决定 [Content_Types].xml 中工作簿主部件的类型 (xltx/xlsm/xltm) */
+    /** Target extension; determines the workbook main part type in [Content_Types].xml (xltx/xlsm/xltm) */
     targetExt?: string;
-    /** 当前打开文件的原始内容；保存为 xlsm 时从中带回宏 (vbaProject.bin)，xlsx 系列在其基础上原地更新 */
+    /** Original content of the open file; saving as xlsm carries the macros (vbaProject.bin) back from it, and the xlsx family is updated in place on top of it */
     vbaSource?: ArrayBuffer;
     /** layout of the CSV/TSV file being saved (BOM, line endings, final line break) */
     csvFormat?: CsvFormat;
 }
 
 const WORKBOOK_CONTENT_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml';
-/** ExcelJS 总是写出普通工作簿类型；这些扩展名需改写主部件类型，否则 Excel 会报扩展名与格式不符 */
+/** ExcelJS always writes the plain workbook type; these extensions need the main part type rewritten, otherwise Excel reports that the extension does not match the format */
 const MAIN_CONTENT_TYPES: Record<string, string> = {
     xltx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.template.main+xml',
     xlsm: 'application/vnd.ms-excel.sheet.macroEnabled.main+xml',
@@ -43,7 +43,7 @@ const MAIN_CONTENT_TYPES: Record<string, string> = {
 const ODS_MEDIA_TYPE = 'application/vnd.oasis.opendocument.spreadsheet';
 const OTS_MEDIA_TYPE = 'application/vnd.oasis.opendocument.spreadsheet-template';
 
-/** SheetJS 负责写出的格式；模板 (xlt/ots) 与基础格式 (xls/ods) 结构相同 */
+/** Formats written by SheetJS; templates (xlt/ots) have the same structure as their base formats (xls/ods) */
 const SHEETJS_BOOK_TYPES: Record<string, XLSX.BookType> = { xls: 'xls', xlt: 'xls', ods: 'ods', ots: 'ods' };
 
 function isRowData(row: RowData | number | undefined): row is RowData {
@@ -511,7 +511,7 @@ function encodeCsvSheet(xws: SheetData, delimiter: string, encoding: CsvEncoding
     return withBom;
 }
 
-/** ots = ods 改写 mimetype 与 manifest；mimetype 须为首个且不压缩的条目 */
+/** ots = ods with the mimetype and manifest rewritten; mimetype must be the first, uncompressed entry */
 async function toOdsTemplate(buffer: Uint8Array) {
     const source = await JSZip.loadAsync(buffer);
     const zip = new JSZip();

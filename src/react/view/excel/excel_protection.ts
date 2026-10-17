@@ -23,7 +23,7 @@ export function isWorksheetProtected(worksheet: ExcelJS.Worksheet): boolean {
     return readWorksheetProtection(worksheet) != null;
 }
 
-/** 受保护工作表中：默认锁定；仅 protection.locked === false 的单元格可编辑 */
+/** In a protected worksheet cells are locked by default; only cells with protection.locked === false are editable */
 export function readCellEditableFromExcel(cell: ExcelJS.Cell, sheetProtected: boolean): boolean | undefined {
     if (!sheetProtected) return undefined;
     if (cell.protection?.locked === false) return true;

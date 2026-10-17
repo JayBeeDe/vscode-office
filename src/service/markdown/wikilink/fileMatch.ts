@@ -21,7 +21,7 @@ export function matchesWikiPage(fullPath: string, page: string): boolean {
     return fileBase === target || basename(posix) === target;
 }
 
-/** 多个命中时取路径最短（最接近笔记库根） */
+/** With several matches, pick the shortest path (closest to the vault root) */
 export function pickBestPath(paths: string[], page: string): string | null {
     let best: string | null = null;
     let bestLength = Number.MAX_SAFE_INTEGER;
@@ -39,7 +39,7 @@ export function pickBestPath(paths: string[], page: string): string | null {
     return best;
 }
 
-/** 多个命中时取路径最短（最接近笔记库根），保留原始 URI scheme（Remote SSH 等） */
+/** With several matches, pick the shortest path (closest to the vault root), keeping the original URI scheme (Remote SSH, etc.) */
 export function pickBestUri(uris: vscode.Uri[], page: string): vscode.Uri | null {
     let best: vscode.Uri | null = null;
     let bestLength = Number.MAX_SAFE_INTEGER;

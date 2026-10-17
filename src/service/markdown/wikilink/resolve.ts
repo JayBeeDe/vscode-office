@@ -18,7 +18,7 @@ export async function resolveWikiLinkFile(
     const workspaceUri = workspaceFolder?.uri;
     const roots = buildSearchRootUris(currentUri, workspaceUri);
 
-    // 1. 祖先目录直接 stat（最快，桌面 / Web / Remote 均可用）
+    // 1. Direct stat in ancestor directories (fastest, works on desktop / Web / Remote)
     for (const root of roots) {
         const found = await statMarkdownAt(root, normalized);
         if (found) {
@@ -32,7 +32,7 @@ export async function resolveWikiLinkFile(
 
     const workspacePath = workspaceUri.fsPath;
 
-    // 2. 各祖先目录内 findFiles 精确匹配（处理 stat 权限等边缘情况）
+    // 2. Exact findFiles match within each ancestor directory (handles edge cases such as stat permissions)
     for (const root of roots) {
         if (root.fsPath !== workspacePath && !root.fsPath.startsWith(workspacePath.endsWith(sep) ? workspacePath : workspacePath + sep)) {
             continue;
@@ -44,7 +44,7 @@ export async function resolveWikiLinkFile(
         }
     }
 
-    // 3. 工作区递归 ** 匹配（笔记库根不在工作区根时兜底）
+    // 3. Recursive ** match across the workspace (fallback when the vault root is not the workspace root)
     const recursiveHits = await findMarkdownRecursive(workspaceFolder, workspacePath, normalized);
     return pickBestUri(recursiveHits, normalized);
 }

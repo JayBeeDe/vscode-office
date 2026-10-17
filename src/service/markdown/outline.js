@@ -120,7 +120,7 @@ async function creatOutlines(doc, dictArray) {
     const outlineRefers = buildOutline(dictArray, doc, outlinesDictRef);
 
 
-    // 下面是将outline引用绑定pdf outline
+    // Below, bind the outline references to the PDF outline
     const outlinesDictMap = new Map();
     outlinesDictMap.set(PDFName.Type, PDFName.of("Outlines"));
     outlinesDictMap.set(PDFName.of("First"), outlineRefers[0]);

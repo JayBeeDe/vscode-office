@@ -13,7 +13,7 @@
 import { tf } from '../locale/locale';
 import { numberCalc } from './helper';
 
-/** 函数名展示：首字母大写，其余小写（Sum / Average） */
+/** Function name display: first letter uppercase, the rest lowercase (Sum / Average) */
 export function formulaDisplayName(key) {
   if (!key) return '';
   const lower = String(key).toLowerCase();

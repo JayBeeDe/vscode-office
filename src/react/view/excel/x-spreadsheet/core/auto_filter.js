@@ -124,7 +124,7 @@ export default class AutoFilter {
     if (this.active()) {
       const { sri, eri } = this.range();
       const { filters } = this;
-      // 首行 sri 为表头，不参与筛选
+      // The first row (sri) is the header and is not filtered
       for (let ri = sri + 1; ri <= eri; ri += 1) {
         let visible = filters.length === 0;
         for (let i = 0; i < filters.length; i += 1) {

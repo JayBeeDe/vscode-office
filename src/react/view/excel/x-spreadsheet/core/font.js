@@ -36,10 +36,10 @@ function getPlatformCnFonts() {
 }
 
 const baseFonts = [
-  // 系统默认
+  // System default
   getSystemDefaultFont(),
   { divider: true },
-  // 通用字体
+  // Common fonts
   { key: 'Arial', title: 'Arial' },
   { key: 'Helvetica', title: 'Helvetica' },
   { key: 'Verdana', title: 'Verdana' },
@@ -49,7 +49,7 @@ const baseFonts = [
   { key: 'Times New Roman', title: 'Times New Roman' },
   { key: 'Georgia', title: 'Georgia' },
   { key: 'Courier New', title: 'Courier New' },
-  // 平台中文字体
+  // Platform Chinese fonts
   ...(() => {
     const cnFonts = getPlatformCnFonts();
     return cnFonts.length ? [{ divider: true }, ...cnFonts] : [];

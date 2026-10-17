@@ -4,13 +4,13 @@ const VBA_REL_TYPE = 'http://schemas.microsoft.com/office/2006/relationships/vba
 const WORKBOOK_PATH = 'xl/workbook.xml';
 const WORKBOOK_RELS_PATH = 'xl/_rels/workbook.xml.rels';
 
-/** 原 xlsm 中保存时需原样带回的宏部件；ExcelJS 重建工作簿时会全部丢失 */
+/** Macro parts of the original xlsm that must be carried back unchanged on save; ExcelJS drops them all when rebuilding the workbook */
 export interface VbaParts {
     vbaPath: string;
     files: Record<string, Uint8Array>;
-    /** [Content_Types].xml 中与上述部件相关的 Default / Override 条目 */
+    /** Default / Override entries in [Content_Types].xml related to the parts above */
     contentTypes: string[];
-    /** VBA 文档模块 (ThisWorkbook / Sheet1…) 依靠 codeName 与工作簿、工作表关联 */
+    /** VBA document modules (ThisWorkbook / Sheet1…) are linked to the workbook and worksheets through codeName */
     workbookCodeName?: string;
 }
 
@@ -24,7 +24,7 @@ const encodeXml = (text: string) => text
 
 const relationships = (xml: string) => xml.match(/<Relationship\b[^>]*>/g) ?? [];
 
-/** 将关系目标解析为包内路径：以 / 开头为绝对路径，否则相对于源部件所在目录 */
+/** Resolve a relationship target to a package path: absolute if it starts with /, otherwise relative to the source part's directory */
 const resolvePart = (baseDir: string, target: string) => target.startsWith('/') ? target.slice(1) : baseDir + target;
 
 async function openPackage(buffer: ArrayBuffer) {
@@ -36,8 +36,8 @@ async function openPackage(buffer: ArrayBuffer) {
 }
 
 /**
- * 工作表名称 → codeName。加载时读取并随工作表数据保存，
- * 这样重命名、调整顺序后保存仍能对应到原来的 VBA 工作表模块
+ * Worksheet name → codeName. Read on load and kept with the worksheet data,
+ * so that after renaming or reordering, saving still maps to the original VBA worksheet modules
  */
 export async function readSheetCodeNames(buffer: ArrayBuffer): Promise<Record<string, string>> {
     const zip = await openPackage(buffer);
@@ -118,7 +118,7 @@ export async function extractVbaParts(buffer: ArrayBuffer): Promise<VbaParts | n
     return { vbaPath, files, contentTypes, workbookCodeName: workbookCodeName ? decodeXml(workbookCodeName) : undefined };
 }
 
-/** 在已有元素上设置 codeName，元素不存在时在 insertAt 返回的位置插入 */
+/** Set codeName on the existing element; if the element is missing, insert it at the position returned by insertAt */
 function withCodeName(xml: string, tag: string, codeName: string, insertAt: (xml: string) => number) {
     const value = encodeXml(codeName);
     const element = xml.match(new RegExp(`<${tag}\\b[^>]*>`))?.[0];
@@ -132,7 +132,7 @@ function withCodeName(xml: string, tag: string, codeName: string, insertAt: (xml
     return index < 0 ? xml : `${xml.slice(0, index)}<${tag} codeName="${value}"/>${xml.slice(index)}`;
 }
 
-/** sheetCodeNames 为写出顺序，对应 xl/worksheets/sheet{n}.xml */
+/** sheetCodeNames is in write order, matching xl/worksheets/sheet{n}.xml */
 export async function injectVbaParts(zip: JSZip, parts: VbaParts, sheetCodeNames: (string | undefined)[]) {
     for (const [path, data] of Object.entries(parts.files)) {
         zip.file(path, data);
@@ -171,7 +171,7 @@ export async function injectVbaParts(zip: JSZip, parts: VbaParts, sheetCodeNames
                 xml => xml.search(/<bookViews\b|<sheets\b/)));
         }
     }
-    // codeName 必须唯一，重复的 (例如复制而来的工作表) 留空，由 Excel 重新分配
+    // codeName must be unique; duplicates (e.g. copied worksheets) are left empty for Excel to reassign
     const usedCodeNames = new Set(parts.workbookCodeName ? [parts.workbookCodeName] : []);
     for (let i = 0; i < sheetCodeNames.length; i += 1) {
         const candidate = sheetCodeNames[i];
@@ -182,7 +182,7 @@ export async function injectVbaParts(zip: JSZip, parts: VbaParts, sheetCodeNames
         const path = `xl/worksheets/sheet${i + 1}.xml`;
         const sheetXml = codeName ? await zip.file(path)?.async('string') : undefined;
         if (!codeName || !sheetXml) continue;
-        // sheetPr 必须是 worksheet 的第一个子元素
+        // sheetPr must be the first child of worksheet
         zip.file(path, withCodeName(sheetXml, 'sheetPr', codeName, xml => {
             const open = xml.match(/<worksheet\b[^>]*>/);
             return open?.index === undefined ? -1 : open.index + open[0].length;

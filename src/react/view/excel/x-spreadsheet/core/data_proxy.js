@@ -1325,7 +1325,7 @@ export default class DataProxy {
       this.sortedRowMap.set(oldAry[index], it);
       this.unsortedRowMap.set(it, oldAry[index]);
     });
-    // 筛选后回到表头行，首行不参与筛选且始终可见
+    // After filtering, go back to the header row; the first row is never filtered and is always visible
     const { scroll } = this;
     scroll.ri = sri;
     scroll.y = rows.sumHeight(0, sri, this.exceptRowSet);
