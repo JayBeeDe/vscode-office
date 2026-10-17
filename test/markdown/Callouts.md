@@ -1,42 +1,42 @@
-# Callout 专项测试
+# Callout Tests
 
-返回 [[Home]]。本页集中测试各 Callout 类型，并与其他页面互链。
+Back to [[Home]]. This page tests every callout type, combined with links to other pages.
 
 #test/callout
 
-## 内置类型
+## Built-in Types
 
-> [!NOTE] 笔记
-> 链到 [[Reference/Glossary#^term-callout]]。
+> [!NOTE] Note
+> Links to [[Reference/Glossary#^term-callout]].
 
-> [!TIP] 提示
-> 嵌入路线图：![[Projects/Roadmap]]
+> [!TIP] Tip
+> Embedded roadmap: ![[Projects/Roadmap]]
 
-> [!IMPORTANT] 重要
-> 行动项：[[Notes/Meeting-Notes#^action-items]]
+> [!IMPORTANT] Important
+> Action items: [[Notes/Meeting-Notes#^action-items]]
 
-> [!WARNING] 警告
-> 认证：[[Reference/API#^auth-section]]
+> [!WARNING] Warning
+> Authentication: [[Reference/API#^auth-section]]
 
-> [!CAUTION] 危险
-> 勿与 [[Reference/API#^api-errors]] 混淆。
+> [!CAUTION] Caution
+> Do not confuse with [[Reference/API#^api-errors]].
 
-## 自定义类型
+## Custom Types
 
-> [!question] 常见问题
-> 双链是什么？见 [[Reference/Glossary#^term-wikilink]]。
+> [!question] Frequently asked question
+> What is a wikilink? See [[Reference/Glossary#^term-wikilink]].
 
-> [!faq] 无内置图标类型
-> 自定义 `faq` 类型应显示标题文字。
+> [!faq] Type without a built-in icon
+> The custom `faq` type should show its title text.
 
-## Callout 内双链与标签
+## Wikilinks and Tags Inside a Callout
 
-> [!NOTE] 混合内容
-> - 页面：[[Projects/Vditor]]、[[Notes/Daily-2026-06-24]]
-> - 嵌入：![[Notes/Meeting-Notes]]
-> - 标签：#mixed #callout/demo
-> - 块引：[[#^callout-footer]]
+> [!NOTE] Mixed content
+> - Pages: [[Projects/Vditor]], [[Notes/Daily-2026-06-24]]
+> - Embed: ![[Notes/Meeting-Notes]]
+> - Tags: #mixed #callout/demo
+> - Block reference: [[#^callout-footer]]
 
-页脚块 ^callout-footer
+Footer block ^callout-footer
 
-本页用于 Callout 与跨文件链接组合测试。
+This page tests callouts combined with cross-file links.

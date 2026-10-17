@@ -1,4 +1,4 @@
-# 术语表
+# Glossary
 
 [[Home]] · [[Reference/API]]
 
@@ -6,41 +6,41 @@
 
 ## WikiLink
 
-Obsidian 双链语法：`[[目标页面]]`、`[[路径/页面|别名]]`。 ^term-wikilink
+Obsidian wikilink syntax: `[[Target page]]`, `[[path/page|alias]]`. ^term-wikilink
 
-示例：[[Projects/Vditor]]、[[Notes/Meeting-Notes|会议纪要]]
+Examples: [[Projects/Vditor]], [[Notes/Meeting-Notes|Meeting notes]]
 
 ## Embed
 
-嵌入语法：`![[页面]]`，将目标页面或资源以嵌入形式展示。 ^term-embed
+Embed syntax: `![[page]]` shows the target page or resource embedded. ^term-embed
 
-示例：![[Projects/Roadmap]]
+Example: ![[Projects/Roadmap]]
 
 ## Block ID
 
-在块末书写 `^block-id`，他处通过 `[[页面#^block-id]]` 引用。 ^term-block-id
+Write `^block-id` at the end of a block, and reference it elsewhere with `[[page#^block-id]]`. ^term-block-id
 
-示例块：
+Sample block:
 
-这是一个带块 ID 的示例段落。 ^sample-block
+This is a sample paragraph with a block ID. ^sample-block
 
-引用方式：[[Reference/Glossary#^sample-block]]、[[#^term-block-id]]
+References: [[Reference/Glossary#^sample-block]], [[#^term-block-id]]
 
 ## Tag
 
-标签以 `#` 开头，支持嵌套：`#a/b/c`。 ^term-tag
+Tags start with `#` and can be nested: `#a/b/c`. ^term-tag
 
-示例：#obsidian/test #project/vditor
+Examples: #obsidian/test #project/vditor
 
 ## Callout
 
-引用块扩展：`> [!NOTE] 标题`。 ^term-callout
+Blockquote extension: `> [!NOTE] Title`. ^term-callout
 
-> [!NOTE] 示例
-> Callout 正文可含 [[Home]] 与 #inline-tag。
+> [!NOTE] Example
+> A callout body can contain [[Home]] and #inline-tag.
 
-## 非 Obsidian 语法（对照）
+## Non-Obsidian Syntax (for Comparison)
 
-- 标准链接：[MDN](https://developer.mozilla.org)
-- 代码内：`[[not-wikilink]]`
-- URL：`https://example.com#fragment`（非标签）
+- Standard link: [MDN](https://developer.mozilla.org)
+- Inside code: `[[not-wikilink]]`
+- URL: `https://example.com#fragment` (not a tag)
