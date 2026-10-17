@@ -81,7 +81,7 @@ const FindReplacePanel = forwardRef<FindReplacePanelHandle, FindReplacePanelProp
         lastMatchRef.current = match;
         const col = String.fromCharCode(65 + (match.ci % 26));
         setStatus({
-            text: t('findReplace.matchLocation', match.sheetIndex + 1, col, match.ri + 1),
+            text: t('findReplace.matchLocation', { sheet: match.sheetIndex + 1, column: col, row: match.ri + 1 }),
         });
         focusFindInput();
     }, [spreadSheet, focusFindInput]);
@@ -118,7 +118,7 @@ const FindReplacePanel = forwardRef<FindReplacePanelHandle, FindReplacePanelProp
         if (!spreadSheet || !findText) return;
         const count = spreadSheet.replaceAll(findText, replaceText, buildOptions());
         onChanged?.();
-        setStatus({ text: t('findReplace.replacedCount', count) });
+        setStatus({ text: t('findReplace.replacedCount', { count }) });
         lastMatchRef.current = null;
         focusFindInput();
     }, [spreadSheet, findText, replaceText, buildOptions, onChanged, focusFindInput]);

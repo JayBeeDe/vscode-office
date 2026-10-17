@@ -1,5 +1,5 @@
 import { getConfigs } from '../../util/vscodeConfig.ts';
-import { getMessages, Language, resolveLanguage } from '../../../i18n/index.ts';
+import { getMessages, Language, MessageVars, resolveLanguage } from '../../../i18n/index.ts';
 import Spreadsheet from './x-spreadsheet/index';
 import { t as localeT } from './x-spreadsheet/locale/locale';
 
@@ -20,12 +20,8 @@ export function getExcelLang(): Language {
     return currentLang;
 }
 
-/** Translate a locale key; `{}` placeholders are filled in order. */
-export function t(key: string, ...args: (string | number)[]): string {
+/** Translates a key of the `spreadsheet` section; vars fill its `{name}` placeholders. */
+export function t(key: string, vars?: MessageVars): string {
     if (!initialized) initExcelLocale();
-    let text = localeT(key);
-    for (const arg of args) {
-        text = text.replace('{}', String(arg));
-    }
-    return text;
+    return localeT(key, vars);
 }

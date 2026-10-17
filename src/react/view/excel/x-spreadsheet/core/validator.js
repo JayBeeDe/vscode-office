@@ -6,10 +6,10 @@ const rules = {
   email: /^[\w.+-]+@[\w.-]+\.[a-zA-Z]{2,}$/,
 };
 
-function returnMessage(flag, key, ...arg) {
+function returnMessage(flag, key, vars) {
   let message = '';
   if (!flag) {
-    message = t(`validation.${key}`, ...arg);
+    message = t(`validation.${key}`, vars);
   }
   return [flag, message];
 }
@@ -79,8 +79,7 @@ export default class Validator {
         return returnMessage(
           v1 >= this.parseValue(min) && v1 <= this.parseValue(max),
           'between',
-          min,
-          max,
+          { min, max },
         );
       }
       if (operator === 'nbe') {
@@ -88,50 +87,49 @@ export default class Validator {
         return returnMessage(
           v1 < this.parseValue(min) || v1 > this.parseValue(max),
           'notBetween',
-          min,
-          max,
+          { min, max },
         );
       }
       if (operator === 'eq') {
         return returnMessage(
           v1 === this.parseValue(value),
           'equal',
-          value,
+          { value },
         );
       }
       if (operator === 'neq') {
         return returnMessage(
           v1 !== this.parseValue(value),
           'notEqual',
-          value,
+          { value },
         );
       }
       if (operator === 'lt') {
         return returnMessage(
           v1 < this.parseValue(value),
           'lessThan',
-          value,
+          { value },
         );
       }
       if (operator === 'lte') {
         return returnMessage(
           v1 <= this.parseValue(value),
           'lessThanEqual',
-          value,
+          { value },
         );
       }
       if (operator === 'gt') {
         return returnMessage(
           v1 > this.parseValue(value),
           'greaterThan',
-          value,
+          { value },
         );
       }
       if (operator === 'gte') {
         return returnMessage(
           v1 >= this.parseValue(value),
           'greaterThanEqual',
-          value,
+          { value },
         );
       }
     }

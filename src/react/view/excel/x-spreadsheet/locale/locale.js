@@ -1,5 +1,5 @@
 /* global window */
-import { getMessages } from '../../../../../i18n/index.ts';
+import { format, getMessages } from '../../../../../i18n/index.ts';
 
 // The strings live in the `spreadsheet` section of i18n/<language>.json
 const en = getMessages('en').spreadsheet;
@@ -40,12 +40,13 @@ function translate(key, messages) {
   return undefined;
 }
 
-function t(key) {
+// vars fill the {name} placeholders of a string
+function t(key, vars) {
   let v = translate(key, $messages);
   if (!v && window && window.x_spreadsheet && window.x_spreadsheet.$messages) {
     v = translate(key, window.x_spreadsheet.$messages);
   }
-  return v || '';
+  return typeof v === 'string' ? format(v, vars) : v || '';
 }
 
 function tf(key) {
