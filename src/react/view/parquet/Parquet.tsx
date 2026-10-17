@@ -230,7 +230,7 @@ function ParquetViewer() {
             setAllRows(rows);
         } catch (e) {
             if (generation !== loadGenerationRef.current) return;
-            setError(e instanceof Error ? e.message : 'Failed to load parquet file');
+            setError(e instanceof Error ? e.message : $t('parquet.failedLoad'));
         } finally {
             if (generation === loadGenerationRef.current) {
                 setLoading(false);
@@ -434,7 +434,7 @@ function ParquetViewer() {
                                         className="parquet-viewer__pager-btn"
                                         disabled={page <= 0}
                                         onClick={() => { cancelEdit(); setPage((p) => Math.max(0, p - 1)); }}
-                                        aria-label="Previous page"
+                                        aria-label={$t('common.previousPage')}
                                     >
                                         <span className="codicon codicon-chevron-left" />
                                     </button>
@@ -444,7 +444,7 @@ function ParquetViewer() {
                                         className="parquet-viewer__pager-btn"
                                         disabled={page >= totalPages - 1}
                                         onClick={() => { cancelEdit(); setPage((p) => Math.min(totalPages - 1, p + 1)); }}
-                                        aria-label="Next page"
+                                        aria-label={$t('common.nextPage')}
                                     >
                                         <span className="codicon codicon-chevron-right" />
                                     </button>

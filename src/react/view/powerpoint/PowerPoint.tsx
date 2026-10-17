@@ -4,6 +4,7 @@ import { PPTXViewer } from "pptxviewjs";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { handler, loadDarkMode, applyDarkMode } from "../../util/vscode";
 import { loadOfficeBuffer } from "../../util/loadOfficeContent";
+import { $t } from "../../i18n/i18nConfig.ts";
 import { loadMasterImages } from "./masterImages";
 import './PowerPoint.css';
 
@@ -355,7 +356,7 @@ export default function PowerPoint() {
         } catch (e) {
             // a load replaced by a newer one doesn't report errors over the new deck
             if (!isCurrent()) return;
-            setError(e instanceof Error ? e.message : 'Failed to load presentation');
+            setError(e instanceof Error ? e.message : $t('presentation.failedLoad'));
             setLoading(false);
         } finally {
             if (isCurrent()) setThumbsLoading(false);
@@ -642,8 +643,8 @@ export default function PowerPoint() {
                     <Sider width={SIDER_WIDTH} className="ppt-thumbnails">
                         <div className="ppt-thumbnails-inner">
                             <div className="ppt-thumbnails-header">
-                                {slideCount > 0 ? `${slideCount} slides` : 'Slides'}
-                                {thumbsLoading && ' · loading…'}
+                                {slideCount > 0 ? $t('presentation.slideCount', { count: slideCount }) : $t('presentation.slides')}
+                                {thumbsLoading && ` · ${$t('presentation.loadingThumbnails')}`}
                             </div>
                             <div className="ppt-thumbnails-list" ref={thumbListRef}>
                                 {slideCount > 0 && thumbnails.length === 0 && thumbsLoading && (
@@ -660,7 +661,7 @@ export default function PowerPoint() {
                                         className={`ppt-thumb${index === currentIndex ? ' is-active' : ''}`}
                                         onClick={() => selectSlide(index)}
                                     >
-                                        <img src={url} alt={`Slide ${index + 1}`} draggable={false} />
+                                        <img src={url} alt={$t('presentation.slide', { number: index + 1 })} draggable={false} />
                                         <span className="ppt-thumb-num">{index + 1}</span>
                                     </div>
                                 ))}
@@ -681,7 +682,7 @@ export default function PowerPoint() {
                         </div>
                         {slideCount > 0 && (
                             <div className="ppt-statusbar">
-                                Slide {currentIndex + 1} / {slideCount}
+                                {$t('presentation.status', { number: currentIndex + 1, count: slideCount })}
                                 {zoom !== 1 && ` · ${Math.round(zoom * 100)}%`}
                             </div>
                         )}
@@ -690,8 +691,8 @@ export default function PowerPoint() {
                 <button
                     type="button"
                     className={`color-mode-toggle${slideCount > 0 ? ' is-above-status' : ''}`}
-                    title={dark ? 'Switch to light mode' : 'Switch to dark mode'}
-                    aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
+                    title={dark ? $t('common.switchToLight') : $t('common.switchToDarkHint')}
+                    aria-label={dark ? $t('common.switchToLight') : $t('common.switchToDark')}
                     onClick={toggleDark}
                 >
                     {dark ? <SunOutlined /> : <MoonOutlined />}
