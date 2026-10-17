@@ -5,10 +5,19 @@ import "@eigenpal/docx-editor-react/styles.css";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { handler, onSaveRequest, vscodeApi } from "../../util/vscode";
 import { loadOfficeBuffer } from "../../util/loadOfficeContent";
-import { $t } from "../../i18n/i18nConfig.ts";
+import { $t, getLanguage, getSection } from "../../i18n/i18nConfig.ts";
+import { LANGUAGES } from "../../../i18n/index.ts";
 import "./Word.css";
 
 type WordColorMode = "light" | "adaptive";
+
+// the editor's toolbar, menus and dialogs: the `document` section of i18n/<language>.json.
+// _lang picks the plural rules: English ones while the language has no strings of its own,
+// or Japanese rules would give "1 replies"
+const EDITOR_STRINGS = {
+    ...getSection("document"),
+    _lang: "document" in LANGUAGES[getLanguage()] ? getLanguage() : "en",
+};
 
 const WORD_COLOR_MODE_KEY = "office-word-color-mode";
 
@@ -147,6 +156,7 @@ export default function Word() {
                 <>
                     <DocxEditor
                         key={documentKey}
+                        i18n={EDITOR_STRINGS}
                         ref={editorRef}
                         className="word-editor"
                         documentBuffer={documentBuffer}

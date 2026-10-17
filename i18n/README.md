@@ -7,6 +7,7 @@ host and the webviews import these files through `src/i18n/index.ts`.
 | --- | --- | --- |
 | `host` | the extension host: notifications, dialogs, status bar | `i18n('markdown.exportStart', { type })` in `src/common/global.ts` |
 | `viewer` | the React viewers: documents, presentations, EPUB, XMind, Parquet | `$t('parquet.totalRows', { count })` in `src/react/i18n/i18nConfig.ts` |
+| `document` | the document editor's toolbar, menus and dialogs (`@eigenpal/docx-editor-react`) | the editor, `{name}` and ICU plurals: `{count, plural, one {# reply} other {# replies}}` |
 | `spreadsheet` | the spreadsheet editor | `t('findReplace.replacedCount', { count })` in `src/react/view/excel/excel_i18n.ts` |
 | `markdown` | the markdown editor (Vditor), its context menu and AI dialogs | sent by the host; the Vditor scripts in `vditor/src/js/i18n` are generated at build |
 | `pdf` | the PDF viewer: the extension's buttons, and PDF.js's interface under `pdf.viewer` | injected by the host (`src/provider/pdfViewerStrings.ts`) |
@@ -22,6 +23,9 @@ host and the webviews import these files through `src/i18n/index.ts`.
   `data-l10n-id` is `previous` (a plain string is its text). A plural is a macro and one key per
   form, as in PDF.js: `find_match_count` is `{[ plural(total) ]}` and `find_match_count[one]`,
   `find_match_count[other]`... hold the texts; a language only needs the forms it uses.
+- `document` mirrors the strings of `@eigenpal/docx-editor-i18n`: when upgrading the editor,
+  compare its `en` locale with `document` in `en.json`, and take its new translations for the
+  languages it ships. The check cannot tell which of these keys the editor uses.
 - When upgrading PDF.js, compare its new `en-US/viewer.properties` with `pdf.viewer` in
   `en.json` (its `{{name}}` placeholders are written `{name}` here).
 
