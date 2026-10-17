@@ -11,7 +11,6 @@ import {EditorThemeToggle} from "./EditorThemeToggle";
 import {Headings} from "./Headings";
 import {Indent} from "./Indent";
 import {Find} from "./Find";
-import {Info} from "./Info";
 import {InsertAfter} from "./InsertAfter";
 import {InsertBefore} from "./InsertBefore";
 import {MenuItem} from "./MenuItem";
@@ -102,9 +101,6 @@ export class Toolbar {
                 break;
             case "upload":
                 menuItemObj = new Upload(vditor, menuItem);
-                break;
-            case "info":
-                menuItemObj = new Info(vditor, menuItem);
                 break;
             case "find":
                 menuItemObj = new Find(vditor, menuItem);
