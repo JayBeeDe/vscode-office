@@ -1,40 +1,40 @@
-# API 参考
+# API Reference
 
-索引：[[Home]]  
-术语：[[Reference/Glossary]]
+Index: [[Home]]  
+Terms: [[Reference/Glossary]]
 
 #reference #api
 
-## 认证
+## Authentication
 
-认证模块说明。客户端须携带 Token。 ^auth-section
+Description of the authentication module. Clients must send a token. ^auth-section
 
 ```
 Authorization: Bearer <token>
 ```
 
-从 [[Projects/Vditor]] 跳转至此块：[[Reference/API#^auth-section]]
+Jump to this block from [[Projects/Vditor]]: [[Reference/API#^auth-section]]
 
-## 双链解析
+## Wikilink Parsing
 
-解析 `[[path]]` 与 `[[path|alias]]`。 ^api-wikilink
+Parses `[[path]]` and `[[path|alias]]`. ^api-wikilink
 
-## 嵌入
+## Embeds
 
-解析 `![[path]]` 为嵌入节点。 ^api-embed
+Parses `![[path]]` into an embed node. ^api-embed
 
 ## Callout
 
-解析 `> [!TYPE] Title` 为 callout 块。 ^api-callout
+Parses `> [!TYPE] Title` into a callout block. ^api-callout
 
-> [!CAUTION] 破坏性变更
-> 修改 Lute Obsidian 选项可能影响已有文档渲染。
+> [!CAUTION] Breaking change
+> Changing the Lute Obsidian options may affect how existing documents render.
 
-## 错误码
+## Error Codes
 
-| 码 | 说明 |
+| Code | Description |
 | --- | --- |
-| 400 | 请求无效 |
-| 401 | 见 [[Reference/API#^auth-section]] |
+| 400 | Invalid request |
+| 401 | See [[Reference/API#^auth-section]] |
 
-错误码表 ^api-errors
+Error code table ^api-errors

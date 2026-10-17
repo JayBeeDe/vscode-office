@@ -1,53 +1,53 @@
 ---
-title: 首页
+title: Home
 tags: [obsidian, test, hub]
 ---
 
-# 测试库首页
+# Test Vault Home
 
-这是 Obsidian 语法多文件测试库的入口。从本页可跳转到各子页面，验证**跨文件双链**、**块引用**、**嵌入**与 **Callout**。
+This is the entry point of the multi-file Obsidian syntax test vault. From this page you can jump to every sub-page to check **cross-file wikilinks**, **block references**, **embeds** and **callouts**.
 
-## 快速导航
+## Quick Navigation
 
-| 主题 | 链接 |
+| Topic | Links |
 | --- | --- |
-| 项目 | [[Projects/Vditor]]、[[Projects/Roadmap]] |
-| 笔记 | [[Notes/Meeting-Notes]]、[[Notes/Daily-2026-06-24]] |
-| 参考 | [[Reference/API]]、[[Reference/Glossary]] |
+| Projects | [[Projects/Vditor]], [[Projects/Roadmap]] |
+| Notes | [[Notes/Meeting-Notes]], [[Notes/Daily-2026-06-24]] |
+| Reference | [[Reference/API]], [[Reference/Glossary]] |
 | Callout | [[Callouts]] |
 
-## 双链示例
+## Wikilink Examples
 
-- 无别名：[[Projects/Vditor]]
-- 有别名：[[Projects/Roadmap|产品路线图]]
-- 子路径：[[Reference/API#认证]]
+- Without alias: [[Projects/Vditor]]
+- With alias: [[Projects/Roadmap|Product roadmap]]
+- Subpath: [[Reference/API#Authentication]]
 
-## 嵌入示例
+## Embed Example
 
-整页嵌入：
+Whole-page embed:
 
 ![[Notes/Meeting-Notes]]
 
-## 块引用（同文件）
+## Block Reference (Same File)
 
-跳转到本页「待办汇总」：[[#^home-todos]]
+Jump to "To-do Summary" on this page: [[#^home-todos]]
 
-引用术语定义：[[Reference/Glossary#^term-wikilink]]
+Reference a term definition: [[Reference/Glossary#^term-wikilink]]
 
-## 标签
+## Tags
 
-本库标签：#obsidian/test #status/active
+Tags of this vault: #obsidian/test #status/active
 
-> [!TIP] 测试提示
-> 建议用 VS Code 分别打开 `test/obsidian/` 下多个 `.md` 文件，检查跨文件 `[[链接]]` 是否可识别与跳转（若扩展支持）。
+> [!TIP] Testing tip
+> Open several `.md` files under `test/markdown/` in VS Code and check that cross-file `[[links]]` are recognized and can be followed (if the extension supports it).
 
-## 待办汇总
+## To-do Summary
 
-以下段落带有块 ID，供他页引用 `[[Home#^home-todos]]`：
+The paragraph below has a block ID, so other pages can reference it with `[[Home#^home-todos]]`:
 
-- [ ] 验证 Callout 渲染
-- [ ] 验证双链与嵌入
-- [ ] 验证块引用 `^block-id` 与 `[[page#^id]]`
-- [ ] 验证标签 #nested/tag
+- [ ] Check callout rendering
+- [ ] Check wikilinks and embeds
+- [ ] Check block references `^block-id` and `[[page#^id]]`
+- [ ] Check tags #nested/tag
 
 ^home-todos

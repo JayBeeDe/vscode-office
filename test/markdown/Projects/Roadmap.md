@@ -1,25 +1,25 @@
-# 产品路线图
+# Product Roadmap
 
-返回：[[Home|首页]]  
-实现细节：[[Projects/Vditor|Vditor 项目]]
+Back: [[Home|Home page]]  
+Implementation details: [[Projects/Vditor|Vditor project]]
 
 #roadmap #planning
 
 ## Q2 2026
 
-- Obsidian Callout / WikiLink / Tag
-- 特殊块 CodeMirror（math、mermaid、plantuml）
-- AI 对话框
+- Obsidian callouts / wikilinks / tags
+- CodeMirror for special blocks (math, mermaid, plantuml)
+- AI dialog
 
 ## Q3 2026
 
-- 双链跳转与反向链接（若支持）
-- 块引用预览
+- Wikilink navigation and backlinks (if supported)
+- Block reference preview
 
-> [!NOTE] 里程碑
-> Alpha：#milestone/alpha  
-> Beta：#milestone/beta
+> [!NOTE] Milestones
+> Alpha: #milestone/alpha  
+> Beta: #milestone/beta
 
-路线图摘要块 ^roadmap-summary
+Roadmap summary block ^roadmap-summary
 
-本季度重点：完善 Obsidian 测试库与编辑器往返一致性。
+Focus this quarter: complete the Obsidian test vault and make editor round-trips consistent.

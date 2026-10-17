@@ -1,38 +1,38 @@
-# 会议纪要 — 2026-06-20
+# Meeting Notes — 2026-06-20
 
-参会：[[Home]] 维护者、[[Projects/Vditor]] 负责人  
-标签：#meeting #decision
+Attendees: [[Home]] maintainer, [[Projects/Vditor]] owner  
+Tags: #meeting #decision
 
-## 议题
+## Agenda
 
-### 1. Obsidian 测试库结构
+### 1. Obsidian Test Vault Structure
 
-决定采用 `test/obsidian/` 多文件布局，便于测跨页双链。
+Decided to use a multi-file layout under `test/markdown/`, which makes cross-page wikilinks easy to test.
 
-决议内容 ^decision-vault
+Decision ^decision-vault
 
-采用文件夹模拟 Obsidian Vault，每文件一个主题。
+Use folders to mimic an Obsidian vault, one topic per file.
 
-### 2. 块引用约定
+### 2. Block Reference Conventions
 
-- 块 ID 格式：`^kebab-case-id`
-- 跨页引用：`[[Notes/Meeting-Notes#^action-items]]`
-- 同页引用：`[[#^action-items]]`
+- Block ID format: `^kebab-case-id`
+- Cross-page reference: `[[Notes/Meeting-Notes#^action-items]]`
+- Same-page reference: `[[#^action-items]]`
 
-### 3. 行动项
+### 3. Action Items
 
-行动项列表（供他页嵌入引用）：
+Action item list (for embedding and references from other pages):
 
-1. 创建测试文档集
-2. 覆盖 Callout 各类型
-3. 记录边界用例到 [[Reference/Glossary]]
+1. Create the test document set
+2. Cover every callout type
+3. Record edge cases in [[Reference/Glossary]]
 
 ^action-items
 
-> [!WARNING] 未决问题
-> 块引用点击后是否滚动到目标块，取决于扩展实现。
+> [!WARNING] Open question
+> Whether clicking a block reference scrolls to the target block depends on the extension.
 
-## 相关链接
+## Related Links
 
 - [[Reference/API#^auth-section]]
 - [[Notes/Daily-2026-06-24]]
