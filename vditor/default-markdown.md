@@ -1,43 +1,43 @@
-Vditor 是一款**所见即所得**编辑器，支持 *Markdown*。
+Vditor is a **WYSIWYG** editor that supports *Markdown*.
 
-* 不熟悉 Markdown 可使用工具栏或快捷键进行排版
-* 熟悉 Markdown 可直接排版
+* If you don't know Markdown, use the toolbar or the shortcuts to format text
+* If you know Markdown, just type it
 
-更多细节和用法请参考 [Vditor - 浏览器端的 Markdown 编辑器](https://ld246.com/article/1549638745630)，同时也欢迎向我们提出建议或报告问题，谢谢 ❤️
+For more details and usage, see [Vditor - a browser-based Markdown editor](https://ld246.com/article/1549638745630). Suggestions and bug reports are welcome, thank you ❤️
 
-## 教程
+## Tutorial
 
-这是一篇讲解如何正确使用 **Markdown** 的排版示例，学会这个很有必要，能让你的文章有更佳清晰的排版。
+This is a formatting sample that explains how to use **Markdown** well. It is worth learning: it makes your articles clearer.
 
-> 引用文本：Markdown is a text formatting syntax inspired
+> Quoted text: Markdown is a text formatting syntax inspired
 
-## 语法指导
+## Syntax Guide
 
-### 普通内容
+### Basic Formatting
 
-这段内容展示了在内容里面一些排版格式，比如：
+This section shows some inline formatting, such as:
 
-- **加粗** - `**加粗**`
-- *倾斜* - `*倾斜*`
-- ~~删除线~~ - `~~删除线~~`
-- `Code 标记` - `` `Code 标记` ``
-- [超级链接](https://ld246.com) - `[超级链接](https://ld246.com)`
+- **Bold** - `**Bold**`
+- *Italic* - `*Italic*`
+- ~~Strikethrough~~ - `~~Strikethrough~~`
+- `Code mark` - `` `Code mark` ``
+- [Hyperlink](https://ld246.com) - `[Hyperlink](https://ld246.com)`
 - [username@gmail.com](mailto:username@gmail.com) - `[username@gmail.com](mailto:username@gmail.com)`
 
-### 提及用户
+### Mentioning Users
 
-@Vanessa 通过 `@User` 可以在内容中提及用户，被提及的用户将会收到系统通知。
+@Vanessa Use `@User` to mention a user in the content; the mentioned user receives a notification.
 
 > NOTE:
 >
-> 1. @用户名之后需要有一个空格
-> 2. 新手没有艾特的功能权限
+> 1. A space is required after @username
+> 2. New users cannot mention others
 
-### 大标题 - Heading 3
+### Large Heading - Heading 3
 
-你可以选择使用 H1 至 H6，使用 ##(N) 打头。建议帖子或回帖中的顶级标题使用 Heading 3，不要使用 1 或 2，因为 1 是系统站点级，2 是帖子标题级。
+You can use H1 to H6, starting the line with ##(N). In posts and replies, use Heading 3 for top-level headings, not 1 or 2: 1 is the site level and 2 is the post title level.
 
-> NOTE: 别忘了 # 后面需要有空格！
+> NOTE: don't forget the space after #!
 
 #### Heading 4
 
@@ -45,18 +45,18 @@ Vditor 是一款**所见即所得**编辑器，支持 *Markdown*。
 
 ###### Heading 6
 
-### 图片
+### Images
 
 ```
-![alt 文本](http://image-path.png)
-![alt 文本](http://image-path.png "图片 Title 值")
+![alt text](http://image-path.png)
+![alt text](http://image-path.png "Image title")
 ```
 
-支持复制粘贴直接上传。
+Pasting an image uploads it directly.
 
-### 代码块
+### Code Blocks
 
-#### 普通
+#### Plain
 
 ```
 *emphasize*    **strong**
@@ -64,11 +64,11 @@ _emphasize_    __strong__
 var a = 1
 ```
 
-#### 语法高亮支持
+#### Syntax Highlighting
 
-如果在 ``` 后面跟随语言名称，可以有语法高亮的效果哦，比如:
+Write a language name after ``` to get syntax highlighting, for example:
 
-##### 演示 Go 代码高亮
+##### Go Highlighting Demo
 
 ```go
 package main
@@ -76,11 +76,11 @@ package main
 import "fmt"
 
 func main() {
-	fmt.Println("Hello, 世界")
+	fmt.Println("Hello, World")
 }
 ```
 
-##### 演示 Java 高亮
+##### Java Highlighting Demo
 
 ```java
 public class HelloWorld {
@@ -92,11 +92,11 @@ public class HelloWorld {
 }
 ```
 
-> Tip: 语言名称支持下面这些: `ruby`, `python`, `js`, `html`, `erb`, `css`, `coffee`, `bash`, `json`, `yml`, `xml` ...
+> Tip: supported language names include: `ruby`, `python`, `js`, `html`, `erb`, `css`, `coffee`, `bash`, `json`, `yml`, `xml` ...
 
-### 有序、无序、任务列表
+### Ordered, Unordered and Task Lists
 
-#### 无序列表
+#### Unordered List
 
 - Java
   - Spring
@@ -109,7 +109,7 @@ public class HelloWorld {
   - Koa
   - Express
 
-#### 有序列表
+#### Ordered List
 
 1. Node.js
    1. Express
@@ -122,15 +122,15 @@ public class HelloWorld {
    1. Latke
    2. IDEA
 
-#### 任务列表
+#### Task List
 
-- [X] 发布 Sym
-- [X] 发布 Solo
-- [ ] 预约牙医
+- [X] Release Sym
+- [X] Release Solo
+- [ ] Book a dentist appointment
 
-### 表格
+### Tables
 
-如果需要展示数据什么的，可以选择使用表格。
+Use a table to show data.
 
 | header 1 | header 2 |
 | -------- | -------- |
@@ -138,33 +138,33 @@ public class HelloWorld {
 | cell 3   | cell 4   |
 | cell 5   | cell 6   |
 
-### 隐藏细节
+### Collapsible Details
 
 <details>
-<summary>这里是摘要部分。</summary>
-这里是细节部分。
+<summary>This is the summary.</summary>
+These are the details.
 </details>
 
-### 段落
+### Paragraphs
 
-空行可以将内容进行分段，便于阅读。（这是第一段）
+A blank line splits content into paragraphs, which makes it easier to read. (This is the first paragraph.)
 
-使用空行在 Markdown 排版中相当重要。（这是第二段）
+Blank lines matter a lot in Markdown formatting. (This is the second paragraph.)
 
-### 链接引用
+### Reference Links
 
-[链接文本][链接标识]
+[Link text][link-id]
 
-[链接标识]: https://b3log.org
+[link-id]: https://b3log.org
 ```
-[链接文本][链接标识]
+[Link text][link-id]
 
-[链接标识]: https://b3log.org
+[link-id]: https://b3log.org
 ```
 
-### 数学公式
+### Math
 
-多行公式块：
+Multi-line formula block:
 
 $$
 \frac{1}{
@@ -176,11 +176,11 @@ $$
 }
 $$
 
-行内公式：
+Inline formula:
 
-公式 $a^2 + b^2 = \color{red}c^2$ 是行内。
+The formula $a^2 + b^2 = \color{red}c^2$ is inline.
 
-### 流程图
+### Flowchart
 
 ```mermaid
 graph TB
@@ -196,7 +196,7 @@ graph TB
     end
 ```
 
-### 时序图
+### Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -206,7 +206,7 @@ sequenceDiagram
     end
 ```
 
-### 甘特图
+### Gantt Chart
 
 ```mermaid
 gantt
@@ -220,41 +220,41 @@ gantt
     another task      : 24d
 ```
 
-### 多媒体
+### Media
 
-支持 v.qq.com，youtube.com，youku.com，coub.com，facebook.com/video，dailymotion.com，.mp4，.m4v，.ogg，.ogv，.webm，.mp3，.wav 链接解析
+Links to v.qq.com, youtube.com, youku.com, coub.com, facebook.com/video, dailymotion.com, .mp4, .m4v, .ogg, .ogv, .webm, .mp3 and .wav are embedded
 
 https://v.qq.com/x/cover/zf2z0xpqcculhcz/y0016tj0qvh.html
 
-### 脚注
+### Footnotes
 
-这里是一个脚注引用[^1]，这里是另一个脚注引用[^bignote]。
+Here is a footnote reference[^1], and here is another one[^bignote].
 
-[^1]: 第一个脚注定义。
+[^1]: The first footnote definition.
     
-[^bignote]: 脚注定义可使用多段内容。
+[^bignote]: A footnote definition can have several paragraphs.
     
-       缩进对齐的段落包含在这个脚注定义内。
+       Indented paragraphs are part of this footnote definition.
     
        ```
-       可以使用代码块。
+       Code blocks can be used.
        ```
-       还有其他行级排版语法，比如**加粗**和[链接](https://b3log.org)。
+       So can other inline formatting, such as **bold** and [links](https://b3log.org).
     
 ```
-这里是一个脚注引用[^1]，这里是另一个脚注引用[^bignote]。
-[^1]: 第一个脚注定义。
-[^bignote]: 脚注定义可使用多段内容。
+Here is a footnote reference[^1], and here is another one[^bignote].
+[^1]: The first footnote definition.
+[^bignote]: A footnote definition can have several paragraphs.
 
-    缩进对齐的段落包含在这个脚注定义内。
+    Indented paragraphs are part of this footnote definition.
 
     ```
-    可以使用代码块。
+    Code blocks can be used.
     ```
 
-    还有其他行级排版语法，比如**加粗**和[链接](https://b3log.org)。
+    So can other inline formatting, such as **bold** and [links](https://b3log.org).
 ```
 
-## 快捷键
+## Shortcuts
 
-我们的编辑器支持很多快捷键，具体请参考 [键盘快捷键](https://ld246.com/article/1474030007391)（或者按 "`?` "😼）
+The editor supports many shortcuts, see [Keyboard shortcuts](https://ld246.com/article/1474030007391) (or press "`?` " 😼)
