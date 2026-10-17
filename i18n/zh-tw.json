@@ -1,0 +1,27 @@
+{
+  "host": {
+    "common": {
+      "yes": "是",
+      "no": "否",
+      "openLink": "開啟",
+      "confirmOpenLink": "開啟「{url}」？此連結並非指向網頁，可能會開啟檔案或執行程式。"
+    },
+    "markdown": {
+      "exportStart": "正在開始匯出 Markdown 為 {type}。",
+      "exportSuccess": "匯出 Markdown 為 {type} 成功！",
+      "exportFailed": "匯出 Markdown 為 {type} 失敗：{error}",
+      "noChromium": "未找到 Chromium，匯出失敗。",
+      "noClipboardImage": "剪貼簿中沒有圖片。",
+      "noPasteDirectory": "不支援貼上目錄。",
+      "installXclip": "請先安裝 xclip 命令。",
+      "wikilinkNotFound": "找不到雙鏈目標：{target}",
+      "aiRequiresVscode": "AI 功能需要 VS Code 1.90+ 並安裝語言模型擴充功能。",
+      "noAiModel": "沒有可用的 AI 語言模型。請安裝語言模型擴充功能（如 GitHub Copilot）。",
+      "aiPolishFailed": "AI 潤色失敗：{error}",
+      "customAiUrlRequired": "自訂 AI：API URL 為必填項。",
+      "customAiPolishFailed": "自訂 AI 潤色失敗：{error}",
+      "selectImage": "選擇圖片",
+      "statusBar": "行 {lines} 字數 {chars}"
+    }
+  }
+}

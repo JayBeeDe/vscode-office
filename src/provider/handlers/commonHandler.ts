@@ -46,8 +46,8 @@ async function openLink(documentUri: Uri, link: string) {
         }
         return;
     }
-    const open = i18n('ext.office.openLink');
-    const choice = await vscode.window.showWarningMessage(i18n('ext.office.confirmOpenLink', url), { modal: true }, open);
+    const open = i18n('common.openLink');
+    const choice = await vscode.window.showWarningMessage(i18n('common.confirmOpenLink', { url }), { modal: true }, open);
     if (choice !== open) {
         return;
     }

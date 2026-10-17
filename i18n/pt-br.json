@@ -1,0 +1,27 @@
+{
+  "host": {
+    "common": {
+      "yes": "SIM",
+      "no": "NÃO",
+      "openLink": "Abrir",
+      "confirmOpenLink": "Abrir \"{url}\"? Este link não aponta para a web e pode abrir um arquivo ou executar um programa."
+    },
+    "markdown": {
+      "exportStart": "Iniciando exportação de Markdown para {type}.",
+      "exportSuccess": "Exportação de Markdown para {type} concluída com sucesso!",
+      "exportFailed": "Falha ao exportar Markdown para {type}: {error}",
+      "noChromium": "Chromium não encontrado, falha na exportação.",
+      "noClipboardImage": "Não há imagem na área de transferência.",
+      "noPasteDirectory": "Não é suportado colar diretórios.",
+      "installXclip": "Você precisa instalar o comando xclip primeiro.",
+      "wikilinkNotFound": "Destino do wikilink não encontrado: {target}",
+      "aiRequiresVscode": "Recursos de IA requerem VS Code 1.90+ com uma extensão de modelo de linguagem instalada.",
+      "noAiModel": "Nenhum modelo de linguagem de IA disponível. Instale uma extensão de modelo de linguagem (ex.: GitHub Copilot).",
+      "aiPolishFailed": "Falha no polimento com IA: {error}",
+      "customAiUrlRequired": "IA personalizada: a URL da API é obrigatória.",
+      "customAiPolishFailed": "Falha no polimento com IA personalizada: {error}",
+      "selectImage": "Selecionar imagem",
+      "statusBar": "Linha {lines} Caracteres {chars}"
+    }
+  }
+}
