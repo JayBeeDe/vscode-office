@@ -2,6 +2,7 @@ import { homedir } from 'os';
 import { join } from 'path';
 import * as vscode from 'vscode';
 import { broadcastToMarkdownWebviews } from '@/service/markdown/blockScroll';
+import { i18n } from '@/common/global';
 
 const CONFIG_FILE_NAME = '.vscode-office-viewer.json';
 const AI_PROMPTS_KEY = 'aiPrompts';
@@ -148,7 +149,7 @@ export class ViewerSettingsService {
     static async createAndOpen(settings: VditorViewerSettings): Promise<void> {
         const uri = this.getConfigUri();
         if (!uri) {
-            vscode.window.showWarningMessage('Viewer settings file is not supported in this environment.');
+            vscode.window.showWarningMessage(i18n('common.settingsUnsupported'));
             return;
         }
         const existed = await this.exists();
