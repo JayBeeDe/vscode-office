@@ -34,7 +34,7 @@ export const codeRender = (element: HTMLElement) => {
         divElement.innerHTML = `<span aria-label="${window.VditorI18n?.copy || "Copy"}"
 onmouseover="this.setAttribute('aria-label', '${window.VditorI18n?.copy || "Copy"}')"
 class="vditor-tooltipped vditor-tooltipped__w"
-onclick="this.previousElementSibling.select();document.execCommand('copy');this.setAttribute('aria-label', '${window.VditorI18n?.copy || "Copied"}')">${iconHTML}</span>`;
+onclick="this.previousElementSibling.select();document.execCommand('copy');this.setAttribute('aria-label', '${window.VditorI18n?.copied || "Copied"}')">${iconHTML}</span>`;
         const textarea = document.createElement("textarea");
         textarea.value = code160to32(codeText);
         divElement.insertAdjacentElement("afterbegin", textarea);
