@@ -23,5 +23,38 @@
       "selectImage": "Bild auswählen",
       "statusBar": "Zeile {lines} Zeichen {chars}"
     }
+  },
+  "viewer": {
+    "common": {
+      "failedOpenFile": "Datei konnte nicht geöffnet werden",
+      "copied": "Kopiert",
+      "close": "Schließen",
+      "officeViewer": "Office Viewer",
+      "switchToLight": "Zum hellen Modus wechseln",
+      "switchToDark": "Zum adaptiven dunklen Modus wechseln",
+      "editInVscode": "In VS Code bearbeiten"
+    },
+    "document": {
+      "failedLoad": "Dokument konnte nicht geladen werden"
+    },
+    "presentation": {
+      "failedLoad": "Präsentation konnte nicht geladen werden",
+      "slides": "Folien"
+    },
+    "epub": {
+      "searchBook": "Buch suchen...",
+      "failedLoad": "EPUB konnte nicht geladen werden",
+      "failedRender": "EPUB-Seite konnte nicht gerendert werden",
+      "searchFailed": "Suche fehlgeschlagen",
+      "untitled": "Unbenannt",
+      "error": "Fehler"
+    },
+    "xmind": {
+      "loading": "XMind wird geladen...",
+      "sheets": "Blätter"
+    },
+    "parquet": {
+      "readOnly": "Schreibgeschützt — Änderungen werden nicht auf der Festplatte gespeichert"
+    }
   }
 }

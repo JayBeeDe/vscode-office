@@ -23,5 +23,38 @@
       "selectImage": "이미지 선택",
       "statusBar": "줄 {lines} 글자 수 {chars}"
     }
+  },
+  "viewer": {
+    "common": {
+      "failedOpenFile": "파일을 열지 못했습니다",
+      "copied": "복사됨",
+      "close": "닫기",
+      "officeViewer": "Office 뷰어",
+      "switchToLight": "라이트 모드로 전환",
+      "switchToDark": "적응형 다크 모드로 전환",
+      "editInVscode": "VS Code에서 편집"
+    },
+    "document": {
+      "failedLoad": "문서를 불러오지 못했습니다"
+    },
+    "presentation": {
+      "failedLoad": "프레젠테이션을 불러오지 못했습니다",
+      "slides": "슬라이드"
+    },
+    "epub": {
+      "searchBook": "책 검색...",
+      "failedLoad": "EPUB을 불러오지 못했습니다",
+      "failedRender": "EPUB 페이지를 렌더링하지 못했습니다",
+      "searchFailed": "검색 실패",
+      "untitled": "제목 없음",
+      "error": "오류"
+    },
+    "xmind": {
+      "loading": "XMind 로딩 중...",
+      "sheets": "시트"
+    },
+    "parquet": {
+      "readOnly": "읽기 전용 — 변경 사항은 디스크에 저장되지 않습니다"
+    }
   }
 }

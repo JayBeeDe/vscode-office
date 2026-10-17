@@ -23,5 +23,38 @@
       "selectImage": "Выбрать изображение",
       "statusBar": "Строка {lines} Символов {chars}"
     }
+  },
+  "viewer": {
+    "common": {
+      "failedOpenFile": "Не удалось открыть файл",
+      "copied": "Скопировано",
+      "close": "Закрыть",
+      "officeViewer": "Просмотр Office",
+      "switchToLight": "Переключить на светлую тему",
+      "switchToDark": "Переключить на адаптивную тёмную тему",
+      "editInVscode": "Редактировать в VS Code"
+    },
+    "document": {
+      "failedLoad": "Не удалось загрузить документ"
+    },
+    "presentation": {
+      "failedLoad": "Не удалось загрузить презентацию",
+      "slides": "Слайды"
+    },
+    "epub": {
+      "searchBook": "Поиск книги...",
+      "failedLoad": "Не удалось загрузить EPUB",
+      "failedRender": "Не удалось отобразить страницу EPUB",
+      "searchFailed": "Ошибка поиска",
+      "untitled": "Без названия",
+      "error": "Ошибка"
+    },
+    "xmind": {
+      "loading": "Загрузка XMind...",
+      "sheets": "Листы"
+    },
+    "parquet": {
+      "readOnly": "Только чтение — изменения не сохраняются на диск"
+    }
   }
 }

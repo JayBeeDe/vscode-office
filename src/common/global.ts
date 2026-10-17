@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { ExtensionContext } from 'vscode';
-import { createTranslator, MessageKey, MessageVars, resolveLanguage } from '../i18n';
+import { createTranslator, MessageKey, MessageVars, resolveLanguage, SectionKey } from '../i18n';
 
 const prefix = 'vscode-office';
 
@@ -11,7 +11,7 @@ export function language() {
 const translate = createTranslator(resolveLanguage(vscode.env.language));
 
 /** Translates a key of the `host` section of i18n/<language>.json. */
-export function i18n(key: MessageKey extends `host.${infer K}` ? K : never, vars?: MessageVars) {
+export function i18n(key: SectionKey<'host'>, vars?: MessageVars) {
     return translate(`host.${key}` as MessageKey, vars);
 }
 

@@ -23,5 +23,48 @@
       "selectImage": "Select Image",
       "statusBar": "Line {lines} Count {chars}"
     }
+  },
+  "viewer": {
+    "common": {
+      "failedOpenFile": "Failed to open file",
+      "copied": "Copied",
+      "close": "Close",
+      "officeViewer": "Office Viewer",
+      "switchToLight": "Switch to light mode",
+      "switchToDark": "Switch to adaptive dark mode",
+      "editInVscode": "Edit In VS Code"
+    },
+    "document": {
+      "failedLoad": "Failed to load document"
+    },
+    "presentation": {
+      "failedLoad": "Failed to load presentation",
+      "slides": "Slides"
+    },
+    "epub": {
+      "searchBook": "Search book...",
+      "failedLoad": "Failed to load EPUB",
+      "failedRender": "Failed to render EPUB page",
+      "searchFailed": "Search failed",
+      "untitled": "Untitled",
+      "error": "Error"
+    },
+    "xmind": {
+      "loading": "Loading XMind...",
+      "sheets": "Sheets"
+    },
+    "parquet": {
+      "readOnly": "Read-only — changes are not saved to disk",
+      "schema": "Schema",
+      "rows": "Rows",
+      "columnsLabel": "Columns",
+      "createdBy": "Created by",
+      "loading": "Loading Parquet…",
+      "totalRows": "{count} rows",
+      "save": "Save",
+      "saveSuccess": "Parquet file saved",
+      "unsaved": "Unsaved changes",
+      "invalidValue": "\"{value}\" is not a valid {type} value"
+    }
   }
 }
