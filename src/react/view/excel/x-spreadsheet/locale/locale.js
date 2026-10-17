@@ -1,5 +1,8 @@
 /* global window */
-import en from './en';
+import { getMessages } from '../../../../../i18n/index.ts';
+
+// The strings live in the `spreadsheet` section of i18n/<language>.json
+const en = getMessages('en').spreadsheet;
 
 // Defines the fallback language as English
 let $languages = ['en'];

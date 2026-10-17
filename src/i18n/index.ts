@@ -15,10 +15,11 @@ import zhTw from '../../i18n/zh-tw.json';
 
 export type Messages = typeof en;
 
-type Tree = { [key: string]: string | Tree };
+// lists (the spreadsheet's month and weekday names) are values like strings
+type Tree = { [key: string]: string | string[] | Tree };
 
 type Leaves<T, P extends string = ''> = {
-    [K in keyof T & string]: T[K] extends string ? `${P}${K}` : Leaves<T[K], `${P}${K}.`>;
+    [K in keyof T & string]: T[K] extends string | readonly string[] ? `${P}${K}` : Leaves<T[K], `${P}${K}.`>;
 }[keyof T & string];
 
 /** Every dotted key of the English file, e.g. `host.markdown.exportStart`. */
@@ -72,7 +73,8 @@ function merge(base: Tree, override: Tree): Tree {
     const result: Tree = { ...base };
     for (const [key, value] of Object.entries(override || {})) {
         const current = result[key];
-        result[key] = typeof value === 'object' && typeof current === 'object' ? merge(current, value) : value;
+        const nested = (v: unknown): v is Tree => typeof v === 'object' && v !== null && !Array.isArray(v);
+        result[key] = nested(value) && nested(current) ? merge(current, value) : value;
     }
     return result;
 }
