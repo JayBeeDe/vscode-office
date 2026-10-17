@@ -63,13 +63,7 @@ export class Options {
             "redo",
             "|",
             "settings",
-            {
-                name: "more",
-                toolbar: [
-                    "outline",
-                    "info",
-                ],
-            },
+            "outline",
         ],
         toolbarConfig: {
             hide: false,
@@ -264,9 +258,6 @@ export class Options {
         }, {
             icon: getToolbarCodicon("code-theme"),
             name: "code-theme",
-        }, {
-            icon: getToolbarCodicon("info"),
-            name: "info",
         }, {
             icon: getToolbarCodicon("ai-settings"),
             name: "ai-settings",
