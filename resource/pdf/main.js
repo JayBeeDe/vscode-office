@@ -76,7 +76,7 @@
   }
 
   function cursorTools(name) {
-    // hand表示可以通过手指上下滑动, 0则可以选择文本
+    // 'hand' allows scrolling by dragging up and down; 0 allows selecting text
     return name === 'hand' ? 1 : 0
   }
   function scrollMode(name) {
@@ -119,8 +119,8 @@
       if (btn) {
         btn.classList.toggle('toggled', on);
         btn.innerHTML = on ? ADAPTIVE_ICON : SUN_STROKE_ICON;
-        btn.title = on ? '使用默认亮色主题 (Ctrl/Cmd+Shift+L)' : '开启主题适配（跟随 VS Code 颜色）(Ctrl/Cmd+Shift+L)';
-        btn.setAttribute('aria-label', on ? '使用默认亮色主题' : '开启主题适配');
+        btn.title = on ? 'Use the default light theme (Ctrl/Cmd+Shift+L)' : 'Enable theme adaptation (follow VS Code colors) (Ctrl/Cmd+Shift+L)';
+        btn.setAttribute('aria-label', on ? 'Use the default light theme' : 'Enable theme adaptation');
       }
     };
     let enabled = false;
@@ -149,8 +149,8 @@
       if (btn) {
         btn.classList.toggle('toggled', on);
         btn.innerHTML = on ? BULB_ICON : MOON_ICON;
-        btn.title = on ? '切换 PDF 亮色模式 (Ctrl/Cmd+L)' : '切换 PDF 暗色模式 (Ctrl/Cmd+L)';
-        btn.setAttribute('aria-label', on ? '切换 PDF 亮色模式' : '切换 PDF 暗色模式');
+        btn.title = on ? 'Switch PDF to light mode (Ctrl/Cmd+L)' : 'Switch PDF to dark mode (Ctrl/Cmd+L)';
+        btn.setAttribute('aria-label', on ? 'Switch PDF to light mode' : 'Switch PDF to dark mode');
       }
     };
     let enabled = false;
