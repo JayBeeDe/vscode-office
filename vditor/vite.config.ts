@@ -1,4 +1,4 @@
-import { cpSync, existsSync, mkdirSync } from "fs";
+import { cpSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import { resolve } from "path";
 import { defineConfig, type Plugin } from "vite";
 import { viteStaticCopy } from "vite-plugin-static-copy";
@@ -14,6 +14,47 @@ function copyLocalLuteOverride() {
   }
   mkdirSync(resourceLuteDir, { recursive: true });
   cpSync(localLuteDir, resourceLuteDir, { recursive: true });
+}
+
+// Vditor loads its strings from dist/js/i18n/<lang>.js; they are written from the `markdown`
+// section of the extension's i18n/<language>.json, with English filling in missing keys.
+const i18nDir = resolve(__dirname, "../i18n");
+const vditorI18nDir = resolve(__dirname, "src/js/i18n");
+const VDITOR_LANGUAGES: Record<string, string> = {
+  en_US: "en",
+  zh_CN: "zh-cn",
+  zh_TW: "zh-tw",
+  ja_JP: "ja",
+  ko_KR: "ko",
+  ru_RU: "ru",
+};
+
+function readMarkdownStrings(language: string): Record<string, string> {
+  return JSON.parse(readFileSync(resolve(i18nDir, `${language}.json`), "utf8")).markdown ?? {};
+}
+
+function writeVditorI18n() {
+  mkdirSync(vditorI18nDir, { recursive: true });
+  const english = readMarkdownStrings("en");
+  for (const [code, language] of Object.entries(VDITOR_LANGUAGES)) {
+    const strings = { ...english, ...readMarkdownStrings(language) };
+    writeFileSync(
+      resolve(vditorI18nDir, `${code}.js`),
+      `// Generated from i18n/${language}.json by vite.config.ts: do not edit.\nwindow.VditorI18n = ${JSON.stringify(strings, null, 2)};\n`,
+    );
+  }
+}
+
+function generateVditorI18n(): Plugin {
+  return {
+    name: "generate-vditor-i18n",
+    buildStart() {
+      writeVditorI18n();
+      for (const language of Object.values(VDITOR_LANGUAGES)) {
+        this.addWatchFile(resolve(i18nDir, `${language}.json`));
+      }
+    },
+  };
 }
 
 function copyBuildToResource(): Plugin {
@@ -61,6 +102,7 @@ export default defineConfig(({ mode }) => {
       },
     },
     plugins: [
+      generateVditorI18n(),
       viteStaticCopy({
         targets: [
           { src: "src/css", dest: ".", rename: { stripBase: 1 } },
