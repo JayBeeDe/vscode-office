@@ -18,7 +18,7 @@ export async function openWikiLink(currentUri: vscode.Uri, wikiUri: string): Pro
     const fileUri = await resolveWikiLinkFile(currentUri, target.page);
     if (!fileUri) {
         const label = target.page || wikiUri.slice(WIKI_URI_PREFIX.length);
-        void vscode.window.showWarningMessage(i18n('ext.markdown.wikilinkNotFound', label));
+        void vscode.window.showWarningMessage(i18n('markdown.wikilinkNotFound', { target: label }));
         return;
     }
 

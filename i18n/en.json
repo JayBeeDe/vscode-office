@@ -1,0 +1,27 @@
+{
+  "host": {
+    "common": {
+      "yes": "YES",
+      "no": "NO",
+      "openLink": "Open",
+      "confirmOpenLink": "Open \"{url}\"? This link points outside the web and may open a file or run a program."
+    },
+    "markdown": {
+      "exportStart": "Starting export markdown to {type}.",
+      "exportSuccess": "Export markdown to {type} success!",
+      "exportFailed": "Export markdown to {type} failed: {error}",
+      "noChromium": "Not chromium found, export fail.",
+      "noClipboardImage": "There is not an image in the clipboard.",
+      "noPasteDirectory": "Not support paste directory.",
+      "installXclip": "You need to install xclip command first.",
+      "wikilinkNotFound": "Wikilink target not found: {target}",
+      "aiRequiresVscode": "AI features require VS Code 1.90+ with a language model extension installed.",
+      "noAiModel": "No AI language model available. Please install a language model extension (e.g. GitHub Copilot).",
+      "aiPolishFailed": "AI Polish failed: {error}",
+      "customAiUrlRequired": "Custom AI: API URL is required.",
+      "customAiPolishFailed": "Custom AI Polish failed: {error}",
+      "selectImage": "Select Image",
+      "statusBar": "Line {lines} Count {chars}"
+    }
+  }
+}

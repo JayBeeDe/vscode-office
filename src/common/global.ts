@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { ExtensionContext } from 'vscode';
-import { initI18n, localize } from './vscode-nls-i18n';
+import { createTranslator, MessageKey, MessageVars, resolveLanguage } from '../i18n';
 
 const prefix = 'vscode-office';
 
@@ -8,8 +8,11 @@ export function language() {
     return vscode.env.language;
 }
 
-export function i18n(key: string, ...args: string[]) {
-    return localize(key, ...args);
+const translate = createTranslator(resolveLanguage(vscode.env.language));
+
+/** Translates a key of the `host` section of i18n/<language>.json. */
+export function i18n(key: MessageKey extends `host.${infer K}` ? K : never, vars?: MessageVars) {
+    return translate(`host.${key}` as MessageKey, vars);
 }
 
 export class Global {
@@ -17,7 +20,6 @@ export class Global {
 
     public static async init(context: ExtensionContext) {
         Global.context = context;
-        await initI18n(context);
     }
 
     /**

@@ -1,0 +1,27 @@
+{
+  "host": {
+    "common": {
+      "yes": "是",
+      "no": "否",
+      "openLink": "打开",
+      "confirmOpenLink": "打开“{url}”？此链接并非指向网页，可能会打开文件或运行程序。"
+    },
+    "markdown": {
+      "exportStart": "正在开始导出 Markdown 为 {type}。",
+      "exportSuccess": "导出 Markdown 为 {type} 成功！",
+      "exportFailed": "导出 Markdown 为 {type} 失败：{error}",
+      "noChromium": "未找到 Chromium，导出失败。",
+      "noClipboardImage": "剪贴板中没有图片。",
+      "noPasteDirectory": "不支持粘贴目录。",
+      "installXclip": "请先安装 xclip 命令。",
+      "wikilinkNotFound": "找不到双链目标：{target}",
+      "aiRequiresVscode": "AI 功能需要 VS Code 1.90+ 并安装语言模型扩展。",
+      "noAiModel": "没有可用的 AI 语言模型。请安装语言模型扩展（如 GitHub Copilot）。",
+      "aiPolishFailed": "AI 润色失败：{error}",
+      "customAiUrlRequired": "自定义 AI：API URL 为必填项。",
+      "customAiPolishFailed": "自定义 AI 润色失败：{error}",
+      "selectImage": "选择图片",
+      "statusBar": "行 {lines} 字数 {chars}"
+    }
+  }
+}

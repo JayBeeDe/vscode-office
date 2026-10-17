@@ -13,8 +13,8 @@ export class Util {
     }
 
     public static async confirmActual(options: vscode.QuickPickOptions, callback?: () => void): Promise<boolean> {
-        const yes = i18n('ext.common.yes');
-        const no = i18n('ext.common.no');
+        const yes = i18n('common.yes');
+        const no = i18n('common.no');
         const res = await vscode.window.showQuickPick([yes, no], options);
         if (res === yes && callback) {
             await callback();

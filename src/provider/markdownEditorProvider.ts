@@ -308,7 +308,7 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
             const files = await vscode.window.showOpenDialog({
                 canSelectMany: false,
                 filters: { Images: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp', 'ico'] },
-                title: i18n('ext.markdown.selectImage'),
+                title: i18n('markdown.selectImage'),
             });
             if (!files || files.length === 0) return;
             const sourceUri = files[0];
@@ -438,7 +438,7 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
 
         const lm = (vscode as any).lm;
         if (typeof lm?.selectChatModels !== 'function') {
-            vscode.window.showWarningMessage(i18n('ext.markdown.aiRequiresVscode'));
+            vscode.window.showWarningMessage(i18n('markdown.aiRequiresVscode'));
             // failed: the review must not offer to replace the text with nothing
             handler.emit('aiPolishEnd', { failed: true });
             return;
@@ -455,7 +455,7 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
                     models = await lm.selectChatModels();
                 }
                 if (!models || models.length === 0) {
-                    vscode.window.showWarningMessage(i18n('ext.markdown.noAiModel'));
+                    vscode.window.showWarningMessage(i18n('markdown.noAiModel'));
                     handler.emit('aiPolishEnd', { failed: true });
                     return;
                 }
@@ -474,7 +474,7 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
             }
         } catch (err: any) {
             if (request.cancellation.token.isCancellationRequested) return;
-            vscode.window.showErrorMessage(i18n('ext.markdown.aiPolishFailed', String(err?.message ?? err)));
+            vscode.window.showErrorMessage(i18n('markdown.aiPolishFailed', { error: String(err?.message ?? err) }));
             handler.emit('aiPolishEnd', { failed: true });
         }
     }
@@ -482,7 +482,7 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
     private async handleCustomAIPolish(handler: Handler, markdown: string, options: any, signal: AbortSignal) {
         const url = options?.customUrl?.trim();
         if (!url) {
-            vscode.window.showWarningMessage(i18n('ext.markdown.customAiUrlRequired'));
+            vscode.window.showWarningMessage(i18n('markdown.customAiUrlRequired'));
             handler.emit('aiPolishEnd', { failed: true });
             return;
         }
@@ -503,7 +503,7 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
             handler.emit('aiPolishEnd');
         } catch (err: any) {
             if (err?.name === 'AbortError') return;
-            vscode.window.showErrorMessage(i18n('ext.markdown.customAiPolishFailed', String(err?.message ?? err)));
+            vscode.window.showErrorMessage(i18n('markdown.customAiPolishFailed', { error: String(err?.message ?? err) }));
             handler.emit('aiPolishEnd', { failed: true });
         }
     }
@@ -552,7 +552,7 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
     private updateCount(content: string, handler: Handler) {
         // only the panel the count belongs to
         if (this.countOwner && this.countOwner !== handler) return;
-        this.countStatus.text = i18n('ext.markdown.statusBar', String(content.split(/\r\n|\r|\n/).length), String(content.length))
+        this.countStatus.text = i18n('markdown.statusBar', { lines: content.split(/\r\n|\r|\n/).length, chars: content.length })
     }
 
     private updateTextDocument(document: vscode.TextDocument, content: string) {

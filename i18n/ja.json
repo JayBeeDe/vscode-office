@@ -1,0 +1,27 @@
+{
+  "host": {
+    "common": {
+      "yes": "はい",
+      "no": "いいえ",
+      "openLink": "開く",
+      "confirmOpenLink": "「{url}」を開きますか？このリンクは Web 以外を指しており、ファイルを開いたりプログラムを実行したりする可能性があります。"
+    },
+    "markdown": {
+      "exportStart": "Markdown を {type} にエクスポートしています...",
+      "exportSuccess": "Markdown の {type} へのエクスポートに成功しました！",
+      "exportFailed": "Markdown の {type} へのエクスポートに失敗しました: {error}",
+      "noChromium": "Chromium が見つかりません。エクスポートに失敗しました。",
+      "noClipboardImage": "クリップボードに画像がありません。",
+      "noPasteDirectory": "ディレクトリの貼り付けはサポートされていません。",
+      "installXclip": "先に xclip コマンドをインストールしてください。",
+      "wikilinkNotFound": "ウィキリンクのターゲットが見つかりません: {target}",
+      "aiRequiresVscode": "AI 機能には VS Code 1.90 以降と言語モデル拡張機能が必要です。",
+      "noAiModel": "利用可能な AI 言語モデルがありません。言語モデル拡張機能（例: GitHub Copilot）をインストールしてください。",
+      "aiPolishFailed": "AI 校正に失敗しました: {error}",
+      "customAiUrlRequired": "カスタム AI: API URL は必須です。",
+      "customAiPolishFailed": "カスタム AI 校正に失敗しました: {error}",
+      "selectImage": "画像を選択",
+      "statusBar": "行 {lines} 文字数 {chars}"
+    }
+  }
+}

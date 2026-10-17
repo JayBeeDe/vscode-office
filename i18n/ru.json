@@ -1,0 +1,27 @@
+{
+  "host": {
+    "common": {
+      "yes": "ДА",
+      "no": "НЕТ",
+      "openLink": "Открыть",
+      "confirmOpenLink": "Открыть «{url}»? Эта ссылка ведёт не в веб и может открыть файл или запустить программу."
+    },
+    "markdown": {
+      "exportStart": "Начало экспорта Markdown в {type}.",
+      "exportSuccess": "Экспорт Markdown в {type} выполнен успешно!",
+      "exportFailed": "Не удалось экспортировать Markdown в {type}: {error}",
+      "noChromium": "Chromium не найден, экспорт не удался.",
+      "noClipboardImage": "В буфере обмена нет изображения.",
+      "noPasteDirectory": "Вставка каталогов не поддерживается.",
+      "installXclip": "Сначала необходимо установить команду xclip.",
+      "wikilinkNotFound": "Цель викиссылки не найдена: {target}",
+      "aiRequiresVscode": "Для функций ИИ требуется VS Code 1.90+ с установленным расширением языковой модели.",
+      "noAiModel": "Нет доступной языковой модели ИИ. Установите расширение языковой модели (например, GitHub Copilot).",
+      "aiPolishFailed": "Ошибка ИИ-редактирования: {error}",
+      "customAiUrlRequired": "Пользовательский ИИ: требуется URL API.",
+      "customAiPolishFailed": "Ошибка пользовательского ИИ-редактирования: {error}",
+      "selectImage": "Выбрать изображение",
+      "statusBar": "Строка {lines} Символов {chars}"
+    }
+  }
+}
