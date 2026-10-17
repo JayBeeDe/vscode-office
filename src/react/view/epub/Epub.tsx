@@ -10,6 +10,7 @@ import { Book, NavItem, Rendition } from 'epubjs';
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { handler } from '../../util/vscode';
 import { loadOfficeBuffer } from '../../util/loadOfficeContent';
+import { $t } from '../../i18n/i18nConfig.ts';
 import {
     applyEpubTheme,
     bookStorageKey,
@@ -31,6 +32,7 @@ import {
     saveEpubSetting,
     searchEpubBook,
     SearchHit,
+    SYSTEM_FONT,
     THEME_OPTIONS,
 } from './epubConfig';
 import './Epub.css';
@@ -277,7 +279,7 @@ export default function Epub() {
             }
         });
         rendition.on('displayError', (_err: Error) => {
-            setError('Failed to render EPUB page');
+            setError($t('failedRenderEpub'));
         });
     }, [bindWheel, onRelocated, openSidebar]);
 
@@ -322,7 +324,7 @@ export default function Epub() {
 
             const metaRecord = metadata as unknown as Record<string, string | undefined>;
             setMeta({
-                title: metadata.title?.trim() || 'Untitled',
+                title: metadata.title?.trim() || $t('untitled'),
                 author: resolveEpubAuthor(metadata.creator),
                 description: metadata.description || '',
                 series: metaRecord.series?.trim(),
@@ -356,7 +358,7 @@ export default function Epub() {
             setBookReady(true);
         } catch (e) {
             if (!isCurrent()) return;
-            setError(e instanceof Error ? e.message : 'Failed to load EPUB');
+            setError(e instanceof Error ? e.message : $t('failedLoadEpub'));
         } finally {
             if (isCurrent()) setLoading(false);
         }
@@ -432,7 +434,7 @@ export default function Epub() {
                 ),
             );
         } catch (e) {
-            setError(e instanceof Error ? e.message : 'Search failed');
+            setError(e instanceof Error ? e.message : $t('searchFailed'));
         } finally {
             setSearching(false);
         }
@@ -516,7 +518,7 @@ export default function Epub() {
         <div className="epub-viewer" ref={appRef}>
             {error && (
                 <div className="error">
-                    <div className="error-title">Error</div>
+                    <div className="error-title">{$t('error')}</div>
                     <div className="error-info">{error}</div>
                 </div>
             )}
@@ -560,7 +562,7 @@ export default function Epub() {
                                     <input
                                         type="text"
                                         className="search-box"
-                                        placeholder="Search book..."
+                                        placeholder={$t('searchBook')}
                                         value={searchQuery}
                                         onChange={e => setSearchQuery(e.target.value)}
                                         onKeyDown={e => {
@@ -601,7 +603,7 @@ export default function Epub() {
                             <div className="tab info">
                                 {meta?.coverUrl ? (
                                     <div className="cover-wrapper">
-                                        <img className="cover" src={meta.coverUrl} alt="cover" />
+                                        <img className="cover" src={meta.coverUrl} alt={$t('epub.cover')} />
                                     </div>
                                 ) : null}
                                 {meta ? (
@@ -630,7 +632,7 @@ export default function Epub() {
                         {sidebarTab === 'settings' && (
                             <div className="tab settings">
                                 <div className="setting">
-                                    <div className="setting-label">Themes</div>
+                                    <div className="setting-label">{$t('epub.themes')}</div>
                                     <div className="setting-content theme chips" data-chips="theme">
                                         {THEME_OPTIONS.map(option => (
                                             <div
@@ -645,7 +647,7 @@ export default function Epub() {
                                     </div>
                                 </div>
                                 <div className="setting">
-                                    <div className="setting-label">Font</div>
+                                    <div className="setting-label">{$t('epub.font')}</div>
                                     <div className="setting-content font chips" data-chips="font">
                                         {FONT_OPTIONS.map(option => (
                                             <div
@@ -654,13 +656,13 @@ export default function Epub() {
                                                 style={{ fontFamily: option.value }}
                                                 onClick={() => updateSetting('font', option.value)}
                                             >
-                                                {option.label}
+                                                {option.value === SYSTEM_FONT ? $t('epub.systemFont') : option.label}
                                             </div>
                                         ))}
                                     </div>
                                 </div>
                                 <div className="setting">
-                                    <div className="setting-label">Font Size</div>
+                                    <div className="setting-label">{$t('epub.fontSize')}</div>
                                     <div className="setting-content font-size chips" data-chips="font-size">
                                         {FONT_SIZE_OPTIONS.map(size => (
                                             <div
@@ -675,7 +677,7 @@ export default function Epub() {
                                     </div>
                                 </div>
                                 <div className="setting">
-                                    <div className="setting-label">Line Spacing</div>
+                                    <div className="setting-label">{$t('epub.lineSpacing')}</div>
                                     <div className="setting-content line-spacing chips" data-chips="line-spacing">
                                         {LINE_SPACING_OPTIONS.map(value => (
                                             <div
@@ -689,7 +691,7 @@ export default function Epub() {
                                     </div>
                                 </div>
                                 <div className="setting">
-                                    <div className="setting-label">Reset</div>
+                                    <div className="setting-label">{$t('epub.reset')}</div>
                                     <div className="setting-content">
                                         <a
                                             href="#"
@@ -698,7 +700,7 @@ export default function Epub() {
                                                 resetAllSettings();
                                             }}
                                         >
-                                            Reset All
+                                            {$t('epub.resetAll')}
                                         </a>
                                     </div>
                                 </div>
@@ -745,7 +747,7 @@ export default function Epub() {
                     className={`epub-nav prev${bookReady ? '' : ' hidden'}`}
                     disabled={atStart}
                     onClick={goPrev}
-                    aria-label="Previous page"
+                    aria-label={$t('common.previousPage')}
                 >
                     <NavChevron direction="prev" />
                 </button>
@@ -755,7 +757,7 @@ export default function Epub() {
                     className={`epub-nav next${bookReady ? '' : ' hidden'}`}
                     disabled={atEnd}
                     onClick={goNext}
-                    aria-label="Next page"
+                    aria-label={$t('common.nextPage')}
                 >
                     <NavChevron direction="next" />
                 </button>
@@ -769,7 +771,7 @@ export default function Epub() {
                                 type="text"
                                 inputMode="numeric"
                                 className="loc-input"
-                                aria-label="Current location"
+                                aria-label={$t('epub.currentLocation')}
                                 value={locationDraft}
                                 onChange={e => setLocationDraft(e.target.value)}
                                 onKeyDown={e => {

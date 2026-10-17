@@ -5,6 +5,7 @@ import "@eigenpal/docx-editor-react/styles.css";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { handler, onSaveRequest, vscodeApi } from "../../util/vscode";
 import { loadOfficeBuffer } from "../../util/loadOfficeContent";
+import { $t } from "../../i18n/i18nConfig.ts";
 import "./Word.css";
 
 type WordColorMode = "light" | "adaptive";
@@ -105,7 +106,7 @@ export default function Word() {
             setDocumentBuffer(buffer);
         } catch (e) {
             if (generation !== loadGenerationRef.current) return;
-            setError(e instanceof Error ? e.message : "Failed to load document");
+            setError(e instanceof Error ? e.message : $t("failedLoadDocument"));
         } finally {
             if (generation === loadGenerationRef.current) {
                 setLoading(false);
@@ -131,8 +132,8 @@ export default function Word() {
             <button
                 type="button"
                 className="dark-mode-toggle"
-                title={adaptiveColorMode ? "Switch to light mode" : "Switch to dark mode (follows the VS Code theme)"}
-                aria-label={adaptiveColorMode ? "Switch to light mode" : "Switch to adaptive dark mode"}
+                title={adaptiveColorMode ? $t("common.switchToLight") : $t("common.switchToDarkHint")}
+                aria-label={adaptiveColorMode ? $t("common.switchToLight") : $t("common.switchToDark")}
                 onClick={toggleColorMode}
             >
                 {adaptiveColorMode ? <SunOutlined /> : <MoonOutlined />}
@@ -140,7 +141,7 @@ export default function Word() {
             <Spin spinning={loading} fullscreen />
             {error && <Alert type="error" message={error} showIcon style={{ margin: 16 }} />}
             {readOnly && !loading && !error && documentBuffer && (
-                <div className="word-readonly-banner">Read-only</div>
+                <div className="word-readonly-banner">{$t("common.readOnlyBadge")}</div>
             )}
             {documentBuffer && !loading && !error && (
                 <>

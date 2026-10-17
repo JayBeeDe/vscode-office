@@ -33,7 +33,15 @@
       "officeViewer": "Office Viewer",
       "switchToLight": "Switch to light mode",
       "switchToDark": "Switch to adaptive dark mode",
-      "editInVscode": "Edit In VS Code"
+      "editInVscode": "Edit In VS Code",
+      "switchToDarkHint": "Switch to dark mode (follows the VS Code theme)",
+      "previousPage": "Previous page",
+      "nextPage": "Next page",
+      "save": "Save",
+      "saved": "Saved successfully",
+      "zoomIn": "Zoom in",
+      "zoomOut": "Zoom out",
+      "readOnlyBadge": "Read-only"
     },
     "failedOpenFile": "Failed to open file",
     "failedLoadDocument": "Failed to load document",
@@ -48,6 +56,29 @@
     "searchFailed": "Search failed",
     "untitled": "Untitled",
     "error": "Error",
+    "epub": {
+      "cover": "Cover",
+      "themes": "Themes",
+      "font": "Font",
+      "systemFont": "System",
+      "fontSize": "Font Size",
+      "lineSpacing": "Line Spacing",
+      "reset": "Reset",
+      "resetAll": "Reset All",
+      "currentLocation": "Current location"
+    },
+    "presentation": {
+      "slide": "Slide {number}",
+      "status": "Slide {number} / {count}",
+      "slideCount": "{count} slides",
+      "loadingThumbnails": "loading…"
+    },
+    "xmind": {
+      "failedLoad": "Failed to load XMind file",
+      "failedSave": "Failed to save XMind file",
+      "noSheets": "No sheets found in XMind file",
+      "noContent": "No content available"
+    },
     "parquet": {
       "schema": "Schema",
       "rows": "Rows",
@@ -58,7 +89,8 @@
       "save": "Save",
       "saveSuccess": "Parquet file saved",
       "unsaved": "Unsaved changes",
-      "invalidValue": "\"{value}\" is not a valid {type} value"
+      "invalidValue": "\"{value}\" is not a valid {type} value",
+      "failedLoad": "Failed to load parquet file"
     }
   },
   "spreadsheet": {

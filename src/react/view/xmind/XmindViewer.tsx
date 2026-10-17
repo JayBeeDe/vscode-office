@@ -4,6 +4,7 @@ import MindElixir, { type MindElixirData, type MindElixirInstance } from 'mind-e
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { handler, onSaveRequest } from '../../util/vscode';
 import { loadOfficeBuffer } from '../../util/loadOfficeContent';
+import { $t } from '../../i18n/i18nConfig.ts';
 import { observeVscodeThemeChange } from '../../util/vscodeTheme';
 import { buildMindElixirTheme } from './mindElixirTheme';
 import { parseXmind, XmindDocument, XmindSheet } from './xmindParser';
@@ -173,7 +174,7 @@ export default function XmindViewer() {
                 return;
             }
             if (!parsed.sheets.length) {
-                throw new Error('No sheets found in XMind file');
+                throw new Error($t('xmind.noSheets'));
             }
             documentRef.current = parsed;
             sheetsRef.current = parsed.sheets;
@@ -181,7 +182,7 @@ export default function XmindViewer() {
             setSelectedId(parsed.sheets[0].id);
         } catch (e) {
             if (!isCurrent()) return;
-            setError(e instanceof Error ? e.message : 'Failed to load XMind file');
+            setError(e instanceof Error ? e.message : $t('xmind.failedLoad'));
         } finally {
             if (isCurrent()) setLoading(false);
         }
@@ -205,7 +206,7 @@ export default function XmindViewer() {
             handler.emit('save', [...content]);
         } catch (e) {
             setSaving(false);
-            message.error(e instanceof Error ? e.message : 'Failed to save XMind file');
+            message.error(e instanceof Error ? e.message : $t('xmind.failedSave'));
         }
     }, [saving, syncCurrentSheet]);
 
@@ -215,7 +216,7 @@ export default function XmindViewer() {
         }).on('saveDone', () => {
             setSaving(false);
             setDirty(false);
-            message.success({ duration: 1.5, content: 'Saved successfully' });
+            message.success({ duration: 1.5, content: $t('common.saved') });
         }).on('saveFailed', (payload?: { message?: string }) => {
             setSaving(false);
             if (payload?.message) {
@@ -274,7 +275,7 @@ export default function XmindViewer() {
                 {showSidebar && (
                     <Sider width={SIDER_WIDTH} className="xmind-sider">
                         <div className="xmind-sider-inner">
-                            <div className="xmind-sider-header">Sheets</div>
+                            <div className="xmind-sider-header">{$t('sheets')}</div>
                             <div className="xmind-sheet-list">
                                 {sheets.map(sheet => (
                                     <div
@@ -313,8 +314,8 @@ export default function XmindViewer() {
                                     size="small"
                                     className="xmind-save-btn"
                                     icon={<SaveOutlined />}
-                                    aria-label="Save"
-                                    title="Save"
+                                    aria-label={$t('common.save')}
+                                    title={$t('common.save')}
                                     loading={saving}
                                     disabled={!dirty || saving}
                                     onClick={() => void handleSave()}
@@ -325,7 +326,7 @@ export default function XmindViewer() {
                                         size="small"
                                         className="xmind-zoom-btn"
                                         icon={<MinusOutlined />}
-                                        aria-label="Zoom out"
+                                        aria-label={$t('common.zoomOut')}
                                         onClick={zoomOut}
                                     />
                                     <span className="xmind-zoom-label">{scalePercent}%</span>
@@ -334,15 +335,15 @@ export default function XmindViewer() {
                                         size="small"
                                         className="xmind-zoom-btn"
                                         icon={<PlusOutlined />}
-                                        aria-label="Zoom in"
+                                        aria-label={$t('common.zoomIn')}
                                         onClick={zoomIn}
                                     />
                                 </div>
                                 <button
                                     type="button"
                                     className="xmind-theme-toggle"
-                                    title={dark ? 'Switch to light mode' : 'Switch to dark mode (follows the VS Code theme)'}
-                                    aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
+                                    title={dark ? $t('common.switchToLight') : $t('common.switchToDarkHint')}
+                                    aria-label={dark ? $t('common.switchToLight') : $t('common.switchToDark')}
                                     onClick={toggleDark}
                                 >
                                     {dark ? <SunOutlined /> : <MoonOutlined />}
@@ -351,11 +352,11 @@ export default function XmindViewer() {
                         </div>
                     )}
                     {!loading && !error && !selected && (
-                        <div className="xmind-empty">No content available</div>
+                        <div className="xmind-empty">{$t('xmind.noContent')}</div>
                     )}
                 </Content>
             </Layout>
-            <Spin spinning={loading} fullscreen tip="Loading XMind…" />
+            <Spin spinning={loading} fullscreen tip={$t('loadingXmind')} />
         </Layout>
     );
 }
