@@ -14,7 +14,7 @@ import { fileURLToPath } from 'node:url';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const I18N_DIR = join(ROOT, 'i18n');
 const RUNTIME = 'src/i18n/index.ts';
-const SECTIONS = ['host', 'viewer', 'spreadsheet', 'markdown', 'pdf'];
+const SECTIONS = ['host', 'viewer', 'document', 'spreadsheet', 'markdown', 'pdf'];
 const PLACEHOLDER = /\{(\w+)\}/g;
 // values that stay the same in every language: brands, formats, symbols
 const SAME_IN_EVERY_LANGUAGE = new Set(['Schema', 'Office Viewer', 'XMind', 'EPUB', 'PDF', 'HTML', 'CSV', 'OK', 'Markdown', 'Mermaid', 'PlantUML', 'KaTeX', 'Emoji', 'Excel', 'Word', 'VS Code', 'Github Copilot', 'Anthropic Claude', 'Google Gemini']);
@@ -97,9 +97,12 @@ const isSentence = text => (text.replace(PLACEHOLDER, '').replace(/\([^)]*\)/g, 
 const strings = value => (Array.isArray(value) ? value : [value]).filter(v => typeof v === 'string');
 // PDF.js picks a plural form with a macro: find_match_count={[ plural(total) ]}
 const MACRO = /\{\[\s*(\w+)\(\s*(\w+)\s*\)\s*\]\}/g;
+// the document editor uses ICU plurals: {count, plural, one {# reply} other {# replies}}
+const ICU = /\{(\w+),\s*(plural|select|selectordinal)\s*,/g;
 const placeholders = value => [...new Set(strings(value).flatMap(s => [
     ...[...s.matchAll(PLACEHOLDER)].map(m => m[1]),
     ...[...s.matchAll(MACRO)].map(m => `[ ${m[1]}(${m[2]}) ]`),
+    ...[...s.matchAll(ICU)].map(m => `${m[1]}, ${m[2]}`),
 ]))].sort().join(', ');
 const kind = value => (Array.isArray(value) ? `list of ${value.length}` : typeof value);
 
