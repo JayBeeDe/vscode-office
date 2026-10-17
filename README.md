@@ -2,17 +2,25 @@
 
 ## Introduction
 
-This extension lets you preview and edit common office files directly in VS Code.
+This extension lets you preview and edit common office files directly in VS Code. The viewers follow your current VS Code color theme.
 
-- Excel: `.xls`, `.xlt`, `.xlsx`, `.xlsm`, `.xltx`, `.xltm`, `.csv`, `.tsv`, `.ods`, `.ots`
-- Word: `.docx`, `.docm`, `.dotx`, `.dotm`
-- PowerPoint: `.pptx`, `.pptm`, `.ppsx`, `.potx`, `.ppsm`, `.potm`
-- PDF & eBook: `.pdf`, `.epub`
-- Mind maps: `.xmind`
-- Parquet: `.parquet`
-- Markdown: `.md`, `.markdown`
+| Feature | Formats | Mode | Library behind it (version) | Technology |
+| --- | --- | --- | --- | --- |
+| Spreadsheet | `.xlsx`, `.xlsm`, `.xltx`, `.xltm`, `.xls`, `.xlt`, `.ods`, `.ots`, `.csv`, `.tsv` | Edit and save | [x-spreadsheet](https://github.com/myliang/x-spreadsheet) (modified copy in `src/react/view/excel/x-spreadsheet`) for the grid; [ExcelJS](https://github.com/exceljs/exceljs) 5.0.2 ([@cweijan/exceljs](https://www.npmjs.com/package/@cweijan/exceljs) fork) for the xlsx family, macros kept; [SheetJS](https://github.com/SheetJS/sheetjs) 0.18.5 for `.xls`, `.xlt`, `.ods`, `.ots`; [uDSV](https://github.com/leeoniya/uDSV) 0.5.3 and [iconv-lite](https://github.com/ashtuchkin/iconv-lite) 0.6.3 for CSV/TSV | React webview, canvas grid |
+| Document | `.docx`, `.docm`, `.dotx`, `.dotm` | Edit and save | [docx-editor](https://github.com/eigenpal/docx-editor) 1.9.0 (`@eigenpal/docx-editor-react`) | React webview, ProseMirror |
+| Presentation | `.pptx`, `.pptm`, `.ppsx`, `.potx`, `.ppsm`, `.potm` | Read-only | [pptxviewjs](https://www.npmjs.com/package/pptxviewjs) 1.1.9 | React webview, canvas |
+| PDF | `.pdf` | Read-only | [PDF.js](https://github.com/mozilla/pdf.js) 3.1.81 (copy in `resource/pdf`) | Plain JavaScript webview, canvas |
+| EPUB | `.epub` | Read-only | [epub.js](https://github.com/futurepress/epub.js) 0.3.93 | React webview, iframe |
+| Mind map | `.xmind` | Edit and save | [Mind Elixir](https://github.com/SSShooter/mind-elixir-core) 5.15.1, [@mind-elixir/import-xmind](https://www.npmjs.com/package/@mind-elixir/import-xmind) 1.0.8 to read, [JSZip](https://github.com/Stuk/jszip) 3.10.2 to write | React webview, HTML and SVG |
+| Parquet | `.parquet` | Edit cells and save | [hyparquet](https://github.com/hyparam/hyparquet) 1.31.3, [hyparquet-writer](https://github.com/hyparam/hyparquet-writer) 0.15.7 | React webview, Ant Design table |
+| Markdown | `.md`, `.markdown` | Edit (WYSIWYG) and save; export to PDF, DOCX, HTML | [Vditor](https://github.com/Vanessa219/vditor) (modified copy in `vditor/`) with [Lute](https://github.com/88250/lute) and [CodeMirror](https://codemirror.net/) 6 for code blocks; exports: [markdown-it](https://github.com/markdown-it/markdown-it) 14.3.2, [Puppeteer](https://github.com/puppeteer/puppeteer) 25.13.0 (`puppeteer-core`, PDF), [vscode-html-to-docx](https://www.npmjs.com/package/vscode-html-to-docx) 1.1.3 (DOCX) | TypeScript webview (no framework) |
 
-The viewers follow your current VS Code color theme.
+Notes:
+
+- A read-only file (permissions, read-only file system) opens read-only in every viewer.
+- The versions are those installed when this table was written; `package.json` has the exact ranges.
+- The webviews are built with [React](https://react.dev/) 19 and [Ant Design](https://ant.design/) 5, except the PDF viewer and the Markdown editor.
+- In the web extension (vscode.dev), Markdown export is not available.
 
 ## Markdown
 
@@ -41,12 +49,6 @@ Shortcuts: Based on [shortcut.md](shortcut.md), plus:
 - Set CodeMirror language: `Alt+Enter` / `^ Enter`
 - Edit in VS Code: `Ctrl Alt E` / `⌘ ^ E`
 - Paste as plain text: `Ctrl+Shift+V` / `⌘ ⇧ V`
-
-## Other features
-
-- Excel: preview and save `.xlsx`, `.xls`, `.xlt`, `.xlsm`, `.xltx`, `.xltm`, `.csv`, `.ods`, and `.ots` files
-- XMind: edit and save mind maps
-- Parquet: browse the schema, edit cells, and save
 
 ## Development Guide
 
@@ -90,14 +92,7 @@ npm run package  # create .vsix
 
 ## Credits
 
-- PDF rendering: [mozilla/pdf.js](https://github.com/mozilla/pdf.js/)
-- DOCX rendering: [VolodymyrBaydalka/docxjs](https://github.com/VolodymyrBaydalka/docxjs)
-- PPTX rendering: [pptxviewjs](https://www.npmjs.com/package/pptxviewjs)
-- XLSX rendering:
-  - [SheetJS/sheetjs](https://github.com/SheetJS/sheetjs): XLSX parsing
-  - [myliang/x-spreadsheet](https://github.com/myliang/x-spreadsheet): XLSX rendering
-- EPUB: [futurepress/epub.js](https://github.com/futurepress/epub.js)
-- XMind: [mind-elixir](https://github.com/ssshooter/mind-elixir-core), [@mind-elixir/import-xmind](https://github.com/ssshooter/mind-elixir-core)
-- Markdown: [Vanessa219/vditor](https://github.com/Vanessa219/vditor)
+The libraries behind each viewer are listed in the table in the [introduction](#introduction).
+
 - File icons for `.parquet`, `.epub`: [PKief/vscode-material-icon-theme](https://github.com/PKief/vscode-material-icon-theme)
 - File icons for spreadsheet, document, `.csv`/`.tsv`, `.pdf` and Markdown formats, and the presentation icon (adapted from the document icon): [jesseweed/seti-ui](https://github.com/jesseweed/seti-ui)
