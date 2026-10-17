@@ -204,7 +204,7 @@ function ExcelViewer() {
             await new Promise<void>((resolve) => {
                 const dialog = modal.confirm({
                     title: t('viewer.formatCannotPreserveTitle'),
-                    content: t(extraSheets ? 'viewer.onlyFirstSheetContent' : 'viewer.formatCannotPreserveContent', ext.toUpperCase()),
+                    content: t(extraSheets ? 'viewer.onlyFirstSheetContent' : 'viewer.formatCannotPreserveContent', { format: ext.toUpperCase() }),
                     okText: t('viewer.saveAsXlsx'),
                     cancelText: t('button.cancel'),
                     centered: true,

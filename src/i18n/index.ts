@@ -93,7 +93,7 @@ export function getMessages(language: Language): Messages {
 
 /** Replaces `{name}` placeholders; unknown placeholders are left as they are. */
 export function format(message: string, vars?: MessageVars): string {
-    if (!vars) return message;
+    if (!vars || typeof vars !== 'object') return message;
     return message.replace(/\{(\w+)\}/g, (match, name) => (name in vars ? String(vars[name]) : match));
 }
 
