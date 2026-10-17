@@ -21,8 +21,9 @@ host and the webviews import these files through `src/i18n/index.ts`.
 
 ## Adding a language
 
-1. Create `<language>.json` (the VS Code locale in lower case: `it`, `pt-br`...), with only the
-   keys you translate.
+1. Create `<language>.json`, named after the language code without region in lower case
+   (`it`, `pl`...), with only the keys you translate. Every region uses it: `pt-BR` and
+   `pt-PT` read `pt.json`, `zh-CN` and `zh-TW` read `zh.json`.
 2. Import it in `LANGUAGES` in `src/i18n/index.ts`.
 3. For the markdown editor's demo page only: add it to `VDITOR_LANGUAGES` in
    `vditor/vite.config.ts` when Vditor has a code for it.

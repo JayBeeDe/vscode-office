@@ -6,9 +6,9 @@ import de from '../../i18n/de.json';
 import es from '../../i18n/es.json';
 import fr from '../../i18n/fr.json';
 import ja from '../../i18n/ja.json';
-import ptBr from '../../i18n/pt-br.json';
+import pt from '../../i18n/pt.json';
 import ru from '../../i18n/ru.json';
-import zhCn from '../../i18n/zh-cn.json';
+import zh from '../../i18n/zh.json';
 
 export type Messages = typeof en;
 
@@ -29,30 +29,22 @@ export type MessageVars = Record<string, string | number>;
 
 export const LANGUAGES = {
     en,
-    'zh-cn': zhCn,
+    zh,
     ja,
     ru,
     de,
     fr,
     es,
-    'pt-br': ptBr,
+    pt,
 } as const;
 
 export type Language = keyof typeof LANGUAGES;
 
-const ALIASES: Record<string, Language> = {
-    zh: 'zh-cn',
-    'zh-sg': 'zh-cn',
-    'zh-hans': 'zh-cn',
-    pt: 'pt-br',
-};
-
-/** Maps a VS Code or browser locale (`fr-CA`, `zh_TW`, …) to one of the supported languages. */
+/** Maps a VS Code or browser locale to a supported language by dropping its region: `fr-CA` gives `fr`, `zh_TW` gives `zh`. */
 export function resolveLanguage(locale?: string): Language {
     let candidate = (locale || 'en').toLowerCase().replace(/_/g, '-');
     while (candidate) {
         if (candidate in LANGUAGES) return candidate as Language;
-        if (candidate in ALIASES) return ALIASES[candidate];
         const index = candidate.lastIndexOf('-');
         if (index <= 0) break;
         candidate = candidate.substring(0, index);
