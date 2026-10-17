@@ -505,6 +505,17 @@
     "boldColorPurple": "Purple",
     "boldColorTeal": "Teal",
     "settingsReset": "Reset",
-    "settingsEditFile": "Edit Config"
+    "settingsEditFile": "Edit Config",
+    "editInVscode": "Edit In VS Code ({shortcut})",
+    "save": "Save",
+    "copyAsHtml": "Copy as HTML",
+    "copyAsPlainText": "Copy as Plain Text",
+    "paste": "Paste",
+    "insertImage": "Insert Image",
+    "exportPdf": "Export PDF",
+    "exportPdfWithoutOutline": "Export PDF (Without Outline)",
+    "exportDocx": "Export Docx",
+    "exportHtml": "Export HTML",
+    "showInFolder": "Show in Folder"
   }
 }
