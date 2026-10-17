@@ -1,47 +1,21 @@
 import { getConfigs } from '../../util/vscodeConfig.ts';
+import { getMessages, Language, resolveLanguage } from '../../../i18n/index.ts';
 import Spreadsheet from './x-spreadsheet/index';
-import en from './x-spreadsheet/locale/en';
-import zhCn from './x-spreadsheet/locale/zh-cn';
-import zhTw from './x-spreadsheet/locale/zh-tw';
-import de from './x-spreadsheet/locale/de';
-import nl from './x-spreadsheet/locale/nl';
 import { t as localeT } from './x-spreadsheet/locale/locale';
 
-const localeMessages: Record<string, object> = {
-    en,
-    'zh-cn': zhCn,
-    'zh-tw': zhTw,
-    de,
-    nl,
-};
-
-const TRADITIONAL_ZH = new Set(['zh-tw', 'zh-hk', 'zh-mo', 'zh-hant']);
-const SIMPLIFIED_ZH = new Set(['zh-cn', 'zh-sg', 'zh-hans']);
-
-function resolveSpreadsheetLang(vscodeLang: string): string {
-    const lower = (vscodeLang || 'en').toLowerCase();
-    if (SIMPLIFIED_ZH.has(lower)) return 'zh-cn';
-    if (TRADITIONAL_ZH.has(lower)) return 'zh-tw';
-    if (lower === 'zh') return 'zh-cn';
-    if (lower.startsWith('de')) return 'de';
-    if (lower.startsWith('nl')) return 'nl';
-    return 'en';
-}
-
-let currentLang = 'en';
+let currentLang: Language = 'en';
 let initialized = false;
 
-export function initExcelLocale(): string {
+export function initExcelLocale(): Language {
     if (initialized) return currentLang;
-    const lang = resolveSpreadsheetLang(getConfigs()?.language ?? 'en');
-    const messages = localeMessages[lang] ?? en;
-    Spreadsheet.locale(lang, messages);
+    const lang = resolveLanguage(getConfigs()?.language);
+    Spreadsheet.locale(lang, getMessages(lang).spreadsheet);
     currentLang = lang;
     initialized = true;
     return lang;
 }
 
-export function getExcelLang(): string {
+export function getExcelLang(): Language {
     if (!initialized) initExcelLocale();
     return currentLang;
 }
