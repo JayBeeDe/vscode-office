@@ -27,8 +27,6 @@
   "viewer": {
     "common": {
       "failedOpenFile": "Datei konnte nicht geöffnet werden",
-      "copied": "Kopiert",
-      "close": "Schließen",
       "officeViewer": "Office Viewer",
       "switchToLight": "Zum hellen Modus wechseln",
       "switchToDark": "Zum adaptiven dunklen Modus wechseln",
@@ -140,7 +138,6 @@
       "concat": "Concat"
     },
     "viewer": {
-      "saveSuccess": "Gespeichert",
       "protectedCell": "Geschützte Zellen unterstützen diese Funktion nicht",
       "readonlyBanner": "Schreibgeschützt — durchsuchen und suchen; zum Speichern „Speichern unter“ verwenden",
       "formatCannotPreserveTitle": "Formatierung kann nicht beibehalten werden",

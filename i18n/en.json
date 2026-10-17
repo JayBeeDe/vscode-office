@@ -28,8 +28,6 @@
   "viewer": {
     "common": {
       "failedOpenFile": "Failed to open file",
-      "copied": "Copied",
-      "close": "Close",
       "officeViewer": "Office Viewer",
       "switchToLight": "Switch to light mode",
       "switchToDark": "Switch to adaptive dark mode",
@@ -160,8 +158,6 @@
       "deleteCellText": "Clear content",
       "hyperlink": "Hyperlink",
       "validation": "Data validations",
-      "cellprintable": "Enable export",
-      "cellnonprintable": "Disable export",
       "celleditable": "Enable editing",
       "cellnoneditable": "Disable editing"
     },
@@ -259,7 +255,6 @@
       "tooltip": "Tooltip"
     },
     "viewer": {
-      "saveSuccess": "Save done",
       "protectedCell": "Protected cells do not support this function",
       "readonlyBanner": "Read-only — browse and find; use Save As to save changes",
       "formatCannotPreserveTitle": "Formatting cannot be preserved",
@@ -355,18 +350,14 @@
     "editor-theme-section-dark": "Dark Themes",
     "editor-theme-toggle-to-auto": "Switch to Auto (follow VS Code)",
     "editor-theme-toggle-to-light": "Switch to Light theme",
-    "column": "Column",
     "comment": "Comment",
-    "confirm": "Confirm",
     "copyFailed": "This diagram cannot be copied",
     "copied": "Copied",
     "copy": "Copy",
     "delete-column": "Delete Column",
     "delete-row": "Delete Row",
-    "devtools": "DevTools",
     "down": "Down",
     "dragBlock": "Drag to move block",
-    "downloadTip": "The browser does not support the download function",
     "edit": "Edit",
     "edit-mode-label": "Edit Mode",
     "find": "Find",
@@ -387,7 +378,6 @@
     "edit-mode-ir-desc": "Markdown with live preview",
     "fileTypeError": "file type is error",
     "footnoteRef": "Footnote Ref",
-    "generate": "Generating",
     "headings": "Headings",
     "heading1": "Heading 1",
     "heading2": "Heading 2",
@@ -395,10 +385,8 @@
     "heading4": "Heading 4",
     "heading5": "Heading 5",
     "heading6": "Heading 6",
-    "help": "Help",
     "imageURL": "image URL",
     "indent": "Indent",
-    "info": "Info",
     "inline-code": "Inline Code",
     "insert-after": "Insert line after",
     "insert-before": "Insert line Before",
@@ -430,7 +418,6 @@
     "table": "Table",
     "textIsNotEmpty": "text(no empty)",
     "title": "Title",
-    "tooltipText": "Tooltip text",
     "undo": "Undo",
     "up": "Up",
     "update": "Update",
@@ -470,7 +457,6 @@
     "aiNoModels": "No models yet",
     "aiAddModel": "Add Model",
     "aiModelName": "Name",
-    "aiSelectModel": "Select Model",
     "aiNoModelSelected": "— Select a model —",
     "aiReviewTitle": "Review Changes",
     "aiGenerating": "Generating…",
@@ -725,7 +711,6 @@
       "@title": "Find in Document",
       "label": "Find"
     },
-    "additional_layers": "Additional Layers",
     "thumb_page": {
       "title": "Page {page}",
       "canvas": "Thumbnail of Page {page}"
@@ -782,10 +767,7 @@
       "line": "Line: {line}"
     },
     "rendering_error": "An error occurred while rendering the page.",
-    "loading_error": {
-      "@text": "An error occurred while loading the PDF.",
-      "indicator": "Error"
-    },
+    "loading_error": "An error occurred while loading the PDF.",
     "invalid_file_error": "Invalid or corrupted PDF file.",
     "missing_file_error": "Missing PDF file.",
     "unexpected_response_error": "Unexpected server response.",
