@@ -379,7 +379,7 @@ function ParquetViewer() {
                 <main className="parquet-viewer__main">
                     {readOnly && !loading && !error && fileInfo && (
                         <div className="parquet-viewer__readonly-banner">
-                            {$t('viewer.readOnly')}
+                            {$t('readOnly')}
                         </div>
                     )}
                     {error ? (

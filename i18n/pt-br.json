@@ -25,5 +25,28 @@
       "selectImage": "Selecionar imagem",
       "statusBar": "Linha {lines} Caracteres {chars}"
     }
+  },
+  "viewer": {
+    "common": {
+      "copied": "Copiado",
+      "close": "Fechar",
+      "officeViewer": "Visualizador do Office",
+      "switchToLight": "Alternar para o modo claro",
+      "switchToDark": "Alternar para o modo escuro adaptativo",
+      "editInVscode": "Editar no VS Code"
+    },
+    "failedOpenFile": "Falha ao abrir o arquivo",
+    "failedLoadDocument": "Falha ao carregar o documento",
+    "failedLoadPresentation": "Falha ao carregar a apresentação",
+    "readOnly": "Somente leitura — as alterações não são salvas no disco",
+    "loadingXmind": "Carregando XMind...",
+    "sheets": "Planilhas",
+    "slides": "Slides",
+    "searchBook": "Pesquisar livro...",
+    "failedLoadEpub": "Falha ao carregar EPUB",
+    "failedRenderEpub": "Falha ao renderizar a página EPUB",
+    "searchFailed": "Falha na pesquisa",
+    "untitled": "Sem título",
+    "error": "Erro"
   }
 }
