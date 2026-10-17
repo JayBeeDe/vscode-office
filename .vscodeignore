@@ -8,6 +8,7 @@ src/**
 test/**
 vditor/**
 vite/**
+scripts/**
 template/**
 node_modules/**
 index.html
