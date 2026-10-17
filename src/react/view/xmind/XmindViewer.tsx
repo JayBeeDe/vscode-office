@@ -215,7 +215,7 @@ export default function XmindViewer() {
         }).on('saveDone', () => {
             setSaving(false);
             setDirty(false);
-            message.success({ duration: 1.5, content: '保存成功' });
+            message.success({ duration: 1.5, content: 'Saved successfully' });
         }).on('saveFailed', (payload?: { message?: string }) => {
             setSaving(false);
             if (payload?.message) {
@@ -314,7 +314,7 @@ export default function XmindViewer() {
                                     className="xmind-save-btn"
                                     icon={<SaveOutlined />}
                                     aria-label="Save"
-                                    title="保存"
+                                    title="Save"
                                     loading={saving}
                                     disabled={!dirty || saving}
                                     onClick={() => void handleSave()}
@@ -341,7 +341,7 @@ export default function XmindViewer() {
                                 <button
                                     type="button"
                                     className="xmind-theme-toggle"
-                                    title={dark ? '切换亮色' : '切换暗色（跟随 VS Code 主题）'}
+                                    title={dark ? 'Switch to light mode' : 'Switch to dark mode (follows the VS Code theme)'}
                                     aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
                                     onClick={toggleDark}
                                 >

@@ -131,7 +131,7 @@ export default function Word() {
             <button
                 type="button"
                 className="dark-mode-toggle"
-                title={adaptiveColorMode ? "切换亮色" : "切换暗色（跟随 VS Code 主题）"}
+                title={adaptiveColorMode ? "Switch to light mode" : "Switch to dark mode (follows the VS Code theme)"}
                 aria-label={adaptiveColorMode ? "Switch to light mode" : "Switch to adaptive dark mode"}
                 onClick={toggleColorMode}
             >

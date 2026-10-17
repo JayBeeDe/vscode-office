@@ -30,7 +30,7 @@ export class MarkdownService {
     public async exportMarkdown(uri: vscode.Uri, option: ExportOption = {}) {
         const { type = 'pdf' } = option;
         try {
-            if (type != 'html') { // html导出速度快, 无需等待
+            if (type != 'html') { // HTML export is fast, no need to wait
                 vscode.window.showInformationMessage(i18n('ext.markdown.exportStart', type))
             }
             await convertMd({ markdownFilePath: uri.fsPath, config: this.getConfig(option) })
@@ -198,7 +198,7 @@ export class MarkdownService {
     }
 
     /**
-     * 如果粘贴板内是复制了一个文件, 取得路径进行复制
+     * If the clipboard contains a copied file, get its path and copy it
      */
     private copyFromPath(savedImagePath: string, targetPath: string) {
         if (savedImagePath.startsWith("copied:")) {

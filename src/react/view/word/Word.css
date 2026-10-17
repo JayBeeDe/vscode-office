@@ -6,7 +6,7 @@ body,
     overflow: hidden;
 }
 
-/* VS Code 自适应模式：同步 webview 页面底色 */
+/* VS Code adaptive mode: sync the webview page background */
 html:has(.word-viewer--vscode-theme),
 html:has(.word-viewer--vscode-theme) body,
 html:has(.word-viewer--vscode-theme) #root {
@@ -23,11 +23,11 @@ html:has(.word-viewer--vscode-theme) #root {
     position: relative;
 
     /*
-     * 工具栏尺寸调节（docx-editor 用 Tailwind rem 类，如 h-8=2rem、gap-2=0.5rem）。
-     * rem 相对 html 字号，不受父级 font-size 影响。
+     * Toolbar size tuning (docx-editor uses Tailwind rem classes, e.g. h-8=2rem, gap-2=0.5rem).
+     * rem is relative to the html font size and ignores the parent font-size.
      *
-     * 方式一（推荐）：zoom 同比缩放工具栏行，改 --word-toolbar-zoom 即可（如 0.875）。
-     * 方式二：改 html rem 基准，取消方式一后启用 --word-editor-rem-scale（如 0.875）。
+     * Option 1 (recommended): zoom scales the toolbar rows proportionally; just change --word-toolbar-zoom (e.g. 0.875).
+     * Option 2: change the html rem base; disable option 1, then enable --word-editor-rem-scale (e.g. 0.875).
      */
     --word-toolbar-zoom: 0.97;
     --word-editor-rem-scale: 1;
@@ -37,13 +37,13 @@ html:has(.word-viewer) {
     font-size: calc(16px * var(--word-editor-rem-scale));
 }
 
-/* formatting-bar 在 editor-toolbar 内，勿重复 zoom，否则末尾按钮间距会塌陷 */
+/* formatting-bar is inside editor-toolbar; do not zoom it again or the spacing of the trailing buttons collapses */
 .word-viewer [data-testid="editor-toolbar"],
 .word-viewer .docx-responsive-toolbar {
     zoom: var(--word-toolbar-zoom);
 }
 
-/* 格式化条末尾：评论、编辑模式等（非 fe 分组子节点） */
+/* End of the formatting bar: comments, editing mode, etc. (not children of the fe groups) */
 .word-viewer [data-testid="formatting-bar"] > [role="separator"] {
     margin-left: 6px !important;
     margin-right: 6px !important;
@@ -72,7 +72,7 @@ html:has(.word-viewer) {
     border-bottom: 1px solid #ffe58f;
 }
 
-/* ── 亮暗切换按钮（样式参考 Excel）──── */
+/* ── Light/dark toggle button (styled after Excel)──── */
 .word-viewer .dark-mode-toggle {
     position: fixed;
     top: 18px;
@@ -112,7 +112,7 @@ html:has(.word-viewer) {
     border-bottom-color: var(--vscode-panel-border, var(--vscode-editorWidget-border));
 }
 
-/* ── VS Code 主题 → docx-editor（变量定义在 .ep-root 上）── */
+/* ── VS Code theme → docx-editor (variables are defined on .ep-root)── */
 .word-viewer--vscode-theme {
     font-family: var(--vscode-font-family, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
     font-size: var(--vscode-font-size, 13px);
@@ -170,7 +170,7 @@ html:has(.word-viewer) {
     background-color: var(--doc-bg);
 }
 
-/* 标题栏 / 工具栏 / 菜单栏 */
+/* Title bar / toolbar / menu bar */
 .word-viewer--vscode-theme [data-testid="editor-toolbar"],
 .word-viewer--vscode-theme [data-testid="title-bar"] {
     background-color: var(--doc-surface) !important;
@@ -186,7 +186,7 @@ html:has(.word-viewer) {
     background-color: var(--doc-bg) !important;
 }
 
-/* 文档页正文色 */
+/* Document page text color */
 .word-viewer--vscode-theme .layout-page,
 .word-viewer--vscode-theme .layout-page-content,
 .word-viewer--vscode-theme .layout-page-header,
@@ -196,7 +196,7 @@ html:has(.word-viewer) {
     color: var(--doc-page-text);
 }
 
-/* 工具栏格式化条（水平滚动） */
+/* Toolbar formatting bar (horizontal scrolling) */
 .word-viewer--vscode-theme [data-testid="formatting-bar"] {
     background-color: var(--doc-bg-subtle) !important;
     scrollbar-color: var(--doc-scrollbar-thumb) var(--doc-scrollbar-track);
@@ -252,7 +252,7 @@ html:has(.word-viewer) {
     border-radius: 9999px;
 }
 
-/* 工具栏按钮 */
+/* Toolbar buttons */
 .word-viewer--vscode-theme .ep-root .ep-toolbar-toggle {
     color: var(--doc-text-muted) !important;
 }
@@ -262,7 +262,7 @@ html:has(.word-viewer) {
     background-color: var(--doc-bg-hover) !important;
 }
 
-/* shadcn / tailwind 工具类覆盖 */
+/* shadcn / tailwind utility class overrides */
 .word-viewer--vscode-theme .ep-root .bg-background,
 .word-viewer--vscode-theme .ep-root .bg-doc-bg {
     background-color: var(--doc-bg) !important;
@@ -350,7 +350,7 @@ html:has(.word-viewer) {
     --tw-ring-color: var(--doc-focus-ring) !important;
 }
 
-/* 选区 / 表格焦点 */
+/* Selection / table focus */
 .word-viewer--vscode-theme .docx-run ::selection,
 .word-viewer--vscode-theme .docx-run-editable ::selection,
 .word-viewer--vscode-theme .docx-run-editable::selection,

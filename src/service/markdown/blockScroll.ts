@@ -5,7 +5,7 @@ const pendingBlockScroll = new Map<string, string>();
 /** every open panel of each file: a file can be open in two split panels */
 const webviewHandlers = new Map<string, Set<Handler>>();
 
-/** 按文件路径缓存 webview，忽略 query / fragment */
+/** Cache webviews by file path, ignoring query / fragment */
 export function markdownUriKey(uri: vscode.Uri): string {
     return uri.with({ query: '', fragment: '' }).toString();
 }

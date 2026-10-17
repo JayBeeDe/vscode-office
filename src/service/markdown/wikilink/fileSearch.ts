@@ -10,7 +10,7 @@ function matchesName(file: vscode.Uri, expected: string): boolean {
     return path === name || path.endsWith(`/${name}`);
 }
 
-/** 直接路径探测：祖先目录 + 文件名，走 fs.stat，避免索引查询 */
+/** Direct path probe: ancestor directory + file name via fs.stat, avoiding an index query */
 export async function statMarkdownAt(baseDir: vscode.Uri, page: string): Promise<vscode.Uri | null> {
     for (const fileName of directFileNames(page)) {
         const fileUri = vscode.Uri.joinPath(baseDir, fileName);
@@ -38,7 +38,7 @@ function toRelativePattern(
     return new vscode.RelativePattern(workspaceFolder, fullPattern);
 }
 
-/** 在 scopeDir 下用 findFiles 做精确相对匹配（非 **） */
+/** Exact relative match under scopeDir using findFiles (no **) */
 export async function findMarkdownInScope(
     workspaceFolder: vscode.WorkspaceFolder,
     scopeDir: string,
@@ -55,7 +55,7 @@ export async function findMarkdownInScope(
     return results;
 }
 
-/** 在工作区（或子目录）内递归查找，模式形如 **/
+/** Recursive search within the workspace (or a subdirectory) using a ** glob pattern */
 export async function findMarkdownRecursive(
     workspaceFolder: vscode.WorkspaceFolder,
     scopeDir: string,

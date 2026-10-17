@@ -43,7 +43,7 @@ export function adjustImgPath(uri: vscode.Uri, ext: string = 'png') {
 }
 
 /**
- * 根据uri获取其工作空间路径
+ * Get the workspace path of a uri
  * @param uri 
  * @returns 
  */
@@ -59,7 +59,7 @@ export class FileUtil {
         this.context = context;
     }
     public static async getLastPath(key: string | string[], path = '') {
-        // 获取已经保存的路径
+        // Get the previously saved path
         let basePath: string;
         if (!Array.isArray(key)) { key = [key] }
         for (const itemKey of key) {

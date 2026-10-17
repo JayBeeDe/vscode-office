@@ -13,7 +13,7 @@ function getPayloadPath(uri: Uri): string {
     return uri.toString();
 }
 
-/** 与 markdown documentCacheId 一致，用于 webview localStorage 键前缀 */
+/** Same as the markdown documentCacheId; used as the webview localStorage key prefix */
 export function buildDocumentCacheId(uri: Uri): string {
     return `${uri.scheme}:${uri.toString()}`;
 }
@@ -106,7 +106,7 @@ function resolveGitPath(): string {
     return workspace.getConfiguration('git').get<string>('path') ?? 'git.exe';
 }
 
-/** ref 末尾单独的 ^ 与后面的 :path 拼接时，部分环境下解析会失败，^1 语义等价于 ^ */
+/** A lone trailing ^ in the ref followed by :path fails to parse in some environments; ^1 is equivalent to ^ */
 function normalizeGitRef(ref: string): string {
     return ref.endsWith('^') ? `${ref}1` : ref;
 }
@@ -123,7 +123,7 @@ function buildGitObjectSpec(ref: string, relativePath: string): string {
     return `${normalizeGitRef(ref)}:${relativePath}`;
 }
 
-/** git scheme 经 VS Code FS 会走 --textconv，Windows 上二进制会被当文本处理 */
+/** The git scheme goes through --textconv in the VS Code FS, so binaries are treated as text on Windows */
 async function readGitUriBytes(uri: Uri): Promise<Uint8Array> {
     const { path: filePath, ref, submoduleOf } = JSON.parse(uri.query) as GitUriQuery;
     if (submoduleOf) {

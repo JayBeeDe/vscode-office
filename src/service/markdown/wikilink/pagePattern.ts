@@ -2,7 +2,7 @@ import { extname } from 'path';
 import { MARKDOWN_EXTENSIONS } from './constants';
 import { normalizePage } from './parse';
 
-/** 在指定目录下直接查找用的相对文件名 */
+/** Relative file names for a direct lookup in a given directory */
 export function directFileNames(page: string): string[] {
     const base = normalizePage(page);
     const ext = extname(base).toLowerCase();
@@ -33,7 +33,7 @@ export function nameToGlob(name: string): string {
     }).join('');
 }
 
-/** 在工作区内递归查找用的 glob 模式（仅 ** 前缀，交给 findFiles） */
+/** Glob patterns for a recursive search in the workspace (** prefix only, passed to findFiles) */
 export function recursiveFindPatterns(page: string): string[] {
     const base = normalizePage(page);
     const ext = extname(base).toLowerCase();

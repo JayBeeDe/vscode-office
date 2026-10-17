@@ -95,7 +95,7 @@ function keydownEventHandler(evt) {
     evt.preventDefault();
     this.clear();
   }
-  // 不知道为什么单元格事件被吞了, Windows上正常
+  // Not sure why the cell event gets swallowed; works fine on Windows
   // text editing shortcuts (undo, cut, copy, paste, select all, moving the caret) belong to the
   // editor itself: re-dispatching them would undo or cut on the sheet
   const editingKeys = ['z', 'y', 'x', 'c', 'v', 'a', 'arrowleft', 'arrowright', 'arrowup', 'arrowdown', 'backspace', 'delete'];

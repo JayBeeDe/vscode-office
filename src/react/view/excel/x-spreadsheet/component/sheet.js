@@ -1431,13 +1431,13 @@ function sheetInitEvents() {
           break;
         case 86:
           if (altKey && !shiftKey) {
-            // ctrl/cmd + alt + v：仅粘贴格式
+            // ctrl/cmd + alt + v: paste formatting only
             if (!this.data.clipboard.isClear()) {
               paste.call(this, 'format');
             }
             evt.preventDefault();
           } else if (shiftKey && !altKey) {
-            // ctrl/cmd + shift + v：仅粘贴值（无格式）
+            // ctrl/cmd + shift + v: paste values only (no formatting)
             if (!this.data.clipboard.isClear()) {
               paste.call(this, 'text');
               this.skipNextPaste = true;
