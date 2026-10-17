@@ -7,7 +7,7 @@ function loadRes(url) {
 const isMac = navigator.userAgent.includes('Mac OS');
 const shortcutTip = isMac ? '⌘ ^ E' : 'Ctrl Alt E';
 
-export async function getToolbar(resPath, onSave = null) {
+export async function getToolbar(resPath, i18n, onSave = null) {
     const codicon = (name) => `<span class="codicon codicon-${name}" aria-hidden="true"></span>`;
     return [
         'outline',
@@ -19,7 +19,7 @@ export async function getToolbar(resPath, onSave = null) {
         "|",
         {
             name: 'edit-in-vscode',
-            tip: `Edit In VSCode (${shortcutTip})`,
+            tip: i18n.editInVscode.replace('{shortcut}', shortcutTip),
             className: 'right',
             icon: codicon('vscode'),
             click() {
@@ -28,7 +28,7 @@ export async function getToolbar(resPath, onSave = null) {
         },
         {
             name: 'save',
-            tip: 'Save',
+            tip: i18n.save,
             className: 'right',
             icon: codicon('save'),
             click() {
@@ -165,6 +165,11 @@ export const setAIAvailable = (available, editor) => {
 
 export const createContextMenu = (editor) => {
     const menu = document.getElementById('context-menu')
+    // each item is labelled with the editor string named after its action
+    for (const item of menu.querySelectorAll('[data-action]')) {
+        const label = window.VditorI18n?.[item.dataset.action]
+        if (label) item.querySelector('.vditor-context-menu__label').textContent = label
+    }
 
     const closeMenu = () => hideContextMenu(menu)
 

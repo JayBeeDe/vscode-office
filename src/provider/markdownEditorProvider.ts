@@ -8,6 +8,7 @@ import { Util } from '../common/util';
 import { Holder } from '../service/markdown/holder';
 import { MarkdownService } from '../service/markdownService';
 import { Global, i18n } from '@/common/global';
+import { getMessages, resolveLanguage } from '@/i18n';
 import { openWikiLink } from '@/service/markdown/wikilink';
 import { streamCustomAI } from '@/service/ai/customAIClient';
 import { buildAIOutputLanguageInstruction } from '@/service/ai/aiOutputLanguage';
@@ -521,6 +522,8 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
                 },
             },
             language: vscode.env.language,
+            // the editor's strings in the VS Code language, English filling in the missing ones
+            i18n: getMessages(resolveLanguage(vscode.env.language)).markdown,
             isWeb: this.options.isWeb,
             isDev: this.context.extensionMode === vscode.ExtensionMode.Development,
         };
