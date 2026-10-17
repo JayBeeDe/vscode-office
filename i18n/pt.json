@@ -27,8 +27,6 @@
   "viewer": {
     "common": {
       "failedOpenFile": "Falha ao abrir o arquivo",
-      "copied": "Copiado",
-      "close": "Fechar",
       "officeViewer": "Visualizador do Office",
       "switchToLight": "Alternar para o modo claro",
       "switchToDark": "Alternar para o modo escuro adaptativo",
