@@ -4,7 +4,8 @@
       "yes": "YES",
       "no": "NO",
       "openLink": "Open",
-      "confirmOpenLink": "Open \"{url}\"? This link points outside the web and may open a file or run a program."
+      "confirmOpenLink": "Open \"{url}\"? This link points outside the web and may open a file or run a program.",
+      "settingsUnsupported": "Viewer settings file is not supported in this environment."
     },
     "markdown": {
       "exportStart": "Starting export markdown to {type}.",
