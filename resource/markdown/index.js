@@ -13,7 +13,7 @@ handler.on("open", async (md) => {
   const { content, rootPath, workspaceBaseUrl, documentCacheId, pendingFragment, shouldRestoreFocus, config, fileName } = md;
   window.__officeMarkdownFileName = fileName || 'Note';
   const {
-    language, isWeb, isDev, markdown,
+    language, i18n, isWeb, isDev, markdown,
     editMode, editorTheme, codeMirrorTheme, mermaidTheme
   } = config;
   if (isWeb) {
@@ -38,8 +38,9 @@ handler.on("open", async (md) => {
     codeMirrorTheme,
     mermaidTheme,
     lang: mapVscodeLanguageToVditorLang(language),
+    i18n,
     tab: '\t',
-    toolbar: await getToolbar(rootPath, () => {
+    toolbar: await getToolbar(rootPath, i18n, () => {
       handler.emit('doSave', getMarkdownValue());
       editor?.markSaved();
     }),
