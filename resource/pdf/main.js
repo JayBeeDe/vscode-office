@@ -111,6 +111,8 @@
 
   const SUN_STROKE_ICON = '<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="2.75"/><path d="M8 1.5v1.5M8 13v1.5M1.5 8H3M13 8h1.5M3.05 3.05l1.06 1.06M11.89 11.89l1.06 1.06M3.05 12.95l1.06-1.06M11.89 4.11l1.06-1.06"/></svg>';
 
+  const strings = window.officePdfStrings || {};
+
   function setupThemeAdapt() {
     const STORAGE_KEY = 'office-pdf-adaptive-theme';
     const apply = (on) => {
@@ -119,8 +121,8 @@
       if (btn) {
         btn.classList.toggle('toggled', on);
         btn.innerHTML = on ? ADAPTIVE_ICON : SUN_STROKE_ICON;
-        btn.title = on ? 'Use the default light theme (Ctrl/Cmd+Shift+L)' : 'Enable theme adaptation (follow VS Code colors) (Ctrl/Cmd+Shift+L)';
-        btn.setAttribute('aria-label', on ? 'Use the default light theme' : 'Enable theme adaptation');
+        btn.title = `${on ? strings.useLightTheme : strings.adaptThemeHint} (Ctrl/Cmd+Shift+L)`;
+        btn.setAttribute('aria-label', on ? strings.useLightTheme : strings.adaptTheme);
       }
     };
     let enabled = false;
@@ -149,8 +151,8 @@
       if (btn) {
         btn.classList.toggle('toggled', on);
         btn.innerHTML = on ? BULB_ICON : MOON_ICON;
-        btn.title = on ? 'Switch PDF to light mode (Ctrl/Cmd+L)' : 'Switch PDF to dark mode (Ctrl/Cmd+L)';
-        btn.setAttribute('aria-label', on ? 'Switch PDF to light mode' : 'Switch PDF to dark mode');
+        btn.title = `${on ? strings.switchToLight : strings.switchToDark} (Ctrl/Cmd+L)`;
+        btn.setAttribute('aria-label', on ? strings.switchToLight : strings.switchToDark);
       }
     };
     let enabled = false;
