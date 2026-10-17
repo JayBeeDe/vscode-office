@@ -1,7 +1,7 @@
 import { isInsideCodeBlockChrome, isInsideCodeMirror, isPlantumlRenderImage } from "../codeBlock/codeMirrorManager";
 import { hasClosestByAttribute, hasClosestByMatchTag } from "./hasClosest";
 
-/** 未配置 onLinkClick 时：Ctrl/⌘+单击、双击或中键触发默认跳转 */
+/** Without onLinkClick: Ctrl/⌘+click, double-click or middle-click follows the link by default */
 export const shouldTriggerLinkClick = (event: MouseEvent) => {
     if (event.type === "auxclick" || event.type === "dblclick") {
         return true;
@@ -193,7 +193,7 @@ export const linkClickEvent = (vditor: IVditor, editorElement: HTMLElement) => {
         });
     };
 
-    // 冒泡阶段，与 util.openLink 一致：先让 pre 内 Vditor UI 处理，再拦截向外传播
+    // bubble phase, like util.openLink: let the Vditor UI inside pre handle it first, then stop outward propagation
     editorElement.addEventListener("click", onPointer);
     editorElement.addEventListener("auxclick", onPointer);
     editorElement.addEventListener("dblclick", onPointer);

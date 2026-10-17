@@ -5,7 +5,7 @@ const PLANTUML_CHROME_CLASS = "vditor-plantuml-chrome";
 
 const openPlantumlUrl = (url: string, event: MouseEvent, link: HTMLAnchorElement, vditor?: IVditor) => {
     if (vditor && typeof vditor.options.onLinkClick === "function") {
-        // 工具栏单击即打开：复用 onLinkClick，用 dblclick action 绕过 Ctrl/⌘ 门禁
+        // a single toolbar click opens it: reuse onLinkClick with the dblclick action to bypass the Ctrl/⌘ requirement
         vditor.options.onLinkClick({
             type: "link",
             href: url,
@@ -57,7 +57,7 @@ const createPlantumlChrome = (url: string, vditor?: IVditor) => {
     return chromeRoot;
 };
 
-/** 以图片为定位盒：figure 收缩到 img 尺寸，工具栏贴在图片右上角 */
+/** Use the image as the positioning box: the figure shrinks to the img size and the toolbar sticks to the image's top-right corner */
 export const ensurePlantumlChrome = (plantumlElement: HTMLElement, url: string, vditor?: IVditor) => {
     const img = plantumlElement.querySelector("img");
     if (!img) {

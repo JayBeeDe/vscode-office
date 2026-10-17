@@ -7,7 +7,7 @@ import {
     isInsideCodeMirror,
 } from "./codeMirrorManager";
 
-/** 从相邻块用 ↑/↓ 进入 CodeMirror */
+/** Enter CodeMirror from an adjacent block with ↑/↓ */
 export const tryFocusAdjacentCodeMirror = (vditor: IVditor, event: KeyboardEvent, range: Range) => {
     if (isCtrl(event) || event.altKey || event.shiftKey || isInsideCodeMirror(event.target)) {
         return false;

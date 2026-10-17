@@ -1,4 +1,4 @@
-// NOTE: 从 hasClosest.ts 中拆分
+// NOTE: split out of hasClosest.ts
 export const hasClosestByTag = (element: Node, nodeName: string) => {
     if (!element) {
         return false;

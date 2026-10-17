@@ -1,6 +1,6 @@
 import { isCtrl, isFirefox } from "./compatibility";
 
-// 是否匹配 ⇧⌘[] / ⌘[] / ⌥[] / ⌥⌘[] / ⇧Tab / []
+// Whether it matches ⇧⌘[] / ⌘[] / ⌥[] / ⌥⌘[] / ⇧Tab / []
 export const matchHotKey = (hotKey: string, event: KeyboardEvent) => {
     if (hotKey === "") {
         return false;
@@ -18,7 +18,7 @@ export const matchHotKey = (hotKey: string, event: KeyboardEvent) => {
         return false;
     }
 
-    // 是否匹配 ⇧Tab
+    // Whether it matches ⇧Tab
     if (hotKey === "⇧Tab") {
         if (!isCtrl(event) && !event.altKey && event.shiftKey && event.code === "Tab") {
             return true;
@@ -28,7 +28,7 @@ export const matchHotKey = (hotKey: string, event: KeyboardEvent) => {
 
     let hotKeys = hotKey.split("");
     if (hotKey.startsWith("⌥")) {
-        // 是否匹配 ⌥[] / ⌥⌘[]
+        // Whether it matches ⌥[] / ⌥⌘[]
         const keyCode = hotKeys.length === 3 ? hotKeys[2] : hotKeys[1];
         if ((hotKeys.length === 3 ? isCtrl(event) : !isCtrl(event)) && event.altKey && !event.shiftKey &&
             event.code === (/^[0-9]$/.test(keyCode) ? "Digit" : "Key") + keyCode) {
@@ -37,7 +37,7 @@ export const matchHotKey = (hotKey: string, event: KeyboardEvent) => {
         return false;
     }
 
-    // 是否匹配 ⇧⌘[] / ⌘[]
+    // Whether it matches ⇧⌘[] / ⌘[]
     if (hotKey === "⌘Enter") {
         hotKeys = ["⌘", "Enter"];
     }

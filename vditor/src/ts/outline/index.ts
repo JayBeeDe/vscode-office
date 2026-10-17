@@ -221,7 +221,7 @@ export class Outline {
             if (vditor[vditor.currentMode].element.contains(range.startContainer)) {
                 setSelectionFocus(range);
             } else {
-                // 编辑器不需要获得焦点, 这会导致滚动位置被清空
+                // the editor must not get focus, it would reset the scroll position
                 // vditor[vditor.currentMode].element.focus();
             }
         }

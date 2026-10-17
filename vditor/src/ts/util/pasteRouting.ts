@@ -3,12 +3,12 @@ import { isIdeCodeHtml, isMarkdownLikePlain } from "./processCode";
 const inlineHTMLTagInPlain = /<\/[a-zA-Z][\w:-]*>|<[a-zA-Z][\w:-]*(?:\s[^>]*)?\/?>/;
 
 /**
- * 粘贴前在 HTML / plain 之间选路。
+ * Choose between HTML and plain text before pasting.
  *
- * 1. VS Code（vscode-editor-data）：以 plain 为准，HTML 仅为语法高亮壳
- * 2. plain 已含 Markdown 结构或 vditor 内联 HTML：丢弃会误导的 HTML
- * 3. 其他 IDE 代码 HTML（IntelliJ 等）：保留 HTML 供 processPasteCode 识别语言
- * 4. 其余：保留 HTML，走 Word / 网页富文本路径
+ * 1. VS Code (vscode-editor-data): use plain text, the HTML is only a syntax-highlighting wrapper
+ * 2. plain text already has Markdown structure or vditor inline HTML: drop the misleading HTML
+ * 3. code HTML from other IDEs (IntelliJ etc.): keep the HTML so processPasteCode can detect the language
+ * 4. anything else: keep the HTML and take the Word / web rich text path
  */
 export const routePasteClipboard = (
     textHTML: string,

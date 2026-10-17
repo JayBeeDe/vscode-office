@@ -8,7 +8,7 @@ const MAC_OPTION_IGNORE_CODES = new Set([
     "Insert", "ContextMenu", "CapsLock", "AltLeft", "AltRight",
 ]);
 
-/** macOS 仅 Option(Alt) + 符号键时返回 true；仅 preventDefault，不 stopPropagation，以便 VS Code 快捷键仍生效 */
+/** Returns true on macOS only for Option(Alt) + a symbol key; only preventDefault, no stopPropagation, so VS Code shortcuts still work */
 export const shouldBlockMacOptionSymbol = (event: KeyboardEvent) => {
     if (!isMacPlatform() || !event.altKey || event.metaKey || event.ctrlKey) {
         return false;

@@ -100,7 +100,7 @@ export class Options {
             } else {
                 this.options.toolbar = this.mergeToolbar(this.defaultOptions.toolbar);
             }
-            // 支持不够完善，我先注释了，后期再打开
+            // support is incomplete, commented out for now, to be re-enabled later
             // if (this.options.rtl) {
             //     this.defaultOptions.rtl = this.options.rtl;
             // }
@@ -108,7 +108,7 @@ export class Options {
 
         const mergedOptions = merge(this.defaultOptions, this.options);
 
-        // 兼容旧配置传入的 sv（分割视图），映射为 ir
+        // backward compatibility: map the legacy sv (split view) option to ir
         if ((mergedOptions.mode as string) === "sv") {
             mergedOptions.mode = "ir";
         }

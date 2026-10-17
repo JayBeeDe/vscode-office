@@ -1,18 +1,18 @@
 export const addScript = (path: string, id: string) => {
     return new Promise<void>((resolve) => {
         if (document.getElementById(id)) {
-            // 脚本加载后再次调用直接返回
+            // once the script is loaded, later calls return immediately
             resolve();
             return false;
         }
         const scriptElement = document.createElement("script");
         scriptElement.src = path;
         scriptElement.async = true;
-        // 循环调用时 Chrome 不会重复请求 js
+        // Chrome does not request the js again on repeated calls
         document.head.appendChild(scriptElement);
         scriptElement.onload = () => {
             if (document.getElementById(id)) {
-                // 循环调用需清除 DOM 中的 script 标签
+                // repeated calls must remove the script tag from the DOM
                 scriptElement.remove();
                 resolve();
                 return false;

@@ -23,14 +23,14 @@ type CacheFocusState = {
     endPath?: number[];
     scrollTop?: number;
     blockIndex?: number;
-    /** 光标相对编辑器可视区域顶部的距离；仅滚动时光标可见时记录 */
+    /** Distance from the caret to the top of the editor viewport; recorded only if the caret is visible when scrolling */
     caretViewportOffset?: number;
 };
 
 type RestoreFocusOptions = {
-    /** 页面/文档首次加载时恢复（读取持久化焦点，不依赖本次会话是否失焦过） */
+    /** Restore on first page/document load (reads the persisted focus, regardless of whether focus was lost in this session) */
     onLoad?: boolean;
-    /** 是否恢复光标并 focus；默认 true。false 时仍恢复滚动 */
+    /** Whether to restore the caret and focus; default true. When false, scrolling is still restored */
     restoreCaret?: boolean;
 };
 
@@ -289,7 +289,7 @@ const isEditorFocused = (vditor: IVditor) => {
         || isInsideCodeBlockChrome(activeElement);
 };
 
-/** 有打开的弹窗/浮层时不应自动抢回编辑器焦点，否则会把弹窗关掉 */
+/** Do not grab editor focus back while a dialog/popup is open, otherwise it would close */
 const hasOpenEditorOverlay = (vditor: IVditor) => {
     const root = vditor.element;
     const aiDialog = root.querySelector<HTMLElement>(".vditor-ai-dialog-overlay");

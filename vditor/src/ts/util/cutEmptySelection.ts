@@ -91,7 +91,7 @@ const hasListItem = (element: HTMLElement) => {
     return false;
 };
 
-/** 无选区时解析可剪切的 Markdown 块；特殊块（公式、代码块等）返回 null */
+/** Without a selection, resolve the Markdown block to cut; special blocks (math, code blocks, etc.) return null */
 export const resolveTextCutBlock = (event: ClipboardEvent): HTMLElement | null => {
     if (isInsideCodeMirror(event.target)) {
         return null;
@@ -140,7 +140,7 @@ const getTextCutBlockClipboardHTML = (blockElement: HTMLElement) => {
     return tempElement.innerHTML;
 };
 
-/** 整行剪切统一按块 DOM 转 Markdown，列表项需带父级列表上下文 */
+/** Whole-line cut always converts the block DOM to Markdown; list items need their parent list context */
 export const copyTextCutBlock = (event: ClipboardEvent, vditor: IVditor, blockElement: HTMLElement) => {
     if (!event.clipboardData) {
         return false;
@@ -157,7 +157,7 @@ export const copyTextCutBlock = (event: ClipboardEvent, vditor: IVditor, blockEl
     return true;
 };
 
-/** 剪切后删除整块并恢复光标 */
+/** After cutting, delete the whole block and restore the caret */
 export const removeTextCutBlock = (vditor: IVditor, blockElement: HTMLElement) => {
     const editor = vditor[vditor.currentMode].element;
     const parentList = blockElement.tagName === "LI" && blockElement.parentElement &&

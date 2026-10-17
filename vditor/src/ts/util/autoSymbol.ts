@@ -1,12 +1,12 @@
 import { CM_BLOCK_CLASS, isInsideCodeBlockChrome, isInsideCodeMirror } from "../codeBlock/codeMirrorManager";
 
-// 保持原来的 keyCode 触发逻辑：219 ([/{), 57 ((/9)
+// Keep the original keyCode trigger logic: 219 ([/{), 57 ((/9)
 const AUTO_PAIR_KEYCODES = new Set([219, 57]);
 
 /**
- * keyCode 命中后再校验 event.key，避免 IME / 中文全角标点误触发。
- * - ( : keyCode 57 + Shift 且 event.key === '('
- * - [ : keyCode 219 + 非 Shift 且 event.key === '['（去除 {）
+ * After a keyCode match, also check event.key, so IME / Chinese full-width punctuation does not trigger it.
+ * - ( : keyCode 57 + Shift and event.key === '('
+ * - [ : keyCode 219 + no Shift and event.key === '[' (excludes {)
  */
 const resolveKeyCodePairClose = (event: KeyboardEvent): string | null => {
     if (event.isComposing || event.ctrlKey || event.metaKey || event.altKey) {
@@ -35,7 +35,7 @@ const isInsideCodeBlockContext = (target: EventTarget | null) => {
     return !!node.closest(`[data-type='code-block'], .${CM_BLOCK_CLASS}`);
 };
 
-/** 自动补全括号和方括号；不在代码块内生效 */
+/** Auto-close parentheses and square brackets; not active inside code blocks */
 export const handleAutoSymbolPair = (event: KeyboardEvent) => {
     const close = resolveKeyCodePairClose(event);
     if (!close) {

@@ -70,7 +70,7 @@ const focusInlineMathView = (view: EditorView) => {
     view.contentDOM.focus({ preventScroll: true });
 };
 
-/** 文本节点是否为纯 ZWSP（lute 在 math-inline 后会插入） */
+/** Whether the text node is only a ZWSP (lute inserts one after math-inline) */
 const isZwspOnlyText = (node: Node | null | undefined): node is Text => {
     return !!node && node.nodeType === 3 && (node.textContent ?? "") === Constants.ZWSP;
 };
@@ -93,7 +93,7 @@ const moveCaretOutsideInlineMath = (
     if (direction === "before") {
         const prev = idx > 0 ? siblings[idx - 1] : null;
         if (isZwspOnlyText(prev)) {
-            // 公式前 ZWSP：光标放在 ZWSP 之后（offset 1），与行内删除逻辑一致
+            // ZWSP before the formula: put the caret after the ZWSP (offset 1), consistent with the inline delete logic
             range.setStart(prev, 1);
         } else if (prev?.nodeType === 3) {
             range.setStart(prev, prev.textContent?.length ?? 0);
@@ -105,7 +105,7 @@ const moveCaretOutsideInlineMath = (
             range.setStartBefore(containerEl);
         }
     } else {
-        // lute 在 math-inline 后写入 ZWSP；光标若落在 ZWSP 开头，输入会跳到行首
+        // lute writes a ZWSP after math-inline; if the caret lands at the start of the ZWSP, typing jumps to the start of the line
         let next = idx > -1 ? siblings[idx + 1] : null;
         if (!isZwspOnlyText(next) && parent) {
             const zwsp = document.createTextNode(Constants.ZWSP);
@@ -117,7 +117,7 @@ const moveCaretOutsideInlineMath = (
             next = zwsp;
         }
         if (isZwspOnlyText(next)) {
-            // 放在 ZWSP 字符之后（offset=1），不要停在 offset=0
+            // place it after the ZWSP character (offset=1), not at offset=0
             range.setStart(next, 1);
         } else if (next?.nodeType === 3) {
             const text = next.textContent ?? "";
@@ -136,8 +136,8 @@ const moveCaretOutsideInlineMath = (
 };
 
 /**
- * 若光标在 math-inline 后的纯 ZWSP 开头，挪到该 ZWSP 字符之后。
- * 落在 ZWSP 内 offset=0 时，浏览器输入会异常跳到行首。
+ * If the caret is at the start of the lone ZWSP after a math-inline, move it after that ZWSP character.
+ * At offset=0 inside the ZWSP, browser input wrongly jumps to the start of the line.
  */
 export const skipZwspAfterInlineMath = (range: Range, vditor?: IVditor) => {
     const node = range.startContainer;
@@ -208,7 +208,7 @@ const inlineMathDomEventHandlers = (
             if (editor && active && (active === editor || editor.contains(active))) {
                 const sel = getSelection();
                 if (sel?.rangeCount && editor.contains(sel.getRangeAt(0).startContainer)) {
-                    // 点击落在公式后的纯 ZWSP 上时，挪到 ZWSP 之后
+                    // when a click lands on the lone ZWSP after the formula, move the caret after the ZWSP
                     skipZwspAfterInlineMath(sel.getRangeAt(0), binding.vditor);
                     return;
                 }
@@ -245,7 +245,7 @@ export const flushInlineMathToSyncCode = (root: ParentNode) => {
     }
 };
 
-/** Spin 前卸载 inline math CodeMirror，避免 cm-editor DOM 混入 Spin 输入 */
+/** Unmount the inline math CodeMirror before spin, so the cm-editor DOM does not leak into the spin input */
 export const deactivateInlineMathEditorsInScope = (scope: ParentNode) => {
     const containers = scope.querySelectorAll(".vditor-math-inline--editing");
     for (let i = 0; i < containers.length; i++) {

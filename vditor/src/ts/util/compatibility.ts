@@ -14,7 +14,7 @@ export const accessLocalStorage = () => {
     }
 };
 
-// 用户 iPhone 点击延迟/需要双击的处理
+// handle tap delay / double-tap requirement on iPhone
 export const getEventName = () => {
     if (navigator.userAgent.indexOf("iPhone") > -1) {
         return "touchstart";
@@ -23,7 +23,7 @@ export const getEventName = () => {
     }
 };
 
-// 区别 mac 上的 ctrl 和 meta
+// distinguish ctrl and meta on mac
 export const isCtrl = (event: KeyboardEvent) => {
     if (navigator.platform.toUpperCase().indexOf("MAC") >= 0) {
         // mac
@@ -44,18 +44,18 @@ export const isMacPlatform = (): boolean => {
     return /macOS|Mac|iPhone|iPod|iPad/i.test(platform);
 };
 
-/** 弹窗退出等场景：Mac 显示 ⌥Enter，Windows/Linux 显示 Alt+Enter */
+/** For cases like closing a dialog: Mac shows ⌥Enter, Windows/Linux shows Alt+Enter */
 export const formatAltEnterHotkeyTip = (): string =>
     isMacPlatform() ? "⌥Enter" : "Alt+Enter";
 
-// Mac，Windows 快捷键展示
+// Shortcut display for Mac and Windows
 export const updateHotkeyTip = (hotkey: string) => {
     if (hotkey === "⌥Enter" || hotkey === "⌥+Enter") {
         return formatAltEnterHotkeyTip();
     }
     if (isMacPlatform()) {
         if (hotkey.indexOf("⇧") > -1 && isFirefox()) {
-            // Mac Firefox 按下 shift 后，key 同 windows 系统
+            // in Firefox on Mac, with shift pressed, key behaves as on Windows
             hotkey = hotkey.replace(";", ":").replace("=", "+").replace("-", "_");
         }
     } else {
