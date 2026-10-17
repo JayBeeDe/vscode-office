@@ -41,7 +41,7 @@ import { enterInlineMathEdit, skipZwspAfterInlineMath } from "../math/inlineMath
 import { handleHtmlEditorAltEnter } from "../htmlInline/htmlInlineEditor";
 
 export const processKeydown = (vditor: IVditor, event: KeyboardEvent) => {
-    // Chrome firefox 触发 compositionend 机制不一致 https://github.com/Vanessa219/vditor/issues/188
+    // Chrome and Firefox fire compositionend inconsistently https://github.com/Vanessa219/vditor/issues/188
     vditor.wysiwyg.composingLock = event.isComposing;
     if (event.isComposing) {
         return false;
@@ -69,13 +69,13 @@ export const processKeydown = (vditor: IVditor, event: KeyboardEvent) => {
         return false;
     }
 
-    // 公式后 ZWSP：输入前先跳过，避免光标在 ZWSP 开头时字符跑到行首
+    // ZWSP after a formula: skip it before input so that characters do not jump to the line start when the caret is at the start of the ZWSP
     if (event.key.length === 1 || event.key === "Enter" || event.key === "Backspace" || event.key === "Delete") {
         const pendingRange = getEditorRange(vditor);
         skipZwspAfterInlineMath(pendingRange, vditor);
     }
 
-    // 添加第一次记录 undo 的光标
+    // Record the caret for the first undo entry
     if (event.key.indexOf("Arrow") === -1 && event.key !== "Meta" && event.key !== "Control" && event.key !== "Alt" &&
         event.key !== "Shift" && event.key !== "CapsLock" && event.key !== "Escape" && !/^F\d{1,2}$/.test(event.key)) {
         vditor.undo.recordFirstPosition(vditor, event);
@@ -92,19 +92,19 @@ export const processKeydown = (vditor: IVditor, event: KeyboardEvent) => {
 
     fixHR(range);
 
-    // 对有子工具栏的块上移
+    // Move up blocks that have a sub-toolbar
     if (matchHotKey("^⌘i", event) || matchHotKey("^!i", event)) {
         moveUp(range, vditor);
         event.stopPropagation();
     }
 
-    // 对有子工具栏的块下移
+    // Move down blocks that have a sub-toolbar
     if (matchHotKey("^⌘j", event) || matchHotKey("^!j", event)) {
         moveDown(range, vditor);
         event.stopPropagation();
     }
 
-    // 仅处理以下快捷键操作
+    // Only handle the following shortcuts
     if (event.key !== "Enter" && event.key !== "Tab" && event.key !== "Backspace" && event.key.indexOf("Arrow") === -1
         && !isCtrl(event) && event.key !== "Escape" && event.key !== "Delete") {
         return false;
@@ -116,7 +116,7 @@ export const processKeydown = (vditor: IVditor, event: KeyboardEvent) => {
         return true;
     }
 
-    // md 处理
+    // Markdown handling
     if (fixMarkdown(event, vditor, pElement, range)) {
         return true;
     }
@@ -134,7 +134,7 @@ export const processKeydown = (vditor: IVditor, event: KeyboardEvent) => {
     // code render
     const codeRenderElement = hasClosestByClassName(startContainer, "vditor-wysiwyg__block");
     if (codeRenderElement) {
-        // esc: 退出编辑
+        // esc: exit editing
         if (event.key === "Escape" && codeRenderElement.getAttribute("data-type") === "code-block") {
             vditor.wysiwyg.popover.style.display = "none";
             if (hasCodeMirror(codeRenderElement) || isCmCodeBlock(codeRenderElement)) {
@@ -150,7 +150,7 @@ export const processKeydown = (vditor: IVditor, event: KeyboardEvent) => {
             }
         }
 
-        // alt+enter: 打开 CodeMirror chrome 语言选择
+        // alt+enter: open the CodeMirror chrome language picker
         if (!isCtrl(event) && !event.shiftKey && event.altKey && event.key === "Enter" &&
             codeRenderElement.getAttribute("data-type") === "code-block") {
             if (focusCodeBlockChromeLanguage(vditor, codeRenderElement)) {
@@ -184,15 +184,15 @@ export const processKeydown = (vditor: IVditor, event: KeyboardEvent) => {
         return true;
     }
 
-    // 顶层 blockquote
+    // Top-level blockquote
     const topBQElement = hasTopClosestByTag(startContainer, "BLOCKQUOTE");
     if (topBQElement) {
         if (!event.shiftKey && event.altKey && event.key === "Enter") {
             if (!isCtrl(event)) {
-                // alt+enter: 跳出多层 blockquote 嵌套之后 https://github.com/Vanessa219/vditor/issues/51
+                // alt+enter: exit nested blockquotes, inserting after them https://github.com/Vanessa219/vditor/issues/51
                 range.setStartAfter(topBQElement);
             } else {
-                // ctrl+alt+enter: 跳出多层 blockquote 嵌套之前
+                // ctrl+alt+enter: exit nested blockquotes, inserting before them
                 range.setStartBefore(topBQElement);
             }
             setSelectionFocus(range);
@@ -212,7 +212,7 @@ export const processKeydown = (vditor: IVditor, event: KeyboardEvent) => {
     const headingElement = hasClosestByHeadings(startContainer);
     if (headingElement) {
         if (!isCtrl(event) && !event.altKey && event.key === "Enter") {
-            // enter/shift+enter: 标题换行时新行应为段落 https://github.com/Vanessa219/vditor/issues/48
+            // enter/shift+enter: a line break in a heading should create a paragraph https://github.com/Vanessa219/vditor/issues/48
             fixHeadingEnter(vditor, range, headingElement);
             renderTocNow(vditor);
             afterRenderEvent(vditor);
@@ -220,7 +220,7 @@ export const processKeydown = (vditor: IVditor, event: KeyboardEvent) => {
             return true;
         }
 
-        // enter++: 标题变大
+        // enter++: increase heading size
         if (matchHotKey("⌘=", event)) {
             const index = parseInt((headingElement as HTMLElement).tagName.substr(1), 10) - 1;
             if (index > 0) {
@@ -231,7 +231,7 @@ export const processKeydown = (vditor: IVditor, event: KeyboardEvent) => {
             return true;
         }
 
-        // enter++: 标题变小
+        // enter++: decrease heading size
         if (matchHotKey("⌘-", event)) {
             const index = parseInt((headingElement as HTMLElement).tagName.substr(1), 10) + 1;
             if (index < 7) {
@@ -244,7 +244,7 @@ export const processKeydown = (vditor: IVditor, event: KeyboardEvent) => {
 
         if (event.key === "Backspace" && !isCtrl(event) && !event.shiftKey && !event.altKey
             && headingElement.textContent.length === 1) {
-            // 删除后变为空
+            // Becomes empty after deletion
             removeHeading(vditor);
         }
     }
@@ -266,7 +266,7 @@ export const processKeydown = (vditor: IVditor, event: KeyboardEvent) => {
         }
     }
 
-    // 删除有子工具栏的块
+    // Delete blocks that have a sub-toolbar
     if (removeBlockElement(vditor, event)) {
         return true;
     }
@@ -275,8 +275,8 @@ export const processKeydown = (vditor: IVditor, event: KeyboardEvent) => {
         return true;
     }
 
-    // shift+enter：段落内硬换行（\n + ZWSP）；table/heading 等由上方 fixTable / fixHeadingEnter 处理
-    // 段末仅插 \n 时 pre-wrap 下光标不换行，需 ZWSP 占位；行内同理 https://github.com/Vanessa219/vditor/issues/170
+    // shift+enter: hard line break inside a paragraph (\n + ZWSP); table/heading etc. are handled by fixTable / fixHeadingEnter above
+    // With pre-wrap, inserting only \n at the end of a paragraph does not move the caret to a new line, so a ZWSP placeholder is needed; same inside a line https://github.com/Vanessa219/vditor/issues/170
     if (!isCtrl(event) && event.shiftKey && !event.altKey && event.key === "Enter" && !headingElement) {
         const textNode = document.createTextNode("\n" + Constants.ZWSP);
         range.insertNode(textNode);
@@ -288,7 +288,7 @@ export const processKeydown = (vditor: IVditor, event: KeyboardEvent) => {
         return true;
     }
 
-    // 删除
+    // Delete
     if (event.key === "Backspace" && !isCtrl(event) && !event.shiftKey && !event.altKey && range.toString() === "") {
         if (fixDelete(vditor, range, event, pElement)) {
             return true;
@@ -303,14 +303,14 @@ export const processKeydown = (vditor: IVditor, event: KeyboardEvent) => {
                 const rangeStart = getSelectPosition(blockElement, vditor.wysiwyg.element, range).start;
                 if ((rangeStart === 0 && range.startOffset === 0) || // https://github.com/Vanessa219/vditor/issues/894
                     (rangeStart === 1 && blockElement.innerText.startsWith(Constants.ZWSP))) {
-                    // 当前块删除后光标落于代码渲染块上，当前块会被删除，因此需要阻止事件，不能和 keyup 中的代码块处理合并
+                    // After deleting, the caret lands on a rendered code block and the current block gets removed, so the event must be prevented; this cannot be merged with the code block handling in keyup
                     const prevBlock = blockElement.previousElementSibling as HTMLElement;
                     const prevPreview = prevBlock?.lastElementChild as HTMLElement;
                     if (!focusWysiwygCodeBlock(prevBlock, vditor, false) && prevPreview) {
                         showCode(prevPreview, vditor, false);
                     }
                     if (blockElement.innerHTML.trim().replace(Constants.ZWSP, "") === "") {
-                        // 当前块为空且不是最后一个时，需要删除
+                        // Delete the current block when it is empty and not the last one
                         blockElement.remove();
                         recordHistoryChange(vditor);
                     }
@@ -324,7 +324,7 @@ export const processKeydown = (vditor: IVditor, event: KeyboardEvent) => {
                 startContainer.textContent.charAt(rangeStartOffset - 2) === "\n" &&
                 startContainer.textContent.charAt(rangeStartOffset - 1) !== Constants.ZWSP
                 && ["STRONG", "STRIKE", "S", "I", "EM", "B"].includes(startContainer.parentElement.tagName)) {
-                // 保持行内元素软换行需继续的一致性
+                // Keep soft line breaks inside inline elements consistent
                 startContainer.textContent = startContainer.textContent.substring(0, rangeStartOffset - 1) +
                     Constants.ZWSP;
                 range.setStart(startContainer, rangeStartOffset);
@@ -334,15 +334,15 @@ export const processKeydown = (vditor: IVditor, event: KeyboardEvent) => {
                 return true;
             }
 
-            // inline code、math、html 行前零宽字符后进行删除
+            // Deleting after the zero-width character before inline code, math or html
             if (startContainer.textContent === Constants.ZWSP && range.startOffset === 1
                 && !startContainer.previousSibling && nextIsCode(range)) {
                 startContainer.textContent = "";
-                // 不能返回，其前面为代码渲染块时需进行以下处理：修正光标位于 inline math/html 前，按下删除按钮 code 中内容会被删除
+                // Do not return: when preceded by a rendered code block, the following is needed. Fix: with the caret before inline math/html, pressing delete would remove the code content
             }
 
-            // 修正光标位于 inline math/html, html-entity 前，按下删除按钮 code 中内容会被删除
-            // inline-math 现在可能包含 CodeMirror 宿主节点，不再依赖 first/lastElementChild 顺序。
+            // Fix: with the caret before inline math/html or html-entity, pressing delete would remove the code content
+            // inline-math may now contain a CodeMirror host node, so do not rely on the first/lastElementChild order.
             blockElement.querySelectorAll("span.vditor-wysiwyg__block[data-type='math-inline']").forEach((item) => {
                 const codeEl = item.querySelector("code[data-type='math-inline']") as HTMLElement | null;
                 const previewEl = item.querySelector(".vditor-wysiwyg__preview") as HTMLElement | null;
@@ -418,7 +418,7 @@ export const processKeydown = (vditor: IVditor, event: KeyboardEvent) => {
     }
 
     if (event.key === "ArrowDown") {
-        // 光标位于内联数学公式前，按下键无作用
+        // With the caret before an inline math formula, the key press has no effect
         const nextElement = startContainer.nextSibling as HTMLElement;
         if (nextElement && nextElement.nodeType !== 3 && nextElement.getAttribute("data-type") === "math-inline") {
             range.setStartAfter(nextElement);
@@ -434,7 +434,7 @@ export const processKeydown = (vditor: IVditor, event: KeyboardEvent) => {
 };
 
 export const removeBlockElement = (vditor: IVditor, event: KeyboardEvent) => {
-    // 删除有子工具栏的块
+    // Delete blocks that have a sub-toolbar
     if (matchHotKey("⇧⌘X", event)) {
         const itemElement: HTMLElement = vditor.wysiwyg.popover.querySelector('[data-type="remove"]');
         if (itemElement) {

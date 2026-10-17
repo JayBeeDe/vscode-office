@@ -55,7 +55,7 @@ export const input = (vditor: IVditor, range: Range, event?: InputEvent) => {
     markPrepareStep("find closest block");
 
     if (!blockElement) {
-        // 使用顶级块元素，应使用 innerHTML
+        // Use the top-level block element; innerHTML should be used
         blockElement = vditor.wysiwyg.element;
     }
     markPrepareStep("resolve fallback block");
@@ -75,19 +75,19 @@ export const input = (vditor: IVditor, range: Range, event?: InputEvent) => {
     ) {
         const previousAEmptyElement = previoueIsEmptyA(range.startContainer);
         if (previousAEmptyElement) {
-            // 链接结尾回车不应该复制到下一行 https://github.com/Vanessa219/vditor/issues/163
+            // Pressing enter at the end of a link should not copy it to the next line https://github.com/Vanessa219/vditor/issues/163
             previousAEmptyElement.remove();
         }
         markPrepareStep("remove previous empty link");
 
-        // 保存光标
+        // Save the caret
         vditor.wysiwyg.element.querySelectorAll("wbr").forEach((wbr) => {
             wbr.remove();
         });
         range.insertNode(document.createElement("wbr"));
         markPrepareStep("reset wbr cursor marker");
 
-        // 在行首进行删除，后面的元素会带有样式，需清除
+        // When deleting at the line start, the following elements carry styles that must be removed
         blockElement.querySelectorAll("[style]").forEach((item) => {
             item.removeAttribute("style");
         });
@@ -95,7 +95,7 @@ export const input = (vditor: IVditor, range: Range, event?: InputEvent) => {
 
         let html = "";
         if (blockElement.getAttribute("data-type") === "link-ref-defs-block") {
-            // 修改链接引用
+            // Update link references
             blockElement = vditor.wysiwyg.element;
         }
         markPrepareStep("resolve link-ref edit scope");
@@ -105,19 +105,19 @@ export const input = (vditor: IVditor, range: Range, event?: InputEvent) => {
         markPrepareStep("detect editor and footnote scope");
 
         if (!isWYSIWYGElement) {
-            // 列表需要到最顶层
+            // Lists must go up to the top level
             const topListElement = getTopList(range.startContainer);
             if (topListElement && !footnoteElement) {
                 const blockquoteElement = hasClosestByTag(range.startContainer, "BLOCKQUOTE");
                 if (blockquoteElement) {
-                    // li 中有 blockquote 就只渲染 blockquote
+                    // If the li contains a blockquote, only render the blockquote
                     blockElement = hasClosestBlock(range.startContainer) || blockElement;
                 } else {
                     blockElement = topListElement;
                 }
             }
 
-            // 修改脚注
+            // Update footnotes
             if (footnoteElement) {
                 blockElement = footnoteElement;
             }
@@ -127,7 +127,7 @@ export const input = (vditor: IVditor, range: Range, event?: InputEvent) => {
             markPrepareStep("serialize scoped outerHTML");
 
             if (blockElement.tagName === "UL" || blockElement.tagName === "OL") {
-                // 如果为列表的话，需要把上下的列表都重绘
+                // For a list, the lists above and below must be re-rendered as well
                 const listPrevElement = blockElement.previousElementSibling;
                 const listNextElement = blockElement.nextElementSibling;
                 if (listPrevElement && (listPrevElement.tagName === "UL" || listPrevElement.tagName === "OL")) {
@@ -138,14 +138,14 @@ export const input = (vditor: IVditor, range: Range, event?: InputEvent) => {
                     html = html + listNextElement.outerHTML;
                     listNextElement.remove();
                 }
-                // firefox 列表回车不会产生新的 list item https://github.com/Vanessa219/vditor/issues/194
+                // In Firefox, pressing enter in a list does not create a new list item https://github.com/Vanessa219/vditor/issues/194
                 html = html.replace("<div><wbr><br></div>", "<li><p><wbr><br></p></li>");
             }
             markPrepareStep("merge adjacent lists");
 
             if (!blockElement.innerText.startsWith("```")) {
                 markPrepareStep("check code fence guard");
-                // 添加链接引用
+                // Add link references
                 vditor.wysiwyg.element.querySelectorAll("[data-type='link-ref-defs-block']").forEach((item) => {
                     if (item && !(blockElement as HTMLElement).isEqualNode(item)) {
                         html += item.outerHTML;
@@ -154,7 +154,7 @@ export const input = (vditor: IVditor, range: Range, event?: InputEvent) => {
                 });
                 markPrepareStep("append link reference blocks");
 
-                // 添加脚注
+                // Add footnotes
                 vditor.wysiwyg.element.querySelectorAll("[data-type='footnotes-block']").forEach((item) => {
                     if (item && !(blockElement as HTMLElement).isEqualNode(item)) {
                         html += item.outerHTML;
@@ -166,15 +166,15 @@ export const input = (vditor: IVditor, range: Range, event?: InputEvent) => {
                 markPrepareStep("check code fence guard");
             }
         } else {
-            // 整页重渲染时需先 deactivate CM，确保 pre 内只有干净的 code 元素，
-            // 否则 Chrome toolbar / cm-editor DOM 会混入 html，Lute 无法正确解析代码内容
+            // On a full-page re-render, deactivate CM first so that pre only contains a clean code element,
+            // otherwise the Chrome toolbar / cm-editor DOM leaks into the html and Lute cannot parse the code content correctly
             deactivateCodeMirrorsInScope(vditor, vditor.wysiwyg.element);
             markPrepareStep("deactivate editor code mirrors");
             html = blockElement.innerHTML;
             markPrepareStep("serialize editor innerHTML");
         }
 
-        // 合并多个 em， strong，s。以防止多个相同元素在一起时不满足 commonmark 规范，出现标记符
+        // Merge adjacent em, strong and s elements, so that identical neighbouring elements do not break the CommonMark spec and show raw markers
         html = html.replace(/<\/(strong|b)><strong data-marker="\W{2}">/g, "")
             .replace(/<\/(em|i)><em data-marker="\W{1}">/g, "")
             .replace(/<\/(s|strike)><s data-marker="~{1,2}">/g, "");
@@ -206,7 +206,7 @@ export const input = (vditor: IVditor, range: Range, event?: InputEvent) => {
         //         </ol>
         //     </li>
         // </ol>
-        // TODO 这里要处理一下, 当li有子元素p的时候, 把他转为如上的ol
+        // TODO handle this: when the li has a child p, convert it to an ol as above
         // <ol data-tight="true" data-marker="1." data-block="0">
         //     <li data-marker="1.">sdfsdf</li>
         //     <li data-marker="2.">sdfsdfsdf
@@ -232,16 +232,16 @@ export const input = (vditor: IVditor, range: Range, event?: InputEvent) => {
             blockElement.innerHTML = html;
             ensureEditorBoundaryParagraphs(blockElement);
         } else {
-            // TODO 这里的判断条件是避免tab+其他字符会生成代码块的bug
+            // TODO this condition avoids the bug where tab + other characters creates a code block
             const isUnexceptCodeBlock = html.match(/vditor-wysiwyg__pre\b/) && !oldHtml.match(/```/);
             // const isUnexceptCodeBlock=html.match(/vditor-wysiwyg__pre/) && !oldHtml.match(/```/);
             if (!isUnexceptCodeBlock) {
-                // 防止创建图片后消失
+                // Prevent the image from disappearing after it is created
                 blockElement.outerHTML = html.replace(`alt=""`, `alt="img"`);
             }
 
             if (footnoteElement) {
-                // 更新正文中的 tip
+                // Update the tip in the body
                 const footnoteItemElement = hasTopClosestByTag(vditor.wysiwyg.element.querySelector("wbr"), "LI");
                 if (footnoteItemElement) {
                     const footnoteRefElement = vditor.wysiwyg.element.querySelector(`sup[data-type="footnotes-ref"][data-footnotes-label="${footnoteItemElement.getAttribute("data-marker")}"]`);
@@ -280,7 +280,7 @@ export const input = (vditor: IVditor, range: Range, event?: InputEvent) => {
         }
         markPostProcessStep("merge link reference blocks");
 
-        // 脚注合并后添加的末尾
+        // After merging, append footnotes at the end
         let firstFootnoteElement: Element;
         const allFootnoteElement = vditor.wysiwyg.element.querySelectorAll("[data-type='footnotes-block']");
         allFootnoteElement.forEach((item, index) => {
@@ -296,7 +296,7 @@ export const input = (vditor: IVditor, range: Range, event?: InputEvent) => {
         }
         markPostProcessStep("merge footnote blocks");
 
-        // 设置光标
+        // Set the caret
         setRangeByWbr(vditor.wysiwyg.element, range);
         markPostProcessStep("restore range by wbr");
         expandMarker(getEditorRange(vditor), vditor.wysiwyg.element);

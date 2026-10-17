@@ -4,7 +4,7 @@ import {setSelectionFocus} from "../util/selection";
 
 const INLINE_PREVIEW_TYPES = new Set(["math-inline", "html-entity"]);
 
-/** 行内 math/html：点击预览区展开源码 code 并聚焦 */
+/** Inline math/html: clicking the preview expands the source code and focuses it */
 const showInlineCode = (previewElement: HTMLElement, vditor: IVditor, first = true) => {
     const blockElement = previewElement.closest(".vditor-wysiwyg__block") as HTMLElement;
     if (!blockElement || !INLINE_PREVIEW_TYPES.has(blockElement.getAttribute("data-type") ?? "")) {
@@ -44,7 +44,7 @@ const showInlineCode = (previewElement: HTMLElement, vditor: IVditor, first = tr
     return true;
 };
 
-/** 点击预览区：特殊块进入 CodeMirror 编辑，普通块聚焦已有 CM；行内 math/html 展开源码 code */
+/** Clicking the preview: special blocks enter CodeMirror editing, regular blocks focus the existing CM; inline math/html expands the source code */
 export const showCode = (previewElement: HTMLElement, vditor: IVditor, first = true) => {
     const blockElement = previewElement.closest(
         "[data-type='code-block'], [data-type='math-block']",

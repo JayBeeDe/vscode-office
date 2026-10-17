@@ -16,7 +16,7 @@ const GHOST_CLASS = "vditor-block-handle__ghost";
 const TARGET_CLASS = "vditor-block-handle-target";
 const HANDLE_GAP = 4;
 const HANDLE_SIZE = 20;
-/** 向上拖拽时，插入线提前触发的像素容差 */
+/** Pixel tolerance for triggering the insertion line early when dragging upwards */
 const DROP_LINE_HIT_OFFSET = 14;
 
 interface DropTarget {

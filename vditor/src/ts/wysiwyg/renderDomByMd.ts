@@ -35,7 +35,7 @@ export const renderDomByMd = (vditor: IVditor, md: string, options = {
         if (!parent) {
             return;
         }
-        // 普通代码块走懒加载 placeholder；数学 / mermaid / plantuml 始终渲染预览
+        // Regular code blocks use a lazy-loaded placeholder; math / mermaid / plantuml always render a preview
         if (parent.getAttribute("data-type") === "code-block" && !isSpecialBlock(parent)) {
             if (!isNearViewport(parent)) {
                 return;

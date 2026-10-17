@@ -89,13 +89,13 @@ export const splitElement = (range: Range) => {
 };
 
 export const modifyPre = (vditor: IVditor, range: Range) => {
-    // 没有被块元素包裹
+    // Not wrapped in a block element
     Array.from(vditor.wysiwyg.element.childNodes).find((node: HTMLElement) => {
         if (node.nodeType === 3) {
             const pElement = document.createElement("p");
             pElement.setAttribute("data-block", "0");
             pElement.textContent = node.textContent;
-            // 为空按下 tab 且 tab = '    ' 时，range.startContainer 不为 node
+            // When empty and tab is pressed with tab = '    ', range.startContainer is not the node
             const cloneRangeOffset = range.startContainer.nodeType === 3 ? range.startOffset : node.textContent.length;
             node.parentNode.insertBefore(pElement, node);
             node.remove();
@@ -109,11 +109,11 @@ export const modifyPre = (vditor: IVditor, range: Range) => {
             } else {
                 if (node.tagName === "DIV") {
                     range.insertNode(document.createElement("wbr"));
-                    // firefox 列表换行产生 div
+                    // Firefox creates a div on a line break in a list
                     node.outerHTML = `<p data-block="0">${node.innerHTML}</p>`;
                 } else {
                     if (node.tagName === "BR") {
-                        // firefox 空换行产生 BR
+                        // Firefox creates a BR on an empty line break
                         node.outerHTML = `<p data-block="0">${node.outerHTML}<wbr></p>`;
                     } else {
                         range.insertNode(document.createElement("wbr"));

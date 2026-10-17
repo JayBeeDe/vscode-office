@@ -13,9 +13,9 @@ export const setHeading = (vditor: IVditor, tagName: string) => {
     }
     if (blockElement && !blockElement.classList.contains("vditor-wysiwyg__block")) {
         range.insertNode(document.createElement("wbr"));
-        // Firefox 需要 trim https://github.com/Vanessa219/vditor/issues/207
+        // Firefox needs trim https://github.com/Vanessa219/vditor/issues/207
         if (blockElement.innerHTML.trim() === "<wbr>") {
-            // Firefox 光标对不齐 https://github.com/Vanessa219/vditor/issues/199 1
+            // Firefox caret misalignment https://github.com/Vanessa219/vditor/issues/199 1
             blockElement.innerHTML = "<wbr><br>";
         }
         if (blockElement.tagName === "BLOCKQUOTE" || blockElement.classList.contains("vditor-reset")) {

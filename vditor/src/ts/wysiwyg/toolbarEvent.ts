@@ -46,7 +46,7 @@ const cancelBES = (range: Range, vditor: IVditor, commandName: string) => {
             if ((commandName === "bold" && tagName === "STRONG") ||
                 (commandName === "italic" && tagName === "EM") ||
                 (commandName === "strikeThrough" && tagName === "S")) {
-                // 取消
+                // Cancel
                 insertHTML += `${lastTagName}${Constants.ZWSP}<wbr>${lastEndTagName}`;
                 jump = true;
             }
@@ -75,8 +75,8 @@ const cancelBES = (range: Range, vditor: IVditor, commandName: string) => {
 };
 
 export const toolbarEvent = (vditor: IVditor, actionBtn: Element, event: Event) => {
-    if (vditor.wysiwyg.composingLock // Mac Chrome 中韩文结束会出发此事件，导致重复末尾字符 https://github.com/Vanessa219/vditor/issues/188
-        && event instanceof CustomEvent // 点击按钮应忽略输入法 https://github.com/Vanessa219/vditor/issues/473
+    if (vditor.wysiwyg.composingLock // In Mac Chrome, finishing Chinese/Korean input triggers this event and duplicates the last character https://github.com/Vanessa219/vditor/issues/188
+        && event instanceof CustomEvent // Clicking a button should ignore the IME https://github.com/Vanessa219/vditor/issues/473
     ) {
         return;
     }
@@ -90,7 +90,7 @@ export const toolbarEvent = (vditor: IVditor, actionBtn: Element, event: Event) 
 
     let commandName = actionBtn.getAttribute("data-type");
 
-    // 移除
+    // Remove
     if (actionBtn.classList.contains("vditor-menu--current")) {
         if (commandName === "strike") {
             commandName = "strikeThrough";
@@ -141,7 +141,7 @@ export const toolbarEvent = (vditor: IVditor, actionBtn: Element, event: Event) 
             }
         }
     } else {
-        // 添加
+        // Add
         if (vditor.wysiwyg.element.childNodes.length === 0) {
             vditor.wysiwyg.element.innerHTML = '<p data-block="0"><wbr></p>';
             setRangeByWbr(vditor.wysiwyg.element, range);
@@ -159,7 +159,7 @@ export const toolbarEvent = (vditor: IVditor, actionBtn: Element, event: Event) 
                 range.insertNode(document.createElement("wbr"));
 
                 const liElement = hasClosestByMatchTag(range.startContainer, "LI");
-                // li 中软换行
+                // Soft line break inside li
                 if (liElement && blockElement.contains(liElement)) {
                     liElement.innerHTML = `<blockquote data-block="0">${liElement.innerHTML}</blockquote>`;
                 } else {
@@ -312,7 +312,7 @@ export const toolbarEvent = (vditor: IVditor, actionBtn: Element, event: Event) 
                 range.insertNode(node);
 
                 if (node.previousSibling && node.previousSibling.textContent === Constants.ZWSP) {
-                    // 移除多层嵌套中的 zwsp
+                    // Remove zwsp from multi-level nesting
                     node.previousSibling.textContent = "";
                 }
 
