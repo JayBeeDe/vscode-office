@@ -237,43 +237,43 @@ declare class Lute {
 
     public GetEmojis(): IObject;
 
-    // md 转换为 html
+    // Convert md to html
     public Md2HTML(markdown: string): string;
 
-    // 粘贴时将 html 转换为 md
+    // Convert html to md on paste
     public HTML2Md(html: string): string;
 
-    // wysiwyg 转换为 html
+    // Convert wysiwyg to html
     public VditorDOM2HTML(vhtml: string): string;
 
-    // wysiwyg 输入渲染
+    // wysiwyg input rendering
     public SpinVditorDOM(html: string): string;
 
-    // 粘贴时将 html 转换为 wysiwyg
+    // Convert html to wysiwyg on paste
     public HTML2VditorDOM(html: string): string;
 
-    // 将 wysiwyg 转换为 md
+    // Convert wysiwyg to md
     public VditorDOM2Md(html: string): string;
 
-    // 将 md 转换为 wysiwyg
+    // Convert md to wysiwyg
     public Md2VditorDOM(markdown: string): string;
 
-    // ir 输入渲染
+    // ir input rendering
     public SpinVditorIRDOM(markdown: string): string;
 
-    // ir 获取 md
+    // Get md from ir
     public VditorIRDOM2Md(html: string): string;
 
-    // md 转换为 ir
+    // Convert md to ir
     public Md2VditorIRDOM(text: string): string;
 
-    // 获取 HTML
+    // Get HTML
     public VditorIRDOM2HTML(html: string): string;
 
-    // 粘贴时将 html 转换为 ir
+    // Convert html to ir on paste
     public HTML2VditorIRDOM(html: string): string;
 
-    // 将markdown转化为JSON结构输出 https://github.com/88250/lute/issues/120
+    // Convert markdown to a JSON structure https://github.com/88250/lute/issues/120
     public RenderJSON(markdown: string): string;
 }
 
@@ -297,90 +297,90 @@ interface II18n {
 
 /** @link https://ld246.com/article/1549638745630#options-upload */
 interface IUpload {
-    /** 上传 url */
+    /** Upload URL */
     url?: string;
-    /** 上传文件最大 Byte */
+    /** Maximum upload file size in bytes */
     max?: number;
-    /** 剪切板中包含图片地址时，使用此 url 重新上传 */
+    /** When the clipboard contains image URLs, re-upload them using this URL */
     linkToImgUrl?: string;
-    /** CORS 上传验证，头为 X-Upload-Token */
+    /** CORS upload token, sent as the X-Upload-Token header */
     token?: string;
-    /** 文件上传类型，同 [input accept](https://www.w3schools.com/tags/att_input_accept.asp) */
+    /** Accepted upload file types, same as [input accept](https://www.w3schools.com/tags/att_input_accept.asp) */
     accept?: string;
-    /** 跨站点访问控制。默认值: false */
+    /** Cross-site access control (withCredentials). Default: false */
     withCredentials?: boolean;
-    /** 请求头设置 */
+    /** Request headers */
     headers?: IObject;
-    /** 额外请求参数 */
+    /** Extra request parameters */
     extraData?: { [key: string]: string | Blob };
-    /** 是否允许多文件上传。默认值：true */
+    /** Whether multiple files can be uploaded at once. Default: true */
     multiple?: boolean;
-    /** 上传字段名。默认值：file[] */
+    /** Upload field name. Default: file[] */
     fieldName?: string;
 
-    /** 每次上传前都会重新设置请求头 */
+    /** Called before each upload to reset the request headers */
     setHeaders?(): IObject;
 
-    /** 上传成功回调 */
+    /** Upload success callback */
     success?(editor: HTMLPreElement, msg: string): void;
 
-    /** 上传失败回调 */
+    /** Upload failure callback */
     error?(msg: string): void;
 
-    /** 文件名安全处理。 默认值: name => name.replace(/\W/g, '') */
+    /** Sanitize file names. Default: name => name.replace(/\W/g, '') */
     filename?(name: string): string;
 
-    /** 校验，成功时返回 true 否则返回错误信息 */
+    /** Validation: return true on success, otherwise an error message */
     validate?(files: File[]): string | boolean;
 
-    /** 自定义上传，当发生错误时返回错误信息 */
+    /** Custom upload; return an error message when an error occurs */
     handler?(files: File[]): string | null | Promise<string> | Promise<null>;
 
-    /** 对服务端返回的数据进行转换，以满足内置的数据结构 */
+    /** Transform the server response to match the built-in data structure */
     format?(files: File[], responseText: string): string;
 
-    /** 对服务端返回的数据进行转换(对应linkToImgUrl)，以满足内置的数据结构 */
+    /** Transform the server response (for linkToImgUrl) to match the built-in data structure */
     linkToImgFormat?(responseText: string): string;
 
-    /** 将上传的文件处理后再返回  */
+    /** Process the files to upload and return them  */
     file?(files: File[]): File[] | Promise<File[]>;
 
-    /** 图片地址上传后的回调  */
+    /** Callback after the image URLs are uploaded  */
     linkToImgCallback?(responseText: string): void;
 }
 
 /** @link https://ld246.com/article/1549638745630#options-toolbar */
 interface IMenuItem {
-    /** 唯一标示 */
+    /** Unique identifier */
     name: string;
-    /** svg 图标 HTML */
+    /** SVG icon HTML */
     icon?: string;
-    /** 元素的样式名称 */
+    /** Element class name */
     className?: string;
-    /** 提示 */
+    /** Tooltip */
     tip?: string;
-    /** 快捷键，支持⌘/ctrl-key 或 ⌘/ctrl-⇧/shift-key 格式的配置，不支持 wysiwyg 模式 */
+    /** Keyboard shortcut, in ⌘/ctrl-key or ⌘/ctrl-⇧/shift-key format; not supported in wysiwyg mode */
     hotkey?: string;
-    /** 插入编辑器中的后缀 */
+    /** Suffix inserted into the editor */
     suffix?: string;
-    /** 插入编辑器中的前缀 */
+    /** Prefix inserted into the editor */
     prefix?: string;
-    /** 提示位置：ne, nw */
+    /** Tooltip position: ne, nw */
     tipPosition?: string;
-    /** 子菜单 */
+    /** Submenu */
     toolbar?: Array<string | IMenuItem>;
-    /** 菜单层级，最大为 3，内部使用 */
+    /** Menu level, at most 3; internal use */
     level?: number;
 
-    /** 自定义按钮点击时触发的事件 */
+    /** Event fired when the custom button is clicked */
     click?(event: Event, vditor: IVditor): void;
 }
 
 /** @link https://ld246.com/article/1549638745630#options-preview-math */
 interface IMath {
-    /** 内联数学公式起始 $ 后是否允许数字。默认值: true */
+    /** Whether a digit is allowed right after the opening $ of inline math. Default: true */
     inlineDigit?: boolean;
-    /** KaTeX 宏定义。默认值: {} */
+    /** KaTeX macro definitions. Default: {} */
     macros?: object;
 }
 
@@ -390,7 +390,7 @@ type ILinkClickAction = "click" | "dblclick" | "auxclick";
 
 interface ILinkClickPayload {
     type: ILinkClickType;
-    /** 单击 / 双击 / 中键 */
+    /** Click / double-click / middle-click */
     action: ILinkClickAction;
     href: string;
     text: string;
@@ -399,37 +399,37 @@ interface ILinkClickPayload {
 
 /** @link https://ld246.com/article/1549638745630#options-preview-markdown */
 interface IMarkdownConfig {
-    /** 自动空格。默认值: false */
+    /** Automatic spacing. Default: false */
     autoSpace?: boolean;
-    /** 段落开头是否空两格。默认值: false */
+    /** Whether to indent paragraphs with two spaces. Default: false */
     paragraphBeginningSpace?: boolean;
-    /** 自动矫正术语。默认值: false */
+    /** Automatically fix terms. Default: false */
     fixTermTypo?: boolean;
-    /** 插入目录。默认值: false */
+    /** Insert a table of contents. Default: false */
     toc?: boolean;
-    /** 脚注。默认值: true */
+    /** Footnotes. Default: true */
     footnotes?: boolean;
-    /** wysiwyg & ir 模式代码块是否渲染。默认值: true */
+    /** Whether code blocks are rendered in wysiwyg & ir modes. Default: true */
     codeBlockPreview?: boolean;
-    /** wysiwyg & ir 模式数学公式块是否渲染。默认值: true */
+    /** Whether math blocks are rendered in wysiwyg & ir modes. Default: true */
     mathBlockPreview?: boolean;
-    /** 是否启用过滤 XSS。默认值: true */
+    /** Whether XSS filtering is enabled. Default: true */
     sanitize?: boolean;
-    /** 链接相对路径前缀。默认值：'' */
+    /** Prefix for relative link paths. Default: '' */
     linkBase?: string;
-    /** 链接强制前缀。默认值：'' */
+    /** Forced link prefix. Default: '' */
     linkPrefix?: string;
-    /** 为列表添加标记，以便[自定义列表样式](https://github.com/Vanessa219/vditor/issues/390) 默认值：false */
+    /** Add markers to lists to allow [custom list styles](https://github.com/Vanessa219/vditor/issues/390). Default: false */
     listStyle?: boolean;
-    /** 支持 mark 标记 */
+    /** Support the mark syntax */
     mark?: boolean;
-    /** Obsidian 语法：callout、wikilink、#tag */
+    /** Obsidian syntax: callout, wikilink, #tag */
     obsidian?: boolean;
-    /** 单独启用 Obsidian Callout（> [!note]） */
+    /** Enable Obsidian callouts only (> [!note]) */
     callout?: boolean;
-    /** 单独启用 Obsidian Wikilink（[[...]] / ![[...]]） */
+    /** Enable Obsidian wikilinks only ([[...]] / ![[...]]) */
     obsidianWikiLink?: boolean;
-    /** 单独启用 Obsidian 标签（#tag） */
+    /** Enable Obsidian tags only (#tag) */
     obsidianTag?: boolean;
 }
 
@@ -453,15 +453,15 @@ interface IHintExtend {
 
 /** @link https://ld246.com/article/1549638745630#options-hint */
 interface IHint {
-    /** 提示内容是否进行 md 解析 */
+    /** Whether hint content is parsed as Markdown */
     parse?: boolean;
-    /** 常用表情提示 HTML */
+    /** Common emoji hint HTML */
     emojiTail?: string;
-    /** 提示 debounce 毫秒间隔。默认值: 200 */
+    /** Hint debounce interval in milliseconds. Default: 200 */
     delay?: number;
-    /** 默认表情，可从 [lute/emoji_map](https://github.com/88250/lute/blob/master/parse/emoji_map.go#L32) 中选取，也可自定义 */
+    /** Default emojis, chosen from [lute/emoji_map](https://github.com/88250/lute/blob/master/parse/emoji_map.go#L32) or custom */
     emoji?: IObject;
-    /** 表情图片地址。默认值: 'https://unpkg.com/vditor@${VDITOR_VERSION}/dist/images/emoji' */
+    /** Emoji image path. Default: 'https://unpkg.com/vditor@${VDITOR_VERSION}/dist/images/emoji' */
     emojiPath?: string;
     extend?: IHintExtend[];
 }
@@ -492,27 +492,27 @@ type ViewerSettingsExport = {
 interface IOptions {
     /** RTL */
     rtl?: boolean;
-    /** 历史记录间隔 */
+    /** History recording interval */
     undoDelay?: number;
-    /** 内部调试时使用 */
+    /** Used for internal debugging */
     _lutePath?: string;
-    /** 编辑器初始化值。默认值: '' */
+    /** Initial editor value. Default: '' */
     value?: string;
-    /** 是否显示日志。默认值: false */
+    /** Whether to show logs. Default: false */
     debugger?: boolean;
-    /** 是否打印 WYSIWYG input SpinVditorDOM 前后的 HTML。默认值: false */
+    /** Whether to print the HTML before and after WYSIWYG input SpinVditorDOM. Default: false */
     wysiwygInputPerf?: boolean;
-    /** 编辑器总高度。默认值: 'auto' */
+    /** Total editor height. Default: 'auto' */
     height?: number | string;
-    /** 编辑器最小高度 */
+    /** Minimum editor height */
     minHeight?: number;
-    /** 编辑器总宽度，支持 %。默认值: 'auto' */
+    /** Total editor width, % supported. Default: 'auto' */
     width?: number | string;
-    /** 输入区域为空时的提示。默认值: '' */
+    /** Placeholder shown when the input area is empty. Default: '' */
     placeholder?: string;
-    /** 多语言。默认值: 'zh_CN' */
+    /** Language. Default: 'zh_CN' */
     lang?: (keyof II18n);
-    /** 国际化, 自定义语言。优先级低于lang */
+    /** i18n: custom language strings. Lower priority than lang */
     i18n?: ITips;
     /** @link https://ld246.com/article/1549638745630#options-toolbar */
     toolbar?: Array<string | IMenuItem>;
@@ -531,14 +531,14 @@ interface IOptions {
     cache?: {
         id?: string;
         /**
-         * 就是在input事件后将文本保存到localStorage, Vditor初始化的时候看下是否有, 有就读取旧的数据
+         * Saves the text to localStorage after each input event; on init, Vditor loads the stored data if any
          */
         enable?: boolean;
-        /** 缓存焦点位置的宿主。 */
+        /** Where the cursor position is cached. */
         focusHost?: "browser" | "vscode";
         after?(markdown: string): void;
     };
-    /** 编辑模式。默认值: 'ir' */
+    /** Edit mode. Default: 'ir' */
     mode?: IEditMode;
     /** @link https://ld246.com/article/1549638745630#options-preview */
     preview?: IPreview;
@@ -549,86 +549,86 @@ interface IOptions {
         hide?: boolean,
         pin?: boolean,
     };
-    /** 主题。默认值: 'classic' */
+    /** Theme. Default: 'classic' */
     theme?: ITheme;
-    /** Markdown 编辑器主题。默认值: 'Auto' */
+    /** Markdown editor theme. Default: 'Auto' */
     editorTheme?: IEditorTheme | string;
-    /** 最后一次选择的非 Auto Markdown 编辑器主题。默认值: 'Light' */
+    /** Last selected non-Auto Markdown editor theme. Default: 'Light' */
     lastNonAutoEditorTheme?: IEditorTheme | string;
-    /** 最后一次选择的亮色 Markdown 编辑器主题。默认值: 'Light' */
+    /** Last selected light Markdown editor theme. Default: 'Light' */
     lastLightEditorTheme?: IEditorTheme | string;
-    /** 最后一次选择的暗色 Markdown 编辑器主题。默认值: 'One Dark' */
+    /** Last selected dark Markdown editor theme. Default: 'One Dark' */
     lastDarkEditorTheme?: IEditorTheme | string;
-    /** CodeMirror 代码块主题。默认值跟随预览代码主题 */
+    /** CodeMirror code block theme. Defaults to the preview code theme */
     codeMirrorTheme?: ICodeMirrorTheme | string;
-    /** Mermaid 图表主题。默认值: 'Auto' */
+    /** Mermaid diagram theme. Default: 'Auto' */
     mermaidTheme?: IMermaidTheme | string;
-    /** 图标。默认值: 'ant' */
+    /** Icon set. Default: 'ant' */
     icon?: "ant" | "material";
     /** @link https://ld246.com/article/1549638745630#options-upload */
     upload?: IUpload;
-    /** 配置自建 CDN 地址。默认值: 'https://unpkg.com/vditor@${VDITOR_VERSION}' */
+    /** Self-hosted CDN URL. Default: 'https://unpkg.com/vditor@${VDITOR_VERSION}' */
     cdn?: string;
-    /** tab 键操作字符串，支持 \t 及任意字符串 */
+    /** String inserted by the Tab key; \t or any string */
     tab?: string;
     /** @link https://ld246.com/article/1549638745630#options-outline */
     outline?: {
         enable: boolean,
         position: "left" | "right",
-        /** 初始宽度，localStorage 中无记录时生效 */
+        /** Initial width, used when nothing is stored in localStorage */
         width?: number,
     };
 
-    /** 编辑器异步渲染完成后的回调方法 */
+    /** Callback after the editor finishes its async rendering */
     after?(): void;
 
-    /** 输入后触发 */
+    /** Fired after input */
     input?(value: string): void;
 
-    /** 代码块主题修改后触发 */
+    /** Fired after the code block theme changes */
     changeCodeTheme?(value: string): void;
 
-    /** 编辑器主题修改后触发 */
+    /** Fired after the editor theme changes */
     changeEditorTheme?(value: string): void;
 
-    /** Mermaid 主题修改后触发 */
+    /** Fired after the Mermaid theme changes */
     changeMermaidTheme?(value: string): void;
 
-    /** AI 功能配置 */
+    /** AI feature configuration */
     ai?: {
-        /** AI 润色回调：接收 markdown 内容，处理完成后调用 apply 将结果写回编辑器 */
+        /** AI polish callback: receives the Markdown content and calls apply when done to write the result back to the editor */
         onPolish?(markdown: string, apply: (result: string) => void, options?: IAIPolishOptions): void;
-        /** 用户点击取消时触发 */
+        /** Fired when the user clicks cancel */
         onCancelPolish?(): void;
         /** Store a model's API key outside the webview; an empty key deletes it */
         onSetModelKey?(modelId: string, key: string): void;
     };
 
-    /** 编辑模式修改后触发 */
+    /** Fired after the edit mode changes */
     changeEditMode?(value: string): void;
 
-    /** 聚焦后触发  */
+    /** Fired after focus  */
     focus?(value: string): void;
 
-    /** 失焦后触发 */
+    /** Fired after blur */
     blur?(value: string): void;
 
-    /** `esc` 按下后触发 */
+    /** Fired after `esc` is pressed */
     esc?(value: string): void;
 
-    /** `⌘/ctrl+enter` 按下后触发 */
+    /** Fired after `⌘/ctrl+enter` is pressed */
     ctrlEnter?(value: string): void;
 
-    /** 编辑器中选中文字后触发 */
+    /** Fired after text is selected in the editor */
     select?(value: string): void;
 
-    /** Ctrl/⌘+单击、双击或中键打开链接时触发；未配置则使用浏览器默认行为 */
+    /** Fired when a link is opened with Ctrl/⌘+click, double-click or middle-click; falls back to the browser default when not set */
     onLinkClick?(payload: ILinkClickPayload, event: MouseEvent, vditor: IVditor): void;
 
-    /** 全局设置变更后触发（仅在配置文件同步启用时） */
+    /** Fired after global settings change (only when config file sync is enabled) */
     onSettingsChange?(settings: ViewerSettingsExport): void;
 
-    /** 点击编辑配置文件按钮时触发 */
+    /** Fired when the edit config file button is clicked */
     onEditSettings?(): void;
 }
 
@@ -644,9 +644,9 @@ interface IVditor {
     originalInnerHTML: string;
     lute: Lute | undefined;
     currentMode: IEditMode;
-    /** 首次加载时的 Markdown 字符数，用于计算 history debounce 放行倍数 */
+    /** Markdown character count at first load, used to compute the history debounce multiplier */
     documentInitialLength?: number;
-    /** recordHistory 相对 undoDelay 的放行倍数；-1 表示超大文档，仅 debounce 不强制 flush */
+    /** recordHistory multiplier relative to undoDelay; -1 means a very large document: debounce only, no forced flush */
     historyMaxWaitFactor?: number;
     outline: {
         element: HTMLElement,

@@ -284,7 +284,7 @@ export const bindShortcut = (handler, editor, workspaceBaseUrl = '') => {
                         e.stopPropagation();
                     }
                     else if (document.getSelection()?.toString()) {
-                        // vscode webview only: 修复剪切后选中文本没有被清除
+                        // vscode webview only: fix selected text not being cleared after cut
                         document.execCommand("delete")
                     }
                     e.preventDefault();

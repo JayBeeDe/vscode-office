@@ -6,8 +6,8 @@
   width: 100%;
 
   pre.vditor-reset {
-    // 首块与编辑器顶部保持间距（标题除外，沿用全局 24px）
-    // boundary 哨兵不占空间但可能是 first-child，需用相邻兄弟选择器兜底
+    // Keep spacing between the first block and the editor top (except headings, which keep the global 24px)
+    // The boundary sentinel takes no space but may be the first-child, so fall back to an adjacent sibling selector
     > :first-child:not(.vditor-editor-boundary),
     > .vditor-editor-boundary:first-child + * {
       margin-top: 18px;

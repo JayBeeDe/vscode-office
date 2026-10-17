@@ -671,7 +671,7 @@
   }
 }
 
-// CodeMirror 内间距：仅代码块 / 数学块 / 图表（mermaid、plantuml）编辑区
+// CodeMirror padding: only for code block / math block / diagram (mermaid, plantuml) editing areas
 [data-type="code-block"].vditor-code-block--cm .vditor-cm-host,
 [data-type="code-block"].vditor-code-block--cm .vditor-cm-preview-host,
 [data-type="math-block"].vditor-code-block--cm .vditor-cm-host,
@@ -749,7 +749,7 @@
   }
 }
 
-// 懒加载屏外 placeholder：纯文本，无 CM / hljs
+// Lazy-loaded off-screen placeholder: plain text, no CM / hljs
 [data-type="code-block"].vditor-code-block-placeholder,
 .vditor-ir__node.vditor-code-block-placeholder[data-type="code-block"] {
   > pre.vditor-code-block-placeholder code {
@@ -795,7 +795,7 @@
   }
 }
 
-// 数学块预览态：禁止露出源码 pre>code（内联数学公式不受影响）
+// Math block preview state: never expose the source pre>code (inline math is not affected)
 .vditor-wysiwyg__block[data-type="math-block"]:not(.vditor-cm-block--editing) {
   > pre:not(.vditor-wysiwyg__preview) {
     display: none !important;
