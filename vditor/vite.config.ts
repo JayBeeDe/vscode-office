@@ -22,7 +22,7 @@ const i18nDir = resolve(__dirname, "../i18n");
 const vditorI18nDir = resolve(__dirname, "src/js/i18n");
 const VDITOR_LANGUAGES: Record<string, string> = {
   en_US: "en",
-  zh_CN: "zh-cn",
+  zh_CN: "zh",
   ja_JP: "ja",
   ko_KR: "ko",
   ru_RU: "ru",

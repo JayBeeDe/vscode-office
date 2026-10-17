@@ -3,7 +3,7 @@ const DEFAULT_VDITOR_LANG = 'en_US'
 /** @type {Map<string, string>} */
 const VSCODE_TO_VDITOR = new Map([
     ['en', 'en_US'],
-    ['zh-cn', 'zh_CN'],
+    ['zh', 'zh_CN'],
     ['ja', 'ja_JP'],
     ['ko', 'ko_KR'],
     ['ru', 'ru_RU'],
@@ -17,5 +17,7 @@ export function mapVscodeLanguageToVditorLang(vscodeLanguage) {
     if (!vscodeLanguage) {
         return DEFAULT_VDITOR_LANG
     }
-    return VSCODE_TO_VDITOR.get(vscodeLanguage.toLowerCase()) ?? DEFAULT_VDITOR_LANG
+    // the region is dropped, as for the extension's own strings: zh-tw uses zh
+    const language = vscodeLanguage.toLowerCase().split(/[-_]/)[0]
+    return VSCODE_TO_VDITOR.get(language) ?? DEFAULT_VDITOR_LANG
 }
