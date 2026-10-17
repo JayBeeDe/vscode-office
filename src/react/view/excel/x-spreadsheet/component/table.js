@@ -9,7 +9,7 @@ import {
 } from '../canvas/draw';
 import { getExcelThemeColor, resolveExcelCellBg, resolveExcelCellColor } from '../../theme';
 
-// gobal var
+// global var
 const cellPaddingWidth = 10;
 
 function tableFixedHeaderCleanStyle() {

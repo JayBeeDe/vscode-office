@@ -228,7 +228,7 @@ export interface Sheet { }
 export class Spreadsheet {
     private options: Options;
     private sheetIndex: number;
-    private datas: DataProxy[];
+    private dataProxies: DataProxy[];
     private bottombar: Bottombar | null;
     private data: DataProxy;
     private sheet: Sheet;
@@ -238,7 +238,7 @@ export class Spreadsheet {
         let targetEl = selectors;
         this.options = { showBottomBar: true, ...options };
         this.sheetIndex = 1;
-        this.datas = [];
+        this.dataProxies = [];
         this.sheetChangeListeners = [];
 
         if (typeof selectors === 'string') {
@@ -252,7 +252,7 @@ export class Spreadsheet {
                 this.sheet.resetData(d);
             },
             (index: number) => {
-                const d = this.datas[index];
+                const d = this.dataProxies[index];
                 this.sheet.resetData(d);
                 this.data = d;
                 for (const listener of this.sheetChangeListeners) {
@@ -266,8 +266,8 @@ export class Spreadsheet {
                 // names that the file format accepts, and unique (without case)
                 const name = this.uniqueSheetName(sanitizeSheetName(value), index);
                 if (name !== value) this.bottombar?.setItemName(index, name);
-                if (this.datas[index].name === name) return;
-                this.datas[index].name = name;
+                if (this.dataProxies[index].name === name) return;
+                this.dataProxies[index].name = name;
                 this.sheet.trigger('change');
             },
             (from: number, to: number) => {
@@ -289,18 +289,18 @@ export class Spreadsheet {
 
     /** Formulas such as Sheet2!A1 read the other sheets of the workbook. */
     private bindSheetLookup(d: DataProxy) {
-        (d as any).getSheetByName = (name: string) => this.datas.find(it => it.name.toLowerCase() === name.toLowerCase());
-        (d as any).getAllSheets = () => this.datas;
+        (d as any).getSheetByName = (name: string) => this.dataProxies.find(it => it.name.toLowerCase() === name.toLowerCase());
+        (d as any).getAllSheets = () => this.dataProxies;
     }
 
     addSheet(name?: string, active = true): DataProxy {
-        const n = name || this.uniqueSheetName(`Sheet${this.datas.length + 1}`);
+        const n = name || this.uniqueSheetName(`Sheet${this.dataProxies.length + 1}`);
         const d = new DataProxy(n, this.options);
         d.change = (...args: any[]) => {
             this.sheet.trigger('change', ...args);
         };
         this.bindSheetLookup(d);
-        this.datas.push(d);
+        this.dataProxies.push(d);
 
         if (this.bottombar !== null) {
             this.bottombar.addItem(n, active, this.options);
@@ -314,10 +314,10 @@ export class Spreadsheet {
 
         const [oldIndex, nindex] = this.bottombar.deleteItem();
         if (oldIndex >= 0) {
-            this.datas.splice(oldIndex, 1);
+            this.dataProxies.splice(oldIndex, 1);
             if (nindex >= 0) {
-                this.data = this.datas[nindex];
-                this.sheet.resetData(this.datas[nindex]);
+                this.data = this.dataProxies[nindex];
+                this.sheet.resetData(this.dataProxies[nindex]);
                 for (const listener of this.sheetChangeListeners) {
                     listener(nindex);
                 }
@@ -328,7 +328,7 @@ export class Spreadsheet {
 
     /** A name no other sheet uses, compared without case like Excel; exceptIndex is the renamed sheet. */
     private uniqueSheetName(base: string, exceptIndex = -1): string {
-        const names = new Set(this.datas.filter((_, i) => i !== exceptIndex).map(d => d.name.toLowerCase()));
+        const names = new Set(this.dataProxies.filter((_, i) => i !== exceptIndex).map(d => d.name.toLowerCase()));
         const trimmed = base.trim() || 'Sheet';
         if (!names.has(trimmed.toLowerCase())) return trimmed;
         let i = 2;
@@ -354,9 +354,9 @@ export class Spreadsheet {
 
     moveSheetTo(from: number, to: number): void {
         if (this.bottombar === null) return;
-        if (from === to || from < 0 || to < 0 || from >= this.datas.length || to >= this.datas.length) return;
-        const [sheet] = this.datas.splice(from, 1);
-        this.datas.splice(to, 0, sheet);
+        if (from === to || from < 0 || to < 0 || from >= this.dataProxies.length || to >= this.dataProxies.length) return;
+        const [sheet] = this.dataProxies.splice(from, 1);
+        this.dataProxies.splice(to, 0, sheet);
         this.bottombar.moveItem(from, to);
         const active = this.getActiveSheetIndex();
         if (active === from || active === to) {
@@ -369,7 +369,7 @@ export class Spreadsheet {
 
     duplicateSheet(sourceIndex: number): void {
         if (this.bottombar === null) return;
-        const source = this.datas[sourceIndex];
+        const source = this.dataProxies[sourceIndex];
         if (!source) return;
 
         const copyName = this.uniqueSheetName(source.name);
@@ -387,7 +387,7 @@ export class Spreadsheet {
         nd.setData(sheetData);
 
         const insertAt = sourceIndex + 1;
-        this.datas.splice(insertAt, 0, nd);
+        this.dataProxies.splice(insertAt, 0, nd);
         this.bottombar.insertItem(insertAt, copyName, true, this.options);
 
         this.data = nd;
@@ -403,7 +403,7 @@ export class Spreadsheet {
         if (this.bottombar !== null) {
             this.bottombar.clear();
         }
-        this.datas = [];
+        this.dataProxies = [];
         if (ds.length > 0) {
             for (let i = 0; i < ds.length; i += 1) {
                 const it = ds[i];
@@ -419,20 +419,20 @@ export class Spreadsheet {
     }
 
     getData(): SpreadsheetData[] {
-        return this.datas.map(it => it.getData());
+        return this.dataProxies.map(it => it.getData());
     }
 
     cellText(ri: number, ci: number, text: string, sheetIndex = 0): this {
-        this.datas[sheetIndex].setCellText(ri, ci, text, 'finished');
+        this.dataProxies[sheetIndex].setCellText(ri, ci, text, 'finished');
         return this;
     }
 
     cell(ri: number, ci: number, sheetIndex = 0): Cell {
-        return this.datas[sheetIndex].getCell(ri, ci);
+        return this.dataProxies[sheetIndex].getCell(ri, ci);
     }
 
     cellStyle(ri: number, ci: number, sheetIndex = 0): CellStyle {
-        return this.datas[sheetIndex].getCellStyle(ri, ci);
+        return this.dataProxies[sheetIndex].getCellStyle(ri, ci);
     }
 
     reRender(): this {
@@ -457,14 +457,14 @@ export class Spreadsheet {
     }
 
     activateSheet(index: number): this {
-        if (index < 0 || index >= this.datas.length) return this;
+        if (index < 0 || index >= this.dataProxies.length) return this;
         if (this.getActiveSheetIndex() === index) return this;
         if (this.bottombar !== null) {
             const bar = this.bottombar as any;
             const item = bar.items[index];
             if (item) bar.clickSwap2(item);
         } else {
-            this.data = this.datas[index];
+            this.data = this.dataProxies[index];
             this.sheet.resetData(this.data);
         }
         return this;
@@ -472,7 +472,7 @@ export class Spreadsheet {
 
     scrollToCell(ri: number, ci: number, sheetIndex = 0): this {
         this.activateSheet(sheetIndex);
-        const data = this.datas[sheetIndex];
+        const data = this.dataProxies[sheetIndex];
         if (!data) {
             return this;
         }
@@ -490,7 +490,7 @@ export class Spreadsheet {
     }
 
     autoFitColumns(sheetIndex = this.getActiveSheetIndex()): this {
-        const data = this.datas[sheetIndex];
+        const data = this.dataProxies[sheetIndex];
         if (!data || typeof document === 'undefined') return this;
 
         const canvas = document.createElement('canvas');
@@ -573,7 +573,7 @@ export class Spreadsheet {
 
     gotoMatch(match: FindMatch): this {
         // matches are data rows; with an autofilter sort the view rows differ
-        const data = this.datas[match.sheetIndex];
+        const data = this.dataProxies[match.sheetIndex];
         const ri = data ? (data as any).getViewRowIndex(match.ri) : match.ri;
         this.scrollToCell(ri, match.ci, match.sheetIndex);
         return this;
@@ -581,10 +581,10 @@ export class Spreadsheet {
 
     replaceAt(match: FindMatch, findText: string, replaceText: string, options: FindOptions = {}): boolean {
         const sheets = this.getData();
-        const before = this.datas[match.sheetIndex]?.getData();
+        const before = this.dataProxies[match.sheetIndex]?.getData();
         const changed = replaceCellText(sheets, match, findText, replaceText, options);
         if (changed) {
-            const data = this.datas[match.sheetIndex];
+            const data = this.dataProxies[match.sheetIndex];
             if (data) {
                 // its own undo step
                 (data as any).history.add(before);
@@ -603,12 +603,12 @@ export class Spreadsheet {
         const before = this.getData();
         const count = replaceAllInSheets(sheets, findText, replaceText, options, this.getActiveSheetIndex());
         if (count > 0) {
-            for (let i = 0; i < this.datas.length; i += 1) {
+            for (let i = 0; i < this.dataProxies.length; i += 1) {
                 if (JSON.stringify((before[i] as SheetData).rows) !== JSON.stringify((sheets[i] as SheetData).rows)) {
                     // one undo step per changed sheet
-                    (this.datas[i] as any).history.add(before[i]);
+                    (this.dataProxies[i] as any).history.add(before[i]);
                 }
-                this.datas[i].setData(sheets[i]);
+                this.dataProxies[i].setData(sheets[i]);
             }
             this.sheet.resetData(this.data);
             this.sheet.trigger('change');
@@ -622,7 +622,7 @@ export class Spreadsheet {
             this.sheet.trigger('open-external-link', parsed.url);
             return this;
         }
-        const sheetIndex = this.datas.findIndex((d) => d.name === parsed.sheetName);
+        const sheetIndex = this.dataProxies.findIndex((d) => d.name === parsed.sheetName);
         if (sheetIndex < 0) return this;
         const [ci, ri] = expr2xy(parsed.ref);
         this.scrollToCell(ri, ci, sheetIndex);

@@ -28,9 +28,9 @@ function inflateDict(array, dict, HTMLElement) {
         dict[key].title = a.text.trim();
         dict[key].isLast = array.length == 1 || index == array.length - 1;
         const nestedList = findDirectChildByTag(li, 'ol', HTMLElement);
-        const childs = nestedList ? getDirectChildElementsByTag(nestedList, 'li', HTMLElement) : [];
-        if (childs != null && childs.length > 0) {
-            dict[key].child = inflateDict(childs, dict, HTMLElement)
+        const children = nestedList ? getDirectChildElementsByTag(nestedList, 'li', HTMLElement) : [];
+        if (children != null && children.length > 0) {
+            dict[key].child = inflateDict(children, dict, HTMLElement)
         }
         dictArray.push(dict[key])
     }
