@@ -5,6 +5,7 @@ import { Handler } from '../common/handler';
 import { handleCommonEvent, revertOfficeDocument, saveOfficeDocument, saveOfficeDocumentAs } from './handlers/commonHandler';
 import { OfficeDocument } from './handlers/officeDocument';
 import { extensionResource, getExtensionResourceRoots, readExtensionText } from '@/common/extensionResource';
+import { getMessages, resolveLanguage } from '@/i18n';
 
 /**
  * support view office files
@@ -112,7 +113,8 @@ export class OfficeViewerProvider implements vscode.CustomEditorProvider<OfficeD
 
 	private async loadPdfViewer(webview: vscode.Webview) {
 		const html = await readExtensionText(this.context, 'resource', 'pdf', 'viewer.html');
-		webview.html = html.replace('{{baseUrl}}', this.getBaseUrl(webview, 'pdf'));
+		const strings = JSON.stringify(getMessages(resolveLanguage(vscode.env.language)).pdf).replace(/</g, '\\u003c');
+		webview.html = html.replace('{{baseUrl}}', this.getBaseUrl(webview, 'pdf')).replace('{{i18n}}', () => strings);
 	}
 
 	private getBaseUrl(webview: vscode.Webview, path: string) {
