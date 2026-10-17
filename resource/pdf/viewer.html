@@ -31,7 +31,8 @@ See https://github.com/adobe-type-tools/cmap-resources
   <base href="{{baseUrl}}/">
   <link rel="stylesheet" href="viewer.css">
   <link rel="stylesheet" href="viewer_adjust.css">
-  <link rel="resource" type="application/l10n" href="locale/locale.properties">
+  <!-- PDF.js's strings: the `pdf.viewer` strings of i18n/<language>.json, filled in by the extension -->
+  <script type="application/l10n">{{l10n}}</script>
   <script src="../lib/vscode.js"></script>
   <script src="pdf.worker.js"></script>
   <script src="pdf.js"></script>
