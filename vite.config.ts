@@ -3,6 +3,7 @@ import { resolve } from 'node:path'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { vditorDevPlugin, vditorProdBuildPlugin } from './vite/vditorPlugin'
+import { i18nCheckPlugin } from './vite/i18nCheckPlugin'
 
 const cwd = process.cwd()
 const argv = process.argv
@@ -19,6 +20,7 @@ if (argv.join(',').includes('mode')) {
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => ({
   plugins: [
+    i18nCheckPlugin(),
     react(),
     command === 'serve' ?
       vditorDevPlugin() : vditorProdBuildPlugin()

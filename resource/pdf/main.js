@@ -121,7 +121,7 @@
       if (btn) {
         btn.classList.toggle('toggled', on);
         btn.innerHTML = on ? ADAPTIVE_ICON : SUN_STROKE_ICON;
-        btn.title = `${on ? strings.useLightTheme : strings.adaptThemeHint} (Ctrl/Cmd+Shift+L)`;
+        btn.title = `${on ? strings.useLightTheme : strings.adaptThemeHint} (Ctrl/Cmd+Shift+L)`; // i18n-ignore: the shortcut
         btn.setAttribute('aria-label', on ? strings.useLightTheme : strings.adaptTheme);
       }
     };
@@ -151,7 +151,7 @@
       if (btn) {
         btn.classList.toggle('toggled', on);
         btn.innerHTML = on ? BULB_ICON : MOON_ICON;
-        btn.title = `${on ? strings.switchToLight : strings.switchToDark} (Ctrl/Cmd+L)`;
+        btn.title = `${on ? strings.switchToLight : strings.switchToDark} (Ctrl/Cmd+L)`; // i18n-ignore: the shortcut
         btn.setAttribute('aria-label', on ? strings.switchToLight : strings.switchToDark);
       }
     };
