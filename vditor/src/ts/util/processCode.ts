@@ -38,7 +38,7 @@ export const isMarkdownLikePlain = (text: string): boolean => {
     return false;
 };
 
-/** null=无 vscode 数据，false=有数据但不应走代码粘贴，string=语言（可为空） */
+/** null = no vscode data, false = data present but not a code paste, string = language (may be empty) */
 const parseVscodeEditorLanguage = (raw: string): string | false | null => {
     if (!raw) {
         return null;

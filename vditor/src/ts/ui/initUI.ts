@@ -18,7 +18,7 @@ export const initUI = (vditor: IVditor) => {
   purgeLegacyDocumentStateKeys();
   vditor.element.innerHTML = "";
   vditor.element.classList.add("vditor");
-  // 支持 RTL
+  // RTL support
   if (vditor.options.rtl) {
     vditor.element.setAttribute("dir", "rtl")
   }

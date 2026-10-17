@@ -1,7 +1,7 @@
 import {highlightToolbarIR} from "../ir/highlightToolbarIR";
 import {highlightToolbarWYSIWYG} from "../wysiwyg/highlightToolbarWYSIWYG";
 
-/** keyup 等高频事件合并到下一帧批量刷新工具栏状态 */
+/** Coalesce high-frequency events such as keyup into one toolbar state refresh on the next frame */
 const HIGHLIGHT_TOOLBAR_DEBOUNCE_MS = 64;
 
 export const highlightToolbar = (vditor: IVditor) => {

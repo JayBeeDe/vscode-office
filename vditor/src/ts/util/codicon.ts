@@ -1,11 +1,11 @@
 export const codicon = (name: string, className = "") =>
     `<span class="codicon codicon-${name}${className ? ` ${className}` : ""}" aria-hidden="true"></span>`;
 
-/** codicon 无 undo，用 redo 水平镜像 */
+/** codicon has no undo icon, use redo mirrored horizontally */
 export const codiconUndo = (className = "") =>
     `<span class="codicon codicon-redo vditor-codicon-undo${className ? ` ${className}` : ""}" aria-hidden="true"></span>`;
 
-/** codicon 无 outdent，用 indent 水平镜像 */
+/** codicon has no outdent icon, use indent mirrored horizontally */
 export const codiconOutdent = (className = "") =>
     `<span class="codicon codicon-indent vditor-codicon-outdent${className ? ` ${className}` : ""}" aria-hidden="true"></span>`;
 

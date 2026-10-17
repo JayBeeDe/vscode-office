@@ -102,7 +102,7 @@ export class Hint {
                 event.preventDefault();
             });
         });
-        // hint 展现在上部
+        // show the hint above
         if (this.element.getBoundingClientRect().bottom > window.innerHeight) {
             this.element.style.top = `${y - this.element.offsetHeight}px`;
         }

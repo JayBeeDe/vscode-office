@@ -7,7 +7,7 @@ import { getNginxLanguageSupport } from "./nginxLanguage";
 
 const languageMap = buildCodeMirrorLanguageMap();
 
-/** DOM / Lute 语言名 → CodeMirror 高亮语言名 */
+/** DOM / Lute language name → CodeMirror highlight language name */
 const HIGHLIGHT_LANGUAGE_ALIASES: Record<string, string> = {
     math: "latex",
 };
@@ -27,7 +27,7 @@ const getMermaidLanguageSupport = () => {
     return mermaidLanguageSupport;
 };
 
-/** StreamLanguage.token 须返回字符串标签名，不能返回 @lezer/highlight 的 Tag 对象 */
+/** StreamLanguage.token must return a string tag name, not an @lezer/highlight Tag object */
 const plantumlLanguage = StreamLanguage.define({
     name: "plantuml",
     startState: () => ({}),

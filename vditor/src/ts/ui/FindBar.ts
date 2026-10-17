@@ -310,7 +310,7 @@ export class FindBar {
         }
     }
 
-    /** CM 懒加载/滚动会抢焦点，延迟把焦点还给查找框 */
+    /** CM lazy loading/scrolling steals focus, give it back to the find box after a delay */
     private scheduleRestoreFindFocus() {
         if (!this.isVisible()) {
             return;

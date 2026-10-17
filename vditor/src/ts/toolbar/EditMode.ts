@@ -119,7 +119,7 @@ export const setEditMode = (
     }
     vditor.undo.resetIcon(vditor);
     if (typeof event !== "string") {
-        // 初始化不 focus
+        // do not focus on init
         vditor[vditor.currentMode].element.focus();
         highlightToolbar(vditor);
     } else if (wasCacheContentRestored(vditor)) {

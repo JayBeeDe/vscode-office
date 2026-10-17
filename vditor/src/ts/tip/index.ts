@@ -21,7 +21,7 @@ export class Tip {
             }, time);
         }
 
-        // 需在动画结束后才能确定位置
+        // the position is only known once the animation ends
         this.element.removeAttribute("style")
         setTimeout(() => {
             const rect = this.element.getBoundingClientRect();

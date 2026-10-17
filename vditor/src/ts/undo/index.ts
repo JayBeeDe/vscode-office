@@ -77,7 +77,7 @@ class Undo {
         this[vditor.currentMode].redoStack.push(state);
         this.renderDiff(state, vditor);
         this[vditor.currentMode].hasUndo = true;
-        // undo 操作后，需要关闭 hint
+        // close the hint after an undo
         hidePanel(vditor, ["hint"]);
     }
 
@@ -107,26 +107,26 @@ class Undo {
             return;
         }
         if (isFirefox() && event.key === "Backspace") {
-            // Firefox 第一次删除无效
+            // in Firefox the first delete has no effect
             return;
         }
         if (isSafari()) {
-            // Safari keydown 在 input 之后，不需要重复记录历史
+            // in Safari keydown fires after input, no need to record history twice
             return;
         }
         const text = this.addCaret(vditor);
         if (text.replace("<wbr>", "").replace(" vditor-ir__node--expand", "")
             !== this[vditor.currentMode].undoStack[0][0].diffs[0][1].replace("<wbr>", "")) {
-            // 当还不没有存入 undo 栈时，按下 ctrl 后会覆盖 lastText
+            // before anything is pushed onto the undo stack, pressing ctrl would overwrite lastText
             return;
         }
         this[vditor.currentMode].undoStack[0][0].diffs[0][1] = text;
         this[vditor.currentMode].lastText = text;
-        // 不能添加 setSelectionFocus(cloneRange); 否则 windows chrome 首次输入会烂
+        // do not add setSelectionFocus(cloneRange); otherwise the first input breaks in Chrome on Windows
     }
 
     public addToUndoStack(vditor: IVditor) {
-        // afterRenderEvent.ts 已经 debounce
+        // afterRenderEvent.ts already debounces
         const debug = vditor.options.debugger;
         const totalStart = debug ? performance.now() : 0;
 
@@ -206,7 +206,7 @@ class Undo {
             });
 
         if (!vditor[vditor.currentMode].element.querySelector("wbr")) {
-            // Safari 第一次输入没有光标，需手动定位到结尾
+            // in Safari there is no caret on the first input, move it to the end manually
             const range = getSelection().getRangeAt(0);
             range.setEndBefore(vditor[vditor.currentMode].element);
             range.collapse(false);
@@ -259,7 +259,7 @@ class Undo {
                 range.insertNode(wbrElement);
             }
         }
-        // 移除数学公式、plantuml 渲染 https://github.com/siyuan-note/siyuan/issues/537
+        // remove math and plantuml rendering https://github.com/siyuan-note/siyuan/issues/537
         const cloneElement = vditor[vditor.currentMode].element.cloneNode(true) as HTMLElement;
         cloneElement.querySelectorAll(`.vditor-${vditor.currentMode}__preview[data-render='1']`)
             .forEach((item: HTMLElement) => {
@@ -281,7 +281,7 @@ class Undo {
         const text = cloneElement.innerHTML;
         vditor[vditor.currentMode].element.querySelectorAll(".vditor-wbr").forEach((item) => {
             item.remove();
-            // 使用 item.outerHTML = "" 会产生 https://github.com/Vanessa219/vditor/pull/686;
+            // using item.outerHTML = "" causes https://github.com/Vanessa219/vditor/pull/686;
         });
         if (setFocus && cloneRange) {
             setSelectionFocus(cloneRange);

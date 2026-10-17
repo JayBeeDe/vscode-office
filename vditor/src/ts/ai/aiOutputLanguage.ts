@@ -5,7 +5,7 @@ export const AI_VDITOR_LANGS: AIVditorLang[] = [
     "en_US", "zh_CN", "zh_TW", "ja_JP", "ko_KR", "ru_RU",
 ];
 
-/** 传给 LLM 的语言名（英文描述，模型理解稳定） */
+/** Language name passed to the LLM (English description, understood reliably by the model) */
 export const AI_LANG_PROMPT_NAMES: Record<AIVditorLang, string> = {
     en_US: "English",
     zh_CN: "Simplified Chinese",

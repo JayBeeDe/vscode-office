@@ -15,7 +15,7 @@ export const appendHistoryInputBuffer = (vditor: IVditor, text: string) => {
     bufferMap.set(vditor, getHistoryInputBuffer(vditor) + text);
 };
 
-/** 追加输入并判断空白边界是否应立刻入栈 */
+/** Append input and decide whether a whitespace boundary should push onto the stack immediately */
 export const trackHistoryInputFromText = (vditor: IVditor, text: string): boolean => {
     if (!text) {
         return false;

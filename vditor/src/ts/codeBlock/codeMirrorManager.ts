@@ -43,11 +43,11 @@ export const CM_EDITING_CLASS = "vditor-cm-block--editing";
 export const CM_SPLIT_CLASS = "vditor-cm-block--split";
 const CM_BLOCK_DATA_TYPES = new Set(["code-block", "math-block"]);
 const SPECIAL_LANGUAGES = ["mermaid", "plantuml", "math"];
-/** 视口内同时挂载 CodeMirror 的上限（参考 Milkdown 25 块文档 <15 个 CM 实例） */
+/** Maximum number of CodeMirror instances mounted at once in the viewport (Milkdown reference: <15 CM instances for a 25-block document) */
 const LAZY_CM_MAX_MOUNTED = 15;
-/** 视口外扩范围，与 Milkdown 一致 */
+/** Margin around the viewport, same as Milkdown */
 const LAZY_CM_VIEWPORT_MARGIN = 200;
-/** 滚出视口后延迟卸载 CodeMirror，避免快速滚动时反复创建/销毁 */
+/** Delay unmounting CodeMirror after it scrolls out of view, to avoid repeated create/destroy while scrolling fast */
 const LAZY_CM_TEARDOWN_DELAY = 5000;
 const CM_PLACEHOLDER_CLASS = "vditor-code-block-placeholder";
 
@@ -78,7 +78,7 @@ export const isSpecialCodeLanguage = (codeElement: HTMLElement) => {
     return false;
 };
 
-/** PlantUML 预览渲染为 code 内的 img，不应触发普通图片编辑弹窗 */
+/** The PlantUML preview renders as an img inside code and must not open the regular image edit popup */
 export const isPlantumlRenderImage = (target: EventTarget | null) => {
     return target instanceof HTMLElement
         && target.tagName === "IMG"
@@ -104,7 +104,7 @@ export const isMathBlockElement = (blockElement: HTMLElement | null) => {
     return blockElement?.getAttribute("data-type") === "math-block";
 };
 
-/** 数学块预览态：隐藏源码 pre，仅展示渲染结果（源码仅供 Lute / CodeMirror 同步） */
+/** Math block preview state: hide the source pre and show only the rendered result (the source is kept only for Lute / CodeMirror sync) */
 export const ensureMathBlockPreviewMode = (blockElement: HTMLElement) => {
     if (!isMathBlockElement(blockElement) || blockElement.classList.contains(CM_EDITING_CLASS)) {
         return;
@@ -141,7 +141,7 @@ export const isMathBlockEmpty = (blockElement: HTMLElement) => {
     return getMathBlockText(blockElement).trim() === "";
 };
 
-/** 空数学块默认 CodeMirror；非空且未编辑时保持预览态 */
+/** Empty math blocks default to CodeMirror; non-empty blocks stay in preview until edited */
 export const syncMathBlockDisplayMode = (vditor: IVditor, blockElement: HTMLElement, focus = false) => {
     const block = normalizeCmBlockElement(blockElement, getModeEditor(vditor)) || blockElement;
     if (!isMathBlockElement(block)) {
@@ -167,7 +167,7 @@ export const syncMathBlocksDisplayMode = (root: ParentNode, vditor: IVditor) => 
     }
 };
 
-/** IR 展开 marker 后：光标落在空数学块上时自动进入 CodeMirror */
+/** After IR expands the marker: enter CodeMirror automatically when the caret lands on an empty math block */
 export const syncIrMathBlockAfterExpand = (vditor: IVditor, range: Range) => {
     if (vditor.currentMode !== "ir") {
         return;
@@ -288,11 +288,11 @@ const isBlockNearViewport = (blockElement: HTMLElement, margin = LAZY_CM_VIEWPOR
     return rect.bottom >= -margin && rect.top <= window.innerHeight + margin;
 };
 
-/** 仅普通代码块走视口懒加载；数学 / mermaid / plantuml 不受影响 */
+/** Only regular code blocks are lazy-loaded by viewport; math / mermaid / plantuml are not affected */
 const isLazyManagedCodeBlock = (blockElement: HTMLElement) =>
     !isSpecialBlock(blockElement);
 
-/** 视口内特殊代码块（mermaid 等）的预览渲染 */
+/** Preview rendering of special code blocks (mermaid etc.) in the viewport */
 export const ensureSpecialCodeBlockPreview = (blockElement: HTMLElement, vditor: IVditor) => {
     if (bindings.has(blockElement)) {
         return;
@@ -309,7 +309,7 @@ export const ensureSpecialCodeBlockPreview = (blockElement: HTMLElement, vditor:
     }
 };
 
-/** 屏外普通代码块：纯文本 placeholder，零 CM / hljs 开销 */
+/** Off-screen regular code blocks: plain text placeholder, no CM / hljs cost */
 const showPlainCodeBlockPlaceholder = (blockElement: HTMLElement) => {
     if (!isLazyManagedCodeBlock(blockElement)) {
         return;
@@ -526,7 +526,7 @@ export const setupLazyCodeMirrorObserver = (_vditor: IVditor) => {
     });
 };
 
-/** 普通代码块只保留隐藏的 sync code + CodeMirror；特殊块编辑时保留 preview 并上下分层显示 */
+/** Regular code blocks keep only the hidden sync code + CodeMirror; special blocks keep the preview while editing, stacked vertically */
 export const prepareCmBlockDom = (blockElement: HTMLElement, keepPreview = false) => {
     if (!isCmCodeBlock(blockElement) && !blockElement.classList.contains(CM_EDITING_CLASS)) {
         return;
@@ -636,7 +636,7 @@ const ensureSpecialSplitLayout = (blockElement: HTMLElement) => {
         return;
     }
     blockElement.classList.add(CM_SPLIT_CLASS);
-    // CodeMirror 在上、渲染预览在下（默认 DOM：editPre 在 preview 前）
+    // CodeMirror on top, rendered preview below (default DOM: editPre before preview)
     if (parts.preview.compareDocumentPosition(parts.editPre) & Node.DOCUMENT_POSITION_PRECEDING) {
         blockElement.insertBefore(parts.editPre, parts.preview);
     }
@@ -742,7 +742,7 @@ const exitSpecialBlockEdit = (vditor: IVditor, blockElement: HTMLElement) => {
     }
 };
 
-/** 数学公式 / Mermaid / PlantUML：CodeMirror 在上、预览在下，编辑时实时重绘 */
+/** Math / Mermaid / PlantUML: CodeMirror on top, preview below, redrawn live while editing */
 export const enterSpecialBlockEdit = (vditor: IVditor, blockElement: HTMLElement, focus = true) => {
     const block = normalizeCmBlockElement(blockElement, getModeEditor(vditor)) || blockElement;
     if (!isSpecialBlock(block)) {
@@ -785,7 +785,7 @@ const scheduleSync = (binding: CodeMirrorBinding, vditor: IVditor) => {
     }, vditor.options.undoDelay);
 };
 
-/** 离开 CodeMirror 时将代码块变更合并入 Vditor 外部撤销栈 */
+/** Merge code block changes into the outer Vditor undo stack when leaving CodeMirror */
 export const flushCodeMirrorExternalUndo = (vditor: IVditor) => {
     if (isInsideCodeMirror(document.activeElement)) {
         return;
@@ -959,7 +959,7 @@ const writeCodeMirrorCopyToClipboard = async (
     }
 };
 
-/** 工具栏复制：plain + 带语法高亮样式的 HTML */
+/** Toolbar copy: plain text + HTML with syntax highlighting styles */
 export const copyCodeMirrorView = async (
     view: EditorView,
     languageName = "",
@@ -972,7 +972,7 @@ export const copyCodeMirrorView = async (
     return writeCodeMirrorCopyToClipboard(payload.plain, payload.html);
 };
 
-/** 无选区时按整行剪切（含行尾换行，末行除外） */
+/** Without a selection, cut the whole line (including its trailing newline, except on the last line) */
 const getCmCutRange = (view: EditorView) => {
     const { from, to } = view.state.selection.main;
     if (from !== to) {
@@ -1347,7 +1347,7 @@ export const destroyAllCodeMirrors = (vditor: IVditor) => {
 /** @deprecated use destroyAllCodeMirrors */
 export const destroyAllWysiwygCodeMirrors = destroyAllCodeMirrors;
 
-/** Spin DOM 前卸载 CodeMirror，保持 sync code 隐藏 */
+/** Unmount CodeMirror before spinning the DOM, keeping the sync code hidden */
 export const deactivateAllCodeMirrors = (vditor: IVditor) => {
     const editor = getModeEditor(vditor);
     if (!editor) {
@@ -1383,7 +1383,7 @@ const collectCodeBlocksInScope = (vditor: IVditor, scope: HTMLElement) => {
     return blocks;
 };
 
-/** Spin 前仅卸载作用域内的 CodeMirror */
+/** Before spin, unmount only the CodeMirror instances within the scope */
 export const deactivateCodeMirrorsInScope = (vditor: IVditor, scope: HTMLElement) => {
     deactivateInlineMathEditorsInScope(scope);
     for (const blockElement of collectCodeBlocksInScope(vditor, scope)) {
@@ -1393,7 +1393,7 @@ export const deactivateCodeMirrorsInScope = (vditor: IVditor, scope: HTMLElement
     }
 };
 
-/** Spin 后仅重建作用域内需要编辑的 CodeMirror */
+/** After spin, rebuild only the CodeMirror instances within the scope that need editing */
 export const renderCodeBlocksInScope = (vditor: IVditor, scope: HTMLElement) => {
     for (const blockElement of collectCodeBlocksInScope(vditor, scope)) {
         scheduleLazyCodeBlock(vditor, blockElement);
@@ -1414,7 +1414,7 @@ const getCmBlockFromNode = (node: Node | null, editorElement: HTMLElement): HTML
     return null;
 };
 
-/** Lute 会在内层 code 上也打 data-type="math-block"，需归一化到可挂载 CM 的外层块 */
+/** Lute also puts data-type="math-block" on the inner code; normalize to the outer block where CM can be mounted */
 const normalizeCmBlockElement = (element: HTMLElement, editorElement: HTMLElement | null): HTMLElement | null => {
     let block: HTMLElement | null = element;
     while (block && block !== editorElement) {
@@ -1433,7 +1433,7 @@ const stripHtmlForBlockTrigger = (html: string) =>
         .replace(/<[^>]+>/g, "")
         .trim();
 
-/** 判断是否为输入 $$ 触发的数学块创建（第二枚 $ 刚输入） */
+/** Whether a math block was just created by typing $$ (the second $ was just typed) */
 export const isMathBlockCreateTrigger = (spinBeforeHtml: string) => {
     const text = stripHtmlForBlockTrigger(spinBeforeHtml);
     return text === "$$" || text === "$$\n";
@@ -1441,7 +1441,7 @@ export const isMathBlockCreateTrigger = (spinBeforeHtml: string) => {
 
 const spinHtmlHadMathBlock = (html: string) => /data-type=["']math-block["']/.test(html);
 
-/** spin 后是否应对光标处的空数学块聚焦（新建块，或明确的 $$ 触发） */
+/** Whether to focus the empty math block at the caret after spin (new block, or explicit $$ trigger) */
 const shouldFocusNewEmptyMathBlock = (spinBeforeHtml: string, blockElement: HTMLElement | null) => {
     if (!blockElement || !isMathBlockElement(blockElement) || !isMathBlockEmpty(blockElement)) {
         return false;
@@ -1472,7 +1472,7 @@ const focusEmptyMathBlockAtCursor = (vditor: IVditor, blockElement: HTMLElement)
     window.setTimeout(apply, 0);
 };
 
-/** Spin 后：光标在新建/触发的空数学块内时聚焦 CodeMirror */
+/** After spin: focus CodeMirror when the caret is inside a newly created/triggered empty math block */
 export const focusEmptyMathBlockAfterSpin = (
     vditor: IVditor,
     editorElement: HTMLElement,
@@ -1487,7 +1487,7 @@ export const focusEmptyMathBlockAfterSpin = (
     return true;
 };
 
-/** 判断是否为输入 ``` 触发的代码块创建 */
+/** Whether a code block was just created by typing ``` */
 export const isCodeBlockCreateTrigger = (spinBeforeHtml: string) => {
     const text = stripHtmlForBlockTrigger(spinBeforeHtml);
     return text === "```" || /^```[\w-]*$/.test(text);
@@ -1504,7 +1504,7 @@ const getCmBlockFromRange = (range: Range, editorElement: HTMLElement): HTMLElem
     return getCmBlockFromNode(node, editorElement);
 };
 
-/** Spin 后根据触发内容自动进入对应块的 CodeMirror（$$ / ```） */
+/** After spin, automatically enter the CodeMirror of the block matching the trigger ($$ / ```) */
 export const autoFocusCreatedBlockAfterSpin = (
     vditor: IVditor,
     editorElement: HTMLElement,
@@ -1538,7 +1538,7 @@ export const autoEnterCreatedMathBlock = (
     return autoFocusCreatedBlockAfterSpin(vditor, editorElement, getEditorRange(vditor), spinBeforeHtml);
 };
 
-/** Spin 后若光标位于普通代码块内，自动挂载并聚焦 CodeMirror */
+/** After spin, if the caret is inside a regular code block, mount and focus CodeMirror */
 export const focusCmBlockAtCursor = (vditor: IVditor, editorElement: HTMLElement) => {
     const blockElement = getCmBlockFromRange(getEditorRange(vditor), editorElement);
     if (!blockElement || isMathBlockElement(blockElement)) {
@@ -1549,7 +1549,7 @@ export const focusCmBlockAtCursor = (vditor: IVditor, editorElement: HTMLElement
 
 const isEmptyCmDoc = (view: EditorView) => view.state.doc.toString().trim() === "";
 
-/** undo/redo 等整页 DOM 替换后，清理残留 CM 挂载并重新初始化 */
+/** After a full-page DOM replacement (undo/redo etc.), clean up leftover CM mounts and reinitialize */
 export const remountCodeMirrorsAfterDomReplace = (vditor: IVditor) => {
     if (vditor.currentMode !== "wysiwyg" && vditor.currentMode !== "ir") {
         return;
@@ -1622,7 +1622,7 @@ const mountCodeMirror = (blockElement: HTMLElement, vditor: IVditor, force = fal
     const rawCode = code.textContent || "";
 
     const view = new EditorView({
-        // Lute有bug, 会给代码块末尾生成一行空行
+        // Lute bug: it appends an empty line at the end of code blocks
         doc: rawCode.trimEnd(),
         parent: editPre,
         extensions: [
@@ -2117,7 +2117,7 @@ const stripCopyFragmentChrome = (root: ParentNode) => {
     });
 };
 
-/** 复制时读取 CodeMirror 内部选区（DOM Selection 通常为空） */
+/** On copy, read the selection inside CodeMirror (the DOM Selection is usually empty) */
 export const getCodeMirrorSelectionTextForCopy = (vditor: IVditor) => {
     const editor = getModeEditor(vditor);
     if (!editor) {
@@ -2137,7 +2137,7 @@ export const getCodeMirrorSelectionTextForCopy = (vditor: IVditor) => {
     return null;
 };
 
-/** 复制前还原编辑态 DOM（CM / 预览块 / 行内公式等），供 Lute 正确转为 Markdown */
+/** Before copying, restore the editing DOM (CM / preview blocks / inline math etc.) so Lute converts it to Markdown correctly */
 export const sanitizeCodeBlocksInCopyFragment = (
     root: ParentNode,
     editor: HTMLElement,
@@ -2152,7 +2152,7 @@ export const sanitizeCodeBlocksInCopyFragment = (
     stripCopyFragmentChrome(root);
 };
 
-/** 保存/导出前将 CodeMirror 文档同步到隐藏的 sync code 节点 */
+/** Before save/export, sync the CodeMirror document to the hidden sync code node */
 export const flushCodeMirrorToSyncCode = (vditor: IVditor) => {
     const editor = getModeEditor(vditor);
     if (!editor) {
@@ -2169,7 +2169,7 @@ export const flushCodeMirrorToSyncCode = (vditor: IVditor) => {
     }
 };
 
-/** 导出 Markdown 前同步 CM 状态；Lute 直接识别 CM DOM，无需再篡改 DOM */
+/** Sync CM state before exporting Markdown; Lute reads the CM DOM directly, no need to alter the DOM */
 export const buildEditorHtmlForMarkdown = (vditor: IVditor) => {
     flushCodeMirrorToSyncCode(vditor);
     flushInlineMathToSyncCode(vditor[vditor.currentMode].element);

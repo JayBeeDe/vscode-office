@@ -20,7 +20,7 @@ export const cancelScheduledRenderToc = (vditor: IVditor) => {
     }
 };
 
-/** 合并 input / recordHistory 等路径的 TOC 刷新，停笔后延迟一次执行 */
+/** Coalesce TOC refreshes from input / recordHistory etc., run once after typing stops */
 export const scheduleRenderToc = (vditor: IVditor) => {
     cancelScheduledRenderToc(vditor);
     tocTimeoutMap.set(vditor, window.setTimeout(() => {
@@ -29,7 +29,7 @@ export const scheduleRenderToc = (vditor: IVditor) => {
     }, getTocRenderDelay(vditor)));
 };
 
-/** 需要立即反映结构变更时调用（undo、切模式、拖块等） */
+/** Call when structure changes must show immediately (undo, mode switch, block drag, etc.) */
 export const renderTocNow = (vditor: IVditor) => {
     cancelScheduledRenderToc(vditor);
     renderToc(vditor);
@@ -97,7 +97,7 @@ export const clickToc = (event: MouseEvent & { target: HTMLElement }, vditor: IV
 };
 
 export const keydownToc = (blockElement: HTMLElement, vditor: IVditor, event: KeyboardEvent, range: Range) => {
-    // toc 前无元素，插入空块
+    // no element before the toc, insert an empty block
     if (blockElement.previousElementSibling &&
         blockElement.previousElementSibling.classList.contains("vditor-toc")) {
         if (event.key === "Backspace" &&
@@ -110,7 +110,7 @@ export const keydownToc = (blockElement: HTMLElement, vditor: IVditor, event: Ke
             return true;
         }
     }
-    // toc 后无元素，插入空块
+    // no element after the toc, insert an empty block
     if (blockElement.nextElementSibling &&
         blockElement.nextElementSibling.classList.contains("vditor-toc")) {
         if (event.key === "Delete" &&
@@ -124,7 +124,7 @@ export const keydownToc = (blockElement: HTMLElement, vditor: IVditor, event: Ke
             return true;
         }
     }
-    // toc 删除
+    // toc deletion
     if (event.key === "Backspace" || event.key === "Delete") {
         const tocElement = hasClosestByClassName(range.startContainer, "vditor-toc");
         if (tocElement) {

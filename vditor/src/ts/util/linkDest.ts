@@ -1,4 +1,4 @@
-/** 判断链接地址是否需要用尖括号包裹才能在 Markdown 中正确解析 */
+/** Whether a link destination must be wrapped in angle brackets to parse correctly in Markdown */
 export const needsAngleBracketLinkDest = (dest: string): boolean => {
     for (let i = 0; i < dest.length; i++) {
         const code = dest.charCodeAt(i);
@@ -13,7 +13,7 @@ export const needsAngleBracketLinkDest = (dest: string): boolean => {
     return false;
 };
 
-/** 将链接地址格式化为 Markdown 中的 destination 部分 */
+/** Format a link address as the destination part of a Markdown link */
 export const formatMarkdownLinkDest = (dest: string): string => {
     const trimmed = dest.trim();
     if (trimmed.startsWith("<") && trimmed.endsWith(">")) {
@@ -25,7 +25,7 @@ export const formatMarkdownLinkDest = (dest: string): string => {
     return trimmed;
 };
 
-/** 规范化链接编辑输入，去掉用户手动输入的尖括号包裹 */
+/** Normalize link edit input, removing angle brackets typed by the user */
 export const normalizeLinkDestInput = (dest: string): string => {
     const trimmed = dest.trim();
     if (trimmed.startsWith("<") && trimmed.endsWith(">")) {

@@ -169,16 +169,16 @@ export const blurEvent = (vditor: IVditor, editorElement: HTMLElement) => {
 
 export const dropEvent = (vditor: IVditor, editorElement: HTMLElement) => {
     editorElement.addEventListener("dragstart", (event) => {
-        // 选中编辑器中的文字进行拖拽
+        // dragging selected text in the editor
         event.dataTransfer.setData(Constants.DROP_EDITOR, Constants.DROP_EDITOR);
     });
     editorElement.addEventListener("drop",
         (event: ClipboardEvent & { dataTransfer?: DataTransfer, target: HTMLElement }) => {
             if (event.dataTransfer.getData(Constants.DROP_EDITOR)) {
-                // 编辑器内选中文字拖拽
+                // dragging text selected inside the editor
                 execAfterRender(vditor);
             } else if (event.dataTransfer.types.includes("Files") || event.dataTransfer.types.includes("text/html")) {
-                // 外部文件拖入编辑器中或者编辑器内选中文字拖拽
+                // external file dropped into the editor, or text selected inside the editor dragged
                 paste(vditor, event, {
                     pasteCode: (code: string) => {
                         insertPastedCode(vditor, code);
@@ -223,7 +223,7 @@ export const hotkeyEvent = (vditor: IVditor, editorElement: HTMLElement) => {
         if (vditor.currentMode === "wysiwyg" || vditor.currentMode === "ir") {
             handleAutoSymbolPair(event);
         }
-        // hint: 上下选择
+        // hint: up/down selection
         if (vditor.options.hint.extend.length > 0 &&
             vditor.hint.select(event, vditor)) {
             return;
@@ -351,7 +351,7 @@ export const selectEvent = (vditor: IVditor, editorElement: HTMLElement) => {
             return;
         }
         editorElement.onmouseup = () => {
-            setTimeout(() => { // 鼠标放开后 range 没有即时更新
+            setTimeout(() => { // the range is not updated immediately after the mouse is released
                 const selectText = getSelectText(vditor[vditor.currentMode].element);
                 if (selectText.trim()) {
                     if (vditor.options.select) {

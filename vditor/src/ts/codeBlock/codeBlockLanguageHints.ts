@@ -10,7 +10,7 @@ type LanguageHintData = IHintData & {
     current?: boolean;
 };
 
-/** 在 @codemirror/language-data 之外补充的语言别名 */
+/** Extra language aliases on top of @codemirror/language-data */
 const EXTRA_LANGUAGE_ALIASES: Record<string, string[]> = {
     Shell: ["bash", "sh", "zsh", "shell", "shellscript", "console", "terminal"],
 };
@@ -114,7 +114,7 @@ export const toCodeBlockLanguageName = (displayName: string): string => {
     return displayName;
 };
 
-/** VS Code languageId / vscode-editor-data mode → CodeMirror 可识别的别名 */
+/** VS Code languageId / vscode-editor-data mode → alias recognized by CodeMirror */
 const VSCODE_EDITOR_MODE_ALIASES: Record<string, string> = {
     typescriptreact: "tsx",
     javascriptreact: "jsx",

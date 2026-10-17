@@ -161,7 +161,7 @@ const selectBlock = (range: Range, vditor: IVditor) => {
     return true;
 };
 
-/** VS Code 快捷键：Alt+↑/↓ 移动行，Shift+Alt+↑/↓ 复制行，Shift+Ctrl+K 删除行，Ctrl+L 选中行，Ctrl+Enter 插入空行 */
+/** VS Code shortcuts: Alt+↑/↓ move line, Shift+Alt+↑/↓ copy line, Shift+Ctrl+K delete line, Ctrl+L select line, Ctrl+Enter insert empty line */
 export const handleVscodeShortcut = (vditor: IVditor, event: KeyboardEvent): boolean => {
     if (event.isComposing) {
         return false;

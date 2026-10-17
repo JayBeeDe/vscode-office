@@ -102,7 +102,7 @@ export const preserveEditorScroll = (vditor: IVditor, action: () => void) => {
     scrollEl.scrollTop = scrollTop;
 };
 
-/** 获取选区在编辑器内的字符偏移，与 setSelectionByPosition 对应 */
+/** Get the selection's character offsets within the editor, counterpart of setSelectionByPosition */
 export const getEditorTextOffset = (editor: HTMLElement, range?: Range) => {
     if (!range) {
         if (getSelection().rangeCount === 0) {
@@ -199,7 +199,7 @@ export const getCursorPosition = (editor: HTMLElement) => {
     let cursorRect;
     if (range.getClientRects().length === 0) {
         if (range.startContainer.nodeType === 3) {
-            // 空行时，会出现没有 br 的情况，需要根据父元素 <p> 获取位置信息
+            // on an empty line there may be no br, so get the position from the parent <p>
             const parent = range.startContainer.parentElement;
             if (parent && parent.getClientRects().length > 0) {
                 cursorRect = parent.getClientRects()[0];
@@ -213,7 +213,7 @@ export const getCursorPosition = (editor: HTMLElement) => {
             const children = (range.startContainer as Element).children;
             if (children[range.startOffset] &&
                 children[range.startOffset].getClientRects().length > 0) {
-                // markdown 模式回车
+                // Enter in markdown mode
                 cursorRect = children[range.startOffset].getClientRects()[0];
             } else if (range.startContainer.childNodes.length > 0) {
                 // in table or code block
@@ -686,7 +686,7 @@ export const setRangeByWbr = (element: HTMLElement, range: Range) => {
                 range.setStartBefore(wbrElement.nextSibling);
             }
         } else {
-            // 内容为空
+            // empty content
             range.setStart(wbrElement.parentElement, 0);
         }
     } else {
@@ -737,7 +737,7 @@ const removeAdjacentEmptyParagraphs = (block: HTMLElement) => {
     }
 };
 
-/** Md2Vditor 转出的 HTML 在局部替换前规范化，避免误走块级插入 */
+/** Normalize HTML produced by Md2Vditor before a partial replacement, to avoid taking the block-level insertion path by mistake */
 export const normalizeMdInsertHtml = (html: string, vditor: IVditor): string => {
     const tempElement = document.createElement("div");
     tempElement.innerHTML = html;
@@ -752,7 +752,7 @@ export const normalizeMdInsertHtml = (html: string, vditor: IVditor): string => 
     return tempElement.innerHTML;
 };
 
-/** AI 局部替换：强制行内插入，避免 insertHTML 块级路径留下前置空段落 */
+/** AI partial replacement: force inline insertion so the insertHTML block-level path does not leave a leading empty paragraph */
 export const insertMdForAIReplace = (html: string, vditor: IVditor, hostBlock: HTMLElement | null) => {
     let insertHtml = normalizeMdInsertHtml(html, vditor);
     const temp = document.createElement("div");
@@ -781,7 +781,7 @@ export const insertMdForAIReplace = (html: string, vditor: IVditor, hostBlock: H
 };
 
 export const insertHTML = (html: string, vditor: IVditor) => {
-    // 使用 lute 方法会添加 p 元素，只有一个 p 元素的时候进行删除
+    // the lute method adds a p element; remove it when there is only one p element
     const tempElement = document.createElement("div");
     tempElement.innerHTML = html;
     const tempBlockElement = tempElement.querySelectorAll("p");
@@ -801,7 +801,7 @@ export const insertHTML = (html: string, vditor: IVditor) => {
 
     if (pasteElement.firstElementChild &&
         pasteElement.firstElementChild.getAttribute("data-block") === "0") {
-        // 粘贴内容为块元素时，应在下一段落中插入
+        // when the pasted content is a block element, insert it in the next paragraph
         pasteElement.lastElementChild.insertAdjacentHTML("beforeend", "<wbr>");
         const blockElement = hasClosestBlock(range.startContainer);
         if (!blockElement) {
@@ -1067,7 +1067,7 @@ const getLineEndForImpreciseLineStartClick = (event: MouseEvent, editor: HTMLEle
     return lineEndRange;
 };
 
-/** mousedown 捕获：非精确点击会落行首时，阻止默认行为并直接落到行尾 */
+/** mousedown capture: when an imprecise click would land at the start of the line, prevent the default and place the caret at the end of the line */
 export const preventImpreciseLineStartClick = (event: MouseEvent, editor: HTMLElement): boolean => {
     const target = event.target;
     if (target instanceof Element && target.closest(".vditor-cm-chrome")) {

@@ -68,7 +68,7 @@ const unbindOverlayReposition = () => {
     repositionHandler = null;
 };
 
-/** 在编辑器失焦时保留选区的视觉高亮（类似 Notion） */
+/** Keep the selection visually highlighted when the editor loses focus (like Notion) */
 export const showFrozenSelection = (vditor: IVditor, range: Range) => {
     hideFrozenSelection(vditor);
     const editor = getEditor(vditor);
@@ -101,7 +101,7 @@ export const hideFrozenSelection = (vditor: IVditor) => {
     overlayEl = null;
 };
 
-/** 打开 AI 弹窗时捕获当前选区；若已有非折叠选区则返回克隆 Range */
+/** Capture the current selection when the AI dialog opens; return a cloned Range if there is a non-collapsed selection */
 export const captureEditorSelection = (vditor: IVditor): Range | null => {
     const editor = getEditor(vditor);
     const range = getSelectionRangeInEditor(editor);
@@ -113,7 +113,7 @@ export const captureEditorSelection = (vditor: IVditor): Range | null => {
     return cloned;
 };
 
-/** 将冻结/缓存的选区恢复到编辑器，供替换选中文本时使用 */
+/** Restore the frozen/cached selection into the editor, for replacing the selected text */
 export const restoreEditorSelection = (vditor: IVditor, range?: Range | null) => {
     const editor = getEditor(vditor);
     const target = range ?? vditor[vditor.currentMode].range;
