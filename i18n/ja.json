@@ -23,5 +23,38 @@
       "selectImage": "画像を選択",
       "statusBar": "行 {lines} 文字数 {chars}"
     }
+  },
+  "viewer": {
+    "common": {
+      "failedOpenFile": "ファイルを開けませんでした",
+      "copied": "コピーしました",
+      "close": "閉じる",
+      "officeViewer": "Office Viewer",
+      "switchToLight": "ライトモードに切り替え",
+      "switchToDark": "アダプティブダークモードに切り替え",
+      "editInVscode": "VS Code で編集"
+    },
+    "document": {
+      "failedLoad": "ドキュメントの読み込みに失敗しました"
+    },
+    "presentation": {
+      "failedLoad": "プレゼンテーションの読み込みに失敗しました",
+      "slides": "スライド"
+    },
+    "epub": {
+      "searchBook": "書籍を検索...",
+      "failedLoad": "EPUB の読み込みに失敗しました",
+      "failedRender": "EPUB ページのレンダリングに失敗しました",
+      "searchFailed": "検索に失敗しました",
+      "untitled": "無題",
+      "error": "エラー"
+    },
+    "xmind": {
+      "loading": "XMind を読み込み中...",
+      "sheets": "シート"
+    },
+    "parquet": {
+      "readOnly": "読み取り専用 — 変更はディスクに保存されません"
+    }
   }
 }
