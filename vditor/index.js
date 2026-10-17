@@ -77,7 +77,7 @@ window.vditor = new Vditor('vditor', {
           if ('vditor'.indexOf(key.toLocaleLowerCase()) > -1) {
             return [{
               value: '#Vditor',
-              html: '<span style="color: #999;">#Vditor</span> ♏ 一款浏览器端的 Markdown 编辑器，支持所见即所得（富文本）、即时渲染（类似 Typora）。',
+              html: '<span style="color: #999;">#Vditor</span> ♏ A browser-based Markdown editor supporting WYSIWYG (rich text) and instant rendering (Typora-like).',
             }]
           }
           return []

@@ -66,6 +66,6 @@ window.addEventListener('keydown', e => {
     else if ((isCompose(e) && e.code == 'KeyV')
         && !isInsideCodeMirrorTarget(e.target)
         && !isInsideCodeMirrorTarget(document.activeElement)) {
-        e.preventDefault()  // vscode的bug, hebrew(希伯来语)键盘会粘贴两次
+        e.preventDefault()  // VS Code bug: the Hebrew keyboard pastes twice
     }
 })

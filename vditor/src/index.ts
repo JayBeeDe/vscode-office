@@ -94,8 +94,8 @@ class Vditor {
     private aiReplaceAll = false;
 
     /**
-     * @param id 要挂载 Vditor 的元素或者元素 ID。
-     * @param options Vditor 参数
+     * @param id The element, or element ID, to mount Vditor on.
+     * @param options Vditor options
      */
     constructor(id: string | HTMLElement, options?: IOptions) {
         this.version = VDITOR_VERSION;
@@ -121,7 +121,7 @@ class Vditor {
             setAIModelKeySink(mergedOptions.ai.onSetModelKey);
         }
 
-        // 支持自定义国际化
+        // Support custom i18n
         if (!mergedOptions.i18n) {
             if (!["en_US", "ja_JP", "ko_KR", "ru_RU", "zh_CN", "zh_TW"].includes(mergedOptions.lang)) {
                 throw new Error(
@@ -145,7 +145,7 @@ class Vditor {
         }
     }
 
-    /** 设置主题 */
+    /** Set the theme */
     public setTheme(
         theme: "dark" | "classic",
         codeTheme?: string,
@@ -158,17 +158,17 @@ class Vditor {
         }
     }
 
-    /** 设置 Markdown 编辑器主题（bundled in index.css） */
+    /** Set the Markdown editor theme (bundled in index.css) */
     public setEditorTheme(editorTheme: string) {
         applyEditorTheme(this.vditor, editorTheme, false);
     }
 
-    /** 设置 Mermaid 主题（不触发 changeMermaidTheme 回调） */
+    /** Set the Mermaid theme (does not fire the changeMermaidTheme callback) */
     public setMermaidTheme(mermaidTheme: string) {
         applyMermaidTheme(this.vditor, mermaidTheme, false);
     }
 
-    /** 切换编辑模式（不触发 changeEditMode 回调） */
+    /** Switch the edit mode (does not fire the changeEditMode callback) */
     public switchEditMode(mode: "wysiwyg" | "ir") {
         if (this.vditor.currentMode === mode) {
             return;
@@ -176,27 +176,27 @@ class Vditor {
         setEditMode(this.vditor, mode, this.getValue());
     }
 
-    /** 获取 Markdown 内容 */
+    /** Get the Markdown content */
     public getValue() {
         return getMarkdown(this.vditor);
     }
 
-    /** 标记当前内容已保存，并禁用工具栏保存按钮 */
+    /** Mark the current content as saved and disable the toolbar save button */
     public markSaved(markdown?: string) {
         markDocumentSaved(this.vditor, markdown);
     }
 
-    /** 当前文档相对上次保存是否有变更 */
+    /** Whether the document has changed since the last save */
     public isDirty() {
         return isDocumentDirty(this.vditor);
     }
 
-    /** 获取编辑器当前编辑模式 */
+    /** Get the editor's current edit mode */
     public getCurrentMode() {
         return this.vditor.currentMode;
     }
 
-    /** 聚焦到编辑器 */
+    /** Focus the editor */
     public focus() {
         if (this.vditor.currentMode === "wysiwyg") {
             this.vditor.wysiwyg.element.focus();
@@ -205,7 +205,7 @@ class Vditor {
         }
     }
 
-    /** 让编辑器失焦 */
+    /** Blur the editor */
     public blur() {
         if (this.vditor.currentMode === "wysiwyg") {
             this.vditor.wysiwyg.element.blur();
@@ -214,7 +214,7 @@ class Vditor {
         }
     }
 
-    /** 禁用编辑器 */
+    /** Disable the editor */
     public disabled() {
         hidePanel(this.vditor, ["subToolbar", "hint", "popover"]);
         disableToolbar(
@@ -227,7 +227,7 @@ class Vditor {
         );
     }
 
-    /** 解除编辑器禁用 */
+    /** Re-enable the editor */
     public enable() {
         enableToolbar(
             this.vditor.toolbar.elements,
@@ -237,7 +237,7 @@ class Vditor {
         this.vditor[this.vditor.currentMode].element.setAttribute("contenteditable", "true");
     }
 
-    /** 返回选中的字符串 */
+    /** Return the selected text */
     public getSelection() {
         if (this.vditor.currentMode === "wysiwyg") {
             return getSelectText(this.vditor.wysiwyg.element);
@@ -247,37 +247,37 @@ class Vditor {
         }
     }
 
-    /** 获取焦点位置 */
+    /** Get the cursor position */
     public getCursorPosition() {
         return getCursorPosition(this.vditor[this.vditor.currentMode].element);
     }
 
-    /** 恢复上次焦点位置；onLoad 用于页面首次加载 */
+    /** Restore the last cursor position; onLoad is for the first page load */
     public restoreFocus(onLoad = false) {
         restoreCacheFocus(this.vditor, { onLoad });
     }
 
-    /** 恢复文档滚动位置 */
+    /** Restore the document scroll position */
     public restoreScroll(scrollTop?: number) {
         restoreDocumentScroll(this.vditor, scrollTop);
     }
 
-    /** 恢复滚动与焦点；onLoad 用于页面首次加载 */
+    /** Restore scroll and cursor position; onLoad is for the first page load */
     public restoreDocumentSession(onLoad = false, restoreCaret = true) {
         restoreCacheFocus(this.vditor, { onLoad, restoreCaret });
     }
 
-    /** 滚动到块引用或标题 fragment（如 ^block-id 或标题 slug） */
+    /** Scroll to a block reference or heading fragment (e.g. ^block-id or a heading slug) */
     public scrollToBlock(fragment: string) {
         return scrollToBlockUtil(this.vditor, fragment);
     }
 
-    /** 上传是否还在进行中 */
+    /** Whether an upload is still in progress */
     public isUploading() {
         return this.vditor.upload.isUploading;
     }
 
-    /** 清除缓存 */
+    /** Clear the cache */
     public clearCache() {
         if (accessLocalStorage()) {
             const cacheId = this.vditor.options.cache.id;
@@ -289,12 +289,12 @@ class Vditor {
         }
     }
 
-    /** 禁用缓存 */
+    /** Disable the cache */
     public disabledCache() {
         this.vditor.options.cache.enable = false;
     }
 
-    /** 启用缓存 */
+    /** Enable the cache */
     public enableCache() {
         if (!this.vditor.options.cache.id) {
             throw new Error(
@@ -304,27 +304,27 @@ class Vditor {
         this.vditor.options.cache.enable = true;
     }
 
-    /** HTML 转 md */
+    /** Convert HTML to Markdown */
     public html2md(value: string) {
         return this.vditor.lute.HTML2Md(value);
     }
 
-    /** markdown 转 JSON 输出 */
+    /** Convert Markdown to JSON */
     public exportJSON(value: string) {
         return this.vditor.lute.RenderJSON(value);
     }
 
-    /** 获取 HTML */
+    /** Get the HTML */
     public getHTML() {
         return getHTML(this.vditor);
     }
 
-    /** 消息提示。time 为 0 将一直显示 */
+    /** Show a message. A time of 0 keeps it displayed */
     public tip(text: string, time?: number) {
         this.vditor.tip.show(text, time);
     }
 
-    /** 删除选中内容 */
+    /** Delete the selected content */
     public deleteValue() {
         if (window.getSelection().isCollapsed) {
             return;
@@ -332,12 +332,12 @@ class Vditor {
         document.execCommand("delete", false);
     }
 
-    /** 更新选中内容 */
+    /** Update the selected content */
     public updateValue(value: string) {
         document.execCommand("insertHTML", false, value);
     }
 
-    /** 在焦点处插入内容，并默认进行 Markdown 渲染 */
+    /** Insert content at the cursor, rendered as Markdown by default */
     public insertValue(value: string, render = true) {
         const range = getEditorRange(this.vditor);
         range.collapse(true);
@@ -357,7 +357,7 @@ class Vditor {
         }
     }
 
-    /** 在焦点处插入 Markdown，行为与粘贴纯文本 Markdown 一致 */
+    /** Insert Markdown at the cursor, behaving like pasting plain-text Markdown */
     public insertMarkdown(markdown: string) {
         const vditor = this.vditor;
         vditor[vditor.currentMode].element.focus();
@@ -373,7 +373,7 @@ class Vditor {
         recordHistoryChange(vditor);
     }
 
-    /** 设置编辑器内容 */
+    /** Set the editor content */
     public setValue(markdown: string, clearStack = false) {
         if (this.vditor.currentMode === "wysiwyg") {
             renderDomByMd(this.vditor, markdown, {
@@ -412,33 +412,33 @@ class Vditor {
         updateSaveToolbarState(this.vditor);
     }
 
-    /** 清空 undo & redo 栈 */
+    /** Clear the undo & redo stacks */
     public clearStack() {
         this.vditor.undo.clearStack(this.vditor);
         this.vditor.undo.addToUndoStack(this.vditor);
     }
 
-    /** 设置 Github Copilot（VS Code Language Model API）是否可选 */
+    /** Set whether GitHub Copilot (VS Code Language Model API) is available */
     public setCopilotAvailable(available: boolean) {
         this.aiDialog?.setCopilotAvailable(available);
     }
 
-    /** 设置可用的 VS Code 语言模型列表 */
+    /** Set the list of available VS Code language models */
     public setVSCodeModels(models: Array<{ id: string; name: string; family: string; vendor: string }>) {
         this.aiDialog?.setVSCodeModels(models);
     }
 
-    /** 启用或禁用配置文件同步 */
+    /** Enable or disable config file sync */
     public setViewerSettingsSyncEnabled(enabled: boolean) {
         enableViewerSettingsSync(enabled);
     }
 
-    /** 导出当前全局设置（用于写入配置文件） */
+    /** Export the current global settings (to write to the config file) */
     public exportViewerSettings(): ViewerSettingsExport {
         return exportViewerSettings();
     }
 
-    /** 从配置文件导入并应用全局设置 */
+    /** Import and apply global settings from the config file */
     public applyViewerSettings(data: ViewerSettingsExport) {
         importViewerSettings(data);
         applyEditorSettings(this.vditor.element);
@@ -459,7 +459,7 @@ class Vditor {
         refreshAISettingsToolbarPanel(this.vditor);
     }
 
-    /** 打开 AI 润色弹窗，由外部（右键菜单等）调用 */
+    /** Open the AI polish dialog; called externally (context menu, etc.) */
     public openAIPolishDialog() {
         if (!this.aiDialog) { return; }
         const sel = this.getSelection();
@@ -470,7 +470,7 @@ class Vditor {
         this.aiDialog.open(sel || this.getValue(), !!sel);
     }
 
-    /** 触发 AI 润色。capturedMarkdown/isSelection 由调用方在失焦前预先捕获，避免选区丢失 */
+    /** Trigger AI polish. capturedMarkdown/isSelection are captured by the caller before blur, so the selection is not lost */
     public triggerAIPolish(options?: IAIPolishOptions, capturedMarkdown?: string, isSelection?: boolean) {
         const onPolish = this.vditor.options.ai?.onPolish;
         if (!onPolish) { return; }
@@ -512,17 +512,17 @@ class Vditor {
         onPolish(markdown, (_result: string) => { /* streaming via streamAIChunk/endAIStream */ }, options);
     }
 
-    /** 流式接收 AI chunk，实时更新 diff 审阅面板 */
+    /** Receive a streamed AI chunk and update the diff review panel live */
     public streamAIChunk(chunk: string) {
         this.aiReviewPanel.stream(chunk);
     }
 
-    /** AI 流结束，启用 Accept 按钮；failed: the request failed, there is nothing to accept */
+    /** The AI stream ended: enable the Accept button; failed: the request failed, there is nothing to accept */
     public endAIStream(failed = false) {
         this.aiReviewPanel.endStream(failed);
     }
 
-    /** 接收 AI 润色结果：退出 loading 状态，将 markdown 并入正文 */
+    /** Receive the AI polish result: leave the loading state and merge the Markdown into the document */
     public applyAIResult(markdown: string, replaceAll = false, selectionRange?: Range | null) {
         this.enable();
         hideFrozenSelection(this.vditor);
@@ -562,7 +562,7 @@ class Vditor {
         }
     }
 
-    /** 销毁编辑器 */
+    /** Destroy the editor */
     public destroy() {
         this.vditor.element.innerHTML = this.vditor.originalInnerHTML;
         this.vditor.element.classList.remove("vditor");
