@@ -524,6 +524,285 @@
     "adaptTheme": "Enable theme adaptation",
     "adaptThemeHint": "Enable theme adaptation (follow VS Code colors)",
     "switchToLight": "Switch PDF to light mode",
-    "switchToDark": "Switch PDF to dark mode"
+    "switchToDark": "Switch PDF to dark mode",
+    "previous": {
+      "@title": "Previous Page",
+      "label": "Previous"
+    },
+    "next": {
+      "@title": "Next Page",
+      "label": "Next"
+    },
+    "page": {
+      "@title": "Page",
+      "of_pages": "({pageNumber} of {pagesCount})",
+      "rotate": {
+        "cw": {
+          "@title": "Rotate Clockwise",
+          "@label": "Rotate Clockwise",
+          "label": "Rotate Clockwise"
+        },
+        "ccw": {
+          "@title": "Rotate Counterclockwise",
+          "@label": "Rotate Counterclockwise",
+          "label": "Rotate Counterclockwise"
+        }
+      },
+      "canvas": "Page {page}",
+      "scale": {
+        "width": "Page Width",
+        "fit": "Page Fit",
+        "auto": "Automatic Zoom",
+        "actual": "Actual Size",
+        "percent": "{scale}%"
+      }
+    },
+    "of_pages": "of {pagesCount}",
+    "zoom": {
+      "@title": "Zoom",
+      "out": {
+        "@title": "Zoom Out",
+        "label": "Zoom Out"
+      },
+      "in": {
+        "@title": "Zoom In",
+        "label": "Zoom In"
+      }
+    },
+    "presentation_mode": {
+      "@title": "Switch to Presentation Mode",
+      "label": "Presentation Mode"
+    },
+    "open_file": {
+      "@title": "Open File",
+      "label": "Open"
+    },
+    "print": {
+      "@title": "Print",
+      "label": "Print",
+      "progress": {
+        "message": "Preparing document for printing…",
+        "percent": "{progress}%",
+        "close": "Cancel"
+      }
+    },
+    "download": {
+      "@title": "Download",
+      "label": "Download"
+    },
+    "bookmark": {
+      "@title": "Current view (copy or open in new window)",
+      "label": "Current View"
+    },
+    "tools": {
+      "@title": "Tools",
+      "label": "Tools"
+    },
+    "first_page": {
+      "@title": "Go to First Page",
+      "@label": "Go to First Page",
+      "label": "Go to First Page"
+    },
+    "last_page": {
+      "@title": "Go to Last Page",
+      "@label": "Go to Last Page",
+      "label": "Go to Last Page"
+    },
+    "cursor": {
+      "text_select_tool": {
+        "@title": "Enable Text Selection Tool",
+        "label": "Text Selection Tool"
+      },
+      "hand_tool": {
+        "@title": "Enable Hand Tool",
+        "label": "Hand Tool"
+      }
+    },
+    "scroll": {
+      "vertical": {
+        "@title": "Use Vertical Scrolling",
+        "label": "Vertical Scrolling"
+      },
+      "horizontal": {
+        "@title": "Use Horizontal Scrolling",
+        "label": "Horizontal Scrolling"
+      },
+      "wrapped": {
+        "@title": "Use Wrapped Scrolling",
+        "label": "Wrapped Scrolling"
+      }
+    },
+    "spread": {
+      "none": {
+        "@title": "Do not join page spreads",
+        "label": "No Spreads"
+      },
+      "odd": {
+        "@title": "Join page spreads starting with odd-numbered pages",
+        "label": "Odd Spreads"
+      },
+      "even": {
+        "@title": "Join page spreads starting with even-numbered pages",
+        "label": "Even Spreads"
+      }
+    },
+    "document": {
+      "properties": {
+        "@title": "Document Properties…",
+        "label": "Document Properties…",
+        "file": {
+          "name": "File name:",
+          "size": "File size:"
+        },
+        "kb": "{size_kb} KB ({size_b} bytes)",
+        "mb": "{size_mb} MB ({size_b} bytes)",
+        "title": "Title:",
+        "author": "Author:",
+        "subject": "Subject:",
+        "keywords": "Keywords:",
+        "creation_date": "Creation Date:",
+        "modification_date": "Modification Date:",
+        "date_string": "{date}, {time}",
+        "creator": "Creator:",
+        "producer": "PDF Producer:",
+        "version": "PDF Version:",
+        "page": {
+          "count": "Page Count:",
+          "size": {
+            "@text": "Page Size:",
+            "unit": {
+              "inches": "in",
+              "millimeters": "mm"
+            },
+            "orientation": {
+              "portrait": "portrait",
+              "landscape": "landscape"
+            },
+            "name": {
+              "a3": "A3",
+              "a4": "A4",
+              "letter": "Letter",
+              "legal": "Legal"
+            },
+            "dimension": {
+              "string": "{width} × {height} {unit} ({orientation})",
+              "name_string": "{width} × {height} {unit} ({name}, {orientation})"
+            }
+          }
+        },
+        "linearized": {
+          "@text": "Fast Web View:",
+          "yes": "Yes",
+          "no": "No"
+        },
+        "close": "Close"
+      },
+      "outline": {
+        "@title": "Show Document Outline (double-click to expand/collapse all items)",
+        "label": "Document Outline"
+      }
+    },
+    "toggle_sidebar": {
+      "@title": "Toggle Sidebar",
+      "label": "Toggle Sidebar",
+      "notification": {
+        "@title": "Toggle Sidebar (document contains outline/attachments/layers)"
+      }
+    },
+    "attachments": {
+      "@title": "Show Attachments",
+      "label": "Attachments"
+    },
+    "layers": {
+      "@title": "Show Layers (double-click to reset all layers to the default state)",
+      "label": "Layers"
+    },
+    "thumbs": {
+      "@title": "Show Thumbnails",
+      "label": "Thumbnails"
+    },
+    "findbar": {
+      "@title": "Find in Document",
+      "label": "Find"
+    },
+    "additional_layers": "Additional Layers",
+    "thumb_page": {
+      "title": "Page {page}",
+      "canvas": "Thumbnail of Page {page}"
+    },
+    "find": {
+      "input": {
+        "@title": "Find",
+        "@placeholder": "Find in document…"
+      },
+      "previous": {
+        "@title": "Find the previous occurrence of the phrase",
+        "label": "Previous"
+      },
+      "next": {
+        "@title": "Find the next occurrence of the phrase",
+        "label": "Next"
+      },
+      "highlight": "Highlight all",
+      "match": {
+        "case_label": "Match case",
+        "count": {
+          "@text": "{[ plural(total) ]}",
+          "[one]": "{current} of {total} match",
+          "[two]": "{current} of {total} matches",
+          "[few]": "{current} of {total} matches",
+          "[many]": "{current} of {total} matches",
+          "[other]": "{current} of {total} matches",
+          "limit": {
+            "@text": "{[ plural(limit) ]}",
+            "[zero]": "More than {limit} matches",
+            "[one]": "More than {limit} match",
+            "[two]": "More than {limit} matches",
+            "[few]": "More than {limit} matches",
+            "[many]": "More than {limit} matches",
+            "[other]": "More than {limit} matches"
+          }
+        }
+      },
+      "entire_word_label": "Whole words",
+      "reached": {
+        "top": "Reached top of document, continued from bottom",
+        "bottom": "Reached end of document, continued from top"
+      },
+      "not_found": "Phrase not found"
+    },
+    "error": {
+      "more_info": "More Information",
+      "less_info": "Less Information",
+      "close": "Close",
+      "version_info": "PDF.js v{version} (build: {build})",
+      "message": "Message: {message}",
+      "stack": "Stack: {stack}",
+      "file": "File: {file}",
+      "line": "Line: {line}"
+    },
+    "rendering_error": "An error occurred while rendering the page.",
+    "loading_error": {
+      "@text": "An error occurred while loading the PDF.",
+      "indicator": "Error"
+    },
+    "invalid_file_error": "Invalid or corrupted PDF file.",
+    "missing_file_error": "Missing PDF file.",
+    "unexpected_response_error": "Unexpected server response.",
+    "annotation_date_string": "{date}, {time}",
+    "text_annotation_type": {
+      "@alt": "[{type} Annotation]"
+    },
+    "password": {
+      "label": "Enter the password to open this PDF file.",
+      "invalid": "Invalid password. Please try again.",
+      "ok": "OK",
+      "cancel": "Cancel"
+    },
+    "printing_not": {
+      "supported": "Warning: Printing is not fully supported by this browser.",
+      "ready": "Warning: The PDF is not fully loaded for printing."
+    },
+    "web_fonts_disabled": "Web fonts are disabled: unable to use embedded PDF fonts."
   }
 }
