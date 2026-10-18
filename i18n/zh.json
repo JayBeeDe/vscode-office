@@ -1224,9 +1224,7 @@
     "boldColorRed": "红色",
     "boldColorOrange": "橙色",
     "boldColorPurple": "紫色",
-    "boldColorTeal": "青色",
-    "settingsReset": "重置",
-    "settingsEditFile": "编辑配置"
+    "boldColorTeal": "青色"
   },
   "pdf": {
     "previous": {

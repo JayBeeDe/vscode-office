@@ -86,12 +86,6 @@ handler.on("open", async (md) => {
     changeEditMode(mode) {
       handler.emit('editMode', mode)
     },
-    onSettingsChange(settings) {
-      handler.emit('syncViewerSettings', settings)
-    },
-    onEditSettings() {
-      handler.emit('editViewerSettings', editor.exportViewerSettings())
-    },
     input(content) {
       handler.emit("save", restoreWorkspaceBaseUrls(content, workspaceBaseUrl))
     },
@@ -114,20 +108,7 @@ handler.on("open", async (md) => {
       },
     },
     after() {
-      const { viewerSettings } = md;
       observeWorkspaceAbsoluteImages(document.getElementById('vditor'), workspaceBaseUrl);
-      if (viewerSettings?.enabled) {
-        editor.setViewerSettingsSyncEnabled(true);
-        if (viewerSettings.settings) {
-          editor.applyViewerSettings(viewerSettings.settings);
-        }
-      }
-      handler.on('viewerSettingsSync', ({ enabled }) => {
-        editor.setViewerSettingsSyncEnabled(!!enabled);
-      });
-      handler.on('viewerSettings', (settings) => {
-        editor.applyViewerSettings(settings);
-      });
       handler.on('theme', (theme) => {
         editor.setColorTheme(theme);
       });

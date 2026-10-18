@@ -43,20 +43,6 @@ import { renderToc } from "./ts/util/toc";
 import { scrollToBlock as scrollToBlockUtil } from "./ts/util/scrollToBlock";
 import { configureHistoryDeferByDocumentLength } from "./ts/util/historySchedule";
 import { isDocumentDirty, markDocumentSaved, updateSaveToolbarState } from "./ts/util/saveToolbarState";
-import {
-    applyEditorSettings,
-    enableViewerSettingsSync,
-    exportViewerSettings,
-    getGlobalLocalStorageSetting,
-    importViewerSettings,
-    setOnViewerSettingsChange,
-    ViewerSettingsExport,
-} from "./ts/util/globalLocalStorageSettings";
-import { exportExportSettings, ExportThemeSettings } from "./ts/util/exportThemeSettings";
-import {
-    buildSettingsPanelHTML,
-    refreshSettingsToolbarPanel,
-} from "./ts/ui/settingsPanel";
 import { WYSIWYG } from "./ts/wysiwyg/index";
 import { input } from "./ts/wysiwyg/input";
 import { ensureEditorBoundaryParagraphs, renderDomByMd } from "./ts/wysiwyg/renderDomByMd";
@@ -405,36 +391,6 @@ class Vditor {
         this.vditor.undo.addToUndoStack(this.vditor);
     }
 
-    /** Enable or disable config file sync */
-    public setViewerSettingsSyncEnabled(enabled: boolean) {
-        enableViewerSettingsSync(enabled);
-    }
-
-    /** Export the current global settings (to write to the config file) */
-    public exportViewerSettings(): ViewerSettingsExport {
-        return exportViewerSettings();
-    }
-
-    /** Import and apply global settings from the config file */
-    public applyViewerSettings(data: ViewerSettingsExport) {
-        importViewerSettings(data);
-        applyEditorSettings(this.vditor.element);
-        const outlineWidth = getGlobalLocalStorageSetting<number>("outlineWidth");
-        if (outlineWidth && this.vditor.outline?.element) {
-            this.vditor.outline.element.style.width = `${outlineWidth}px`;
-        }
-        const outlineEnable = getGlobalLocalStorageSetting<boolean>("outlineEnable");
-        if (outlineEnable !== undefined) {
-            this.vditor.options.outline.enable = outlineEnable === true || outlineEnable === "true";
-        }
-        const settingsItem = this.vditor.toolbar.elements.settings;
-        const panelElement = settingsItem?.querySelector(".vditor-hint") as HTMLElement | null;
-        if (panelElement) {
-            panelElement.innerHTML = buildSettingsPanelHTML(this.vditor);
-        }
-        refreshSettingsToolbarPanel(this.vditor);
-    }
-
     /** Destroy the editor */
     public destroy() {
         this.vditor.element.innerHTML = this.vditor.originalInnerHTML;
@@ -461,10 +417,6 @@ class Vditor {
         this.vditor.wysiwyg = new WYSIWYG(this.vditor);
         this.vditor.ir = new IR(this.vditor);
         this.vditor.toolbar = new Toolbar(this.vditor);
-
-        if (typeof mergedOptions.onSettingsChange === "function") {
-            setOnViewerSettingsChange((settings) => mergedOptions.onSettingsChange?.(settings));
-        }
 
         if (mergedOptions.upload.url || mergedOptions.upload.handler) {
             this.vditor.upload = new Upload();

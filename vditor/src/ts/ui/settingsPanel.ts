@@ -111,20 +111,6 @@ const resolveDisplayedFontSize = (vditor: IVditor, key: string, fallback: number
         ?? fallback;
 };
 
-export const buildSettingsFooterHTML = () => {
-    const i18n = window.VditorI18n;
-    return `<div class="${SETTINGS_PANEL_CLASS}__footer">
-            <button type="button" class="${SETTINGS_PANEL_CLASS}__footer-btn ${SETTINGS_PANEL_CLASS}__footer-btn--edit" data-edit-settings title="${i18n.settingsEditFile ?? i18n.edit}">
-                <span class="codicon codicon-edit" aria-hidden="true"></span>
-                <span>${i18n.settingsEditFile ?? i18n.edit}</span>
-            </button>
-            <button type="button" class="${SETTINGS_PANEL_CLASS}__footer-btn ${SETTINGS_PANEL_CLASS}__footer-btn--reset" data-reset-settings title="${i18n.settingsReset ?? 'Reset'}">
-                <span class="codicon codicon-discard" aria-hidden="true"></span>
-                <span>${i18n.settingsReset ?? 'Reset'}</span>
-            </button>
-        </div>`;
-};
-
 export const buildSettingsPanelHTML = (vditor: IVditor) => {
     const i18n = window.VditorI18n;
     const uiSize = resolveDisplayedFontSize(vditor, UI_FONT_SIZE_KEY, UI_FONT_SIZE_DEFAULT);
@@ -172,7 +158,6 @@ export const buildSettingsPanelHTML = (vditor: IVditor) => {
                 ${buildImageStepperHTML(IMAGE_MAX_HEIGHT_KEY, i18n.imageMaxHeight, imgMaxHeight, "vh")}
             </div>
         </div>
-        ${buildSettingsFooterHTML()}
     </div>`;
 };
 

@@ -17,7 +17,6 @@ import {
     registerMarkdownWebview,
     unregisterMarkdownWebview,
 } from '@/service/markdown/blockScroll';
-import { ViewerSettingsService } from '@/service/viewerSettingsService';
 import { parseWebviewResourceUri } from '@/common/webviewUri';
 
 function getRuntimePlatform(): string {
@@ -211,7 +210,6 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
             }
         });
         handler.on("init", async () => {
-            const viewerSettings = await ViewerSettingsService.loadForWebview();
             const workspaceUri = this.getWorkspaceUriByFileUtil(uri);
             handler.emit("open", {
                 content, rootPath,
@@ -220,7 +218,6 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
                 pendingFragment: consumePendingBlockScroll(uri),
                 shouldRestoreFocus: config.get<boolean>("restoreViewState", true),
                 config: this.getMarkdownWebviewConfig(config),
-                viewerSettings,
             })
             this.countOwner = handler;
             this.updateCount(content, handler)
@@ -317,12 +314,6 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
             if (url) {
                 vscode.env.openExternal(vscode.Uri.parse(url));
             }
-        }).on('syncViewerSettings', async (settings) => {
-            if (await ViewerSettingsService.exists()) {
-                await ViewerSettingsService.writeFromVditor(settings);
-            }
-        }).on('editViewerSettings', async (settings) => {
-            await ViewerSettingsService.createAndOpen(settings);
         })
 
         // without a workspace folder the document's folder stays the base, not the disk root
