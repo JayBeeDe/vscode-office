@@ -152,49 +152,6 @@ export const IMAGE_MAX_WIDTH_MAX = 100;
 export const IMAGE_MAX_HEIGHT_MIN = 10;
 export const IMAGE_MAX_HEIGHT_MAX = 100;
 
-export type ViewerSettingsExport = {
-    globalSettings: GlobalLocalStorageSettings;
-};
-
-let settingsSyncEnabled = false;
-let suppressSettingsNotify = false;
-let onViewerSettingsChange: ((settings: ViewerSettingsExport) => void) | undefined;
-
-export const enableViewerSettingsSync = (enabled: boolean) => {
-    settingsSyncEnabled = enabled;
-};
-
-export const isViewerSettingsSyncEnabled = () => settingsSyncEnabled;
-
-export const setOnViewerSettingsChange = (
-    callback: ((settings: ViewerSettingsExport) => void) | undefined,
-) => {
-    onViewerSettingsChange = callback;
-};
-
-export const exportViewerSettings = (): ViewerSettingsExport => ({
-    globalSettings: readGlobalSettings(),
-});
-
-const notifyViewerSettingsChange = () => {
-    if (suppressSettingsNotify || !settingsSyncEnabled || !onViewerSettingsChange) {
-        return;
-    }
-    onViewerSettingsChange(exportViewerSettings());
-};
-
-export const importViewerSettings = (data: ViewerSettingsExport | null | undefined) => {
-    if (!data || typeof data !== "object") {
-        return;
-    }
-    suppressSettingsNotify = true;
-    try {
-        writeGlobalSettings({ ...(data.globalSettings ?? {}) });
-    } finally {
-        suppressSettingsNotify = false;
-    }
-};
-
 export const applyPageWidthSetting = (vditorElement: HTMLElement, pageWidth?: string) => {
     if (pageWidth !== undefined && pageWidth !== PAGE_WIDTH_DEFAULT) {
         vditorElement.style.setProperty("--vditor-page-width", pageWidth);
@@ -239,14 +196,6 @@ export const applyEditorSettings = (vditorElement: HTMLElement) => {
 /** @deprecated use applyEditorSettings */
 export const applyFontSizes = applyEditorSettings;
 
-export const resetGlobalSettings = () => {
-    if (!accessLocalStorage()) return;
-    try {
-        localStorage.removeItem(GLOBAL_SETTINGS_STORAGE_KEY);
-    } catch { /* ignore */ }
-    notifyViewerSettingsChange();
-};
-
 export const setGlobalLocalStorageSetting = (
     key: string,
     value: GlobalLocalStorageSettings[keyof GlobalLocalStorageSettings],
@@ -258,5 +207,4 @@ export const setGlobalLocalStorageSetting = (
         settings[key] = value;
     }
     writeGlobalSettings(settings);
-    notifyViewerSettingsChange();
 };

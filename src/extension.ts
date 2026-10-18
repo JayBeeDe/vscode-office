@@ -4,7 +4,6 @@ import { MarkdownEditorProvider } from './provider/markdownEditorProvider';
 import { OfficeViewerProvider } from './provider/officeViewerProvider';
 import { MarkdownService } from './service/markdownService';
 import { switchCsvEditor } from './service/csvService';
-import { ViewerSettingsService } from './service/viewerSettingsService';
 import { FileUtil } from './common/fileUtil';
 import { ReactApp } from './common/reactApp';
 
@@ -17,7 +16,6 @@ export async function activate(context: vscode.ExtensionContext) {
 	const viewerInstance = new OfficeViewerProvider(context);
 	const markdownEditorProvider = new MarkdownEditorProvider(context)
 	context.subscriptions.push(
-		{ dispose: () => ViewerSettingsService.dispose() },
 		vscode.commands.registerCommand('office.markdown.switch', (uri) => { markdownService.switchEditor(uri) }),
 		vscode.commands.registerCommand('office.csv.switch', (uri) => { switchCsvEditor(uri) }),
 		vscode.commands.registerCommand('office.markdown.paste', () => { markdownService.loadClipboardImage() }),

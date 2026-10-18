@@ -444,10 +444,6 @@ interface IHint {
     extend?: IHintExtend[];
 }
 
-type ViewerSettingsExport = {
-    globalSettings: Record<string, boolean | number | string | undefined>;
-};
-
 /** @link https://ld246.com/article/1549638745630#options */
 interface IOptions {
     /** RTL */
@@ -567,12 +563,6 @@ interface IOptions {
 
     /** Fired when a link is opened with Ctrl/⌘+click, double-click or middle-click; falls back to the browser default when not set */
     onLinkClick?(payload: ILinkClickPayload, event: MouseEvent, vditor: IVditor): void;
-
-    /** Fired after global settings change (only when config file sync is enabled) */
-    onSettingsChange?(settings: ViewerSettingsExport): void;
-
-    /** Fired when the edit config file button is clicked */
-    onEditSettings?(): void;
 }
 
 interface IEChart {

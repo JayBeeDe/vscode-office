@@ -4,8 +4,7 @@
       "yes": "YES",
       "no": "NO",
       "openLink": "Open",
-      "confirmOpenLink": "Open \"{url}\"? This link points outside the web and may open a file or run a program.",
-      "settingsUnsupported": "Viewer settings file is not supported in this environment."
+      "confirmOpenLink": "Open \"{url}\"? This link points outside the web and may open a file or run a program."
     },
     "markdown": {
       "exportStart": "Starting export markdown to {type}.",
@@ -1290,8 +1289,6 @@
     "boldColorOrange": "Orange",
     "boldColorPurple": "Purple",
     "boldColorTeal": "Teal",
-    "settingsReset": "Reset",
-    "settingsEditFile": "Edit Config",
     "editInVscode": "Edit In VS Code ({shortcut})",
     "save": "Save",
     "copyAsHtml": "Copy as HTML",

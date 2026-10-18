@@ -41,8 +41,6 @@ import {
     CODE_BLOCK_MAX_HEIGHT_OPTIONS,
     getGlobalLocalStorageSetting,
     setGlobalLocalStorageSetting,
-    resetGlobalSettings,
-    applyEditorSettings,
 } from "../util/globalLocalStorageSettings";
 import {getCodeFontFamilyOptions} from "../util/fontFamilyOptions";
 
@@ -279,31 +277,6 @@ export class Settings extends MenuItem {
                 event.stopPropagation();
                 return;
             }
-
-            // Edit settings file
-            if (event.target.closest("[data-edit-settings]")) {
-                const fn = vditor.options.onEditSettings;
-                if (typeof fn === "function") {
-                    fn();
-                }
-                event.preventDefault();
-                event.stopPropagation();
-                return;
-            }
-
-            // Reset settings
-            if (event.target.closest("[data-reset-settings]")) {
-                resetGlobalSettings();
-                for (const prop of ["--ui-font-size", "--editor-font-size", "--editor-line-height", "--editor-font-family", "--code-font-family", "--bold-color", "--vditor-page-width", "--vditor-image-max-width", "--vditor-image-max-height"]) {
-                    vditor.element.style.removeProperty(prop);
-                }
-                applyEditorSettings(vditor.element);
-                panelElement.innerHTML = buildSettingsPanelHTML(vditor);
-                event.preventDefault();
-                event.stopPropagation();
-                return;
-            }
-
         });
 
         // Line height manual input
