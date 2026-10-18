@@ -328,7 +328,7 @@ const hasOpenEditorOverlay = (vditor: IVditor) => {
     if (themePanel && themePanel.style.display === "block") {
         return true;
     }
-    if (root.querySelector(".vditor-cm-chrome__lang--open, .vditor-cm-chrome__theme--open, .vditor-mermaid-chrome__theme--open")) {
+    if (root.querySelector(".vditor-cm-chrome__lang--open")) {
         return true;
     }
     return false;

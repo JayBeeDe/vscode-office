@@ -83,12 +83,6 @@ handler.on("open", async (md) => {
     },
     debugger: isDev,
     wysiwygInputPerf: isDev && false,
-    changeCodeTheme(theme) {
-      handler.emit('codeMirrorTheme', theme)
-    },
-    changeMermaidTheme(theme) {
-      handler.emit('mermaidTheme', theme)
-    },
     changeEditMode(mode) {
       handler.emit('editMode', mode)
     },

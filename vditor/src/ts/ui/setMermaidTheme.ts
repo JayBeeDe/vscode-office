@@ -27,16 +27,13 @@ export const shownMermaidTheme = (vditor: IVditor) => {
     return isPageDark(vditor) ? "dark" : "light";
 };
 
-/** Sets the shown theme on the editor, the diagrams and their theme menus. */
+/** Sets the shown theme on the editor and the diagrams. */
 export const syncMermaidTheme = (vditor: IVditor) => {
     const shown = shownMermaidTheme(vditor);
     vditor.element.setAttribute(MERMAID_THEME_ATTR, shown);
     document.documentElement.setAttribute(MERMAID_THEME_ATTR, shown);
     for (const host of vditor.element.querySelectorAll(".vditor-mermaid-host")) {
         host.setAttribute(MERMAID_THEME_ATTR, shown);
-    }
-    for (const panel of document.querySelectorAll(".vditor-mermaid-chrome__theme-panel")) {
-        panel.setAttribute(MERMAID_THEME_ATTR, shown);
     }
 };
 
