@@ -72,11 +72,11 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
         MarkdownEditorProvider.configSyncRegistered = true;
         context.subscriptions.push(
             vscode.workspace.onDidChangeConfiguration((event) => {
-                const config = vscode.workspace.getConfiguration('vscode-office');
+                const config = vscode.workspace.getConfiguration('vscode-office.markdown');
                 const patch: Partial<Record<MarkdownSyncConfigKey, unknown>> = {};
                 let changed = false;
                 for (const key of MARKDOWN_SYNC_CONFIG_KEYS) {
-                    if (event.affectsConfiguration(`vscode-office.${key}`)) {
+                    if (event.affectsConfiguration(`vscode-office.markdown.${key}`)) {
                         patch[key] = config.get(key);
                         changed = true;
                     }
@@ -204,7 +204,7 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
             // re-parsing on every keystroke (ANTLR token recognition errors in console).
             documentSyncTimer = setTimeout(() => void flushDocumentSync(), 400);
         };
-        const config = vscode.workspace.getConfiguration("vscode-office");
+        const config = vscode.workspace.getConfiguration("vscode-office.markdown");
         registerMarkdownWebview(uri, handler);
         handler.panel.onDidDispose(() => {
             void flushDocumentSync();
@@ -276,7 +276,7 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
                 "Dracula", "Monokai", "One Dark", "Solarized Dark", "Material Dark",
             ];
             if (validThemes.includes(theme)) {
-                Global.updateConfig("codeMirrorTheme", theme === "default" ? "Auto" : theme);
+                Global.updateConfig("markdown.codeMirrorTheme", theme === "default" ? "Auto" : theme);
             }
         }).on("editorTheme", (theme: string) => {
             const validThemes = [
@@ -284,7 +284,7 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
                 "One Dark", "Github Dark", "Nord", "Monokai", "Dracula",
             ];
             if (validThemes.includes(theme)) {
-                Global.updateConfig("editorTheme", theme);
+                Global.updateConfig("markdown.editorTheme", theme);
             }
         }).on("mermaidTheme", (theme: string) => {
             const validThemes = [
@@ -292,11 +292,11 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
                 "Dark", "Dracula", "Monokai", "Nord",
             ];
             if (validThemes.includes(theme)) {
-                Global.updateConfig("mermaidTheme", theme);
+                Global.updateConfig("markdown.mermaidTheme", theme);
             }
         }).on("editMode", (mode: string) => {
             if (mode === "wysiwyg" || mode === "ir") {
-                Global.updateConfig("editMode", mode);
+                Global.updateConfig("markdown.editMode", mode);
             }
         }).on("img", async (payload) => {
             const imgData: string = typeof payload === 'string' ? payload : payload.data;
@@ -387,7 +387,7 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
         })
 
         // without a workspace folder the document's folder stays the base, not the disk root
-        const workspacePath = Global.getConfig('workspacePathAsImageBasePath') ? getWorkspacePath(folderPath) : '';
+        const workspacePath = Global.getConfig('markdown.workspacePathAsImageBasePath') ? getWorkspacePath(folderPath) : '';
         const basePath = workspacePath ? vscode.Uri.file(workspacePath) : folderPath;
         const baseUrl = webview.asWebviewUri(basePath).toString().replace(/\?.+$/, '').replace('https://git', 'https://file');
         const indexHtml = await readExtensionText(this.context, 'resource', 'markdown', 'index.html');
