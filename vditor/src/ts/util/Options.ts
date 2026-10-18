@@ -62,7 +62,6 @@ export class Options {
             "undo",
             "redo",
             "|",
-            "settings",
             "outline",
         ],
         toolbarConfig: {
@@ -237,10 +236,6 @@ export class Options {
         }, {
             icon: getToolbarCodicon("edit-mode"),
             name: "edit-mode",
-        }, {
-            icon: getToolbarCodicon("settings"),
-            name: "settings",
-            tip: "Settings",
         }, {
             icon: getToolbarCodicon("outline"),
             name: "outline",

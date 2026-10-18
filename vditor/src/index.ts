@@ -43,6 +43,7 @@ import { renderToc } from "./ts/util/toc";
 import { scrollToBlock as scrollToBlockUtil } from "./ts/util/scrollToBlock";
 import { configureHistoryDeferByDocumentLength } from "./ts/util/historySchedule";
 import { isDocumentDirty, markDocumentSaved, updateSaveToolbarState } from "./ts/util/saveToolbarState";
+import { applyEditorSettings } from "./ts/util/editorSettings";
 import { WYSIWYG } from "./ts/wysiwyg/index";
 import { input } from "./ts/wysiwyg/input";
 import { ensureEditorBoundaryParagraphs, renderDomByMd } from "./ts/wysiwyg/renderDomByMd";
@@ -389,6 +390,12 @@ class Vditor {
     public clearStack() {
         this.vditor.undo.clearStack(this.vditor);
         this.vditor.undo.addToUndoStack(this.vditor);
+    }
+
+    /** Apply new vscode-office.markdown display settings (font sizes, fonts, widths...) */
+    public setEditorSettings(editorSettings: IEditorSettings) {
+        this.vditor.options.editorSettings = editorSettings;
+        applyEditorSettings(this.vditor);
     }
 
     /** Destroy the editor */

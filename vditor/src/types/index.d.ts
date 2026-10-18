@@ -444,6 +444,20 @@ interface IHint {
     extend?: IHintExtend[];
 }
 
+/** The vscode-office.markdown display settings, as their ids (see util/editorSettings) */
+interface IEditorSettings {
+    uiFontSize?: number;
+    editorFontSize?: number;
+    editorFontFamily?: string;
+    boldColor?: string;
+    pageWidth?: string;
+    editorLineHeight?: number;
+    codeFontFamily?: string;
+    codeBlockMaxHeight?: string;
+    imageMaxWidth?: number;
+    imageMaxHeight?: number;
+}
+
 /** @link https://ld246.com/article/1549638745630#options */
 interface IOptions {
     /** RTL */
@@ -511,6 +525,8 @@ interface IOptions {
     colorTheme?: IColorTheme | string;
     /** Light or dark page: vscode-office.markdown.theme, `auto` following colorTheme. Default: 'auto' */
     pageTheme?: IColorTheme | string;
+    /** Display settings: font sizes, fonts, widths... (vscode-office.markdown.*) */
+    editorSettings?: IEditorSettings;
     /** CodeMirror code block theme; `auto` follows the editor. Default: 'auto' */
     codeMirrorTheme?: ICodeMirrorTheme | string;
     /** Mermaid diagram theme; `auto` follows the editor. Default: 'auto' */
@@ -563,6 +579,9 @@ interface IOptions {
 
     /** Fired when a link is opened with Ctrl/⌘+click, double-click or middle-click; falls back to the browser default when not set */
     onLinkClick?(payload: ILinkClickPayload, event: MouseEvent, vditor: IVditor): void;
+
+    /** Fired when ⌘/ctrl+wheel changes the document font size */
+    changeEditorFontSize?(size: number): void;
 }
 
 interface IEChart {

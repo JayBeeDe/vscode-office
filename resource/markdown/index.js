@@ -14,7 +14,7 @@ handler.on("open", async (md) => {
   window.__officeMarkdownFileName = fileName || 'Note';
   const {
     language, i18n, isWeb, isDev, markdown,
-    editMode, theme, pageTheme, codeMirrorTheme, mermaidTheme
+    editMode, theme, pageTheme, codeMirrorTheme, mermaidTheme, editorSettings
   } = config;
   if (isWeb) {
     document.body.classList.add('is-web')
@@ -36,6 +36,7 @@ handler.on("open", async (md) => {
     mode: editMode,
     colorTheme: theme,
     pageTheme,
+    editorSettings,
     codeMirrorTheme,
     mermaidTheme,
     lang: mapVscodeLanguageToVditorLang(language),
@@ -86,6 +87,9 @@ handler.on("open", async (md) => {
     changeEditMode(mode) {
       handler.emit('editMode', mode)
     },
+    changeEditorFontSize(size) {
+      handler.emit('editorFontSize', size)
+    },
     input(content) {
       handler.emit("save", restoreWorkspaceBaseUrls(content, workspaceBaseUrl))
     },
@@ -124,6 +128,9 @@ handler.on("open", async (md) => {
         }
         if (update.editMode !== undefined) {
           editor.switchEditMode(update.editMode);
+        }
+        if (update.editorSettings !== undefined) {
+          editor.setEditorSettings(update.editorSettings);
         }
       });
       // an update that arrives while the front-matter editor has focus is applied when it loses

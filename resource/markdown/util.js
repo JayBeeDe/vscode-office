@@ -50,8 +50,7 @@ export async function getToolbar(resPath, i18n, onSave = null) {
         "undo",
         "redo",
         "|",
-        "find",
-        "settings"
+        "find"
     ]
 }
 

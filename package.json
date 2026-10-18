@@ -463,6 +463,132 @@
 						"type": "string",
 						"default": "image/${fileName}/${now}.${ext}",
 						"description": "Markdown paste image path, variables: workspaceDir, fileName, now, date (YYYYMMDD), uuid, ext (file extension)."
+					},
+					"vscode-office.markdown.uiFontSize": {
+						"type": "number",
+						"minimum": 10,
+						"maximum": 24,
+						"default": 13,
+						"markdownDescription": "Font size of the Markdown editor's toolbar, menus and panels, in pixels."
+					},
+					"vscode-office.markdown.editorFontSize": {
+						"type": "number",
+						"minimum": 10,
+						"maximum": 24,
+						"default": 13,
+						"markdownDescription": "Font size of the document text in the Markdown editor, in pixels. Ctrl/Cmd+wheel in the editor changes it."
+					},
+					"vscode-office.markdown.editorFontFamily": {
+						"type": "string",
+						"enum": [
+							"default",
+							"humanist",
+							"serif",
+							"old-style",
+							"garamond",
+							"charter",
+							"slab-serif",
+							"narrow",
+							"mono",
+							"jetbrains-mono",
+							"courier"
+						],
+						"default": "default",
+						"markdownDescription": "Font of the document text in the Markdown editor."
+					},
+					"vscode-office.markdown.boldColor": {
+						"type": "string",
+						"enum": [
+							"default",
+							"plain",
+							"accent",
+							"red",
+							"orange",
+							"purple",
+							"teal"
+						],
+						"markdownEnumDescriptions": [
+							"Slightly tinted.",
+							"The text colour.",
+							"The link colour.",
+							"Red.",
+							"Orange.",
+							"Purple.",
+							"Teal."
+						],
+						"default": "default",
+						"markdownDescription": "Colour of bold text in the Markdown editor."
+					},
+					"vscode-office.markdown.pageWidth": {
+						"type": "string",
+						"enum": [
+							"full",
+							"a4",
+							"a5",
+							"b5",
+							"letter",
+							"768px",
+							"960px"
+						],
+						"markdownEnumDescriptions": [
+							"The full width of the editor.",
+							"A4 paper, 210 mm.",
+							"A5 paper, 148 mm.",
+							"B5 paper, 176 mm.",
+							"US Letter paper, 8.5 in.",
+							"768 pixels.",
+							"960 pixels."
+						],
+						"default": "full",
+						"markdownDescription": "Maximum width of the document in the Markdown editor."
+					},
+					"vscode-office.markdown.editorLineHeight": {
+						"type": "number",
+						"minimum": 1,
+						"maximum": 3,
+						"default": 1.7,
+						"markdownDescription": "Line spacing of the document text in the Markdown editor."
+					},
+					"vscode-office.markdown.codeFontFamily": {
+						"type": "string",
+						"enum": [
+							"default",
+							"cascadia-code",
+							"consolas",
+							"monaco",
+							"andale-mono",
+							"courier-new",
+							"jetbrains-mono",
+							"fira-code"
+						],
+						"default": "default",
+						"markdownDescription": "Font of the code blocks in the Markdown editor. JetBrains Mono and Fira Code need to be installed."
+					},
+					"vscode-office.markdown.codeBlockMaxHeight": {
+						"type": "string",
+						"enum": [
+							"none",
+							"300px",
+							"400px",
+							"600px",
+							"800px"
+						],
+						"default": "none",
+						"markdownDescription": "Maximum height of a code block in the Markdown editor before it scrolls."
+					},
+					"vscode-office.markdown.imageMaxWidth": {
+						"type": "number",
+						"minimum": 10,
+						"maximum": 100,
+						"default": 100,
+						"markdownDescription": "Maximum width of images in the Markdown editor, in % of the page width."
+					},
+					"vscode-office.markdown.imageMaxHeight": {
+						"type": "number",
+						"minimum": 10,
+						"maximum": 100,
+						"default": 70,
+						"markdownDescription": "Maximum height of images in the Markdown editor, in % of the window height."
 					}
 				}
 			},

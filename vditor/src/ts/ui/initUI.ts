@@ -9,7 +9,7 @@ import { initColorTheme } from "./setEditorTheme";
 import { initMermaidTheme } from "./setMermaidTheme";
 import { setCodeTheme } from "./setCodeTheme";
 import { setTheme } from "./setTheme";
-import { applyEditorSettings } from "../util/globalLocalStorageSettings";
+import { applyEditorSettings } from "../util/editorSettings";
 import { initSaveToolbarState } from "../util/saveToolbarState";
 import { configureHistoryDeferByDocumentLength } from "../util/historySchedule";
 
@@ -22,7 +22,7 @@ export const initUI = (vditor: IVditor) => {
     vditor.element.setAttribute("dir", "rtl")
   }
   setTheme(vditor);
-  applyEditorSettings(vditor.element);
+  applyEditorSettings(vditor);
   macOptionSymbolEvent(vditor);
   setCodeTheme(vditor);
   if (typeof vditor.options.height === "number") {

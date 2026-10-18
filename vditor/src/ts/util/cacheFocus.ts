@@ -313,13 +313,6 @@ const hasOpenEditorOverlay = (vditor: IVditor) => {
             return true;
         }
     }
-    if (document.querySelector<HTMLElement>(".vditor-settings-panel__floating-menu:not([hidden])")) {
-        return true;
-    }
-    const themePanel = document.querySelector<HTMLElement>(".vditor-theme-picker-popover");
-    if (themePanel && themePanel.style.display === "block") {
-        return true;
-    }
     if (root.querySelector(".vditor-cm-chrome__lang--open")) {
         return true;
     }
