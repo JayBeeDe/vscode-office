@@ -15,11 +15,6 @@
       "noPasteDirectory": "Não é suportado colar diretórios.",
       "installXclip": "Você precisa instalar o comando xclip primeiro.",
       "wikilinkNotFound": "Destino do wikilink não encontrado: {target}",
-      "aiRequiresVscode": "Recursos de IA requerem VS Code 1.90+ com uma extensão de modelo de linguagem instalada.",
-      "noAiModel": "Nenhum modelo de linguagem de IA disponível. Instale uma extensão de modelo de linguagem (ex.: GitHub Copilot).",
-      "aiPolishFailed": "Falha no polimento com IA: {error}",
-      "customAiUrlRequired": "IA personalizada: a URL da API é obrigatória.",
-      "customAiPolishFailed": "Falha no polimento com IA personalizada: {error}",
       "selectImage": "Selecionar imagem",
       "statusBar": "Linha {lines} Caracteres {chars}"
     }

@@ -160,10 +160,6 @@ body.is-web .vditor-context-menu__item--desktop-only:focus-visible {
     color: var(--ctx-icon-folder);
 }
 
-.vditor-context-menu__item[data-action="aiPolish"] .codicon {
-    color: var(--vscode-textLink-foreground, #4a90d9);
-}
-
 .vditor-context-menu__label {
     flex: 1;
     overflow: hidden;

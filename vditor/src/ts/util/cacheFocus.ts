@@ -292,14 +292,6 @@ const isEditorFocused = (vditor: IVditor) => {
 /** Do not grab editor focus back while a dialog/popup is open, otherwise it would close */
 const hasOpenEditorOverlay = (vditor: IVditor) => {
     const root = vditor.element;
-    const aiDialog = root.querySelector<HTMLElement>(".vditor-ai-dialog-overlay");
-    if (aiDialog && !aiDialog.hidden) {
-        return true;
-    }
-    const aiOverlay = root.querySelector<HTMLElement>(".vditor-ai-overlay");
-    if (aiOverlay && !aiOverlay.hidden) {
-        return true;
-    }
     if (document.querySelector(".vditor-confirm-overlay") || document.querySelector(".vditor-img-overlay")) {
         return true;
     }

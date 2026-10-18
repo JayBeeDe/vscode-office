@@ -34,7 +34,6 @@ const TOOLBAR_CODICONS: Record<string, string> = {
     "edit-mode": "edit",
     outline: "list-tree",
     "code-theme": "file-code",
-    "ai-settings": "sparkle",
     settings: "settings-gear",
     find: "search",
 };

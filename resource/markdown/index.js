@@ -1,4 +1,4 @@
-import { getToolbar, bindShortcut, createContextMenu, setAIAvailable, } from "./util.js";
+import { getToolbar, bindShortcut, createContextMenu, } from "./util.js";
 import { observeWorkspaceAbsoluteImages, createMarkdownValueReader, restoreWorkspaceBaseUrls, } from "./imagePath.js";
 import { mapVscodeLanguageToVditorLang } from "./lang.js";
 
@@ -108,17 +108,6 @@ handler.on("open", async (md) => {
         };
       }
     },
-    ai: {
-      onPolish(markdown, apply, options) {
-        handler.emit('aiPolish', { markdown, options })
-      },
-      onCancelPolish() {
-        handler.emit('aiPolishCancel')
-      },
-      onSetModelKey(modelId, key) {
-        handler.emit('aiSetModelKey', { modelId, key })
-      }
-    },
     preview: {
       math: {
         macros: markdown?.math?.macros ?? {},
@@ -193,22 +182,6 @@ handler.on("open", async (md) => {
         if (fragment) {
           editor.scrollToBlock(fragment);
         }
-      })
-      handler.emit('queryAIAvailable')
-      handler.on("aiAvailable", (available) => {
-        setAIAvailable(available, editor)
-        if (available) {
-          handler.emit('queryVSCodeModels')
-        }
-      })
-      handler.on("vscodeModels", (models) => {
-        editor.setVSCodeModels(models)
-      })
-      handler.on('aiPolishChunk', (chunk) => {
-        editor.streamAIChunk(chunk)
-      })
-      handler.on('aiPolishEnd', (result) => {
-        editor.endAIStream(!!result?.failed)
       })
       editor.restoreDocumentSession(true, !!shouldRestoreFocus)
       if (pendingFragment) {

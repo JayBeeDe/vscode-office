@@ -51,7 +51,6 @@ export async function getToolbar(resPath, i18n, onSave = null) {
         "redo",
         "|",
         "find",
-        "ai-settings",
         "settings"
     ]
 }
@@ -156,10 +155,6 @@ const copyPlainText = async (text) => {
     textarea.remove()
 }
 
-export const setAIAvailable = (available, editor) => {
-    editor?.setCopilotAvailable?.(available);
-}
-
 export const createContextMenu = (editor) => {
     const menu = document.getElementById('context-menu')
     // each item is labelled with the editor string named after its action
@@ -221,9 +216,6 @@ export const createContextMenu = (editor) => {
                 break
             case 'insertImage':
                 vscodeEvent.emit('insertImage')
-                break
-            case 'aiPolish':
-                editor.openAIPolishDialog()
                 break
         }
     })
