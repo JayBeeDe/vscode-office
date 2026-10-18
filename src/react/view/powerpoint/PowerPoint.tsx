@@ -1,8 +1,7 @@
-import { MoonOutlined, SunOutlined } from "@ant-design/icons";
 import { Alert, Layout, Spin } from "antd";
 import { PPTXViewer } from "pptxviewjs";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { handler, loadDarkMode, applyDarkMode } from "../../util/vscode";
+import { handler } from "../../util/vscode";
 import { loadOfficeBuffer } from "../../util/loadOfficeContent";
 import { $t } from "../../i18n/i18nConfig.ts";
 import { loadMasterImages } from "./masterImages";
@@ -185,20 +184,6 @@ export default function PowerPoint() {
     const [zoom, setZoom] = useState(1);
     const [pan, setPan] = useState({ x: 0, y: 0 });
     const [dragging, setDragging] = useState(false);
-    const [dark, setDark] = useState(loadDarkMode);
-
-    useEffect(() => {
-        document.body.classList.toggle('office-dark', dark);
-    }, [dark]);
-
-    const toggleDark = () => {
-        setDark(prev => {
-            const next = !prev;
-            applyDarkMode(next);
-            return next;
-        });
-    };
-
     useEffect(() => {
         zoomRef.current = zoom;
     }, [zoom]);
@@ -688,15 +673,6 @@ export default function PowerPoint() {
                         )}
                     </Content>
                 </Layout>
-                <button
-                    type="button"
-                    className={`color-mode-toggle${slideCount > 0 ? ' is-above-status' : ''}`}
-                    title={dark ? $t('common.switchToLight') : $t('common.switchToDarkHint')}
-                    aria-label={dark ? $t('common.switchToLight') : $t('common.switchToDark')}
-                    onClick={toggleDark}
-                >
-                    {dark ? <SunOutlined /> : <MoonOutlined />}
-                </button>
             </Layout>
         </>
     );
