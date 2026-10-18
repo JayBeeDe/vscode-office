@@ -407,28 +407,6 @@ body:has(.excel-app) {
         background-color: #057c52;
     }
 
-    .dark-mode-toggle {
-        position: fixed;
-        top: 5px;
-        right: 10px;
-        z-index: 1001;
-        width: 28px;
-        height: 28px;
-        flex-shrink: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 1px solid rgba(128, 128, 128, 0.35);
-        border-radius: 6px;
-        background-color: rgba(255, 255, 255, 0.85);
-        color: #2c3e50;
-        cursor: pointer;
-
-        &:hover {
-            background-color: rgba(0, 0, 0, 0.06);
-        }
-    }
-
     .excel-load-error {
         position: fixed;
         inset: 0;
@@ -1163,15 +1141,6 @@ body.office-adaptive .excel-viewer {
         border-radius: 4px;
     }
 
-    .dark-mode-toggle {
-        background-color: var(--vscode-editorGroupHeader-tabsBackground, var(--vscode-sideBarSectionHeader-background, #252526));
-        color: var(--vscode-editor-foreground, #cccccc);
-        border-color: var(--vscode-editorWidget-border, rgba(128, 128, 128, 0.45));
-
-        &:hover {
-            background-color: var(--vscode-toolbar-hoverBackground, rgba(90, 93, 94, 0.31));
-        }
-    }
 }
 
 body.office-adaptive.office-dark .excel-viewer {

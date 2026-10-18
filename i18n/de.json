@@ -1001,9 +1001,7 @@
       "exportXlsLabel": "Excel 97-2003 (.xls)",
       "exportXlsDesc": "Legacy-Excel-Format",
       "exportOdsLabel": "OpenDocument (.ods)",
-      "exportOdsDesc": "Kompatibel mit LibreOffice / WPS",
-      "switchToLightMode": "Zum hellen Modus wechseln",
-      "switchToDarkMode": "Zum adaptiven Modus wechseln (VS Code-Theme folgen)"
+      "exportOdsDesc": "Kompatibel mit LibreOffice / WPS"
     },
     "findReplace": {
       "title": "Suchen",
