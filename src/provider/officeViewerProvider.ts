@@ -7,6 +7,7 @@ import { OfficeDocument } from './handlers/officeDocument';
 import { extensionResource, getExtensionResourceRoots, readExtensionText } from '@/common/extensionResource';
 import { resolveLanguage } from '@/i18n';
 import { getPdfViewerStrings } from './pdfViewerStrings';
+import { bindTheme, getTheme } from '@/common/theme';
 
 /**
  * support view office files
@@ -66,6 +67,7 @@ export class OfficeViewerProvider implements vscode.CustomEditorProvider<OfficeD
 		let route: string;
 		const suffix = getFileSuffix(uri.fsPath);
 		handleCommonEvent(document, handler);
+		bindTheme(handler);
 		switch (suffix) {
 			case '.xlsx':
 			case '.xlsm':
@@ -117,7 +119,8 @@ export class OfficeViewerProvider implements vscode.CustomEditorProvider<OfficeD
 		const strings = getPdfViewerStrings(resolveLanguage(vscode.env.language));
 		webview.html = html.replace('{{baseUrl}}', this.getBaseUrl(webview, 'pdf'))
 			.replace('{{i18n}}', () => strings.buttons)
-			.replace('{{l10n}}', () => strings.l10n);
+			.replace('{{l10n}}', () => strings.l10n)
+			.replace('{{theme}}', () => JSON.stringify(getTheme()));
 	}
 
 	private getBaseUrl(webview: vscode.Webview, path: string) {

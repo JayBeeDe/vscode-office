@@ -367,6 +367,27 @@
 		],
 		"configuration": [
 			{
+				"title": "General",
+				"order": 0,
+				"properties": {
+					"vscode-office.theme": {
+						"type": "string",
+						"enum": [
+							"auto",
+							"light",
+							"dark"
+						],
+						"enumDescriptions": [
+							"Light or dark, following the current VS Code theme.",
+							"Always light.",
+							"Always dark."
+						],
+						"default": "auto",
+						"markdownDescription": "Theme of every viewer and editor of the extension. The EPUB reader's theme choice changes this setting in the user settings; a workspace value overrides it."
+					}
+				}
+			},
+			{
 				"title": "Markdown",
 				"order": 1,
 				"properties": {

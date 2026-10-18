@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This extension lets you preview and edit common office files directly in VS Code. The viewers follow your current VS Code color theme.
+This extension lets you preview and edit common office files directly in VS Code. The `vscode-office.theme` setting makes every viewer light or dark: `auto` (the default) follows your current VS Code color theme.
 
 | Feature | Formats | Mode | Library behind it (version) | Technology |
 | --- | --- | --- | --- | --- |

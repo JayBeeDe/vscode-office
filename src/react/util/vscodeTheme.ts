@@ -30,25 +30,20 @@ function luminance(r: number, g: number, b: number): number {
     return (0.299 * r + 0.587 * g + 0.114 * b) / 255;
 }
 
+/** A VS Code colour as the page sees it: dark-palette.css replaces them in a forced dark page. */
 export function getVscodeThemeColor(name: string, fallback: string): string {
-    const value = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    const value = getComputedStyle(document.body).getPropertyValue(name).trim();
     return value || fallback;
 }
 
+/** Guesses VS Code's kind from its editor background, set on the root element. */
 export function isVscodeEditorDark(): boolean {
-    const bg = getVscodeThemeColor('--vscode-editor-background', '#ffffff');
+    const bg = getComputedStyle(document.documentElement).getPropertyValue('--vscode-editor-background').trim() || '#ffffff';
     const rgb = parseRgb(bg);
     if (!rgb) {
         return false;
     }
     return luminance(...rgb) < 0.5;
-}
-
-export function isVscodeDarkTheme(): boolean {
-    if (document.body.classList.contains('office-dark')) {
-        return true;
-    }
-    return isVscodeEditorDark();
 }
 
 export function observeVscodeThemeChange(onChange: () => void): () => void {
