@@ -229,20 +229,6 @@
 				"when": "editorTextFocus && editorLangId == markdown"
 			}
 		],
-		"menus": {
-			"editor/title": [
-				{
-					"command": "office.markdown.switch",
-					"when": "resourceExtname == '.md' || resourceExtname == '.markdown'",
-					"group": "navigation@-2"
-				},
-				{
-					"command": "office.csv.switch",
-					"when": "resourceExtname == '.csv' || resourceExtname == '.tsv'",
-					"group": "navigation@-2"
-				}
-			]
-		},
 		"customEditors": [
 			{
 				"viewType": "cweijan.officeViewer",
