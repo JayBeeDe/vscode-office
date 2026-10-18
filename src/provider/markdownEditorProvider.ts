@@ -8,6 +8,7 @@ import { Util } from '../common/util';
 import { Holder } from '../service/markdown/holder';
 import { MarkdownService } from '../service/markdownService';
 import { Global, i18n } from '@/common/global';
+import { bindTheme, getTheme } from '@/common/theme';
 import { getMessages, resolveLanguage } from '@/i18n';
 import { openWikiLink } from '@/service/markdown/wikilink';
 import { streamCustomAI } from '@/service/ai/customAIClient';
@@ -36,7 +37,7 @@ const AI_MODEL_KEY_SECRET_PREFIX = 'vscode-office.aiModelKey.';
 
 const MARKDOWN_SYNC_CONFIG_KEYS = [
     'editMode',
-    'editorTheme',
+    'theme',
     'codeMirrorTheme',
     'mermaidTheme',
 ] as const;
@@ -206,6 +207,7 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
         };
         const config = vscode.workspace.getConfiguration("vscode-office.markdown");
         registerMarkdownWebview(uri, handler);
+        bindTheme(handler);
         handler.panel.onDidDispose(() => {
             void flushDocumentSync();
             unregisterMarkdownWebview(uri, handler);
@@ -270,26 +272,14 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
                 vscode.env.openExternal(vscode.Uri.parse(linkUri));
             }
         }).on("codeMirrorTheme", (theme: string) => {
-            const validThemes = [
-                "Auto", "default",
-                "Github", "Solarized Light", "Material Light", "Quiet Light", "One Light",
-                "Dracula", "Monokai", "One Dark", "Solarized Dark", "Material Dark",
-            ];
+            const validThemes = ["auto", "default", "light", "dark"];
             if (validThemes.includes(theme)) {
-                Global.updateConfig("markdown.codeMirrorTheme", theme === "default" ? "Auto" : theme);
-            }
-        }).on("editorTheme", (theme: string) => {
-            const validThemes = [
-                "Auto", "Light", "Solarized", "Warm Light", "Dim Light",
-                "One Dark", "Github Dark", "Nord", "Monokai", "Dracula",
-            ];
-            if (validThemes.includes(theme)) {
-                Global.updateConfig("markdown.editorTheme", theme);
+                Global.updateConfig("markdown.codeMirrorTheme", theme === "default" ? "auto" : theme);
             }
         }).on("mermaidTheme", (theme: string) => {
             const validThemes = [
-                "Auto", "Light", "Forest", "Ocean", "Sunset",
-                "Dark", "Dracula", "Monokai", "Nord",
+                "auto", "light", "light-forest", "light-ocean", "light-sunset",
+                "dark", "dark-dracula",
             ];
             if (validThemes.includes(theme)) {
                 Global.updateConfig("markdown.mermaidTheme", theme);
@@ -513,9 +503,10 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
         const markdownConfiguration = vscode.workspace.getConfiguration("markdown");
         return {
             editMode: configuration.get<string>("editMode", "wysiwyg"),
-            editorTheme: configuration.get<string>("editorTheme", "Auto"),
-            codeMirrorTheme: configuration.get<string>("codeMirrorTheme", "Auto"),
-            mermaidTheme: configuration.get<string>("mermaidTheme", "Auto"),
+            theme: getTheme(),
+            pageTheme: configuration.get<string>("theme", "auto"),
+            codeMirrorTheme: configuration.get<string>("codeMirrorTheme", "auto"),
+            mermaidTheme: configuration.get<string>("mermaidTheme", "auto"),
             markdown: {
                 math: {
                     macros: markdownConfiguration.get<Record<string, string>>("math.macros", {}),

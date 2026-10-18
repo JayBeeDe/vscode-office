@@ -82,11 +82,9 @@ export class Options {
         },
         value: "",
         width: "auto",
-        editorTheme: "Auto",
-        lastNonAutoEditorTheme: "Light",
-        lastLightEditorTheme: "Light",
-        lastDarkEditorTheme: "One Dark",
-        mermaidTheme: "Auto",
+        colorTheme: "auto",
+        pageTheme: "auto",
+        mermaidTheme: "auto",
     };
 
     constructor(options: IOptions) {
@@ -246,15 +244,6 @@ export class Options {
         }, {
             icon: getToolbarCodicon("outline"),
             name: "outline",
-        }, {
-            name: "editor-theme-label",
-            icon: "Theme:",
-        }, {
-            icon: getToolbarCodicon("editor-theme"),
-            name: "editor-theme",
-        }, {
-            icon: "",
-            name: "editor-theme-toggle",
         }, {
             icon: getToolbarCodicon("code-theme"),
             name: "code-theme",

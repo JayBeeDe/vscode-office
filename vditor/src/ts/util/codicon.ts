@@ -33,7 +33,6 @@ const TOOLBAR_CODICONS: Record<string, string> = {
     more: "ellipsis",
     "edit-mode": "edit",
     outline: "list-tree",
-    "editor-theme": "color-mode",
     "code-theme": "file-code",
     "ai-settings": "sparkle",
     settings: "settings-gear",

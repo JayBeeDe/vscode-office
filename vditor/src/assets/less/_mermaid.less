@@ -31,7 +31,7 @@
   --mm-chrome-panel-bg: var(--panel-background-color, var(--second-bg-color, var(--bg-color, #fff)));
   --mm-chrome-fg: var(--front-color, #24292e);
   --mm-chrome-accent: var(--list-hover-color, var(--link-color, #0969da));
-  // Auto: follow the editor; named themes are overridden by the host/panel data-mermaid-theme
+  // defaults, overridden by the theme the host/panel shows in data-mermaid-theme
   --mm-chrome-trigger-bg: var(--cm-lang-trigger-bg, var(--second-bg-color, color-mix(in srgb, var(--front-color, #24292e) 12%, var(--bg-color, #fff))));
   --mm-chrome-hover-bg: color-mix(in srgb, var(--mm-chrome-fg) 10%, var(--mm-chrome-trigger-bg));
   --mm-chrome-icon-color: var(--link-color, var(--mm-chrome-accent));
@@ -43,7 +43,7 @@
   margin-bottom: 16px;
   .vditor-mermaid-chrome-vars();
 
-  &[data-mermaid-theme="Light"] {
+  &[data-mermaid-theme="light"] {
     --mermaid-bg: #ffffff;
     --mm-chrome-bg: #f6f8fa;
     --mm-chrome-panel-bg: #ffffff;
@@ -54,7 +54,7 @@
     --mm-chrome-icon-color: #0969da;
   }
 
-  &[data-mermaid-theme="Forest"] {
+  &[data-mermaid-theme="light-forest"] {
     --mermaid-bg: #f4f9f4;
     --mm-chrome-bg: #eef6ee;
     --mm-chrome-panel-bg: #ffffff;
@@ -65,7 +65,7 @@
     --mm-chrome-icon-color: #2f7d4f;
   }
 
-  &[data-mermaid-theme="Ocean"] {
+  &[data-mermaid-theme="light-ocean"] {
     --mermaid-bg: #f3fbff;
     --mm-chrome-bg: #e7f5fb;
     --mm-chrome-panel-bg: #ffffff;
@@ -76,7 +76,7 @@
     --mm-chrome-icon-color: #147fb5;
   }
 
-  &[data-mermaid-theme="Sunset"] {
+  &[data-mermaid-theme="light-sunset"] {
     --mermaid-bg: #fff8f0;
     --mm-chrome-bg: #fff0df;
     --mm-chrome-panel-bg: #ffffff;
@@ -87,7 +87,7 @@
     --mm-chrome-icon-color: #d96c2c;
   }
 
-  &[data-mermaid-theme="Dark"] {
+  &[data-mermaid-theme="dark"] {
     --mermaid-bg: #1e1e1e;
     --mm-chrome-bg: #1e1e1e;
     --mm-chrome-panel-bg: #2d333b;
@@ -98,7 +98,7 @@
     --mm-chrome-icon-color: #539bf5;
   }
 
-  &[data-mermaid-theme="Dracula"] {
+  &[data-mermaid-theme="dark-dracula"] {
     --mermaid-bg: #282a36;
     --mm-chrome-bg: #282a36;
     --mm-chrome-panel-bg: #343746;
@@ -109,27 +109,7 @@
     --mm-chrome-icon-color: #bd93f9;
   }
 
-  &[data-mermaid-theme="Monokai"] {
-    --mermaid-bg: #272822;
-    --mm-chrome-bg: #272822;
-    --mm-chrome-panel-bg: #35362f;
-    --mm-chrome-fg: #f8f8f2;
-    --mm-chrome-accent: #a6e22e;
-    --mm-chrome-trigger-bg: #49483e;
-    --mm-chrome-hover-bg: #555447;
-    --mm-chrome-icon-color: #a6e22e;
-  }
 
-  &[data-mermaid-theme="Nord"] {
-    --mermaid-bg: #2e3440;
-    --mm-chrome-bg: #2e3440;
-    --mm-chrome-panel-bg: #3b4252;
-    --mm-chrome-fg: #eceff4;
-    --mm-chrome-accent: #88c0d0;
-    --mm-chrome-trigger-bg: #434c5e;
-    --mm-chrome-hover-bg: #4c566a;
-    --mm-chrome-icon-color: #88c0d0;
-  }
 
   .language-mermaid {
     max-width: 100%;
@@ -292,7 +272,7 @@
   .vditor-mermaid-chrome-vars();
   .vditor-mermaid-scrollbar(var(--mm-chrome-panel-bg));
 
-  &[data-mermaid-theme="Light"] {
+  &[data-mermaid-theme="light"] {
     --mm-chrome-panel-bg: #ffffff;
     --mm-chrome-fg: #1f2328;
     --mm-chrome-accent: #0969da;
@@ -300,7 +280,7 @@
     --mm-chrome-icon-color: #0969da;
   }
 
-  &[data-mermaid-theme="Forest"] {
+  &[data-mermaid-theme="light-forest"] {
     --mm-chrome-panel-bg: #ffffff;
     --mm-chrome-fg: #1d3a2b;
     --mm-chrome-accent: #2f7d4f;
@@ -308,7 +288,7 @@
     --mm-chrome-icon-color: #2f7d4f;
   }
 
-  &[data-mermaid-theme="Ocean"] {
+  &[data-mermaid-theme="light-ocean"] {
     --mm-chrome-panel-bg: #ffffff;
     --mm-chrome-fg: #183042;
     --mm-chrome-accent: #147fb5;
@@ -316,7 +296,7 @@
     --mm-chrome-icon-color: #147fb5;
   }
 
-  &[data-mermaid-theme="Sunset"] {
+  &[data-mermaid-theme="light-sunset"] {
     --mm-chrome-panel-bg: #ffffff;
     --mm-chrome-fg: #3d261f;
     --mm-chrome-accent: #d96c2c;
@@ -324,7 +304,7 @@
     --mm-chrome-icon-color: #d96c2c;
   }
 
-  &[data-mermaid-theme="Dark"] {
+  &[data-mermaid-theme="dark"] {
     --mm-chrome-panel-bg: #2d333b;
     --mm-chrome-fg: #e6edf3;
     --mm-chrome-accent: #539bf5;
@@ -332,7 +312,7 @@
     --mm-chrome-icon-color: #539bf5;
   }
 
-  &[data-mermaid-theme="Dracula"] {
+  &[data-mermaid-theme="dark-dracula"] {
     --mm-chrome-panel-bg: #343746;
     --mm-chrome-fg: #f8f8f2;
     --mm-chrome-accent: #bd93f9;
@@ -340,21 +320,7 @@
     --mm-chrome-icon-color: #bd93f9;
   }
 
-  &[data-mermaid-theme="Monokai"] {
-    --mm-chrome-panel-bg: #35362f;
-    --mm-chrome-fg: #f8f8f2;
-    --mm-chrome-accent: #a6e22e;
-    --mm-chrome-hover-bg: #555447;
-    --mm-chrome-icon-color: #a6e22e;
-  }
 
-  &[data-mermaid-theme="Nord"] {
-    --mm-chrome-panel-bg: #3b4252;
-    --mm-chrome-fg: #eceff4;
-    --mm-chrome-accent: #88c0d0;
-    --mm-chrome-hover-bg: #4c566a;
-    --mm-chrome-icon-color: #88c0d0;
-  }
 
   .vditor-mermaid-theme-panel {
     min-width: 0;

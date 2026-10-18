@@ -5,9 +5,9 @@ import { bindDocumentScrollPersistence, purgeLegacyDocumentStateKeys, setScrollF
 import { bindHistoryInputBufferClick } from "../util/historyInputBuffer";
 import { accessLocalStorage } from "../util/compatibility";
 import { macOptionSymbolEvent } from "../util/editorCommonEvent";
-import { initEditorTheme } from "./setEditorTheme";
+import { initColorTheme } from "./setEditorTheme";
 import { initMermaidTheme } from "./setMermaidTheme";
-import { resolveCodeMirrorTheme, setCodeTheme } from "./setCodeTheme";
+import { setCodeTheme } from "./setCodeTheme";
 import { setTheme } from "./setTheme";
 import { applyEditorSettings } from "../util/globalLocalStorageSettings";
 import { initSaveToolbarState } from "../util/saveToolbarState";
@@ -25,7 +25,7 @@ export const initUI = (vditor: IVditor) => {
   setTheme(vditor);
   applyEditorSettings(vditor.element);
   macOptionSymbolEvent(vditor);
-  setCodeTheme(resolveCodeMirrorTheme(vditor.options), vditor.element);
+  setCodeTheme(vditor);
   if (typeof vditor.options.height === "number") {
     vditor.element.style.height = vditor.options.height + "px";
   } else {
@@ -72,7 +72,7 @@ export const initUI = (vditor: IVditor) => {
 
   bindToolbarOutsideDismiss(vditor);
 
-  initEditorTheme(vditor);
+  initColorTheme(vditor);
   initMermaidTheme(vditor);
 
   setScrollFocusAnchorHandler(persistScrollFocusAnchor);

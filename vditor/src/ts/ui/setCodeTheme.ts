@@ -1,48 +1,36 @@
-import {Constants} from "../constants";
-import {CM_THEME_ATTR, CM_THEME_AUTO} from "./codeMirrorColorThemes";
-
-const resolveRoot = (root?: HTMLElement): HTMLElement | null => {
-    if (root) {
-        return root;
-    }
-    return document.getElementById("vditor") ?? document.querySelector(".vditor");
-};
+import {CM_THEME_ATTR, CM_THEME_AUTO, CM_THEME_IDS} from "./codeMirrorColorThemes";
+import {getPageElements, isPageDark} from "./colorTheme";
 
 export const normalizeCodeMirrorThemeId = (theme?: string) => {
     if (!theme || theme === "default") {
         return CM_THEME_AUTO;
     }
-    return Constants.CODE_THEME.includes(theme) ? theme : CM_THEME_AUTO;
+    return CM_THEME_IDS.includes(theme) ? theme : CM_THEME_AUTO;
 };
 
-/** Resolve CodeMirror theme from options. */
+/** The code blocks' theme setting: `auto`, `light` or `dark`. */
 export const resolveCodeMirrorTheme = (options: {
     codeMirrorTheme?: string;
 }) => {
     return normalizeCodeMirrorThemeId(options.codeMirrorTheme);
 };
 
-/** Apply CodeMirror syntax / chrome colors on the editor root element. */
-export const setCodeTheme = (codeTheme: string, root?: HTMLElement) => {
-    const theme = normalizeCodeMirrorThemeId(codeTheme);
-    if (!Constants.CODE_THEME.includes(theme)) {
-        return;
+/** Shows the code blocks' colours on the page: `auto` is light or dark, following the page. */
+export const setCodeTheme = (vditor: IVditor) => {
+    const theme = resolveCodeMirrorTheme(vditor.options);
+    const shown = theme === CM_THEME_AUTO ? (isPageDark(vditor) ? "dark" : "light") : theme;
+    document.documentElement.setAttribute(CM_THEME_ATTR, shown);
+    vditor.element.setAttribute(CM_THEME_ATTR, shown);
+    for (const page of getPageElements(vditor)) {
+        page.setAttribute(CM_THEME_ATTR, shown);
     }
-
-    const element = resolveRoot(root);
-    if (!element) {
-        return;
-    }
-
-    document.documentElement.setAttribute(CM_THEME_ATTR, theme);
-    element.setAttribute(CM_THEME_ATTR, theme);
 };
 
-export const applyCodeMirrorTheme = (vditor: IVditor, theme: string) => {
+export const applyCodeMirrorTheme = (vditor: IVditor, theme: string, notify = true) => {
     const resolved = normalizeCodeMirrorThemeId(theme);
     vditor.options.codeMirrorTheme = resolved;
-    setCodeTheme(resolved, vditor.element);
-    if (vditor.options.changeCodeTheme) {
+    setCodeTheme(vditor);
+    if (notify && vditor.options.changeCodeTheme) {
         vditor.options.changeCodeTheme(resolved);
     }
     return resolved;

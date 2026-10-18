@@ -1,4 +1,3 @@
-import { CM_THEME_IDS } from "./ui/codeMirrorColorThemes";
 
 declare const VDITOR_VERSION: string;
 
@@ -14,8 +13,6 @@ export abstract class Constants {
   public static readonly EDIT_TOOLBARS: string[] = ["headings", "bold", "italic", "strike", "link", "list",
     "ordered-list", "outdent", "indent", "check", "line", "quote", "code", "inline-code", "insert-after",
     "insert-before", "upload", "table"];
-  /** CodeMirror color theme ids (see setCodeTheme). */
-  public static readonly CODE_THEME: string[] = CM_THEME_IDS;
   public static readonly CODE_LANGUAGES: string[] = ["mermaid", "plantuml", "apache",
     "js", "ts", "html",
     // common

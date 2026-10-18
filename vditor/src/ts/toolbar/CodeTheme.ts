@@ -1,24 +1,22 @@
 import {CM_THEME_GROUPS} from "../ui/codeMirrorColorThemes";
 import {
-    buildEditorThemePickerPanelHTML,
-    queryEditorThemePickerPanel,
-    refreshEditorThemePickerPanel,
-} from "../ui/editorThemePickerPanel";
+    buildThemePickerPanelHTML,
+    EDITOR_THEME_PANEL_CLASS,
+    refreshThemePickerPanel,
+} from "../ui/themePickerPanel";
 import {applyCodeMirrorTheme, resolveCodeMirrorTheme} from "../ui/setCodeTheme";
 import {getEventName} from "../util/compatibility";
 import {MenuItem} from "./MenuItem";
 import {toggleSubMenu} from "./setToolbar";
 
-const formatThemeLabel = (themeId: string) => themeId;
-
 const buildCodeThemePanelHTML = (currentTheme: string) => {
-    return buildEditorThemePickerPanelHTML(CM_THEME_GROUPS, currentTheme, formatThemeLabel);
+    return buildThemePickerPanelHTML(CM_THEME_GROUPS, currentTheme);
 };
 
 const refreshCodeThemePanel = (panelElement: HTMLElement, currentTheme: string) => {
-    const panelRoot = queryEditorThemePickerPanel(panelElement);
+    const panelRoot = panelElement.querySelector(`.${EDITOR_THEME_PANEL_CLASS}`) as HTMLElement | null;
     if (panelRoot) {
-        refreshEditorThemePickerPanel(panelRoot, currentTheme);
+        refreshThemePickerPanel(panelRoot, currentTheme);
     }
 };
 

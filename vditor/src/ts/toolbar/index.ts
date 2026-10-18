@@ -5,9 +5,6 @@ import {Counter} from "./Counter";
 import {Custom} from "./Custom";
 import {Divider} from "./Divider";
 import {EditMode} from "./EditMode";
-import {EditorTheme} from "./EditorTheme";
-import {EditorThemeLabel} from "./EditorThemeLabel";
-import {EditorThemeToggle} from "./EditorThemeToggle";
 import {Headings} from "./Headings";
 import {Indent} from "./Indent";
 import {Find} from "./Find";
@@ -131,15 +128,6 @@ export class Toolbar {
                 break;
             case "settings":
                 menuItemObj = new Settings(vditor, menuItem);
-                break;
-            case "editor-theme-label":
-                menuItemObj = new EditorThemeLabel(vditor, menuItem);
-                break;
-            case "editor-theme":
-                menuItemObj = new EditorTheme(vditor, menuItem);
-                break;
-            case "editor-theme-toggle":
-                menuItemObj = new EditorThemeToggle(vditor, menuItem);
                 break;
             default:
                 menuItemObj = new Custom(vditor, menuItem);

@@ -26,39 +26,17 @@ interface IObject {
 
 type ITheme = "classic" | "dark";
 type IEditMode = "wysiwyg" | "ir";
-type IEditorTheme =
-    "Auto" |
-    "Light" |
-    "Solarized" |
-    "Warm Light" |
-    "Dim Light" |
-    "One Dark" |
-    "Github Dark" |
-    "Nord" |
-    "Monokai" |
-    "Dracula";
-type ICodeMirrorTheme =
-    "Auto" |
-    "Github" |
-    "Solarized Light" |
-    "Material Light" |
-    "Quiet Light" |
-    "One Light" |
-    "Dracula" |
-    "Monokai" |
-    "One Dark" |
-    "Solarized Dark" |
-    "Material Dark";
+/** The extension's vscode-office.theme setting. */
+type IColorTheme = "auto" | "light" | "dark";
+type ICodeMirrorTheme = "auto" | "light" | "dark";
 type IMermaidTheme =
-    "Auto" |
-    "Light" |
-    "Forest" |
-    "Ocean" |
-    "Sunset" |
-    "Dark" |
-    "Dracula" |
-    "Monokai" |
-    "Nord";
+    "auto" |
+    "light" |
+    "light-forest" |
+    "light-ocean" |
+    "light-sunset" |
+    "dark" |
+    "dark-dracula";
 
 interface ILuteNode {
     TokensStr: () => string;
@@ -551,17 +529,13 @@ interface IOptions {
     };
     /** Theme. Default: 'classic' */
     theme?: ITheme;
-    /** Markdown editor theme. Default: 'Auto' */
-    editorTheme?: IEditorTheme | string;
-    /** Last selected non-Auto Markdown editor theme. Default: 'Light' */
-    lastNonAutoEditorTheme?: IEditorTheme | string;
-    /** Last selected light Markdown editor theme. Default: 'Light' */
-    lastLightEditorTheme?: IEditorTheme | string;
-    /** Last selected dark Markdown editor theme. Default: 'One Dark' */
-    lastDarkEditorTheme?: IEditorTheme | string;
-    /** CodeMirror code block theme. Defaults to the preview code theme */
+    /** Light or dark: vscode-office.theme, `auto` following VS Code. Default: 'auto' */
+    colorTheme?: IColorTheme | string;
+    /** Light or dark page: vscode-office.markdown.theme, `auto` following colorTheme. Default: 'auto' */
+    pageTheme?: IColorTheme | string;
+    /** CodeMirror code block theme; `auto` follows the editor. Default: 'auto' */
     codeMirrorTheme?: ICodeMirrorTheme | string;
-    /** Mermaid diagram theme. Default: 'Auto' */
+    /** Mermaid diagram theme; `auto` follows the editor. Default: 'auto' */
     mermaidTheme?: IMermaidTheme | string;
     /** Icon set. Default: 'ant' */
     icon?: "ant" | "material";
@@ -587,9 +561,6 @@ interface IOptions {
 
     /** Fired after the code block theme changes */
     changeCodeTheme?(value: string): void;
-
-    /** Fired after the editor theme changes */
-    changeEditorTheme?(value: string): void;
 
     /** Fired after the Mermaid theme changes */
     changeMermaidTheme?(value: string): void;

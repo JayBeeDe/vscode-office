@@ -57,9 +57,6 @@ export const CODE_FONT_FAMILY_KEY = "codeFontFamily";
 export const BOLD_COLOR_KEY = "boldColor";
 export const HTML_EDITOR_LINE_WRAP_KEY = "htmlEditorLineWrap";
 export const TYPEWRITER_MODE_KEY = "typewriterMode";
-export const LAST_NON_AUTO_EDITOR_THEME_KEY = "lastNonAutoEditorTheme";
-export const LAST_LIGHT_EDITOR_THEME_KEY = "lastLightEditorTheme";
-export const LAST_DARK_EDITOR_THEME_KEY = "lastDarkEditorTheme";
 
 export const LINE_HEIGHT_MIN = 1.0;
 export const LINE_HEIGHT_MAX = 3.0;

@@ -383,7 +383,7 @@
 							"Always dark."
 						],
 						"default": "auto",
-						"markdownDescription": "Theme of every viewer and editor of the extension. The EPUB reader's theme choice changes this setting in the user settings; a workspace value overrides it."
+						"markdownDescription": "Theme of every viewer and editor of the extension. The EPUB reader's theme choice changes this setting in the user settings; a workspace value overrides it. The Markdown pages follow `#vscode-office.markdown.theme#`."
 					}
 				}
 			},
@@ -391,56 +391,49 @@
 				"title": "Markdown",
 				"order": 1,
 				"properties": {
-					"vscode-office.markdown.editorTheme": {
+					"vscode-office.markdown.theme": {
 						"type": "string",
 						"enum": [
-							"Auto",
-							"Light",
-							"Solarized",
-							"Warm Light",
-							"Dim Light",
-							"One Dark",
-							"Github Dark",
-							"Nord",
-							"Monokai",
-							"Dracula"
+							"auto",
+							"light",
+							"dark"
 						],
-						"default": "Auto",
-						"markdownDescription": "The theme for the Markdown editor."
+						"enumDescriptions": [
+							"Follows `vscode-office.theme`.",
+							"Light page.",
+							"Dark page."
+						],
+						"default": "auto",
+						"markdownDescription": "Colours of the Markdown editor's page (text, background, code blocks and diagrams); the toolbar, outline and menus follow `#vscode-office.theme#`."
 					},
 					"vscode-office.markdown.codeMirrorTheme": {
 						"type": "string",
 						"enum": [
-							"Auto",
-							"Github",
-							"Solarized Light",
-							"Material Light",
-							"Quiet Light",
-							"One Light",
-							"Dracula",
-							"Monokai",
-							"One Dark",
-							"Solarized Dark",
-							"Material Dark"
+							"auto",
+							"light",
+							"dark"
 						],
-						"default": "Auto",
-						"markdownDescription": "CodeMirror syntax theme for code blocks in the Markdown editor."
+						"default": "auto",
+						"markdownDescription": "Theme of the code blocks in the Markdown editor. `auto` follows the page, so `#vscode-office.markdown.theme#`.",
+						"markdownEnumDescriptions": [
+							"Light or dark, following the page.",
+							"The One Light colours.",
+							"The One Dark colours."
+						]
 					},
 					"vscode-office.markdown.mermaidTheme": {
 						"type": "string",
 						"enum": [
-							"Auto",
-							"Light",
-							"Forest",
-							"Ocean",
-							"Sunset",
-							"Dark",
-							"Dracula",
-							"Monokai",
-							"Nord"
+							"auto",
+							"light",
+							"light-forest",
+							"light-ocean",
+							"light-sunset",
+							"dark",
+							"dark-dracula"
 						],
-						"default": "Auto",
-						"markdownDescription": "Mermaid diagram theme in the Markdown editor. Auto follows the editor theme."
+						"default": "auto",
+						"markdownDescription": "Theme of the Mermaid diagrams in the Markdown editor. `auto` follows the page, so `#vscode-office.markdown.theme#`."
 					},
 					"vscode-office.markdown.editMode": {
 						"type": "string",

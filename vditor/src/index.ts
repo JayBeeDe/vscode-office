@@ -24,8 +24,8 @@ import { enableToolbar } from "./ts/toolbar/setToolbar";
 import { AIDialog } from "./ts/ui/aiDialog";
 import { AIReviewPanel } from "./ts/ui/aiReviewPanel";
 import { initUI } from "./ts/ui/initUI";
-import { setCodeTheme } from "./ts/ui/setCodeTheme";
-import { setEditorTheme as applyEditorTheme } from "./ts/ui/setEditorTheme";
+import { applyCodeMirrorTheme } from "./ts/ui/setCodeTheme";
+import { setColorTheme, setPageTheme } from "./ts/ui/setEditorTheme";
 import { applyMermaidTheme } from "./ts/ui/setMermaidTheme";
 import { setEditMode } from "./ts/toolbar/EditMode";
 import { setTheme } from "./ts/ui/setTheme";
@@ -83,8 +83,6 @@ class Vditor {
     public static mermaidRender = mermaidRender;
     public static plantumlRender = plantumlRender;
     public static outlineRender = outlineRender;
-    public static setCodeTheme = setCodeTheme;
-    public static setEditorTheme = applyEditorTheme;
 
     public readonly version: string;
     public vditor: IVditor;
@@ -153,14 +151,23 @@ class Vditor {
         this.vditor.options.theme = theme;
         setTheme(this.vditor);
         if (codeTheme) {
-            this.vditor.options.codeMirrorTheme = codeTheme;
-            setCodeTheme(codeTheme, this.vditor.element);
+            applyCodeMirrorTheme(this.vditor, codeTheme, false);
         }
     }
 
-    /** Set the Markdown editor theme (bundled in index.css) */
-    public setEditorTheme(editorTheme: string) {
-        applyEditorTheme(this.vditor, editorTheme, false);
+    /** Follow a new vscode-office.theme value: auto, light or dark */
+    public setColorTheme(colorTheme: string) {
+        setColorTheme(this.vditor, colorTheme);
+    }
+
+    /** Follow a new vscode-office.markdown.theme value for the page: auto, light or dark */
+    public setPageTheme(pageTheme: string) {
+        setPageTheme(this.vditor, pageTheme);
+    }
+
+    /** Set the code block theme (does not fire the changeCodeTheme callback) */
+    public setCodeMirrorTheme(codeMirrorTheme: string) {
+        applyCodeMirrorTheme(this.vditor, codeMirrorTheme, false);
     }
 
     /** Set the Mermaid theme (does not fire the changeMermaidTheme callback) */

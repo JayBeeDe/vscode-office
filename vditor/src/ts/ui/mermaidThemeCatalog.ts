@@ -1,5 +1,6 @@
 export const MERMAID_THEME_ATTR = "data-mermaid-theme";
-export const MERMAID_THEME_AUTO = "Auto";
+/** Light or dark, following the editor. */
+export const MERMAID_THEME_AUTO = "auto";
 
 export interface IMermaidThemeGroup {
     titleKey: string;
@@ -13,11 +14,11 @@ export const MERMAID_THEME_GROUPS: IMermaidThemeGroup[] = [
     },
     {
         titleKey: "mermaid-theme-section-light",
-        themes: ["Light", "Forest", "Ocean", "Sunset"],
+        themes: ["light", "light-forest", "light-ocean", "light-sunset"],
     },
     {
         titleKey: "mermaid-theme-section-dark",
-        themes: ["Dark", "Dracula", "Monokai", "Nord"],
+        themes: ["dark", "dark-dracula"],
     },
 ];
 

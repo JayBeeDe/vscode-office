@@ -11,9 +11,6 @@ let toolbar = [
   'strike',
   'link',
   '|',
-  'editor-theme-label',
-  "editor-theme",
-  '|',
   'list',
   'ordered-list',
   'check',
@@ -34,8 +31,7 @@ let toolbar = [
 
 window.vditor = new Vditor('vditor', {
   cdn: rootPath,
-  editorTheme: 'Light',
-  codeMirrorTheme: 'Github',
+  colorTheme: 'light',
   toolbar,
   mode: 'wysiwyg',
   height: document.querySelector('.demo-editor').clientHeight,

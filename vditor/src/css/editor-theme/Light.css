@@ -1,9 +1,11 @@
 html[data-editor-theme="Light"],
-#vditor[data-editor-theme="Light"] {
+#vditor[data-editor-theme="Light"],
+#vditor .vditor-page[data-editor-theme="Light"],
+#vditor .vditor-ui[data-editor-theme="Light"] {
     /* Surface */
     --bg-color: #ffffff;
     --front-color: #333333;
-    --second-bg-color: #f8f9fa;
+    --second-bg-color: #f6f8fa;
     --second-color: #767676;
 
     /* Border & Divider */
@@ -30,11 +32,11 @@ html[data-editor-theme="Light"],
     --table-axis-color: #aeb6bf;
 
     /* Inline Code */
-    --code-bg-color: #f0f2f5;
+    --code-bg-color: #f6f8fa;
     --code-fg-color: var(--front-color);
 
     /* Toolbar & Panel */
-    --toolbar-background-color: #f5f6f7;
+    --toolbar-background-color: #ffffff;
     --toolbar-icon-color: var(--front-color);
     --toolbar-icon-hover-color: var(--list-hover-color);
     --panel-background-color: var(--bg-color);
@@ -44,7 +46,7 @@ html[data-editor-theme="Light"],
     --count-background-color: rgba(51, 51, 51, 0.08);
 
     /* Outline */
-    --outline-bg-color: #fafbfc;
+    --outline-bg-color: #ffffff;
     --outline-hover-bg: #f0f2f5;
     --outline-active-bg: #e8ecf0;
 
@@ -90,7 +92,9 @@ html[data-editor-theme="Light"],
     --scrollbar-thumb-hover: rgba(51, 51, 51, 0.44);
 }
 
-#vditor[data-editor-theme="Light"] {
+#vditor[data-editor-theme="Light"],
+#vditor .vditor-page[data-editor-theme="Light"],
+#vditor .vditor-ui[data-editor-theme="Light"] {
     /* IR Syntax */
     --ir-heading-color: #660e7a;
     --ir-title-color: #808080;
