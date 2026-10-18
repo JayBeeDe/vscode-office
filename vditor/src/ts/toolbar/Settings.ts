@@ -43,8 +43,6 @@ import {
     setGlobalLocalStorageSetting,
     resetGlobalSettings,
     applyEditorSettings,
-    applyTypewriterModeClass,
-    TYPEWRITER_MODE_KEY,
 } from "../util/globalLocalStorageSettings";
 import {getCodeFontFamilyOptions} from "../util/fontFamilyOptions";
 
@@ -237,22 +235,6 @@ export class Settings extends MenuItem {
                 vditor.element.style.setProperty("--editor-line-height", String(next));
                 const input = row.querySelector<HTMLInputElement>("[data-lh-value]");
                 if (input) input.value = next.toFixed(1);
-                event.preventDefault();
-                event.stopPropagation();
-                return;
-            }
-
-            // Toggle switch
-            const toggleTrigger = event.target.closest("[data-toggle-trigger]") as HTMLElement | null;
-            if (toggleTrigger) {
-                const key = toggleTrigger.getAttribute("data-toggle-key") || "";
-                const next = !toggleTrigger.classList.contains(`${SETTINGS_PANEL_CLASS}__toggle--on`);
-                toggleTrigger.classList.toggle(`${SETTINGS_PANEL_CLASS}__toggle--on`, next);
-                toggleTrigger.setAttribute("aria-checked", String(next));
-                setGlobalLocalStorageSetting(key, next ? true : undefined);
-                if (key === TYPEWRITER_MODE_KEY) {
-                    applyTypewriterModeClass(vditor.element, next);
-                }
                 event.preventDefault();
                 event.stopPropagation();
                 return;

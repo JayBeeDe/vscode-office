@@ -23,7 +23,6 @@ import {
     CODE_BLOCK_MAX_HEIGHT_KEY,
     CODE_BLOCK_MAX_HEIGHT_DEFAULT,
     CODE_BLOCK_MAX_HEIGHT_OPTIONS,
-    TYPEWRITER_MODE_KEY,
     getAIPrompts,
     setAIPrompts,
     AIPrompt,
@@ -91,12 +90,6 @@ const buildDropdownHTML = (key: string, label: string, options: readonly { label
         </button>
     </div>`;
 };
-
-const buildToggleHTML = (key: string, label: string, checked: boolean) =>
-    `<div class="${SETTINGS_PANEL_CLASS}__toggle-row">
-        <span class="${SETTINGS_PANEL_CLASS}__toggle-label">${label}</span>
-        <button type="button" class="${SETTINGS_PANEL_CLASS}__toggle${checked ? ` ${SETTINGS_PANEL_CLASS}__toggle--on` : ""}" data-toggle-trigger data-toggle-key="${key}" role="switch" aria-checked="${checked}"></button>
-    </div>`;
 
 const parsePxValue = (value: string): number | undefined => {
     const match = value.trim().match(/^(\d+(?:\.\d+)?)px$/i);
@@ -296,7 +289,6 @@ export const buildSettingsPanelHTML = (vditor: IVditor) => {
     const imgMaxWidth = getGlobalLocalStorageSetting<number>(IMAGE_MAX_WIDTH_KEY, IMAGE_MAX_WIDTH_DEFAULT);
     const imgMaxHeight = getGlobalLocalStorageSetting<number>(IMAGE_MAX_HEIGHT_KEY, IMAGE_MAX_HEIGHT_DEFAULT);
     const codeBlockMaxHeight = getGlobalLocalStorageSetting<string>(CODE_BLOCK_MAX_HEIGHT_KEY, CODE_BLOCK_MAX_HEIGHT_DEFAULT) ?? CODE_BLOCK_MAX_HEIGHT_DEFAULT;
-    const typewriterMode = getGlobalLocalStorageSetting<boolean>(TYPEWRITER_MODE_KEY, false) === true;
     return `<div class="${SETTINGS_PANEL_CLASS}">
         <div class="${SETTINGS_PANEL_CLASS}__section">
             <div class="${SETTINGS_PANEL_CLASS}__title">Edit Mode</div>
@@ -316,7 +308,6 @@ export const buildSettingsPanelHTML = (vditor: IVditor) => {
                 ${buildDropdownHTML(BOLD_COLOR_KEY, i18n.boldColor ?? "Bold Color", getBoldColorOptions(), boldColor)}
                 ${buildDropdownHTML(PAGE_WIDTH_KEY, i18n.pageWidth, PAGE_WIDTH_OPTIONS, pageWidth)}
                 ${buildLineHeightStepperHTML(lineHeight)}
-                ${buildToggleHTML(TYPEWRITER_MODE_KEY, i18n.typewriterMode ?? "Typewriter Mode", typewriterMode)}
             </div>
         </div>
         <div class="${SETTINGS_PANEL_CLASS}__section">
