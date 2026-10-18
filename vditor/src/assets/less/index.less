@@ -10,7 +10,7 @@
 
 @max-width: 520px;
 
-@block-handle-size: 20px;
+@block-marker-height: 20px;
 @block-marker-offset: -29px;
 
 .vditor-block-marker-aligned-host() {
@@ -22,7 +22,7 @@
   position: absolute;
   left: @block-marker-offset;
   top: var(--vditor-block-marker-top, 0px);
-  height: @block-handle-size;
+  height: @block-marker-height;
   min-width: 25px;
   padding: 0 4px 0 0;
   margin: 0;
@@ -211,7 +211,6 @@
 @import "_obsidian";
 @import "_list";
 @import "_wysiwyg";
-@import "_blockHandle";
 @import "_tableHandle";
 @import "_codemirror";
 @import "_mermaid";
