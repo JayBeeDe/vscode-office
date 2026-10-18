@@ -28,8 +28,6 @@
     "common": {
       "failedOpenFile": "Не удалось открыть файл",
       "officeViewer": "Просмотр Office",
-      "switchToLight": "Переключить на светлую тему",
-      "switchToDark": "Переключить на адаптивную тёмную тему",
       "editInVscode": "Редактировать в VS Code"
     },
     "document": {
