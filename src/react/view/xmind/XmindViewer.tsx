@@ -1,4 +1,4 @@
-import { MinusOutlined, MoonOutlined, PlusOutlined, SaveOutlined, SunOutlined } from '@ant-design/icons';
+import { MinusOutlined, PlusOutlined, SaveOutlined } from '@ant-design/icons';
 import { Alert, Button, Layout, Spin, message } from 'antd';
 import MindElixir, { type MindElixirData, type MindElixirInstance } from 'mind-elixir';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -6,6 +6,7 @@ import { handler, onSaveRequest } from '../../util/vscode';
 import { loadOfficeBuffer } from '../../util/loadOfficeContent';
 import { $t } from '../../i18n/i18nConfig.ts';
 import { observeVscodeThemeChange } from '../../util/vscodeTheme';
+import { useTheme } from '../../util/theme';
 import { buildMindElixirTheme } from './mindElixirTheme';
 import { parseXmind, XmindDocument, XmindSheet } from './xmindParser';
 import './XmindViewer.css';
@@ -42,7 +43,8 @@ export default function XmindViewer() {
     const [saving, setSaving] = useState(false);
     const [dirty, setDirty] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [dark, setDark] = useState(false);
+    // dark: the map takes VS Code's colours (dark-palette.css when VS Code is light)
+    const dark = useTheme() === 'dark';
 
     useEffect(() => {
         sheetsRef.current = sheets;
@@ -140,10 +142,6 @@ export default function XmindViewer() {
             return;
         }
         mind.scale(Math.min(mind.scaleMax, mind.scaleVal + ZOOM_STEP));
-    }, []);
-
-    const toggleDark = useCallback(() => {
-        setDark(prev => !prev);
     }, []);
 
     const loadGenerationRef = useRef(0);
@@ -262,6 +260,7 @@ export default function XmindViewer() {
         if (!dark) {
             return;
         }
+        // another dark VS Code theme: new colours for the map
         return observeVscodeThemeChange(() => {
             mindRef.current?.changeTheme(buildMindElixirTheme(true));
         });
@@ -339,15 +338,6 @@ export default function XmindViewer() {
                                         onClick={zoomIn}
                                     />
                                 </div>
-                                <button
-                                    type="button"
-                                    className="xmind-theme-toggle"
-                                    title={dark ? $t('common.switchToLight') : $t('common.switchToDarkHint')}
-                                    aria-label={dark ? $t('common.switchToLight') : $t('common.switchToDark')}
-                                    onClick={toggleDark}
-                                >
-                                    {dark ? <SunOutlined /> : <MoonOutlined />}
-                                </button>
                             </div>
                         </div>
                     )}
