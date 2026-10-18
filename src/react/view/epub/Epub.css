@@ -95,8 +95,24 @@ body,
     font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     font-size: 14px;
     --epub-muted: rgba(0, 0, 0, 0.62);
-    --epub-nav-color: rgba(0, 0, 0, 0.38);
     --epub-nav-width: 56px;
+    background: #fff;
+    color: #000;
+}
+
+/* the page area takes the book's colours (vscode-office.epub.theme), set by applyEpubTheme */
+.epub-viewer .epub-reader {
+    --epub-nav-color: rgba(0, 0, 0, 0.38);
+    --epub-nav-hover-color: rgba(0, 0, 0, 0.55);
+}
+
+.epub-viewer .epub-reader.epub-page-dark {
+    --epub-nav-color: rgba(255, 255, 255, 0.38);
+    --epub-nav-hover-color: rgba(255, 255, 255, 0.7);
+}
+
+.epub-viewer .epub-reader.epub-page-dark .epub-loading {
+    background: rgba(0, 0, 0, 0.6);
 }
 
 .epub-viewer button {
@@ -210,7 +226,7 @@ body,
 
 .epub-viewer .epub-nav:hover:not(:disabled) {
     background: transparent;
-    color: rgba(0, 0, 0, 0.55);
+    color: var(--epub-nav-hover-color);
 }
 
 .epub-viewer .epub-nav:active:not(:disabled) {
@@ -754,6 +770,12 @@ body,
     padding: 4px 8px;
 }
 
+.epub-viewer .sidebar .settings .setting-note {
+    margin: 4px;
+    font-size: 12px;
+    opacity: 0.7;
+}
+
 .epub-viewer .sidebar .settings .chips .chip:hover,
 .epub-viewer .sidebar .settings .chips .chip.active {
     border: 1px solid rgba(0, 0, 0, 0.35);
@@ -841,4 +863,114 @@ body,
 
 .epub-viewer .hidden {
     display: none !important;
+}
+/* Dark vscode-office.theme: the bars and the menus are black like the markdown editor's dark theme */
+body.office-dark .epub-viewer {
+    background: #000;
+    color: #e6e6e6;
+    --epub-muted: rgba(255, 255, 255, 0.62);
+    --epub-dark-bg: #000000;
+    --epub-dark-raised: #161616;
+    --epub-dark-fg: #e6e6e6;
+    --epub-dark-border: #333333;
+    --epub-dark-hover: rgba(255, 255, 255, 0.08);
+    --epub-dark-active: rgba(255, 255, 255, 0.14);
+    --epub-dark-accent: #4daafc;
+}
+
+body.office-dark .epub-viewer button:hover,
+body.office-dark .epub-viewer .sidebar .tab-list .item:hover,
+body.office-dark .epub-viewer .sidebar .toc-list .item:hover,
+body.office-dark .epub-viewer .sidebar .search-results .item:hover {
+    background: var(--epub-dark-hover);
+}
+
+body.office-dark .epub-viewer button:active,
+body.office-dark .epub-viewer .sidebar .tab-list .item:active {
+    background: var(--epub-dark-active);
+}
+
+body.office-dark .epub-viewer .loc-input:hover,
+body.office-dark .epub-viewer .loc-input:focus {
+    border-bottom-color: rgba(255, 255, 255, 0.35);
+}
+
+body.office-dark .epub-viewer .sidebar,
+body.office-dark .epub-viewer .sidebar .tab-list,
+body.office-dark .epub-viewer .sidebar .tab-container,
+body.office-dark .epub-viewer .dictionary,
+body.office-dark .epub-viewer .error {
+    background: var(--epub-dark-bg);
+    color: var(--epub-dark-fg);
+}
+
+body.office-dark .epub-viewer .sidebar {
+    box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.6);
+    border-left: 1px solid var(--epub-dark-border);
+}
+
+body.office-dark .epub-viewer .sidebar .tab-list {
+    border-bottom-color: var(--epub-dark-border);
+    box-shadow: none;
+}
+
+body.office-dark .epub-viewer .sidebar .tab-list .item.active,
+body.office-dark .epub-viewer .sidebar .toc-list .item.active,
+body.office-dark .epub-viewer .sidebar .settings .setting-content a:link,
+body.office-dark .epub-viewer .sidebar .settings .setting-content a:visited {
+    color: var(--epub-dark-accent);
+    border-bottom-color: var(--epub-dark-accent);
+}
+
+body.office-dark .epub-viewer .sidebar .toc-list .item.active {
+    background: var(--epub-dark-hover);
+}
+
+body.office-dark .epub-viewer .sidebar .toc-list .item .page {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+body.office-dark .epub-viewer .sidebar .search-bar,
+body.office-dark .epub-viewer .sidebar .search-results .item {
+    background: var(--epub-dark-raised);
+    border-color: var(--epub-dark-border);
+    box-shadow: none;
+}
+
+body.office-dark .epub-viewer .sidebar .search-bar .search-button {
+    border-left-color: var(--epub-dark-border);
+}
+
+body.office-dark .epub-viewer .sidebar .search-bar .search-button:hover {
+    background: var(--epub-dark-hover);
+}
+
+body.office-dark .epub-viewer .sidebar .search-results .item .pbar {
+    background: var(--epub-dark-border);
+}
+
+body.office-dark .epub-viewer .sidebar .search-results .item .pbar .pbar-inner {
+    background: rgba(255, 255, 255, 0.6);
+}
+
+body.office-dark .epub-viewer .dictionary,
+body.office-dark .epub-viewer .dictionary .definition,
+body.office-dark .epub-viewer .sidebar .info .description,
+body.office-dark .epub-viewer .sidebar .setting {
+    border-color: var(--epub-dark-border);
+}
+
+body.office-dark .epub-viewer .sidebar .settings .chips .chip {
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+body.office-dark .epub-viewer .sidebar .settings .chips .chip:hover,
+body.office-dark .epub-viewer .sidebar .settings .chips .chip.active {
+    border-color: rgba(255, 255, 255, 0.5);
+    background: var(--epub-dark-hover);
+    box-shadow: 0 0 4px 0 rgba(255, 255, 255, 0.15);
+}
+
+body.office-dark .epub-viewer .error .error-dump {
+    background: var(--epub-dark-raised);
 }

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import * as vscode from 'vscode';
 import { extensionResource, getExtensionUri, readExtensionText } from './extensionResource';
-import { getTheme } from './theme';
+import { getEpubTheme, getTheme } from './theme';
 
 interface ViewOption {
     route: string;
@@ -35,6 +35,7 @@ export class ReactApp {
             ...option,
             language: vscode.env.language,
             theme: getTheme(),
+            epubTheme: getEpubTheme(),
         });
         // the configs go into a quoted attribute: escape them, and use a replacer function so `$` patterns are not expanded
         webview.html = this.buildPath(html, webview)

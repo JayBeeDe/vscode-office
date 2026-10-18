@@ -9,9 +9,9 @@ export type ThemeSetting = 'auto' | 'light' | 'dark';
 export type Theme = 'light' | 'dark';
 
 const SETTINGS: readonly string[] = ['auto', 'light', 'dark'];
-const toSetting = (value: unknown): ThemeSetting => SETTINGS.includes(value as string) ? value as ThemeSetting : 'auto';
+export const toThemeSetting = (value: unknown): ThemeSetting => SETTINGS.includes(value as string) ? value as ThemeSetting : 'auto';
 
-let setting = toSetting(getConfigs()?.theme);
+let setting = toThemeSetting(getConfigs()?.theme);
 const listeners = new Set<() => void>();
 
 /** VS Code's own kind: high contrast is dark, high contrast light is light. */
@@ -55,7 +55,7 @@ function update() {
 }
 
 handler.on('theme', (value: unknown) => {
-    setting = toSetting(value);
+    setting = toThemeSetting(value);
     update();
 });
 // VS Code changes the body's classes and its colour variables when its theme changes
@@ -70,14 +70,4 @@ function subscribe(listener: () => void) {
 /** `light` or `dark`, following `vscode-office.theme` and, for `auto`, VS Code. */
 export function useTheme(): Theme {
     return useSyncExternalStore(subscribe, () => resolveTheme());
-}
-
-/** The setting itself: `auto`, `light` or `dark`. */
-export function useThemeSetting(): ThemeSetting {
-    return useSyncExternalStore(subscribe, () => setting);
-}
-
-/** Changes `vscode-office.theme` for the whole extension; the new value comes back through `theme`. */
-export function changeThemeSetting(value: ThemeSetting) {
-    handler.emit('theme', value);
 }

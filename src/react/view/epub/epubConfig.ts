@@ -1,5 +1,6 @@
 import ePub, { Book, Contents, NavItem, Rendition } from 'epubjs';
 import type Section from 'epubjs/types/section';
+import type { Theme } from '../../util/theme';
 
 /** spineItems exists at runtime, the typings don't declare it */
 function spineItems(book: Book): Section[] {
@@ -8,14 +9,11 @@ function spineItems(book: Book): Section[] {
 
 export const STORAGE_PREFIX = 'ePubViewer:';
 
-export const THEME_OPTIONS = [
-    { label: 'A', value: '#fff;#000', bg: '#fff', fg: '#000' },
-    { label: 'A', value: '#000;#fff', bg: '#000', fg: '#fff' },
-    { label: 'A', value: '#333;#eee', bg: '#333', fg: '#eee' },
-    { label: 'A', value: '#f5deb3;#000', bg: '#f5deb3', fg: '#000' },
-    { label: 'A', value: '#111;#f5deb3', bg: '#111', fg: '#f5deb3' },
-    { label: 'A', value: '#111b21;#e8e8e8', bg: '#111b21', fg: '#e8e8e8' },
-];
+/** The page and text colours of the reader in a light and a dark vscode-office.theme. */
+export const THEME_COLORS: Record<Theme, { bg: string; fg: string }> = {
+    light: { bg: '#fff', fg: '#000' },
+    dark: { bg: '#000', fg: '#fff' },
+};
 
 export const SYSTEM_FONT = "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif";
 
@@ -32,14 +30,12 @@ export const FONT_SIZE_OPTIONS = ['11pt', '12pt', '13pt', '14pt', '15pt', '16pt'
 export const LINE_SPACING_OPTIONS = ['1', '1.2', '1.4', '1.6', '1.8', '2', '2.3', '2.6', '3'];
 
 export interface EpubSettings {
-    theme: string;
     font: string;
     fontSize: string;
     lineSpacing: string;
 }
 
 export const DEFAULT_SETTINGS: EpubSettings = {
-    theme: '#fff;#000',
     font: SYSTEM_FONT,
     fontSize: '13pt',
     lineSpacing: '1.6',
@@ -106,7 +102,6 @@ export function loadEpubSettings(): EpubSettings {
     const read = (storageKey: string, fallback: string) =>
         localStorage.getItem(`${STORAGE_PREFIX}${storageKey}`) ?? fallback;
     return {
-        theme: read('theme', DEFAULT_SETTINGS.theme),
         font: read('font', DEFAULT_SETTINGS.font),
         fontSize: read('font-size', DEFAULT_SETTINGS.fontSize),
         lineSpacing: read('line-spacing', DEFAULT_SETTINGS.lineSpacing),
@@ -114,7 +109,6 @@ export function loadEpubSettings(): EpubSettings {
 }
 
 const SETTING_STORAGE_KEYS: Record<keyof EpubSettings, string> = {
-    theme: 'theme',
     font: 'font',
     fontSize: 'font-size',
     lineSpacing: 'line-spacing',
@@ -124,7 +118,7 @@ export function saveEpubSetting(key: keyof EpubSettings, value: string) {
     localStorage.setItem(`${STORAGE_PREFIX}${SETTING_STORAGE_KEYS[key]}`, value);
 }
 
-/** Reset reader display settings to defaults (theme, font, etc.). */
+/** Reset reader display settings to defaults (font, size, line spacing). */
 export function resetEpubSettings(): EpubSettings {
     const next = { ...DEFAULT_SETTINGS };
     for (const key of Object.keys(SETTING_STORAGE_KEYS) as (keyof EpubSettings)[]) {
@@ -193,8 +187,8 @@ function themeRulesToCss(rules: ReturnType<typeof buildThemeRules>): string {
     return parts.join('\n');
 }
 
-export function buildThemeRules(settings: EpubSettings) {
-    const [bg, fg] = settings.theme.split(';');
+export function buildThemeRules(settings: EpubSettings, theme: Theme) {
+    const { bg, fg } = THEME_COLORS[theme];
     const linkColor = '#1e83d2';
     return {
         body: {
@@ -228,14 +222,25 @@ export function buildThemeRules(settings: EpubSettings) {
     };
 }
 
-export function applyEpubTheme(rendition: Rendition, settings: EpubSettings, root?: HTMLElement | null) {
-    const [bg, fg] = settings.theme.split(';');
+/**
+ * Paints the pages: the book's own documents and the page area around them (`page`, with the
+ * previous/next arrows) take the colours of `theme`; the bars and the sidebar around follow
+ * vscode-office.theme in Epub.css. `root` takes the book's font.
+ */
+export function applyEpubTheme(rendition: Rendition | null, settings: EpubSettings, theme: Theme, root?: HTMLElement | null, page?: HTMLElement | null) {
+    const { bg, fg } = THEME_COLORS[theme];
     if (root) {
-        root.style.background = bg;
         root.style.fontFamily = settings.font;
-        root.style.color = fg;
     }
-    const css = themeRulesToCss(buildThemeRules(settings));
+    if (page) {
+        page.style.background = bg;
+        page.style.color = fg;
+        page.classList.toggle('epub-page-dark', theme === 'dark');
+    }
+    if (!rendition) {
+        return;
+    }
+    const css = themeRulesToCss(buildThemeRules(settings, theme));
     for (const content of rendition.getContents() as unknown as Contents[]) {
         content.addStylesheetCss(css, EPUB_THEME_STYLE_KEY);
     }
