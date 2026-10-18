@@ -9,6 +9,8 @@ import { Spin } from 'antd';
 import { Book, NavItem, Rendition } from 'epubjs';
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { handler } from '../../util/vscode';
+import { type Theme, type ThemeSetting, toThemeSetting, useTheme } from '../../util/theme';
+import { getConfigs } from '../../util/vscodeConfig';
 import { loadOfficeBuffer } from '../../util/loadOfficeContent';
 import { $t } from '../../i18n/i18nConfig.ts';
 import {
@@ -33,11 +35,13 @@ import {
     searchEpubBook,
     SearchHit,
     SYSTEM_FONT,
-    THEME_OPTIONS,
+    THEME_COLORS,
 } from './epubConfig';
 import './Epub.css';
 
 type SidebarTab = 'toc' | 'search' | 'info' | 'settings';
+
+const THEME_CHOICES: ThemeSetting[] = ['auto', 'light', 'dark'];
 
 const WHEEL_NAV_INTERVAL_MS = 320;
 
@@ -109,11 +113,22 @@ function TocItems({
 export default function Epub() {
     const appRef = useRef<HTMLDivElement>(null);
     const readerRef = useRef<HTMLDivElement>(null);
+    const pageRef = useRef<HTMLDivElement>(null);
     const bookRef = useRef<Book | null>(null);
     const loadGenerationRef = useRef(0);
     const storageKeyRef = useRef('');
     const renditionRef = useRef<Rendition | null>(null);
     const settingsRef = useRef<EpubSettings>(loadEpubSettings());
+    // the pages follow vscode-office.epub.theme, `auto` following vscode-office.theme like the menus
+    const uiTheme = useTheme();
+    const [themeSetting, setThemeSetting] = useState<ThemeSetting>(() => toThemeSetting(getConfigs()?.epubTheme));
+    const theme: Theme = themeSetting === 'auto' ? uiTheme : themeSetting;
+    const themeRef = useRef(theme);
+    const themeLabels: Record<ThemeSetting, string> = {
+        auto: $t('epub.themeAuto'),
+        light: $t('epub.themeLight'),
+        dark: $t('epub.themeDark'),
+    };
     const wheelNavLockRef = useRef(0);
 
     const [loading, setLoading] = useState(false);
@@ -178,7 +193,7 @@ export default function Epub() {
 
     const bindWheel = useCallback((rendition: Rendition) => {
         rendition.hooks.content.register(contents => {
-            applyEpubTheme(rendition, settingsRef.current, appRef.current);
+            applyEpubTheme(rendition, settingsRef.current, themeRef.current, appRef.current, pageRef.current);
             const doc = contents.document;
             if (doc) {
                 bindReaderMetaKeyRelay(doc);
@@ -220,11 +235,20 @@ export default function Epub() {
             saveEpubSetting(key, value);
             const rendition = renditionRef.current;
             if (rendition) {
-                applyEpubTheme(rendition, next, appRef.current);
+                applyEpubTheme(rendition, next, themeRef.current, appRef.current, pageRef.current);
             }
             return next;
         });
     }, []);
+
+    useEffect(() => {
+        handler.on('epubTheme', (value: unknown) => setThemeSetting(toThemeSetting(value)));
+    }, []);
+
+    useEffect(() => {
+        themeRef.current = theme;
+        applyEpubTheme(renditionRef.current, settingsRef.current, theme, appRef.current, pageRef.current);
+    }, [theme]);
 
     const resetAllSettings = useCallback(() => {
         const next = resetEpubSettings();
@@ -234,7 +258,7 @@ export default function Epub() {
         if (!rendition) {
             return;
         }
-        applyEpubTheme(rendition, next, appRef.current);
+        applyEpubTheme(rendition, next, themeRef.current, appRef.current, pageRef.current);
         const location = rendition.location;
         if (location?.start) {
             onRelocated(location);
@@ -341,7 +365,7 @@ export default function Epub() {
             });
             renditionRef.current = rendition;
             bindRendition(rendition);
-            applyEpubTheme(rendition, settingsRef.current, appRef.current);
+            applyEpubTheme(rendition, settingsRef.current, themeRef.current, appRef.current, pageRef.current);
 
             const storedPos = readStored(`${storageKeyRef.current}:pos`);
             await rendition.display(storedPos || undefined);
@@ -634,17 +658,18 @@ export default function Epub() {
                                 <div className="setting">
                                     <div className="setting-label">{$t('epub.themes')}</div>
                                     <div className="setting-content theme chips" data-chips="theme">
-                                        {THEME_OPTIONS.map(option => (
+                                        {THEME_CHOICES.map(choice => (
                                             <div
-                                                key={option.value}
-                                                className={`theme chip${settings.theme === option.value ? ' active' : ''}`}
-                                                style={{ background: option.bg, color: option.fg }}
-                                                onClick={() => updateSetting('theme', option.value)}
+                                                key={choice}
+                                                className={`theme chip${themeSetting === choice ? ' active' : ''}`}
+                                                style={choice === 'auto' ? undefined : { background: THEME_COLORS[choice].bg, color: THEME_COLORS[choice].fg }}
+                                                onClick={() => handler.emit('epubTheme', choice)}
                                             >
-                                                {option.label}
+                                                {themeLabels[choice]}
                                             </div>
                                         ))}
                                     </div>
+                                    <div className="setting-note">{$t('epub.themeScope')}</div>
                                 </div>
                                 <div className="setting">
                                     <div className="setting-label">{$t('epub.font')}</div>
@@ -736,7 +761,7 @@ export default function Epub() {
                 <div className="right" />
             </div>
 
-            <div className="epub-reader">
+            <div className="epub-reader" ref={pageRef}>
                 {loading && (
                     <div className="epub-loading">
                         <Spin />

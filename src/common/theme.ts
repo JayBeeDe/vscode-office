@@ -7,16 +7,22 @@ export type Theme = typeof THEMES[number];
 
 const isTheme = (value: unknown): value is Theme => (THEMES as readonly unknown[]).includes(value);
 
-/** The `vscode-office.theme` setting, shared by every viewer and editor. */
-export function getTheme(): Theme {
-    const theme = Global.getConfig<string>('theme', 'auto');
+function readTheme(key: string): Theme {
+    const theme = Global.getConfig<string>(key, 'auto');
     return isTheme(theme) ? theme : 'auto';
 }
 
-/**
- * Keeps the page's theme in sync: sends `theme` whenever the setting changes, and saves the
- * theme the page picks (the EPUB reader's "Themes" choice) in the user settings.
- */
+/** The `vscode-office.theme` setting, shared by every viewer and editor. */
+export function getTheme(): Theme {
+    return readTheme('theme');
+}
+
+/** The `vscode-office.epub.theme` setting: the EPUB pages' colours, `auto` following `vscode-office.theme`. */
+export function getEpubTheme(): Theme {
+    return readTheme('epub.theme');
+}
+
+/** Sends `theme` to the page whenever `vscode-office.theme` changes. */
 export function bindTheme(handler: Handler) {
     const subscription = vscode.workspace.onDidChangeConfiguration((event) => {
         if (event.affectsConfiguration('vscode-office.theme')) {
@@ -24,9 +30,22 @@ export function bindTheme(handler: Handler) {
         }
     });
     handler.panel.onDidDispose(() => subscription.dispose());
-    handler.on('theme', async (theme: unknown) => {
+}
+
+/**
+ * Keeps the EPUB reader's page theme in sync: sends `epubTheme` whenever the setting changes, and
+ * saves the theme the reader's "Themes" choice picks in the user settings.
+ */
+export function bindEpubTheme(handler: Handler) {
+    const subscription = vscode.workspace.onDidChangeConfiguration((event) => {
+        if (event.affectsConfiguration('vscode-office.epub.theme')) {
+            handler.emit('epubTheme', getEpubTheme());
+        }
+    });
+    handler.panel.onDidDispose(() => subscription.dispose());
+    handler.on('epubTheme', async (theme: unknown) => {
         if (isTheme(theme)) {
-            await Global.updateConfig('theme', theme);
+            await Global.updateConfig('epub.theme', theme);
         }
     });
 }

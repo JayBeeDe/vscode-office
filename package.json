@@ -383,7 +383,7 @@
 							"Always dark."
 						],
 						"default": "auto",
-						"markdownDescription": "Theme of every viewer and editor of the extension. The EPUB reader's theme choice changes this setting in the user settings; a workspace value overrides it. The Markdown pages follow `#vscode-office.markdown.theme#`."
+						"markdownDescription": "Theme of every viewer and editor of the extension. The EPUB pages follow `#vscode-office.epub.theme#` and the Markdown pages `#vscode-office.markdown.theme#`."
 					}
 				}
 			},
@@ -486,6 +486,27 @@
 						"type": "integer",
 						"default": 25,
 						"description": "Printed pdf default top margin."
+					}
+				}
+			},
+			{
+				"title": "EPUB",
+				"order": 3,
+				"properties": {
+					"vscode-office.epub.theme": {
+						"type": "string",
+						"enum": [
+							"auto",
+							"light",
+							"dark"
+						],
+						"enumDescriptions": [
+							"Follows `vscode-office.theme`.",
+							"White pages, black text.",
+							"Black pages, white text."
+						],
+						"default": "auto",
+						"markdownDescription": "Colours of the EPUB reader's pages; the menus follow `#vscode-office.theme#`. The reader's \"Themes\" choice changes this setting in the user settings; a workspace value overrides it."
 					}
 				}
 			}
