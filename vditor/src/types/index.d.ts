@@ -444,29 +444,11 @@ interface IHint {
     extend?: IHintExtend[];
 }
 
-/** @link https://ld246.com/article/1549638745630#options */
-interface IAIPolishOptions {
-    goal?: string;
-    prompt?: string;
-    engine?: "vscode" | "custom";
-    /** auto = follow UI language */
-    outputLanguage?: "auto" | "en_US" | "zh_CN" | "zh_TW" | "ja_JP" | "ko_KR" | "ru_RU";
-    /** Current editor UI language (vditor.options.lang) */
-    uiLanguage?: string;
-    vscodeModelId?: string;
-    customUrl?: string;
-    /** id of the custom model, used by the host to look up its stored API key */
-    customModelId?: string;
-    customModel?: string;
-    /** auto | openai | anthropic | gemini | ollama */
-    customApiFormat?: "auto" | "openai" | "anthropic" | "gemini" | "ollama";
-}
-
 type ViewerSettingsExport = {
     globalSettings: Record<string, boolean | number | string | undefined>;
-    aiPreferences: Record<string, string>;
 };
 
+/** @link https://ld246.com/article/1549638745630#options */
 interface IOptions {
     /** RTL */
     rtl?: boolean;
@@ -564,16 +546,6 @@ interface IOptions {
 
     /** Fired after the Mermaid theme changes */
     changeMermaidTheme?(value: string): void;
-
-    /** AI feature configuration */
-    ai?: {
-        /** AI polish callback: receives the Markdown content and calls apply when done to write the result back to the editor */
-        onPolish?(markdown: string, apply: (result: string) => void, options?: IAIPolishOptions): void;
-        /** Fired when the user clicks cancel */
-        onCancelPolish?(): void;
-        /** Store a model's API key outside the webview; an empty key deletes it */
-        onSetModelKey?(modelId: string, key: string): void;
-    };
 
     /** Fired after the edit mode changes */
     changeEditMode?(value: string): void;

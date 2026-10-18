@@ -248,9 +248,6 @@ export class Options {
             icon: getToolbarCodicon("code-theme"),
             name: "code-theme",
         }, {
-            icon: getToolbarCodicon("ai-settings"),
-            name: "ai-settings",
-        }, {
             name: "br",
         }];
         const toolbarResult: IMenuItem[] = [];

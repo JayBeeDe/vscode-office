@@ -15,11 +15,6 @@
       "noPasteDirectory": "Einfügen von Verzeichnissen wird nicht unterstützt.",
       "installXclip": "Sie müssen zuerst den Befehl xclip installieren.",
       "wikilinkNotFound": "Wikilink-Ziel nicht gefunden: {target}",
-      "aiRequiresVscode": "AI-Funktionen erfordern VS Code 1.90+ mit installierter Sprachmodell-Erweiterung.",
-      "noAiModel": "Kein AI-Sprachmodell verfügbar. Bitte installieren Sie eine Sprachmodell-Erweiterung (z. B. GitHub Copilot).",
-      "aiPolishFailed": "AI-Korrektur fehlgeschlagen: {error}",
-      "customAiUrlRequired": "Benutzerdefinierte AI: API-URL ist erforderlich.",
-      "customAiPolishFailed": "Benutzerdefinierte AI-Korrektur fehlgeschlagen: {error}",
       "selectImage": "Bild auswählen",
       "statusBar": "Zeile {lines} Zeichen {chars}"
     }

@@ -2,7 +2,6 @@ import "./assets/less/index.less";
 import * as adapterRender from "./ts/markdown/adapterRender";
 import { codeRender } from "./ts/markdown/codeRender";
 import { codeMirrorPreviewRender } from "./ts/codeBlock/codeMirrorPreviewRender";
-import { renderCodeBlocks } from "./ts/codeBlock/codeMirrorManager";
 import { mathRender } from "./ts/markdown/mathRender";
 import { mermaidRender } from "./ts/markdown/mermaidRender";
 import { outlineRender } from "./ts/markdown/outlineRender";
@@ -21,8 +20,6 @@ import { Tip } from "./ts/tip/index";
 import { Toolbar } from "./ts/toolbar/index";
 import { disableToolbar, hidePanel } from "./ts/toolbar/setToolbar";
 import { enableToolbar } from "./ts/toolbar/setToolbar";
-import { AIDialog } from "./ts/ui/aiDialog";
-import { AIReviewPanel } from "./ts/ui/aiReviewPanel";
 import { initUI } from "./ts/ui/initUI";
 import { applyCodeMirrorTheme } from "./ts/ui/setCodeTheme";
 import { setColorTheme, setPageTheme } from "./ts/ui/setEditorTheme";
@@ -38,16 +35,9 @@ import { clearDocumentScroll, restoreDocumentScroll } from "./ts/util/documentSt
 import { getSelectText } from "./ts/util/getSelectText";
 import { Options } from "./ts/util/Options";
 import { processCodeRender } from "./ts/util/processCode";
-import { hasClosestBlock } from "./ts/util/hasClosest";
-import { getCursorPosition, getEditorRange, insertHTML, insertMdForAIReplace, setSelectionFocus } from "./ts/util/selection";
+import { getCursorPosition, getEditorRange, insertHTML } from "./ts/util/selection";
 import { markOutlineEditing } from "./ts/outline/updateOutlineActive";
 import { recordHistoryChange } from "./ts/util/instantHistory";
-import {
-    captureEditorSelection,
-    hideFrozenSelection,
-    restoreEditorSelection,
-    showFrozenSelection,
-} from "./ts/util/frozenSelection";
 import { afterRenderEvent } from "./ts/wysiwyg/afterRenderEvent";
 import { renderToc } from "./ts/util/toc";
 import { scrollToBlock as scrollToBlockUtil } from "./ts/util/scrollToBlock";
@@ -59,14 +49,12 @@ import {
     exportViewerSettings,
     getGlobalLocalStorageSetting,
     importViewerSettings,
-    setAIModelKeySink,
     setOnViewerSettingsChange,
     ViewerSettingsExport,
 } from "./ts/util/globalLocalStorageSettings";
 import { exportExportSettings, ExportThemeSettings } from "./ts/util/exportThemeSettings";
 import {
     buildSettingsPanelHTML,
-    refreshAISettingsToolbarPanel,
     refreshSettingsToolbarPanel,
 } from "./ts/ui/settingsPanel";
 import { WYSIWYG } from "./ts/wysiwyg/index";
@@ -85,10 +73,6 @@ class Vditor {
 
     public readonly version: string;
     public vditor: IVditor;
-    private aiDialog: AIDialog | null = null;
-    private aiSelectionRange: Range | null = null;
-    private aiReviewPanel: AIReviewPanel = new AIReviewPanel();
-    private aiReplaceAll = false;
 
     /**
      * @param id The element, or element ID, to mount Vditor on.
@@ -114,9 +98,6 @@ class Vditor {
 
         const getOptions = new Options(options);
         const mergedOptions = getOptions.merge();
-        if (mergedOptions.ai?.onSetModelKey) {
-            setAIModelKeySink(mergedOptions.ai.onSetModelKey);
-        }
 
         // Support custom i18n
         if (!mergedOptions.i18n) {
@@ -424,16 +405,6 @@ class Vditor {
         this.vditor.undo.addToUndoStack(this.vditor);
     }
 
-    /** Set whether GitHub Copilot (VS Code Language Model API) is available */
-    public setCopilotAvailable(available: boolean) {
-        this.aiDialog?.setCopilotAvailable(available);
-    }
-
-    /** Set the list of available VS Code language models */
-    public setVSCodeModels(models: Array<{ id: string; name: string; family: string; vendor: string }>) {
-        this.aiDialog?.setVSCodeModels(models);
-    }
-
     /** Enable or disable config file sync */
     public setViewerSettingsSyncEnabled(enabled: boolean) {
         enableViewerSettingsSync(enabled);
@@ -462,110 +433,6 @@ class Vditor {
             panelElement.innerHTML = buildSettingsPanelHTML(this.vditor);
         }
         refreshSettingsToolbarPanel(this.vditor);
-        refreshAISettingsToolbarPanel(this.vditor);
-    }
-
-    /** Open the AI polish dialog; called externally (context menu, etc.) */
-    public openAIPolishDialog() {
-        if (!this.aiDialog) { return; }
-        const sel = this.getSelection();
-        this.aiSelectionRange = captureEditorSelection(this.vditor);
-        if (this.aiSelectionRange) {
-            showFrozenSelection(this.vditor, this.aiSelectionRange);
-        }
-        this.aiDialog.open(sel || this.getValue(), !!sel);
-    }
-
-    /** Trigger AI polish. capturedMarkdown/isSelection are captured by the caller before blur, so the selection is not lost */
-    public triggerAIPolish(options?: IAIPolishOptions, capturedMarkdown?: string, isSelection?: boolean) {
-        const onPolish = this.vditor.options.ai?.onPolish;
-        if (!onPolish) { return; }
-        const replaceAll = isSelection !== undefined ? !isSelection : !this.getSelection();
-        this.aiReplaceAll = replaceAll;
-        const markdown = capturedMarkdown ?? (this.getSelection() || this.getValue());
-        this.disabled();
-        if (this.aiSelectionRange) {
-            showFrozenSelection(this.vditor, this.aiSelectionRange);
-        }
-        const finishReview = (cancel = false, restoreSelection = true) => {
-            const range = this.aiSelectionRange;
-            const hadSelection = !!range && !this.aiReplaceAll;
-            this.enable();
-            hideFrozenSelection(this.vditor);
-            this.aiSelectionRange = null;
-            this.aiReviewPanel.close();
-            if (restoreSelection && hadSelection) {
-                restoreEditorSelection(this.vditor, range);
-            } else if (restoreSelection) {
-                this.focus();
-            }
-            if (cancel) {
-                this.vditor.options.ai?.onCancelPolish?.();
-            }
-        };
-        this.aiReviewPanel.open(
-            markdown,
-            {
-                onAccept: (result) => {
-                    const range = this.aiSelectionRange?.cloneRange() || null;
-                    finishReview(false, false);
-                    this.applyAIResult(result, this.aiReplaceAll, range);
-                },
-                onReject: () => finishReview(false),
-                onStop: () => finishReview(true),
-            },
-        );
-        onPolish(markdown, (_result: string) => { /* streaming via streamAIChunk/endAIStream */ }, options);
-    }
-
-    /** Receive a streamed AI chunk and update the diff review panel live */
-    public streamAIChunk(chunk: string) {
-        this.aiReviewPanel.stream(chunk);
-    }
-
-    /** The AI stream ended: enable the Accept button; failed: the request failed, there is nothing to accept */
-    public endAIStream(failed = false) {
-        this.aiReviewPanel.endStream(failed);
-    }
-
-    /** Receive the AI polish result: leave the loading state and merge the Markdown into the document */
-    public applyAIResult(markdown: string, replaceAll = false, selectionRange?: Range | null) {
-        this.enable();
-        hideFrozenSelection(this.vditor);
-        if (replaceAll) {
-            this.aiSelectionRange = null;
-            this.setValue(markdown);
-        } else {
-            const range = selectionRange ?? this.aiSelectionRange;
-            this.aiSelectionRange = null;
-            const editor = this.vditor[this.vditor.currentMode].element;
-            const hostBlock = hasClosestBlock(range.startContainer) as HTMLElement | null;
-            if (range && !range.collapsed
-                && editor.contains(range.startContainer)
-                && editor.contains(range.endContainer)) {
-                this.vditor[this.vditor.currentMode].preventInput = true;
-                range.deleteContents();
-                range.collapse(true);
-                setSelectionFocus(range);
-                this.vditor[this.vditor.currentMode].range = range;
-            } else {
-                restoreEditorSelection(this.vditor, range);
-                this.vditor[this.vditor.currentMode].preventInput = true;
-                document.execCommand("delete", false);
-            }
-            const editorHTML = this.vditor.currentMode === "wysiwyg"
-                ? this.vditor.lute.Md2VditorDOM(markdown.trim())
-                : this.vditor.lute.Md2VditorIRDOM(markdown.trim());
-            insertMdForAIReplace(editorHTML, this.vditor, hostBlock);
-            editor.querySelectorAll(`.vditor-${this.vditor.currentMode}__preview[data-render='2']`)
-                .forEach((item: HTMLElement) => {
-                    processCodeRender(item, this.vditor);
-                });
-            if (this.vditor.currentMode === "wysiwyg") {
-                renderCodeBlocks(this.vditor);
-            }
-            recordHistoryChange(this.vditor);
-        }
     }
 
     /** Destroy the editor */
@@ -630,17 +497,6 @@ class Vditor {
             });
 
             initUI(this.vditor);
-
-            if (mergedOptions.ai?.onPolish) {
-                this.aiDialog = new AIDialog(this.vditor, (markdown, isSelection, options) => {
-                    this.triggerAIPolish(options, markdown, isSelection);
-                }, (reason) => {
-                    if (reason !== "submit") {
-                        hideFrozenSelection(this.vditor);
-                        this.aiSelectionRange = null;
-                    }
-                });
-            }
 
             if (mergedOptions.after) {
                 mergedOptions.after();

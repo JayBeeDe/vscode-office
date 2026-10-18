@@ -5,51 +5,15 @@ import { broadcastToMarkdownWebviews } from '@/service/markdown/blockScroll';
 import { i18n } from '@/common/global';
 
 const CONFIG_FILE_NAME = '.vscode-office-viewer.json';
-const AI_PROMPTS_KEY = 'aiPrompts';
-const AI_MODELS_KEY = 'aiModels';
-const JSON_ARRAY_GLOBAL_KEYS = [AI_PROMPTS_KEY, AI_MODELS_KEY] as const;
 
 export type ViewerSettingsPayload = Record<string, unknown>;
 
 export type VditorViewerSettings = {
     globalSettings: Record<string, unknown>;
-    aiPreferences?: Record<string, string>;
-};
-
-const serializeGlobalSettingsForFile = (globalSettings: Record<string, unknown>): Record<string, unknown> => {
-    const result: Record<string, unknown> = { ...globalSettings };
-    for (const key of JSON_ARRAY_GLOBAL_KEYS) {
-        const value = result[key];
-        if (typeof value === 'string' && value) {
-            try {
-                result[key] = JSON.parse(value);
-            } catch {
-                // keep original string
-            }
-        }
-    }
-    // API keys live in the editor's secret storage, never in the shared settings file
-    if (Array.isArray(result[AI_MODELS_KEY])) {
-        result[AI_MODELS_KEY] = (result[AI_MODELS_KEY] as Record<string, unknown>[])
-            .map(model => (model && typeof model === 'object' ? { ...model, key: '' } : model));
-    }
-    return result;
-};
-
-const deserializeGlobalSettingsForVditor = (globalSettings: Record<string, unknown> | undefined): Record<string, unknown> => {
-    const result: Record<string, unknown> = { ...(globalSettings ?? {}) };
-    for (const key of JSON_ARRAY_GLOBAL_KEYS) {
-        const value = result[key];
-        if (value !== undefined && typeof value !== 'string') {
-            result[key] = JSON.stringify(value);
-        }
-    }
-    return result;
 };
 
 export const serializeViewerSettingsForFile = (settings: VditorViewerSettings): ViewerSettingsPayload => ({
-    globalSettings: serializeGlobalSettingsForFile(settings.globalSettings ?? {}),
-    aiPreferences: settings.aiPreferences ?? {},
+    globalSettings: { ...(settings.globalSettings ?? {}) },
 });
 
 export const deserializeViewerSettingsFromFile = (payload: ViewerSettingsPayload | null | undefined): VditorViewerSettings | null => {
@@ -57,8 +21,7 @@ export const deserializeViewerSettingsFromFile = (payload: ViewerSettingsPayload
         return null;
     }
     return {
-        globalSettings: deserializeGlobalSettingsForVditor(payload.globalSettings as Record<string, unknown> | undefined),
-        aiPreferences: (payload.aiPreferences as Record<string, string> | undefined) ?? {},
+        globalSettings: { ...((payload.globalSettings as Record<string, unknown> | undefined) ?? {}) },
     };
 };
 

@@ -11,8 +11,6 @@ import { Global, i18n } from '@/common/global';
 import { bindTheme, getTheme } from '@/common/theme';
 import { getMessages, resolveLanguage } from '@/i18n';
 import { openWikiLink } from '@/service/markdown/wikilink';
-import { streamCustomAI } from '@/service/ai/customAIClient';
-import { buildAIOutputLanguageInstruction } from '@/service/ai/aiOutputLanguage';
 import {
     broadcastToMarkdownWebviews,
     consumePendingBlockScroll,
@@ -33,8 +31,6 @@ export interface MarkdownEditorProviderOptions {
     isWeb?: boolean;
 }
 
-const AI_MODEL_KEY_SECRET_PREFIX = 'vscode-office.aiModelKey.';
-
 const MARKDOWN_SYNC_CONFIG_KEYS = [
     'editMode',
     'theme',
@@ -54,8 +50,6 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
     private countStatus: vscode.StatusBarItem;
     /** the panel whose line and character count is shown */
     private countOwner: Handler | undefined;
-    /** running AI request of each panel: starting one in a panel doesn't cancel another's */
-    private aiRequests = new Map<Handler, { cancellation: vscode.CancellationTokenSource; abort: AbortController }>();
 
     constructor(
         private context: vscode.ExtensionContext, private options: MarkdownEditorProviderOptions = {}
@@ -215,7 +209,6 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
                 this.countOwner = undefined;
                 this.countStatus.hide();
             }
-            this.cancelAIPolish(handler);
         });
         handler.on("init", async () => {
             const viewerSettings = await ViewerSettingsService.loadForWebview();
@@ -324,37 +317,6 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
             if (url) {
                 vscode.env.openExternal(vscode.Uri.parse(url));
             }
-        }).on('queryAIAvailable', () => {
-            void this.notifyAIAvailable(handler);
-        }).on('queryVSCodeModels', async () => {
-            const lm = (vscode as any).lm;
-            if (typeof lm?.selectChatModels !== 'function') {
-                handler.emit('vscodeModels', []);
-                return;
-            }
-            try {
-                const models: any[] = await lm.selectChatModels();
-                handler.emit('vscodeModels', (models ?? []).map((m: any) => ({
-                    id: m.id,
-                    name: m.name,
-                    family: m.family,
-                    vendor: m.vendor,
-                })));
-            } catch {
-                handler.emit('vscodeModels', []);
-            }
-        }).on('aiPolish', async (payload: { markdown: string; options?: any }) => {
-            await this.handleAIPolish(handler, payload.markdown, payload.options);
-        }).on('aiPolishCancel', () => {
-            this.cancelAIPolish(handler);
-        }).on('aiSetModelKey', async ({ modelId, key }: { modelId: string; key: string }) => {
-            if (!modelId) return;
-            const secretKey = `${AI_MODEL_KEY_SECRET_PREFIX}${modelId}`;
-            if (key) {
-                await this.context.secrets.store(secretKey, key);
-            } else {
-                await this.context.secrets.delete(secretKey);
-            }
         }).on('syncViewerSettings', async (settings) => {
             if (await ViewerSettingsService.exists()) {
                 await ViewerSettingsService.writeFromVditor(settings);
@@ -371,119 +333,6 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
         webview.html = Util.buildPath(
             indexHtml.replace("{{baseUrl}}", baseUrl), webview, contextUri
         );
-    }
-
-    private cancelAIPolish(handler: Handler) {
-        const request = this.aiRequests.get(handler);
-        request?.cancellation.cancel();
-        request?.abort.abort();
-        this.aiRequests.delete(handler);
-    }
-
-    private async notifyAIAvailable(handler: Handler) {
-        const lm = (vscode as any).lm;
-        const available = typeof lm?.selectChatModels === 'function';
-        handler.emit('aiAvailable', available);
-    }
-
-    private buildPolishPrompt(markdown: string, options?: any): string {
-        const parts: string[] = [];
-        parts.push('You are a writing assistant.');
-        if (options?.prompt) {
-            parts.push(options.prompt);
-        } else {
-            parts.push('Polish the following Markdown text: improve clarity, fix grammar, and enhance readability.');
-        }
-        if (options?.goal) {
-            parts.push(`Focus on: ${options.goal}`);
-        }
-        parts.push(buildAIOutputLanguageInstruction(options?.outputLanguage, options?.uiLanguage));
-        parts.push('Return ONLY the polished Markdown with no extra commentary.\n\n' + markdown);
-        return parts.join('\n');
-    }
-
-    private async handleAIPolish(handler: Handler, markdown: string, options?: any) {
-        const engine = options?.engine ?? 'vscode';
-
-        this.cancelAIPolish(handler);
-        const request = { cancellation: new vscode.CancellationTokenSource(), abort: new AbortController() };
-        this.aiRequests.set(handler, request);
-
-        if (engine === 'custom') {
-            await this.handleCustomAIPolish(handler, markdown, options, request.abort.signal);
-            return;
-        }
-
-        const lm = (vscode as any).lm;
-        if (typeof lm?.selectChatModels !== 'function') {
-            vscode.window.showWarningMessage(i18n('markdown.aiRequiresVscode'));
-            // failed: the review must not offer to replace the text with nothing
-            handler.emit('aiPolishEnd', { failed: true });
-            return;
-        }
-        try {
-            let model: any;
-            if (options?.vscodeModelId) {
-                const all: any[] = await lm.selectChatModels();
-                model = all?.find((m: any) => m.id === options.vscodeModelId);
-            }
-            if (!model) {
-                let models: any[] = await lm.selectChatModels({ family: 'gpt-4o' });
-                if (!models || models.length === 0) {
-                    models = await lm.selectChatModels();
-                }
-                if (!models || models.length === 0) {
-                    vscode.window.showWarningMessage(i18n('markdown.noAiModel'));
-                    handler.emit('aiPolishEnd', { failed: true });
-                    return;
-                }
-                model = models[0];
-            }
-            const LanguageModelChatMessage = (vscode as any).LanguageModelChatMessage;
-            const messages = [LanguageModelChatMessage.User(this.buildPolishPrompt(markdown, options))];
-            const token = request.cancellation.token;
-            const response = await model.sendRequest(messages, {}, token);
-            for await (const chunk of response.text) {
-                if (token.isCancellationRequested) break;
-                handler.emit('aiPolishChunk', chunk);
-            }
-            if (!token.isCancellationRequested) {
-                handler.emit('aiPolishEnd');
-            }
-        } catch (err: any) {
-            if (request.cancellation.token.isCancellationRequested) return;
-            vscode.window.showErrorMessage(i18n('markdown.aiPolishFailed', { error: String(err?.message ?? err) }));
-            handler.emit('aiPolishEnd', { failed: true });
-        }
-    }
-
-    private async handleCustomAIPolish(handler: Handler, markdown: string, options: any, signal: AbortSignal) {
-        const url = options?.customUrl?.trim();
-        if (!url) {
-            vscode.window.showWarningMessage(i18n('markdown.customAiUrlRequired'));
-            handler.emit('aiPolishEnd', { failed: true });
-            return;
-        }
-        try {
-            await streamCustomAI({
-                url,
-                apiKey: options?.customModelId
-                    ? (await this.context.secrets.get(`${AI_MODEL_KEY_SECRET_PREFIX}${options.customModelId}`))?.trim()
-                    : undefined,
-                model: options?.customModel?.trim(),
-                format: options?.customApiFormat,
-                prompt: this.buildPolishPrompt(markdown, options),
-                signal,
-                onChunk: (chunk: string) => {
-                    handler.emit('aiPolishChunk', chunk);
-                },
-            });
-            handler.emit('aiPolishEnd');
-        } catch (err: any) {
-            if (err?.name === 'AbortError') return;
-            vscode.window.showErrorMessage(i18n('markdown.customAiPolishFailed', { error: String(err?.message ?? err) }));
-            handler.emit('aiPolishEnd', { failed: true });
-        }
     }
 
     private getMarkdownWebviewConfig(configuration: vscode.WorkspaceConfiguration) {
