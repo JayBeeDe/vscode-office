@@ -1,6 +1,7 @@
 import './polyfills/buffer';
 import ReactDOM from 'react-dom/client';
 import './util/vscode.js';
+import './util/theme.ts';
 import { getConfigs } from './util/vscodeConfig.ts';
 import { initI18n, $t } from './i18n/i18nConfig.ts';
 import './main.css'
