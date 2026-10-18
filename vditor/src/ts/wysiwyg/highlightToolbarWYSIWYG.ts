@@ -35,7 +35,6 @@ import {removeBlockElement} from "./processKeydown";
 import {updateActiveHeadingMarker} from "../util/updateActiveHeadingMarker";
 import {showToast} from "../ui/toast";
 import {codicon} from "../util/codicon";
-import {updateBlockHandle} from "./blockHandle";
 import {updateTableHandle} from "./tableHandle";
 import {resolveAdjacentElementFromRange} from "../util/rangeAdjacentElement";
 import {normalizeLinkDestInput} from "../util/linkDest";
@@ -351,7 +350,6 @@ export const highlightToolbarWYSIWYG = (vditor: IVditor) => {
         }
         } finally {
             updateActiveHeadingMarker(vditor);
-            updateBlockHandle(vditor, range?.startContainer);
             updateTableHandle(vditor);
         }
     
