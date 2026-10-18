@@ -31,6 +31,7 @@ See https://github.com/adobe-type-tools/cmap-resources
   <base href="{{baseUrl}}/">
   <link rel="stylesheet" href="viewer.css">
   <link rel="stylesheet" href="viewer_adjust.css">
+  <link rel="stylesheet" href="../theme/dark-palette.css">
   <!-- PDF.js's strings: the `pdf` strings of i18n/<language>.json, filled in by the extension -->
   <script type="application/l10n">{{l10n}}</script>
   <script src="../lib/vscode.js"></script>
@@ -39,6 +40,8 @@ See https://github.com/adobe-type-tools/cmap-resources
   <script src="viewer.js"></script>
   <!-- the `pdf` strings of i18n/<language>.json, filled in by the extension -->
   <script>window.officePdfStrings = {{i18n}};</script>
+  <!-- vscode-office.theme, filled in by the extension -->
+  <script>window.officePdfTheme = {{theme}};</script>
   <script src="main.js"></script>
 </head>
 
@@ -267,8 +270,6 @@ See https://github.com/adobe-type-tools/cmap-resources
               </a>
 
               <div class="splitToolbarButton office-theme-toggle-group">
-                <button id="themeAdaptToggle" class="toolbarButton" title="Enable theme adaptation (follow VS Code colors)" tabindex="35" aria-label="Enable theme adaptation"></button>
-                <div class="splitToolbarButtonSeparator"></div>
                 <button id="darkModeToggle" class="toolbarButton" title="Switch PDF to dark mode (Ctrl/Cmd+L)" tabindex="36" aria-label="Switch PDF to dark mode"></button>
               </div>
 

@@ -103,44 +103,35 @@
         return -1
     }
   }
-  const ADAPTIVE_ICON = '<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M13.2 6.8a5 5 0 1 0-8.5 4.2c.3.7 1.2 1.3 2.5 1.3.5 0 1-.1 1.5-.25"/><circle cx="5.75" cy="7" r=".65" fill="currentColor" stroke="none"/><circle cx="8" cy="5.5" r=".65" fill="currentColor" stroke="none"/><circle cx="10.25" cy="7.25" r=".65" fill="currentColor" stroke="none"/></svg>';
-
   const BULB_ICON = '<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2a3.5 3.5 0 0 0-1.5 6.7V12h3V8.7A3.5 3.5 0 0 0 8 2z"/><path d="M6.25 12h3.5M6.75 13.5h2.5"/></svg>';
 
   const MOON_ICON = '<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M14 8.53A6 6 0 1 1 7.48 2 4.67 4.67 0 0 0 14 8.53z"/></svg>';
 
-  const SUN_STROKE_ICON = '<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="2.75"/><path d="M8 1.5v1.5M8 13v1.5M1.5 8H3M13 8h1.5M3.05 3.05l1.06 1.06M11.89 11.89l1.06 1.06M3.05 12.95l1.06-1.06M11.89 4.11l1.06-1.06"/></svg>';
-
   const strings = window.officePdfStrings || {};
 
-  function setupThemeAdapt() {
-    const STORAGE_KEY = 'office-pdf-adaptive-theme';
-    const apply = (on) => {
-      document.body.classList.toggle('office-adaptive-theme', on);
-      const btn = document.getElementById('themeAdaptToggle');
-      if (btn) {
-        btn.classList.toggle('toggled', on);
-        btn.innerHTML = on ? ADAPTIVE_ICON : SUN_STROKE_ICON;
-        btn.title = `${on ? strings.useLightTheme : strings.adaptThemeHint} (Ctrl/Cmd+Shift+L)`; // i18n-ignore: the shortcut
-        btn.setAttribute('aria-label', on ? strings.useLightTheme : strings.adaptTheme);
-      }
+  // vscode-office.theme: the toolbars, the sidebar and the menus are light or dark; the pages keep
+  // their colours (the dark mode button inverts them)
+  function setupTheme() {
+    let setting = window.officePdfTheme || 'auto';
+    const isVscodeDark = () => {
+      const kind = document.body.getAttribute('data-vscode-theme-kind')
+        || ['vscode-high-contrast-light', 'vscode-light', 'vscode-high-contrast', 'vscode-dark']
+          .find((name) => document.body.classList.contains(name));
+      return kind === 'vscode-dark' || kind === 'vscode-high-contrast';
     };
-    let enabled = false;
-    try { enabled = localStorage.getItem(STORAGE_KEY) === '1'; } catch (e) { }
-    apply(enabled);
-    const toggle = () => {
-      enabled = !enabled;
-      try { localStorage.setItem(STORAGE_KEY, enabled ? '1' : '0'); } catch (e) { }
-      apply(enabled);
+    const apply = () => {
+      const vscodeDark = isVscodeDark();
+      const dark = setting === 'dark' || (setting === 'auto' && vscodeDark);
+      document.body.classList.toggle('office-adaptive-theme', dark);
+      // VS Code's colours are light ones then: ../theme/dark-palette.css replaces them
+      document.body.classList.toggle('office-forced-dark', dark && !vscodeDark);
     };
-    const btn = document.getElementById('themeAdaptToggle');
-    if (btn) btn.addEventListener('click', toggle);
-    window.addEventListener('keydown', (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.shiftKey && !e.altKey && e.key.toLowerCase() === 'l') {
-        e.preventDefault();
-        toggle();
-      }
+    apply();
+    handler.on('theme', (value) => {
+      setting = value;
+      apply();
     });
+    new MutationObserver(apply).observe(document.body, { attributes: true, attributeFilter: ['class', 'data-vscode-theme-kind'] });
   }
 
   function setupDarkMode() {
@@ -463,7 +454,7 @@
   }
 
   window.addEventListener('load', function () {
-    setupThemeAdapt();
+    setupTheme();
     setupDarkMode();
     setupCustomScaleSelect();
     PDFViewerApplication.initializedPromise.then(() => {

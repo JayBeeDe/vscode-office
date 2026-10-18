@@ -1366,9 +1366,6 @@
     "showInFolder": "Show in Folder"
   },
   "pdf": {
-    "useLightTheme": "Use the default light theme",
-    "adaptTheme": "Enable theme adaptation",
-    "adaptThemeHint": "Enable theme adaptation (follow VS Code colors)",
     "switchToLight": "Switch PDF to light mode",
     "switchToDark": "Switch PDF to dark mode",
     "previous": {

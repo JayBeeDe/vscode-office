@@ -168,7 +168,7 @@ body.office-adaptive-theme .office-scale-select.open .office-scale-select-trigge
     float: none;
 }
 
-/* Native PDF.js light theme when adaptive color is off */
+/* Light UI: the native PDF.js light theme */
 body:not(.office-adaptive-theme) {
     color-scheme: light;
     scrollbar-color: rgb(184 184 184) rgb(212 212 215) !important;
@@ -199,7 +199,8 @@ body:not(.office-adaptive-theme) ::-webkit-scrollbar-corner {
     background: rgb(212 212 215) !important;
 }
 
-/* Map PDF.js theme variables to VSCode theme when adaptive is on */
+/* Dark UI (vscode-office.theme): PDF.js's theme variables from VS Code's colours, or from
+   ../theme/dark-palette.css when VS Code is light (office-forced-dark) */
 body.office-adaptive-theme {
     --main-color: var(--vscode-foreground);
     --body-bg-color: var(--vscode-editor-background);
@@ -303,8 +304,8 @@ body.office-adaptive-theme :is(.toolbarButton, .splitToolbarButton > .toolbarBut
     background-color: var(--vscode-toolbar-hoverBackground) !important;
 }
 
-body.office-adaptive-theme .toolbarButton.toggled:not(#darkModeToggle):not(#themeAdaptToggle),
-body.office-adaptive-theme .splitToolbarButton.toggled > .toolbarButton.toggled:not(#darkModeToggle):not(#themeAdaptToggle) {
+body.office-adaptive-theme .toolbarButton.toggled:not(#darkModeToggle),
+body.office-adaptive-theme .splitToolbarButton.toggled > .toolbarButton.toggled:not(#darkModeToggle) {
     background-color: var(--vscode-list-activeSelectionBackground) !important;
     color: var(--vscode-list-activeSelectionForeground) !important;
 }
@@ -471,8 +472,8 @@ html[dir="rtl"] #sidebarResizer {
 /* Default light: outline & toolbar hover & active highlights */
 body:not(.office-adaptive-theme) #outlineView .treeItem > a:hover,
 body:not(.office-adaptive-theme) #outlineView .treeItemToggler:hover + a,
-body:not(.office-adaptive-theme) :is(.toolbarButton, .splitToolbarButton > .toolbarButton, .overlayButton, .findbar button, .secondaryToolbarButton):not(#darkModeToggle):not(#themeAdaptToggle):hover,
-body:not(.office-adaptive-theme) :is(.toolbarButton, .splitToolbarButton > .toolbarButton, .overlayButton, .findbar button, .secondaryToolbarButton):not(#darkModeToggle):not(#themeAdaptToggle):focus {
+body:not(.office-adaptive-theme) :is(.toolbarButton, .splitToolbarButton > .toolbarButton, .overlayButton, .findbar button, .secondaryToolbarButton):not(#darkModeToggle):hover,
+body:not(.office-adaptive-theme) :is(.toolbarButton, .splitToolbarButton > .toolbarButton, .overlayButton, .findbar button, .secondaryToolbarButton):not(#darkModeToggle):focus {
     background-color: var(--office-hover-bg) !important;
     color: var(--office-hover-fg) !important;
 }
@@ -482,8 +483,8 @@ body:not(.office-adaptive-theme) #outlineView .treeItem.selected > a {
     color: var(--office-active-fg) !important;
 }
 
-body:not(.office-adaptive-theme) :is(.toolbarButton.toggled, .splitToolbarButton.toggled > .toolbarButton.toggled, .secondaryToolbarButton.toggled):not(#darkModeToggle):not(#themeAdaptToggle),
-body:not(.office-adaptive-theme) :is(.toolbarButton.toggled, .splitToolbarButton.toggled > .toolbarButton.toggled, .secondaryToolbarButton.toggled):not(#darkModeToggle):not(#themeAdaptToggle):hover {
+body:not(.office-adaptive-theme) :is(.toolbarButton.toggled, .splitToolbarButton.toggled > .toolbarButton.toggled, .secondaryToolbarButton.toggled):not(#darkModeToggle),
+body:not(.office-adaptive-theme) :is(.toolbarButton.toggled, .splitToolbarButton.toggled > .toolbarButton.toggled, .secondaryToolbarButton.toggled):not(#darkModeToggle):hover {
     background-color: var(--office-toolbar-active-bg) !important;
     color: var(--office-toolbar-active-fg) !important;
 }
@@ -507,7 +508,6 @@ body.office-dark .pdfViewer .page {
     box-shadow: 0 0 0 1px #444;
 }
 
-#themeAdaptToggle.toolbarButton::before,
 #darkModeToggle.toolbarButton::before {
     content: none !important;
     display: none !important;
@@ -515,37 +515,28 @@ body.office-dark .pdfViewer .page {
     mask-image: none !important;
 }
 
-#themeAdaptToggle.toolbarButton,
-#themeAdaptToggle.toolbarButton.toggled,
 #darkModeToggle.toolbarButton,
 #darkModeToggle.toolbarButton.toggled {
     background-color: transparent !important;
     color: var(--main-color) !important;
 }
 
-body.office-adaptive-theme #themeAdaptToggle.toolbarButton,
-body.office-adaptive-theme #themeAdaptToggle.toolbarButton.toggled,
 body.office-adaptive-theme #darkModeToggle.toolbarButton,
 body.office-adaptive-theme #darkModeToggle.toolbarButton.toggled {
     color: var(--vscode-icon-foreground, var(--vscode-foreground)) !important;
 }
 
-#themeAdaptToggle.toolbarButton:hover,
-#themeAdaptToggle.toolbarButton.toggled:hover,
 #darkModeToggle.toolbarButton:hover,
 #darkModeToggle.toolbarButton.toggled:hover {
     background-color: var(--office-hover-bg) !important;
     color: var(--office-hover-fg) !important;
 }
 
-body.office-adaptive-theme #themeAdaptToggle.toolbarButton:hover,
-body.office-adaptive-theme #themeAdaptToggle.toolbarButton.toggled:hover,
 body.office-adaptive-theme #darkModeToggle.toolbarButton:hover,
 body.office-adaptive-theme #darkModeToggle.toolbarButton.toggled:hover {
     background-color: var(--vscode-toolbar-hoverBackground) !important;
 }
 
-#themeAdaptToggle.toolbarButton svg,
 #darkModeToggle.toolbarButton svg {
     width: 16px;
     height: 16px;
@@ -553,7 +544,7 @@ body.office-adaptive-theme #darkModeToggle.toolbarButton.toggled:hover {
 }
 
 /* Toolbar icons: mask SVG so color follows currentColor / --main-color */
-.toolbarButton:not(#darkModeToggle):not(#themeAdaptToggle)::before,
+.toolbarButton:not(#darkModeToggle)::before,
 .secondaryToolbarButton::before,
 .findbar .splitToolbarButton .toolbarButton::before {
     content: "" !important;
