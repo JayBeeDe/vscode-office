@@ -1,10 +1,10 @@
-import { MoonOutlined, SunOutlined } from '@ant-design/icons';
 import { App, Input, type InputRef, Table } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import '@vscode/codicons/dist/codicon.css';
 import { $t } from '../../i18n/i18nConfig.ts';
-import { handler, onSaveRequest, vscodeApi } from '../../util/vscode.ts';
+import { handler, onSaveRequest } from '../../util/vscode.ts';
+import { useTheme } from '../../util/theme.ts';
 import { loadOfficeBuffer } from '../../util/loadOfficeContent.ts';
 import {
     formatCellValue,
@@ -20,33 +20,8 @@ import {
 import './Parquet.less';
 
 const PAGE_SIZE = getPageSize();
-const PARQUET_VSCODE_THEME_KEY = 'parquet-vscode-theme';
 
 type ColumnIconKind = 'bool' | 'numeric' | 'string' | 'datetime' | 'structure' | 'field';
-
-function loadParquetVscodeTheme(): boolean {
-    const state = vscodeApi?.getState?.() as { parquetVscodeTheme?: boolean } | undefined;
-    if (state?.parquetVscodeTheme !== undefined) {
-        return state.parquetVscodeTheme;
-    }
-    try {
-        const saved = localStorage.getItem(PARQUET_VSCODE_THEME_KEY);
-        if (saved !== null) {
-            return saved === '1';
-        }
-    } catch { }
-    return true;
-}
-
-function saveParquetVscodeTheme(vscodeTheme: boolean) {
-    try {
-        localStorage.setItem(PARQUET_VSCODE_THEME_KEY, vscodeTheme ? '1' : '0');
-    } catch { }
-    if (vscodeApi?.setState) {
-        const prev = (vscodeApi.getState?.() ?? {}) as Record<string, unknown>;
-        vscodeApi.setState({ ...prev, parquetVscodeTheme: vscodeTheme });
-    }
-}
 
 function resolveColumnIcon(type: string): { icon: string; kind: ColumnIconKind } {
     const upper = `${type}`.toUpperCase();
@@ -81,7 +56,8 @@ function ParquetViewer() {
     const [dirty, setDirty] = useState(false);
     const [saving, setSaving] = useState(false);
     const [readOnly, setReadOnly] = useState(false);
-    const [vscodeTheme, setVscodeTheme] = useState(loadParquetVscodeTheme);
+    // dark: the table takes VS Code's colours (dark-palette.css when VS Code is light)
+    const vscodeTheme = useTheme() === 'dark';
     const readOnlyRef = useRef(false);
     // false while only the first page is read: an edit or a save then would lose the other rows
     const rowsCompleteRef = useRef(false);
@@ -103,14 +79,6 @@ function ParquetViewer() {
             key: `${page}-${index}`,
         }));
     }, [allRows, page]);
-
-    const toggleTheme = () => {
-        setVscodeTheme((prev) => {
-            const next = !prev;
-            saveParquetVscodeTheme(next);
-            return next;
-        });
-    };
 
     const cancelEdit = useCallback(() => {
         setEditingRow(null);
@@ -404,15 +372,6 @@ function ParquetViewer() {
                                         {$t('parquet.save')}
                                     </button>
                                 </div>
-                                <button
-                                    type="button"
-                                    className="parquet-theme-toggle"
-                                    title={vscodeTheme ? $t('common.switchToLight') : $t('common.switchToDark')}
-                                    onClick={toggleTheme}
-                                    aria-label={vscodeTheme ? $t('common.switchToLight') : $t('common.switchToDark')}
-                                >
-                                    {vscodeTheme ? <SunOutlined /> : <MoonOutlined />}
-                                </button>
                             </div>
                             <div className="parquet-viewer__table-wrap">
                                 <Table<TableRow>
