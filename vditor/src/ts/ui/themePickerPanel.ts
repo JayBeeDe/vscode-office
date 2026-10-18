@@ -4,8 +4,6 @@ export interface IThemePickerGroup {
 }
 
 export const EDITOR_THEME_PANEL_CLASS = "vditor-editor-theme-panel";
-export const CM_CHROME_THEME_PANEL_CLASS = "vditor-cm-chrome-theme-panel";
-export const MERMAID_THEME_PANEL_CLASS = "vditor-mermaid-theme-panel";
 
 /** A theme id as the menus show it: `light-forest` is "Light Forest". */
 export const formatThemeName = (themeId: string) =>

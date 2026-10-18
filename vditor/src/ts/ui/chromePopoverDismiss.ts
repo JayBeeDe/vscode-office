@@ -61,18 +61,6 @@ export const isInsideCmLangPopover = (target: Element | null) => {
     return !!target?.closest(".vditor-cm-chrome__lang");
 };
 
-export const isInsideCmThemePopover = (target: Element | null) => {
-    return !!target?.closest(
-        ".vditor-cm-chrome__theme, .vditor-cm-chrome__theme-panel",
-    );
-};
-
-export const isInsideMermaidThemePopover = (target: Element | null) => {
-    return !!target?.closest(
-        ".vditor-mermaid-chrome__theme, .vditor-mermaid-chrome__theme-panel",
-    );
-};
-
 export const isInsideSettingsThemePopover = (target: Element | null) => {
     return !!target?.closest(".vditor-theme-picker-popover");
 };

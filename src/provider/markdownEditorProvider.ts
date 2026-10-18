@@ -271,19 +271,6 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
             } else {
                 vscode.env.openExternal(vscode.Uri.parse(linkUri));
             }
-        }).on("codeMirrorTheme", (theme: string) => {
-            const validThemes = ["auto", "default", "light", "dark"];
-            if (validThemes.includes(theme)) {
-                Global.updateConfig("markdown.codeMirrorTheme", theme === "default" ? "auto" : theme);
-            }
-        }).on("mermaidTheme", (theme: string) => {
-            const validThemes = [
-                "auto", "light", "light-forest", "light-ocean", "light-sunset",
-                "dark", "dark-dracula",
-            ];
-            if (validThemes.includes(theme)) {
-                Global.updateConfig("markdown.mermaidTheme", theme);
-            }
         }).on("editMode", (mode: string) => {
             if (mode === "wysiwyg" || mode === "ir") {
                 Global.updateConfig("markdown.editMode", mode);
