@@ -61,10 +61,3 @@ export const isInsideCmLangPopover = (target: Element | null) => {
     return !!target?.closest(".vditor-cm-chrome__lang");
 };
 
-export const isInsideSettingsThemePopover = (target: Element | null) => {
-    return !!target?.closest(".vditor-theme-picker-popover");
-};
-
-export const isInsideSettingsFloatingMenu = (target: Element | null) => {
-    return !!target?.closest(".vditor-settings-panel__floating-menu");
-};

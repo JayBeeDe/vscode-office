@@ -25,7 +25,6 @@ let toolbar = [
   'undo',
   'redo',
   '|',
-  'settings',
   'help',
 ]
 

@@ -23,14 +23,7 @@ import { saveCacheFocus } from "./cacheFocus";
 import { clearActiveHeadingMarker } from "./updateActiveHeadingMarker";
 import { handleAutoSymbolPair } from "./autoSymbol";
 import { handleVscodeShortcut } from "./vscodeShortcut";
-import {
-    EDITOR_FONT_SIZE_DEFAULT,
-    EDITOR_FONT_SIZE_KEY,
-    FONT_SIZE_MAX,
-    FONT_SIZE_MIN,
-    getGlobalLocalStorageSetting,
-    setGlobalLocalStorageSetting,
-} from "./globalLocalStorageSettings";
+import { applyEditorSettings, getEditorFontSize, stepEditorFontSize } from "./editorSettings";
 
 const markImageLoading = (img: HTMLImageElement) => {
     if (img.complete && img.naturalWidth > 0) {
@@ -40,29 +33,6 @@ const markImageLoading = (img: HTMLImageElement) => {
     const clear = () => img.removeAttribute("data-loading");
     img.addEventListener("load", clear, { once: true });
     img.addEventListener("error", clear, { once: true });
-};
-
-const parsePxValue = (value: string): number | undefined => {
-    const match = value.trim().match(/^(\d+(?:\.\d+)?)px$/i);
-    if (!match) {
-        return undefined;
-    }
-    const parsed = Number(match[1]);
-    return Number.isFinite(parsed) ? parsed : undefined;
-};
-
-const resolveCurrentEditorFontSize = (vditor: IVditor): number => {
-    const stored = getGlobalLocalStorageSetting<number>(EDITOR_FONT_SIZE_KEY);
-    if (stored !== undefined) {
-        return stored;
-    }
-
-    const content = vditor.element.querySelector<HTMLElement>(".vditor-ir")
-        || vditor.element.querySelector<HTMLElement>(".vditor-wysiwyg")
-        || vditor.element;
-    return parsePxValue(getComputedStyle(vditor.element).getPropertyValue("--editor-font-size"))
-        ?? parsePxValue(getComputedStyle(content).fontSize)
-        ?? EDITOR_FONT_SIZE_DEFAULT;
 };
 
 const WHEEL_FONT_SIZE_THROTTLE_MS = 250;
@@ -87,14 +57,16 @@ export const wheelZoomFontSizeEvent = (vditor: IVditor, editorElement: HTMLEleme
             return;
         }
 
-        const current = resolveCurrentEditorFontSize(vditor);
-        const next = Math.min(FONT_SIZE_MAX, Math.max(FONT_SIZE_MIN, current + direction));
+        const current = getEditorFontSize(vditor);
+        const next = stepEditorFontSize(vditor, direction);
         if (next === current) {
             return;
         }
 
-        setGlobalLocalStorageSetting(EDITOR_FONT_SIZE_KEY, next);
-        vditor.element.style.setProperty("--editor-font-size", `${next}px`);
+        // shown at once; the extension saves it in vscode-office.markdown.editorFontSize
+        vditor.options.editorSettings = { ...vditor.options.editorSettings, editorFontSize: next };
+        applyEditorSettings(vditor);
+        vditor.options.changeEditorFontSize?.(next);
         lastAppliedAt = now;
     }, { passive: false });
 };

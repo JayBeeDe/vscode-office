@@ -49,7 +49,6 @@
     }
   },
   "markdown": {
-    "codeBlockHeight": "最大高さ",
     "expandCode": "展開",
     "collapseCode": "折りたたむ",
     "alignCenter": "中央",
@@ -130,18 +129,6 @@
     "wysiwyg": "ウィジウィグ",
     "aiSave": "保存",
     "aiCancel": "キャンセル",
-    "aiDelete": "削除",
-    "imageSize": "画像サイズ",
-    "imageMaxWidth": "最大幅",
-    "imageMaxHeight": "最大高さ",
-    "pageWidth": "ページ幅",
-    "boldColor": "太字の色",
-    "boldColorDefault": "デフォルト",
-    "boldColorPlain": "本文色",
-    "boldColorAccent": "アクセント",
-    "boldColorRed": "赤",
-    "boldColorOrange": "オレンジ",
-    "boldColorPurple": "紫",
-    "boldColorTeal": "ティール"
+    "aiDelete": "削除"
   }
 }

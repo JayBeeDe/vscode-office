@@ -16,7 +16,6 @@ import {renderTocNow} from "../util/toc";
 import {ensureEditorBoundaryParagraphs, renderDomByMd} from "../wysiwyg/renderDomByMd";
 import {renderCodeBlocks} from "../codeBlock/codeMirrorManager";
 import {MenuItem} from "./MenuItem";
-import {refreshSettingsToolbarPanel} from "../ui/settingsPanel";
 import {
     disableToolbar,
     enableToolbar,
@@ -145,7 +144,6 @@ export const setEditMode = (
     }
 
     refreshEditModePanel(vditor);
-    refreshSettingsToolbarPanel(vditor);
 };
 
 export class EditMode extends MenuItem {

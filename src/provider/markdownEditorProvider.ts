@@ -39,6 +39,24 @@ const MARKDOWN_SYNC_CONFIG_KEYS = [
 
 type MarkdownSyncConfigKey = typeof MARKDOWN_SYNC_CONFIG_KEYS[number];
 
+/** The editor's display settings, sent together as `editorSettings` */
+const EDITOR_SETTING_KEYS = [
+    'uiFontSize',
+    'editorFontSize',
+    'editorFontFamily',
+    'boldColor',
+    'pageWidth',
+    'editorLineHeight',
+    'codeFontFamily',
+    'codeBlockMaxHeight',
+    'imageMaxWidth',
+    'imageMaxHeight',
+] as const;
+
+function getEditorSettings(config: vscode.WorkspaceConfiguration) {
+    return Object.fromEntries(EDITOR_SETTING_KEYS.map(key => [key, config.get(key)]));
+}
+
 /**
  * support view and edit office files.
  */
@@ -67,13 +85,17 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
         context.subscriptions.push(
             vscode.workspace.onDidChangeConfiguration((event) => {
                 const config = vscode.workspace.getConfiguration('vscode-office.markdown');
-                const patch: Partial<Record<MarkdownSyncConfigKey, unknown>> = {};
+                const patch: Partial<Record<MarkdownSyncConfigKey | 'editorSettings', unknown>> = {};
                 let changed = false;
                 for (const key of MARKDOWN_SYNC_CONFIG_KEYS) {
                     if (event.affectsConfiguration(`vscode-office.markdown.${key}`)) {
                         patch[key] = config.get(key);
                         changed = true;
                     }
+                }
+                if (EDITOR_SETTING_KEYS.some(key => event.affectsConfiguration(`vscode-office.markdown.${key}`))) {
+                    patch.editorSettings = getEditorSettings(config);
+                    changed = true;
                 }
                 if (changed) {
                     broadcastToMarkdownWebviews('markdownConfig', patch);
@@ -261,6 +283,11 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
             } else {
                 vscode.env.openExternal(vscode.Uri.parse(linkUri));
             }
+        }).on("editorFontSize", (size: unknown) => {
+            // ctrl/⌘+wheel in the editor
+            if (typeof size === "number") {
+                Global.updateConfig("markdown.editorFontSize", size);
+            }
         }).on("editMode", (mode: string) => {
             if (mode === "wysiwyg" || mode === "ir") {
                 Global.updateConfig("markdown.editMode", mode);
@@ -334,6 +361,7 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
             pageTheme: configuration.get<string>("theme", "auto"),
             codeMirrorTheme: configuration.get<string>("codeMirrorTheme", "auto"),
             mermaidTheme: configuration.get<string>("mermaidTheme", "auto"),
+            editorSettings: getEditorSettings(configuration),
             markdown: {
                 math: {
                     macros: markdownConfiguration.get<Record<string, string>>("math.macros", {}),
