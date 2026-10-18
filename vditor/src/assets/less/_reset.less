@@ -1,3 +1,9 @@
+@keyframes vditor-mermaid-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 @keyframes vditor-img-shimmer {
   0% {
     background-position: 200% 0;
@@ -302,6 +308,31 @@
     .language-mermaid {
       text-align: center;
       background-color: var(--mermaid-bg, var(--toolbar-background-color, #fff));
+    }
+
+    // until mermaidRender has drawn the diagram: a spinner rather than its source
+    .language-mermaid:not([data-vditor-mermaid-processed]):not(:empty) {
+      position: relative;
+      min-height: 48px;
+      overflow: hidden;
+      color: transparent;
+      font-size: 0;
+      white-space: nowrap;
+
+      &::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 20px;
+        height: 20px;
+        margin: -10px 0 0 -10px;
+        box-sizing: border-box;
+        border: 2px solid color-mix(in srgb, var(--front-color, #333) 20%, transparent);
+        border-top-color: var(--front-color, #333);
+        border-radius: 50%;
+        animation: vditor-mermaid-spin 0.8s linear infinite;
+      }
     }
 
     // Inline math source code is an internal sync channel, should never show.

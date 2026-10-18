@@ -103,6 +103,8 @@ const renderMermaidElements = async (
         }
         const code = getMermaidSource(item).trim();
         if (!code) {
+            // nothing to draw: done, or the loading spinner would stay
+            item.setAttribute(MERMAID_PROCESSED_ATTR, "true");
             continue;
         }
         storeMermaidSource(item, code);
