@@ -61,19 +61,13 @@
     }
 
     &:hover &-mark,
-    &--drag &-mark,
     &--menu &-mark {
       display: none;
     }
 
     &:hover &-grip,
-    &--drag &-grip,
     &--menu &-grip {
       display: block;
-    }
-
-    &--drag {
-      cursor: grabbing;
     }
 
     &--menu {
@@ -161,23 +155,6 @@
         background-color: color-mix(in srgb, var(--link-color, var(--list-hover-color, @blurColor)) 12%, var(--panel-background-color));
         color: var(--link-color, var(--list-hover-color, @blurColor));
       }
-    }
-  }
-
-  &__drop-line {
-    position: absolute;
-    z-index: 6;
-    display: none;
-    border-radius: 1px;
-    background: var(--list-hover-color, @blurColor);
-    box-shadow: 0 0 0 1px color-mix(in srgb, var(--list-hover-color, @blurColor) 18%, transparent);
-    pointer-events: none;
-  }
-
-  &--dragging {
-    .vditor-panel,
-    .vditor-table-handle__menu {
-      display: none !important;
     }
   }
 }

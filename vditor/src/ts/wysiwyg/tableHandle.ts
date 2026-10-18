@@ -6,8 +6,6 @@ import {
     insertColumn,
     insertRow,
     insertRowAbove,
-    moveTableColumn,
-    moveTableRow,
     setTableAlign,
 } from "../util/fixBrowserBehavior";
 import { codicon, TABLE_CODICONS } from "../util/codicon";
@@ -19,7 +17,6 @@ const AXIS_CLASS = "vditor-table-handle__axis";
 const AXIS_MARK_CLASS = "vditor-table-handle__axis-mark";
 const AXIS_GRIP_CLASS = "vditor-table-handle__axis-grip";
 const AXIS_GRIP_COL_CLASS = "vditor-table-handle__axis-grip--col";
-const AXIS_DRAG_CLASS = "vditor-table-handle__axis--drag";
 const AXIS_MENU_CLASS = "vditor-table-handle__axis--menu";
 const AXIS_ROW_CLASS = "vditor-table-handle__axis--row";
 const AXIS_COL_CLASS = "vditor-table-handle__axis--col";
@@ -27,9 +24,6 @@ const MENU_CLASS = "vditor-table-handle__menu";
 const MENU_PORTAL_CLASS = "vditor-table-handle__menu--portal";
 const MENU_DIVIDER_CLASS = "vditor-table-handle__menu-divider";
 const MENU_ITEM_CURRENT_CLASS = "vditor-table-handle__menu-item--current";
-const DROP_LINE_CLASS = "vditor-table-handle__drop-line";
-const DRAGGING_CLASS = "vditor-table-handle--dragging";
-const DRAG_THRESHOLD = 4;
 const MENU_VIEWPORT_MARGIN = 8;
 
 interface ITableContentRect {
@@ -51,7 +45,6 @@ interface ITableHandleState {
     vditor: IVditor;
     root: HTMLElement;
     menu: HTMLElement;
-    dropLine: HTMLElement;
     rowAxisControl: HTMLButtonElement;
     colAxisControl: HTMLButtonElement;
     wrapper: HTMLElement;
@@ -63,11 +56,7 @@ interface ITableHandleState {
     observedTable: HTMLTableElement | null;
     onTableScroll?: () => void;
     resizeObserver?: ResizeObserver;
-    dragging: boolean;
     menuMode: "row" | "col" | null;
-    dragMode: "row" | "col" | null;
-    dragClientX: number;
-    dragClientY: number;
     onDocumentPointerDown?: (event: PointerEvent) => void;
     scrollTargets?: EventTarget[];
     onScroll?: () => void;
@@ -137,27 +126,6 @@ const getFocusedCell = (vditor: IVditor, editor: HTMLElement): HTMLTableCellElem
     }
     return null;
 };
-
-const getRowIndex = (table: HTMLTableElement, cell: HTMLTableCellElement) => {
-    const row = cell.parentElement as HTMLTableRowElement;
-    for (let i = 0; i < table.rows.length; i++) {
-        if (table.rows[i] === row) {
-            return i;
-        }
-    }
-    return -1;
-};
-
-const getColumnIndex = (cell: HTMLTableCellElement) => {
-    let index = 0;
-    let previous = cell.previousElementSibling;
-    while (previous) {
-        index++;
-        previous = previous.previousElementSibling;
-    }
-    return index;
-};
-
 const shouldShowHandle = (vditor: IVditor, editorElement: HTMLElement, target: EventTarget | null) => {
     if (!isEditingMode(vditor) || vditor[vditor.currentMode]?.element !== editorElement) {
         return false;
@@ -170,11 +138,6 @@ const shouldShowHandle = (vditor: IVditor, editorElement: HTMLElement, target: E
     }
     return true;
 };
-
-const hideDropLine = (state: ITableHandleState) => {
-    state.dropLine.style.display = "none";
-};
-
 const hideAxisMenu = (state: ITableHandleState) => {
     state.menu.style.display = "none";
     state.menu.innerHTML = "";
@@ -195,19 +158,14 @@ const setAxisMenuOpen = (state: ITableHandleState, mode: "row" | "col" | null) =
 };
 
 const hideAll = (state: ITableHandleState) => {
-    state.dragging = false;
-    state.dragMode = null;
     state.activeTable = null;
     state.focusedCell = null;
-    state.root.classList.remove(`${ROOT_CLASS}--visible`, DRAGGING_CLASS);
-    state.rowAxisControl.classList.remove(AXIS_DRAG_CLASS, AXIS_MENU_CLASS);
-    state.colAxisControl.classList.remove(AXIS_DRAG_CLASS, AXIS_MENU_CLASS);
+    state.root.classList.remove(`${ROOT_CLASS}--visible`);
+    state.rowAxisControl.classList.remove(AXIS_MENU_CLASS);
+    state.colAxisControl.classList.remove(AXIS_MENU_CLASS);
     state.rowAxisControl.style.display = "none";
     state.colAxisControl.style.display = "none";
-    hideDropLine(state);
     hideAxisMenu(state);
-    document.body.style.userSelect = "";
-    document.body.style.cursor = "";
     if (state.observedTable && state.onTableScroll) {
         state.observedTable.removeEventListener("scroll", state.onTableScroll);
     }
@@ -302,73 +260,6 @@ const positionAxisControls = (
     state.colAxisControl.style.left = `${colCenterX - wrapperRect.left}px`;
     state.colAxisControl.style.top = `${contentRect.top - wrapperRect.top}px`;
 };
-
-const resolveRowDropIndex = (table: HTMLTableElement, clientY: number) => {
-    for (let i = 0; i < table.rows.length; i++) {
-        const rect = table.rows[i].getBoundingClientRect();
-        if (clientY < rect.top + rect.height / 2) {
-            return i;
-        }
-    }
-    return table.rows.length;
-};
-
-const resolveColumnDropIndex = (table: HTMLTableElement, clientX: number) => {
-    const row = table.rows[0];
-    if (!row) {
-        return 0;
-    }
-    for (let i = 0; i < row.cells.length; i++) {
-        const rect = row.cells[i].getBoundingClientRect();
-        if (clientX < rect.left + rect.width / 2) {
-            return i;
-        }
-    }
-    return row.cells.length;
-};
-
-const positionRowDropLine = (state: ITableHandleState, table: HTMLTableElement, dropIndex: number) => {
-    const wrapperRect = state.wrapper.getBoundingClientRect();
-    const contentRect = getTableContentRect(table);
-    let y = contentRect.bottom;
-    if (dropIndex < table.rows.length) {
-        y = table.rows[dropIndex].getBoundingClientRect().top;
-    }
-    state.dropLine.className = `${DROP_LINE_CLASS} ${DROP_LINE_CLASS}--row`;
-    state.dropLine.style.display = "block";
-    state.dropLine.style.left = `${contentRect.left - wrapperRect.left}px`;
-    state.dropLine.style.top = `${y - wrapperRect.top}px`;
-    state.dropLine.style.width = `${contentRect.right - contentRect.left}px`;
-    state.dropLine.style.height = "2px";
-};
-
-const positionColumnDropLine = (state: ITableHandleState, table: HTMLTableElement, dropIndex: number) => {
-    const wrapperRect = state.wrapper.getBoundingClientRect();
-    const contentRect = getTableContentRect(table);
-    const row = table.rows[0];
-    let x = contentRect.right;
-    if (row && dropIndex < row.cells.length) {
-        x = row.cells[dropIndex].getBoundingClientRect().left;
-    }
-    state.dropLine.className = `${DROP_LINE_CLASS} ${DROP_LINE_CLASS}--col`;
-    state.dropLine.style.display = "block";
-    state.dropLine.style.left = `${x - wrapperRect.left}px`;
-    state.dropLine.style.top = `${contentRect.top - wrapperRect.top}px`;
-    state.dropLine.style.width = "2px";
-    state.dropLine.style.height = `${contentRect.bottom - contentRect.top}px`;
-};
-
-const updateDragDropLine = (state: ITableHandleState) => {
-    if (!state.dragging || !state.activeTable || !state.dragMode) {
-        return;
-    }
-    if (state.dragMode === "row") {
-        positionRowDropLine(state, state.activeTable, resolveRowDropIndex(state.activeTable, state.dragClientY));
-    } else {
-        positionColumnDropLine(state, state.activeTable, resolveColumnDropIndex(state.activeTable, state.dragClientX));
-    }
-};
-
 const repositionControls = (state: ITableHandleState) => {
     if (!state.activeTable || !state.focusedCell) {
         return;
@@ -614,9 +505,6 @@ const runAxisMenuAction = (state: ITableHandleState, action: string) => {
 };
 
 const refresh = (vditor: IVditor, state: ITableHandleState) => {
-    if (state.dragging) {
-        return;
-    }
     if (!shouldShowHandle(vditor, state.editorElement, document.activeElement)) {
         hideAll(state);
         return;
@@ -695,93 +583,13 @@ const createAxisControl = (className: string, horizontalGrip = false) => {
     return button;
 };
 
+/** A click on the row or column control opens its menu (insert, delete, align...) */
 const bindAxisControl = (
     state: ITableHandleState,
     control: HTMLButtonElement,
     mode: "row" | "col",
 ) => {
-    let pointerId = -1;
     let pointerDown = false;
-    let dragStarted = false;
-    let sourceIndex = -1;
-    let dropIndex = -1;
-    let startX = 0;
-    let startY = 0;
-
-    const resetDrag = () => {
-        dragStarted = false;
-        state.dragging = false;
-        state.dragMode = null;
-        control.classList.remove(AXIS_DRAG_CLASS);
-        if (pointerId >= 0 && control.hasPointerCapture(pointerId)) {
-            control.releasePointerCapture(pointerId);
-        }
-        state.root.classList.remove(DRAGGING_CLASS);
-        hideDropLine(state);
-        document.body.style.userSelect = "";
-        document.body.style.cursor = "";
-        pointerId = -1;
-        sourceIndex = -1;
-        dropIndex = -1;
-    };
-
-    const startDrag = () => {
-        if (!state.activeTable || !state.focusedCell) {
-            return;
-        }
-        hideAxisMenu(state);
-        dragStarted = true;
-        state.dragging = true;
-        state.dragMode = mode;
-        sourceIndex = mode === "row"
-            ? getRowIndex(state.activeTable, state.focusedCell)
-            : getColumnIndex(state.focusedCell);
-        dropIndex = sourceIndex;
-        control.classList.add(AXIS_DRAG_CLASS);
-        if (pointerId >= 0) {
-            control.setPointerCapture(pointerId);
-        }
-        state.root.classList.add(DRAGGING_CLASS);
-        document.body.style.userSelect = "none";
-        document.body.style.cursor = mode === "row" ? "row-resize" : "col-resize";
-        if (mode === "row") {
-            dropIndex = resolveRowDropIndex(state.activeTable, state.dragClientY);
-            positionRowDropLine(state, state.activeTable, dropIndex);
-        } else {
-            dropIndex = resolveColumnDropIndex(state.activeTable, state.dragClientX);
-            positionColumnDropLine(state, state.activeTable, dropIndex);
-        }
-    };
-
-    const finishDrag = () => {
-        const table = state.activeTable;
-        if (dragStarted && table) {
-            if (mode === "row") {
-                dropIndex = resolveRowDropIndex(table, state.dragClientY);
-            } else {
-                dropIndex = resolveColumnDropIndex(table, state.dragClientX);
-            }
-        }
-        const shouldMove = dragStarted && table && sourceIndex >= 0 && dropIndex >= 0 && sourceIndex !== dropIndex;
-        const moveFrom = sourceIndex;
-        const moveTo = dropIndex;
-        resetDrag();
-        pointerDown = false;
-        if (shouldMove && table) {
-            if (mode === "row") {
-                moveTableRow(state.vditor, table, moveFrom, moveTo);
-            } else {
-                moveTableColumn(state.vditor, table, moveFrom, moveTo);
-            }
-            state.vditor.undo.addToUndoStack(state.vditor);
-            execAfterRender(state.vditor, {
-                enableAddUndoStack: false,
-                enableHint: false,
-                enableInput: true,
-            });
-        }
-        refresh(state.vditor, state);
-    };
 
     control.addEventListener("pointerdown", (event) => {
         if (event.button !== 0 || !state.focusedCell || !state.activeTable) {
@@ -789,44 +597,9 @@ const bindAxisControl = (
         }
         event.preventDefault();
         pointerDown = true;
-        pointerId = event.pointerId;
-        startX = event.clientX;
-        startY = event.clientY;
-        state.dragClientX = event.clientX;
-        state.dragClientY = event.clientY;
-    });
-
-    control.addEventListener("pointermove", (event) => {
-        state.dragClientX = event.clientX;
-        state.dragClientY = event.clientY;
-        if (!pointerDown) {
-            return;
-        }
-        if (!dragStarted) {
-            const dx = event.clientX - startX;
-            const dy = event.clientY - startY;
-            if (Math.hypot(dx, dy) >= DRAG_THRESHOLD) {
-                startDrag();
-            }
-            return;
-        }
-        if (!state.activeTable) {
-            return;
-        }
-        if (mode === "row") {
-            dropIndex = resolveRowDropIndex(state.activeTable, event.clientY);
-            positionRowDropLine(state, state.activeTable, dropIndex);
-        } else {
-            dropIndex = resolveColumnDropIndex(state.activeTable, event.clientX);
-            positionColumnDropLine(state, state.activeTable, dropIndex);
-        }
     });
 
     control.addEventListener("pointerup", () => {
-        if (dragStarted) {
-            finishDrag();
-            return;
-        }
         if (pointerDown) {
             showAxisMenu(state, control, mode);
         }
@@ -834,10 +607,6 @@ const bindAxisControl = (
     });
 
     control.addEventListener("pointercancel", () => {
-        if (dragStarted) {
-            resetDrag();
-            refresh(state.vditor, state);
-        }
         pointerDown = false;
     });
 };
@@ -854,24 +623,18 @@ export const initTableHandle = (vditor: IVditor, wrapper: HTMLElement, editorEle
     menu.className = `vditor-hint ${MENU_CLASS}`;
     menu.style.display = "none";
 
-    const dropLine = document.createElement("div");
-    dropLine.className = DROP_LINE_CLASS;
-    dropLine.style.display = "none";
-
     const rowAxisControl = createAxisControl(AXIS_ROW_CLASS);
     const colAxisControl = createAxisControl(AXIS_COL_CLASS, true);
 
     root.appendChild(rowAxisControl);
     root.appendChild(colAxisControl);
     root.appendChild(menu);
-    root.appendChild(dropLine);
     wrapper.insertBefore(root, wrapper.firstChild);
 
     const state: ITableHandleState = {
         vditor,
         root,
         menu,
-        dropLine,
         rowAxisControl,
         colAxisControl,
         wrapper,
@@ -881,11 +644,7 @@ export const initTableHandle = (vditor: IVditor, wrapper: HTMLElement, editorEle
         focusedCell: null,
         refreshRafId: 0,
         observedTable: null,
-        dragging: false,
         menuMode: null,
-        dragMode: null,
-        dragClientX: 0,
-        dragClientY: 0,
     };
     handleMap.set(editorElement, state);
 
@@ -915,7 +674,7 @@ export const initTableHandle = (vditor: IVditor, wrapper: HTMLElement, editorEle
     document.addEventListener("pointerdown", state.onDocumentPointerDown);
 
     const onMouseMove = (event: MouseEvent) => {
-        if (state.dragging || isAxisMenuOpen(state)) {
+        if (isAxisMenuOpen(state)) {
             return;
         }
         if (!shouldShowHandle(vditor, editorElement, event.target)) {
@@ -940,7 +699,7 @@ export const initTableHandle = (vditor: IVditor, wrapper: HTMLElement, editorEle
     };
 
     const onMouseLeave = (event: MouseEvent) => {
-        if (state.dragging || isAxisMenuOpen(state)) {
+        if (isAxisMenuOpen(state)) {
             return;
         }
         const related = event.relatedTarget as Node | null;
@@ -952,11 +711,6 @@ export const initTableHandle = (vditor: IVditor, wrapper: HTMLElement, editorEle
     };
 
     const onScroll = () => {
-        if (state.dragging) {
-            updateDragDropLine(state);
-            repositionControls(state);
-            return;
-        }
         if (isAxisMenuOpen(state) && state.menuMode) {
             repositionControls(state);
             const control = state.menuMode === "row" ? state.rowAxisControl : state.colAxisControl;
