@@ -13,7 +13,6 @@
     pointer-events: auto;
   }
 
-  &__drag,
   &__insert {
     display: flex;
     align-items: center;
@@ -25,7 +24,7 @@
     border-radius: var(--vditor-popover-radius, 6px);
     background: color-mix(in srgb, var(--toolbar-icon-color) 4%, transparent);
     color: var(--toolbar-icon-color);
-    cursor: grab;
+    cursor: pointer;
     transition:
       background-color 0.18s var(--vditor-popover-ease, ease-in-out),
       color 0.18s var(--vditor-popover-ease, ease-in-out);
@@ -36,23 +35,7 @@
     }
 
     &:active {
-      cursor: grabbing;
       background: color-mix(in srgb, var(--toolbar-icon-color) 14%, transparent);
-    }
-  }
-
-  &__grip {
-    width: 8px;
-    height: 14px;
-    display: block;
-    opacity: 0.88;
-  }
-
-  &__insert {
-    cursor: pointer;
-
-    &:active {
-      cursor: pointer;
     }
   }
 
@@ -61,35 +44,6 @@
     height: 12px;
     display: block;
     opacity: 0.9;
-  }
-
-  &__drop-line {
-    position: absolute;
-    z-index: 3;
-    height: 2px;
-    border-radius: 1px;
-    background: var(--list-hover-color, @blurColor);
-    box-shadow: 0 0 0 1px color-mix(in srgb, var(--list-hover-color, @blurColor) 18%, transparent);
-    pointer-events: none;
-  }
-
-  &__source--dragging {
-    visibility: hidden;
-  }
-}
-
-.vditor-block-handle__ghost {
-  position: fixed;
-  z-index: 10000;
-  pointer-events: none;
-  opacity: 0.45;
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-
-.vditor-block-handle--dragging {
-  .vditor-panel {
-    display: none !important;
   }
 }
 

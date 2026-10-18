@@ -2,49 +2,21 @@ import { isInsideCodeBlockChrome } from "../codeBlock/codeMirrorManager";
 import { syncBlockMarkerTop } from "../util/blockMarker";
 import { execAfterRender } from "../util/fixBrowserBehavior";
 import { scrollElementIntoEditorView, setSelectionFocus } from "../util/selection";
-import { renderTocNow } from "../util/toc";
 
 const ROOT_CLASS = "vditor-block-handle";
-const DRAG_CLASS = "vditor-block-handle__drag";
 const INSERT_CLASS = "vditor-block-handle__insert";
-const GRIP_CLASS = "vditor-block-handle__grip";
 const INSERT_ICON_CLASS = "vditor-block-handle__insert-icon";
-const DROP_LINE_CLASS = "vditor-block-handle__drop-line";
-const DRAGGING_CLASS = "vditor-block-handle--dragging";
-const SOURCE_DRAGGING_CLASS = "vditor-block-handle__source--dragging";
-const GHOST_CLASS = "vditor-block-handle__ghost";
 const TARGET_CLASS = "vditor-block-handle-target";
 const HANDLE_GAP = 4;
 const HANDLE_SIZE = 20;
-/** Pixel tolerance for triggering the insertion line early when dragging upwards */
-const DROP_LINE_HIT_OFFSET = 14;
-
-interface DropTarget {
-    container: HTMLElement;
-    referenceNode: Element | null;
-}
-
-interface DropTargetLine extends DropTarget {
-    y: number;
-}
-
 interface IBlockHandleState {
     root: HTMLElement;
-    dragBtn: HTMLButtonElement;
     insertBtn: HTMLButtonElement;
-    dropLine: HTMLElement;
     wrapper: HTMLElement;
     editorElement: HTMLElement;
     activeBlock: HTMLElement | null;
-    dragging: boolean;
     visible: boolean;
     hideTimer: number | null;
-    dragBlock: HTMLElement | null;
-    dropTarget: DropTarget | null;
-    originalDropTarget: DropTarget | null;
-    dragGhost: HTMLElement | null;
-    dragOffsetX: number;
-    dragOffsetY: number;
     moveRafId: number;
     unbind?: () => void;
 }
@@ -178,7 +150,7 @@ const getListItemAtPoint = (y: number, editor: HTMLElement, hitElement: Element 
     return best;
 };
 
-const getDraggableBlock = (node: Node | null, editor: HTMLElement): HTMLElement | null => {
+const getHandleBlock = (node: Node | null, editor: HTMLElement): HTMLElement | null => {
     if (!node) {
         return null;
     }
@@ -206,7 +178,7 @@ const getDraggableBlock = (node: Node | null, editor: HTMLElement): HTMLElement 
     return element as HTMLElement;
 };
 
-const getDraggableBlockFromPoint = (x: number, y: number, editor: HTMLElement) => {
+const getHandleBlockFromPoint = (x: number, y: number, editor: HTMLElement) => {
     const hitElement = getHitElementAtPoint(x, y);
     const tocBlock = getTocBlock(hitElement, editor);
     if (tocBlock) {
@@ -216,206 +188,8 @@ const getDraggableBlockFromPoint = (x: number, y: number, editor: HTMLElement) =
     if (listItem) {
         return listItem;
     }
-    return getDraggableBlock(hitElement, editor);
+    return getHandleBlock(hitElement, editor);
 };
-
-const cloneDropTarget = (target: DropTarget): DropTarget => ({
-    container: target.container,
-    referenceNode: target.referenceNode,
-});
-
-const dropTargetsEqual = (a: DropTarget | null, b: DropTarget | null) => {
-    if (!a || !b) {
-        return a === b;
-    }
-    return a.container === b.container && a.referenceNode === b.referenceNode;
-};
-
-const wouldMoveBlock = (block: HTMLElement, target: DropTarget) => {
-    if (target.container !== block.parentElement) {
-        return true;
-    }
-    if (target.referenceNode === block) {
-        return false;
-    }
-    if (target.referenceNode === block.nextElementSibling) {
-        return false;
-    }
-    if (!target.referenceNode && !block.nextElementSibling) {
-        return false;
-    }
-    return true;
-};
-
-const addListDropTargets = (list: HTMLElement, targets: DropTargetLine[], exclude: HTMLElement) => {
-    if (isInsideToc(list)) {
-        return;
-    }
-    for (const child of list.children) {
-        if (child.tagName !== "LI" || child === exclude) {
-            continue;
-        }
-        const rect = (child as HTMLElement).getBoundingClientRect();
-        targets.push({
-            container: list,
-            referenceNode: child,
-            y: rect.top,
-        });
-        for (const nested of child.children) {
-            if (isListElement(nested)) {
-                addListDropTargets(nested as HTMLElement, targets, exclude);
-            }
-        }
-    }
-    const listRect = list.getBoundingClientRect();
-    targets.push({
-        container: list,
-        referenceNode: null,
-        y: listRect.bottom,
-    });
-};
-
-const collectDropTargets = (editor: HTMLElement, exclude: HTMLElement) => {
-    const targets: DropTargetLine[] = [];
-
-    for (const child of editor.children) {
-        if (child === exclude) {
-            continue;
-        }
-        if (isListElement(child)) {
-            addListDropTargets(child as HTMLElement, targets, exclude);
-            continue;
-        }
-        const rect = (child as HTMLElement).getBoundingClientRect();
-        targets.push({
-            container: editor,
-            referenceNode: child,
-            y: rect.top,
-        });
-    }
-    targets.push({
-        container: editor,
-        referenceNode: null,
-        y: editor.getBoundingClientRect().bottom,
-    });
-    targets.sort((a, b) => a.y - b.y);
-    return targets;
-};
-
-const resolveDropTarget = (editor: HTMLElement, clientY: number, exclude: HTMLElement) => {
-    const targets = collectDropTargets(editor, exclude);
-    let best = targets[targets.length - 1];
-    for (const target of targets) {
-        if (clientY < target.y + DROP_LINE_HIT_OFFSET) {
-            best = target;
-            break;
-        }
-    }
-    return best;
-};
-
-const getCurrentDropTarget = (block: HTMLElement, editor: HTMLElement): DropTarget => {
-    const parent = block.parentElement as HTMLElement;
-    if (isListElement(parent)) {
-        return { container: parent, referenceNode: block };
-    }
-    if (parent === editor) {
-        return { container: editor, referenceNode: block };
-    }
-    return { container: editor, referenceNode: block };
-};
-
-const cleanupEmptyLists = (start: HTMLElement | null) => {
-    let list = start;
-    while (list && isListElement(list)) {
-        if (list.childElementCount > 0) {
-            break;
-        }
-        const parent = list.parentElement;
-        list.remove();
-        list = parent;
-    }
-};
-
-const liToParagraphHtml = (li: HTMLElement) => {
-    const clone = li.cloneNode(true) as HTMLElement;
-    clone.querySelector('input[type="checkbox"]')?.remove();
-    return clone.innerHTML.trim();
-};
-
-const createTopLevelListFromLi = (li: HTMLElement) => {
-    const sourceList = li.parentElement as HTMLElement;
-    const list = document.createElement(sourceList.tagName.toLowerCase());
-    if (sourceList.getAttribute("data-block") === "0") {
-        list.setAttribute("data-block", "0");
-    }
-    const marker = sourceList.getAttribute("data-marker");
-    if (marker) {
-        list.setAttribute("data-marker", marker);
-    }
-    const tight = sourceList.getAttribute("data-tight");
-    if (tight) {
-        list.setAttribute("data-tight", tight);
-    }
-    list.appendChild(li.cloneNode(true));
-    return list;
-};
-
-const createLiFromBlock = (block: HTMLElement, listContainer: HTMLElement) => {
-    const li = document.createElement("li");
-    const sampleLi = listContainer.querySelector("li");
-    if (sampleLi?.classList.contains("vditor-task")) {
-        li.classList.add("vditor-task");
-        li.innerHTML = `<input type="checkbox" /> ${block.innerHTML}`;
-    } else {
-        li.innerHTML = block.innerHTML;
-    }
-    return li;
-};
-
-const applyDropTarget = (block: HTMLElement, target: DropTarget, editor: HTMLElement) => {
-    const oldListParent = block.tagName === "LI" ? block.parentElement : null;
-
-    if (block.tagName === "LI" && target.container === editor) {
-        const node = block.querySelector("ul, ol")
-            ? createTopLevelListFromLi(block)
-            : (() => {
-                const paragraph = document.createElement("p");
-                paragraph.setAttribute("data-block", "0");
-                paragraph.innerHTML = liToParagraphHtml(block);
-                return paragraph;
-            })();
-        if (target.referenceNode) {
-            editor.insertBefore(node, target.referenceNode);
-        } else {
-            editor.appendChild(node);
-        }
-        block.remove();
-        cleanupEmptyLists(oldListParent as HTMLElement);
-        return;
-    }
-
-    if (block.tagName !== "LI" && isListElement(target.container)) {
-        const li = createLiFromBlock(block, target.container);
-        if (target.referenceNode) {
-            target.container.insertBefore(li, target.referenceNode);
-        } else {
-            target.container.appendChild(li);
-        }
-        block.remove();
-        return;
-    }
-
-    if (target.referenceNode) {
-        target.container.insertBefore(block, target.referenceNode);
-    } else {
-        target.container.appendChild(block);
-    }
-    if (oldListParent && oldListParent !== target.container) {
-        cleanupEmptyLists(oldListParent as HTMLElement);
-    }
-};
-
 const clearBlockHandleTarget = (block: HTMLElement | null) => {
     block?.classList.remove(TARGET_CLASS);
 };
@@ -443,46 +217,7 @@ const positionHandle = (state: IBlockHandleState, block: HTMLElement) => {
     state.root.classList.add(`${ROOT_CLASS}--visible`);
     state.visible = true;
 };
-
-const getDropLineMetrics = (target: DropTarget) => {
-    if (target.referenceNode instanceof HTMLElement) {
-        const rect = target.referenceNode.getBoundingClientRect();
-        return { y: rect.top, left: rect.left, width: rect.width };
-    }
-    const container = target.container;
-    let anchor: HTMLElement | null = null;
-    if (isListElement(container)) {
-        for (let i = container.children.length - 1; i >= 0; i--) {
-            const child = container.children[i];
-            if (child.tagName === "LI") {
-                anchor = child as HTMLElement;
-                break;
-            }
-        }
-    } else {
-        anchor = container.lastElementChild as HTMLElement | null;
-    }
-    if (anchor) {
-        const rect = anchor.getBoundingClientRect();
-        return { y: rect.bottom, left: rect.left, width: rect.width };
-    }
-    const rect = container.getBoundingClientRect();
-    return { y: rect.bottom, left: rect.left, width: rect.width };
-};
-
-const positionDropLine = (state: IBlockHandleState, target: DropTarget) => {
-    const metrics = getDropLineMetrics(target);
-    const wrapperRect = state.wrapper.getBoundingClientRect();
-    state.dropLine.style.top = `${metrics.y - wrapperRect.top}px`;
-    state.dropLine.style.left = `${metrics.left - wrapperRect.left}px`;
-    state.dropLine.style.width = `${metrics.width}px`;
-    state.dropLine.style.display = "block";
-};
-
 const hideHandle = (state: IBlockHandleState) => {
-    if (state.dragging) {
-        return;
-    }
     if (state.hideTimer !== null) {
         clearTimeout(state.hideTimer);
     }
@@ -494,26 +229,6 @@ const hideHandle = (state: IBlockHandleState) => {
         state.root.classList.remove(`${ROOT_CLASS}--visible`);
     }, 500);
 };
-
-const removeDragGhost = (state: IBlockHandleState) => {
-    state.dragGhost?.remove();
-    state.dragGhost = null;
-};
-
-const createDragGhost = (block: HTMLElement) => {
-    const rect = block.getBoundingClientRect();
-    const blockStyle = getComputedStyle(block);
-    const ghost = document.createElement("div");
-    ghost.className = GHOST_CLASS;
-    ghost.textContent = block.innerText.trim() || "\u00a0";
-    ghost.style.maxWidth = `${rect.width}px`;
-    ghost.style.font = blockStyle.font;
-    ghost.style.lineHeight = blockStyle.lineHeight;
-    ghost.style.color = blockStyle.color;
-    document.body.appendChild(ghost);
-    return ghost;
-};
-
 const createEmptySiblingHTML = (block: HTMLElement) => {
     if (block.tagName === "LI") {
         const marker = block.getAttribute("data-marker");
@@ -573,108 +288,6 @@ const insertEmptyBlockAfterActiveBlock = (vditor: IVditor, state: IBlockHandleSt
         enableInput: true,
     });
 };
-
-const positionDragGhost = (
-    ghost: HTMLElement,
-    clientX: number,
-    clientY: number,
-    offsetX: number,
-    offsetY: number,
-) => {
-    ghost.style.left = `${clientX - offsetX}px`;
-    ghost.style.top = `${clientY - offsetY}px`;
-};
-
-const finishDrag = (vditor: IVditor, state: IBlockHandleState) => {
-    const editor = state.editorElement;
-    const block = state.dragBlock;
-    const dropTarget = state.dropTarget;
-    state.dragging = false;
-    state.dragBlock = null;
-    state.dropTarget = null;
-    state.wrapper.classList.remove(DRAGGING_CLASS);
-    state.dropLine.style.display = "none";
-    removeDragGhost(state);
-    document.body.style.userSelect = "";
-    document.body.style.cursor = "";
-
-    if (block && dropTarget) {
-        block.classList.remove(SOURCE_DRAGGING_CLASS);
-        const moved = !dropTargetsEqual(state.originalDropTarget, dropTarget)
-            && wouldMoveBlock(block, dropTarget);
-        if (moved) {
-            applyDropTarget(block, dropTarget, editor);
-            renderTocNow(vditor);
-            vditor.undo.addToUndoStack(vditor);
-            execAfterRender(vditor, {
-                enableAddUndoStack: false,
-                enableHint: false,
-                enableInput: true,
-            });
-        }
-        state.activeBlock = block.isConnected ? block : null;
-        if (state.activeBlock) {
-            positionHandle(state, state.activeBlock);
-        }
-    }
-};
-
-const startDrag = (vditor: IVditor, state: IBlockHandleState, event: PointerEvent) => {
-    const block = state.activeBlock;
-    if (!block || !isEditingMode(vditor)) {
-        return;
-    }
-    event.preventDefault();
-    event.stopPropagation();
-
-    const editor = state.editorElement;
-    const blockRect = block.getBoundingClientRect();
-    const currentTarget = getCurrentDropTarget(block, editor);
-    state.dragging = true;
-    state.dragBlock = block;
-    state.originalDropTarget = cloneDropTarget(currentTarget);
-    state.dropTarget = cloneDropTarget(currentTarget);
-    state.dragOffsetX = event.clientX - blockRect.left;
-    state.dragOffsetY = event.clientY - blockRect.top;
-    state.dragGhost = createDragGhost(block);
-    positionDragGhost(state.dragGhost, event.clientX, event.clientY, state.dragOffsetX, state.dragOffsetY);
-    state.wrapper.classList.add(DRAGGING_CLASS);
-    block.classList.add(SOURCE_DRAGGING_CLASS);
-    state.root.classList.remove(`${ROOT_CLASS}--visible`);
-    document.body.style.userSelect = "none";
-    document.body.style.cursor = "grabbing";
-
-    const initialLine = resolveDropTarget(editor, event.clientY, block);
-    state.dropTarget = { container: initialLine.container, referenceNode: initialLine.referenceNode };
-    positionDropLine(state, state.dropTarget);
-    state.dragBtn.setPointerCapture(event.pointerId);
-
-    const onPointerMove = (moveEvent: PointerEvent) => {
-        if (state.dragGhost) {
-            positionDragGhost(
-                state.dragGhost,
-                moveEvent.clientX,
-                moveEvent.clientY,
-                state.dragOffsetX,
-                state.dragOffsetY,
-            );
-        }
-        const line = resolveDropTarget(editor, moveEvent.clientY, block);
-        state.dropTarget = { container: line.container, referenceNode: line.referenceNode };
-        positionDropLine(state, state.dropTarget);
-    };
-
-    const onPointerUp = (upEvent: PointerEvent) => {
-        state.dragBtn.releasePointerCapture(upEvent.pointerId);
-        document.removeEventListener("pointermove", onPointerMove);
-        document.removeEventListener("pointerup", onPointerUp);
-        finishDrag(vditor, state);
-    };
-
-    document.addEventListener("pointermove", onPointerMove);
-    document.addEventListener("pointerup", onPointerUp);
-};
-
 const shouldShowHandle = (vditor: IVditor, editorElement: HTMLElement | undefined, target: EventTarget | null) => {
     if (!isEditingMode(vditor) || !editorElement || vditor[vditor.currentMode]?.element !== editorElement) {
         return false;
@@ -690,7 +303,7 @@ const shouldShowHandle = (vditor: IVditor, editorElement: HTMLElement | undefine
 
 const showForBlock = (vditor: IVditor, block: HTMLElement | null) => {
     const state = getBlockHandleState(vditor);
-    if (!state || !block || state.dragging) {
+    if (!state || !block) {
         return;
     }
     if (state.hideTimer !== null) {
@@ -713,12 +326,6 @@ export const initBlockHandle = (vditor: IVditor, wrapper: HTMLElement, editorEle
     const root = document.createElement("div");
     root.className = ROOT_CLASS;
 
-    const dragBtn = document.createElement("button");
-    dragBtn.type = "button";
-    dragBtn.className = DRAG_CLASS;
-    dragBtn.setAttribute("aria-label", window.VditorI18n.dragBlock || "Drag to move block");
-    dragBtn.innerHTML = `<svg class="${GRIP_CLASS}" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 14" width="8" height="14"><circle cx="2" cy="2" r="1.2" fill="currentColor"/><circle cx="6" cy="2" r="1.2" fill="currentColor"/><circle cx="2" cy="7" r="1.2" fill="currentColor"/><circle cx="6" cy="7" r="1.2" fill="currentColor"/><circle cx="2" cy="12" r="1.2" fill="currentColor"/><circle cx="6" cy="12" r="1.2" fill="currentColor"/></svg>`;
-
     const insertBtn = document.createElement("button");
     insertBtn.type = "button";
     insertBtn.className = INSERT_CLASS;
@@ -726,41 +333,21 @@ export const initBlockHandle = (vditor: IVditor, wrapper: HTMLElement, editorEle
     insertBtn.setAttribute("title", window.VditorI18n["insert-after"] || "Insert line after");
     insertBtn.innerHTML = `<svg class="${INSERT_ICON_CLASS}" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12" width="12" height="12"><path fill="currentColor" d="M5 1h2v4h4v2H7v4H5V7H1V5h4z"/></svg>`;
     root.appendChild(insertBtn);
-    root.appendChild(dragBtn);
 
-    const dropLine = document.createElement("div");
-    dropLine.className = DROP_LINE_CLASS;
-    dropLine.style.display = "none";
-    wrapper.insertBefore(dropLine, wrapper.firstChild);
     wrapper.insertBefore(root, wrapper.firstChild);
 
     const state: IBlockHandleState = {
         root,
-        dragBtn,
         insertBtn,
-        dropLine,
         wrapper,
         editorElement,
         activeBlock: null,
-        dragging: false,
         visible: false,
         hideTimer: null,
-        dragBlock: null,
-        dropTarget: null,
-        originalDropTarget: null,
-        dragGhost: null,
-        dragOffsetX: 0,
-        dragOffsetY: 0,
         moveRafId: 0,
     };
     handleMap.set(editorElement, state);
 
-    dragBtn.addEventListener("mousedown", (event) => {
-        event.preventDefault();
-    });
-    dragBtn.addEventListener("pointerdown", (event) => {
-        startDrag(vditor, state, event);
-    });
     insertBtn.addEventListener("mousedown", (event) => {
         event.preventDefault();
     });
@@ -781,10 +368,10 @@ export const initBlockHandle = (vditor: IVditor, wrapper: HTMLElement, editorEle
         }
         state.moveRafId = requestAnimationFrame(() => {
             state.moveRafId = 0;
-            if (state.dragging || !shouldShowHandle(vditor, editorElement, pendingMoveTarget)) {
+            if (!shouldShowHandle(vditor, editorElement, pendingMoveTarget)) {
                 return;
             }
-            const block = getDraggableBlockFromPoint(pendingMoveX, pendingMoveY, editorElement);
+            const block = getHandleBlockFromPoint(pendingMoveX, pendingMoveY, editorElement);
             if (block) {
                 showForBlock(vditor, block);
             } else {
@@ -794,9 +381,6 @@ export const initBlockHandle = (vditor: IVditor, wrapper: HTMLElement, editorEle
     };
 
     const onMouseLeave = (event: MouseEvent) => {
-        if (state.dragging) {
-            return;
-        }
         const related = event.relatedTarget as Node | null;
         if (related && (state.root.contains(related) || state.wrapper.contains(related))) {
             return;
@@ -805,7 +389,7 @@ export const initBlockHandle = (vditor: IVditor, wrapper: HTMLElement, editorEle
     };
 
     const onScroll = () => {
-        if (state.activeBlock && !state.dragging) {
+        if (state.activeBlock) {
             positionHandle(state, state.activeBlock);
         }
     };
@@ -842,7 +426,6 @@ export const initBlockHandle = (vditor: IVditor, wrapper: HTMLElement, editorEle
         editorElement.removeEventListener("scroll", onScroll);
         window.removeEventListener("scroll", onScroll);
         root.remove();
-        dropLine.remove();
         handleMap.delete(editorElement);
     };
 };
