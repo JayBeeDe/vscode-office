@@ -228,25 +228,6 @@ body:has(.xmind-viewer.xmind-dark) {
     user-select: none;
 }
 
-.xmind-theme-toggle {
-    flex-shrink: 0;
-    width: 28px;
-    height: 28px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid var(--viewer-border);
-    border-radius: 6px;
-    background: color-mix(in srgb, var(--viewer-bg) 90%, transparent);
-    color: var(--viewer-fg);
-    cursor: pointer;
-    transition: background-color 0.15s;
-}
-
-.xmind-theme-toggle:hover {
-    background: var(--viewer-hover);
-}
-
 .xmind-map-title {
     font-size: 13px;
     font-weight: 600;
