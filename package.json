@@ -370,7 +370,7 @@
 				"title": "Markdown",
 				"order": 1,
 				"properties": {
-					"vscode-office.editorTheme": {
+					"vscode-office.markdown.editorTheme": {
 						"type": "string",
 						"enum": [
 							"Auto",
@@ -387,7 +387,7 @@
 						"default": "Auto",
 						"markdownDescription": "The theme for the Markdown editor."
 					},
-					"vscode-office.codeMirrorTheme": {
+					"vscode-office.markdown.codeMirrorTheme": {
 						"type": "string",
 						"enum": [
 							"Auto",
@@ -405,7 +405,7 @@
 						"default": "Auto",
 						"markdownDescription": "CodeMirror syntax theme for code blocks in the Markdown editor."
 					},
-					"vscode-office.mermaidTheme": {
+					"vscode-office.markdown.mermaidTheme": {
 						"type": "string",
 						"enum": [
 							"Auto",
@@ -421,7 +421,7 @@
 						"default": "Auto",
 						"markdownDescription": "Mermaid diagram theme in the Markdown editor. Auto follows the editor theme."
 					},
-					"vscode-office.editMode": {
+					"vscode-office.markdown.editMode": {
 						"type": "string",
 						"enum": [
 							"wysiwyg",
@@ -430,22 +430,22 @@
 						"default": "wysiwyg",
 						"markdownDescription": "Default edit mode for the Markdown editor."
 					},
-					"vscode-office.restoreViewState": {
+					"vscode-office.markdown.restoreViewState": {
 						"type": "boolean",
 						"default": true,
 						"markdownDescription": "Restore caret focus when opening a Markdown file. Scroll position is always restored."
 					},
-					"vscode-office.workspacePathAsImageBasePath": {
+					"vscode-office.markdown.workspacePathAsImageBasePath": {
 						"type": "boolean",
 						"default": false,
 						"description": "Using workspace path as markdown image base path."
 					},
-					"vscode-office.pasteImageToWorkspacePath": {
+					"vscode-office.markdown.pasteImageToWorkspacePath": {
 						"type": "boolean",
 						"default": false,
 						"description": "Paste markdown images into the workspace path and insert image links with a leading slash."
 					},
-					"vscode-office.pasterImgPath": {
+					"vscode-office.markdown.pasterImgPath": {
 						"type": "string",
 						"default": "image/${fileName}/${now}.${ext}",
 						"description": "Markdown paste image path, variables: workspaceDir, fileName, now, date (YYYYMMDD), uuid, ext (file extension)."
@@ -456,11 +456,11 @@
 				"title": "Markdown PDF",
 				"order": 2,
 				"properties": {
-					"vscode-office.chromiumPath": {
+					"vscode-office.markdown.chromiumPath": {
 						"type": "string",
 						"description": "Set the chromium browser location for exporting markdown pdf."
 					},
-					"vscode-office.puppeteerArgs": {
+					"vscode-office.markdown.puppeteerArgs": {
 						"type": "array",
 						"items": {
 							"type": "string"
@@ -468,7 +468,7 @@
 						"default": [],
 						"description": "Additional arguments to pass to Puppeteer/Chromium when exporting PDF. Example: [\"--no-sandbox\", \"--disable-setuid-sandbox\"] for Linux servers running as root."
 					},
-					"vscode-office.pdfMarginTop": {
+					"vscode-office.markdown.pdfMarginTop": {
 						"type": "integer",
 						"default": 25,
 						"description": "Printed pdf default top margin."

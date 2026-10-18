@@ -17,7 +17,7 @@ export function adjustImgPath(uri: vscode.Uri, ext: string = 'png') {
     // without a workspace folder, ${workspaceDir} stands for the document's folder
     const workspacePath = workspaceFolderPath || dirname(uri.fsPath);
     const replaceVariable = (text: string, name: string, value: string) => text.split(`\${${name}}`).join(value);
-    let imgPath = Global.getConfig<string>("pasterImgPath");
+    let imgPath = Global.getConfig<string>("markdown.pasterImgPath");
     imgPath = replaceVariable(imgPath, 'fileName', parse(uri.fsPath).name.replace(/\s/g, ''));
     imgPath = replaceVariable(imgPath, 'now', now.getTime() + "");
     imgPath = replaceVariable(imgPath, 'date', date);
@@ -26,7 +26,7 @@ export function adjustImgPath(uri: vscode.Uri, ext: string = 'png') {
     const fullPath = replaceVariable(imgPath, 'workspaceDir', workspacePath);
     let relPath = imgPath.replace(/\$\{workspaceDir\}\/?/g, '');
     if (
-        Global.getConfig<boolean>("pasteImageToWorkspacePath", false)
+        Global.getConfig<boolean>("markdown.pasteImageToWorkspacePath", false)
         && workspaceFolderPath
         && !isAbsolute(imgPath)
     ) {

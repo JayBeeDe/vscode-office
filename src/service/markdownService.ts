@@ -42,7 +42,7 @@ export class MarkdownService {
     }
 
     public getConfig(option: ExportOption) {
-        const top = Global.getConfig("pdfMarginTop")
+        const top = Global.getConfig("markdown.pdfMarginTop")
         const { type = 'pdf', withoutOutline = false } = option;
         return {
             type,
@@ -64,7 +64,7 @@ export class MarkdownService {
 
     private getPuppeteerArgs(): string[] {
         // Custom args from settings
-        const customArgs = Global.getConfig<string[]>("puppeteerArgs");
+        const customArgs = Global.getConfig<string[]>("markdown.puppeteerArgs");
         if (customArgs && customArgs.length > 0) {
             return customArgs;
         }
@@ -110,7 +110,7 @@ export class MarkdownService {
     }
 
     private getChromiumPath() {
-        const chromiumPath = Global.getConfig<string>("chromiumPath")
+        const chromiumPath = Global.getConfig<string>("markdown.chromiumPath")
         const paths = [chromiumPath, ...this.paths]
         for (const path of paths) {
             if (existsSync(path)) {
