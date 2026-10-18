@@ -1,6 +1,9 @@
-// VS Code integration: bridge theme tokens and layout overrides via CSS variables.
+// VS Code integration: bridge theme tokens and layout overrides via CSS variables. The page panes
+// (vscode-office.markdown.theme) and the menus inside them (vscode-office.theme) set their own theme.
 
-#vditor[data-editor-theme]:not([data-editor-theme="Auto"]) {
+#vditor[data-editor-theme],
+#vditor .vditor-page[data-editor-theme],
+#vditor .vditor-ui[data-editor-theme] {
   --table-border: var(--border-color);
   --table-row-border: var(--border-color);
   --panel-background-color: var(--textarea-background-color, var(--bg-color));

@@ -14,7 +14,7 @@ const isDarkPreview = (theme?: string) => {
     if (theme === "dark") {
         return true;
     }
-    return !!document.querySelector(".vditor--dark, [data-editor-theme='One Dark'], [data-editor-theme='Github Dark'], [data-editor-theme='Dracula'], [data-editor-theme='Monokai'], [data-editor-theme='Nord']");
+    return !!document.querySelector(".vditor--dark, [data-editor-theme='One Dark']");
 };
 
 const resolvePreviewOptions = (

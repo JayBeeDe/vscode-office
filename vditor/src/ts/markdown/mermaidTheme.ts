@@ -1,13 +1,3 @@
-export interface IEditorAccentColors {
-    red: string;
-    blue: string;
-    yellow: string;
-    orange: string;
-    green: string;
-    purple: string;
-    foreground: string;
-}
-
 interface IMermaidThemePalette {
     background: string;
     panel: string;
@@ -24,7 +14,7 @@ interface IMermaidThemePalette {
 }
 
 const CUSTOM_MERMAID_THEMES: Record<string, IMermaidThemePalette> = {
-    Ocean: {
+    "light-ocean": {
         background: "#f3fbff",
         panel: "#ffffff",
         foreground: "#183042",
@@ -37,7 +27,7 @@ const CUSTOM_MERMAID_THEMES: Record<string, IMermaidThemePalette> = {
         warning: "#f2b84b",
         error: "#d25b6a",
     },
-    Sunset: {
+    "light-sunset": {
         background: "#fff8f0",
         panel: "#ffffff",
         foreground: "#3d261f",
@@ -50,7 +40,7 @@ const CUSTOM_MERMAID_THEMES: Record<string, IMermaidThemePalette> = {
         warning: "#d99b25",
         error: "#c24645",
     },
-    Dracula: {
+    "dark-dracula": {
         background: "#282a36",
         panel: "#343746",
         foreground: "#f8f8f2",
@@ -64,39 +54,6 @@ const CUSTOM_MERMAID_THEMES: Record<string, IMermaidThemePalette> = {
         error: "#ff5555",
         darkMode: true,
     },
-    Monokai: {
-        background: "#272822",
-        panel: "#35362f",
-        foreground: "#f8f8f2",
-        muted: "#cfcfc2",
-        border: "#75715e",
-        accent: "#a6e22e",
-        secondary: "#66d9ef",
-        tertiary: "#ae81ff",
-        note: "#49483e",
-        warning: "#e6db74",
-        error: "#f92672",
-        darkMode: true,
-    },
-    Nord: {
-        background: "#2e3440",
-        panel: "#3b4252",
-        foreground: "#eceff4",
-        muted: "#d8dee9",
-        border: "#4c566a",
-        accent: "#88c0d0",
-        secondary: "#8fbcbb",
-        tertiary: "#b48ead",
-        note: "#434c5e",
-        warning: "#ebcb8b",
-        error: "#bf616a",
-        darkMode: true,
-    },
-};
-
-const readCssVar = (root: HTMLElement, name: string, fallback = ""): string => {
-    const value = getComputedStyle(root).getPropertyValue(name).trim();
-    return value || fallback;
 };
 
 const parseRgb = (color: string): [number, number, number] | null => {
@@ -142,31 +99,19 @@ export const findVditorRoot = (element: HTMLElement): HTMLElement => {
     return vditor ?? element;
 };
 
-export const readEditorAccentColors = (root: HTMLElement): IEditorAccentColors => ({
-    red: readCssVar(root, "--chart-red", "#e51400"),
-    blue: readCssVar(root, "--chart-blue", "#3794ff"),
-    yellow: readCssVar(root, "--chart-yellow", "#cca700"),
-    orange: readCssVar(root, "--chart-orange", "#d18616"),
-    green: readCssVar(root, "--chart-green", "#89d185"),
-    purple: readCssVar(root, "--chart-purple", "#b180d7"),
-    foreground: readCssVar(root, "--chart-foreground", readCssVar(root, "--front-color", "#333333")),
-});
-
-export const buildMermaidInitConfig = (themeId: string, root: HTMLElement) => {
-    if (themeId === "Light") {
-        return { theme: "default" };
-    }
-    if (themeId === "Dark") {
+/** Mermaid's settings for a theme id of mermaidThemeCatalog (never `auto`, resolved before). */
+export const buildMermaidInitConfig = (themeId: string) => {
+    if (themeId === "dark") {
         return { theme: "dark" };
     }
-    if (themeId === "Forest") {
+    if (themeId === "light-forest") {
         return { theme: "forest" };
     }
     const customTheme = CUSTOM_MERMAID_THEMES[themeId];
     if (customTheme) {
         return buildCustomMermaidThemeConfig(customTheme);
     }
-    return buildMermaidThemeConfig(root);
+    return { theme: "default" };
 };
 
 const buildCustomMermaidThemeConfig = (palette: IMermaidThemePalette) => {
@@ -254,107 +199,6 @@ const buildCustomMermaidThemeConfig = (palette: IMermaidThemePalette) => {
             textColor: palette.foreground,
             titleColor: palette.accent,
             todayLineColor: palette.error,
-        },
-    };
-};
-
-export const buildMermaidThemeConfig = (root: HTMLElement) => {
-    const editorBg = readCssVar(root, "--bg-color");
-    const dark = root.classList.contains("vditor--dark") || isDarkBackground(editorBg);
-    const bg = readCssVar(root, "--toolbar-background-color", readCssVar(root, "--second-bg-color", editorBg));
-    const panelBg = readCssVar(root, "--second-bg-color", readCssVar(root, "--code-bg-color", bg));
-    const fg = readCssVar(root, "--front-color", dark ? "#d4d4d4" : "#333333");
-    const codeBg = readCssVar(root, "--code-bg-color", panelBg);
-    const tableHeader = readCssVar(root, "--table-header-bg", codeBg);
-    const border = readCssVar(root, "--border-color", dark ? "#444444" : "#d0d0d0");
-    const accent = readCssVar(root, "--list-hover-color") || readCssVar(root, "--link-color", readCssVar(root, "--chart-blue"));
-    const muted = readCssVar(root, "--second-color", border);
-    const error = readCssVar(root, "--error-color", readCssVar(root, "--chart-red", "#e51400"));
-    const chart = readEditorAccentColors(root);
-    const noteBg = chart.yellow;
-    const noteFg = isDarkBackground(noteBg) ? fg : "#1f2020";
-    const contrastColor = (bg: string): string => isDarkBackground(bg) ? "#ffffff" : "#1f2020";
-
-    return {
-        theme: "base",
-        themeVariables: {
-            activationBkgColor: chart.blue,
-            activationBorderColor: accent,
-            activeTaskBkgColor: chart.blue,
-            activeTaskBorderColor: accent,
-            actorBkg: panelBg,
-            actorBorder: accent,
-            actorLineColor: muted,
-            actorTextColor: fg,
-            altBackground: codeBg,
-            altSectionBkgColor: chart.orange,
-            arrowheadColor: muted,
-            background: bg,
-            border1: accent,
-            border2: border,
-            classText: fg,
-            clusterBkg: chart.purple,
-            clusterTextColor: contrastColor(chart.purple),
-            clusterBorder: accent,
-            critBkgColor: error,
-            critBorderColor: error,
-            darkMode: dark,
-            defaultLinkColor: accent,
-            doneTaskBkgColor: muted,
-            doneTaskBorderColor: border,
-            edgeLabelBackground: bg,
-            errorBkgColor: error,
-            errorTextColor: contrastColor(error),
-            fillType0: panelBg,
-            fillType1: chart.blue,
-            fillType2: chart.purple,
-            fillType3: chart.green,
-            fillType4: chart.yellow,
-            fillType5: chart.orange,
-            fillType6: chart.red,
-            fillType7: chart.purple,
-            fontFamily: "sans-serif",
-            fontSize: "16px",
-            gridColor: border,
-            labelBackground: bg,
-            labelBoxBkgColor: panelBg,
-            labelBoxBorderColor: accent,
-            labelColor: fg,
-            labelTextColor: fg,
-            lineColor: muted,
-            loopTextColor: chart.orange,
-            mainBkg: panelBg,
-            mainContrastColor: fg,
-            nodeBkg: panelBg,
-            nodeBorder: accent,
-            noteBkgColor: noteBg,
-            noteBorderColor: chart.orange,
-            noteTextColor: noteFg,
-            primaryBorderColor: accent,
-            primaryColor: panelBg,
-            primaryTextColor: fg,
-            secondBkg: chart.green,
-            secondaryBorderColor: chart.blue,
-            secondaryColor: chart.blue,
-            secondaryTextColor: contrastColor(chart.blue),
-            sectionBkgColor: chart.yellow,
-            sectionBkgColor2: chart.orange,
-            sequenceNumberColor: contrastColor(chart.blue),
-            signalColor: chart.blue,
-            signalTextColor: fg,
-            taskBkgColor: chart.green,
-            taskBorderColor: accent,
-            taskTextClickableColor: accent,
-            taskTextColor: contrastColor(chart.green),
-            taskTextDarkColor: "#1f2020",
-            taskTextLightColor: "#ffffff",
-            taskTextOutsideColor: fg,
-            tertiaryBorderColor: chart.purple,
-            tertiaryColor: chart.purple,
-            tertiaryTextColor: contrastColor(chart.purple),
-            textColor: fg,
-            titleColor: chart.blue,
-            todayLineColor: error,
         },
     };
 };

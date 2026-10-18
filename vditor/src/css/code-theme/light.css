@@ -1,7 +1,8 @@
-html[data-cm-theme="One Light"],
-#vditor[data-cm-theme="One Light"] {
+html[data-cm-theme="light"],
+#vditor[data-cm-theme="light"],
+#vditor .vditor-page[data-cm-theme="light"] {
     /* Surface */
-    --cm-bg-color: #fafafa;
+    --cm-bg-color: #f6f8fa;
     --cm-lang-trigger-bg: #ffffff;
     --cm-fg-color: #383a42;
 

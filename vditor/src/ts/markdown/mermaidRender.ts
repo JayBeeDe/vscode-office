@@ -1,7 +1,7 @@
 import {Constants} from "../constants";
 import {addScript} from "../util/addScript";
 import {MERMAID_THEME_ATTR} from "../ui/mermaidThemeCatalog";
-import {resolveMermaidTheme} from "../ui/setMermaidTheme";
+import {shownMermaidTheme} from "../ui/setMermaidTheme";
 import {mermaidRenderAdapter} from "./adapterRender";
 import {ensureMermaidChrome} from "./mermaidChrome";
 import {buildMermaidInitConfig, findVditorRoot} from "./mermaidTheme";
@@ -83,9 +83,9 @@ const renderSingleMermaid = async (item: HTMLElement, code: string, index: numbe
 
 const getThemeId = (themeRoot: HTMLElement, vditor?: IVditor) => {
     if (vditor) {
-        return resolveMermaidTheme(vditor.options);
+        return shownMermaidTheme(vditor);
     }
-    return themeRoot.getAttribute(MERMAID_THEME_ATTR) || "Auto";
+    return themeRoot.getAttribute(MERMAID_THEME_ATTR) || "light";
 };
 
 const renderMermaidElements = async (
@@ -94,7 +94,7 @@ const renderMermaidElements = async (
     vditor?: IVditor,
 ) => {
     const themeId = getThemeId(themeRoot, vditor);
-    const themeConfig = buildMermaidInitConfig(themeId, themeRoot);
+    const themeConfig = buildMermaidInitConfig(themeId);
     mermaid.initialize({...MERMAID_BASE_CONFIG, ...themeConfig});
     for (let i = 0; i < mermaidElements.length; i++) {
         const item = mermaidElements[i] as HTMLElement;

@@ -14,7 +14,7 @@ handler.on("open", async (md) => {
   window.__officeMarkdownFileName = fileName || 'Note';
   const {
     language, i18n, isWeb, isDev, markdown,
-    editMode, editorTheme, codeMirrorTheme, mermaidTheme
+    editMode, theme, pageTheme, codeMirrorTheme, mermaidTheme
   } = config;
   if (isWeb) {
     document.body.classList.add('is-web')
@@ -34,7 +34,8 @@ handler.on("open", async (md) => {
       focusHost: 'vscode',
     },
     mode: editMode,
-    editorTheme,
+    colorTheme: theme,
+    pageTheme,
     codeMirrorTheme,
     mermaidTheme,
     lang: mapVscodeLanguageToVditorLang(language),
@@ -82,9 +83,6 @@ handler.on("open", async (md) => {
     },
     debugger: isDev,
     wysiwygInputPerf: isDev && false,
-    changeEditorTheme(theme) {
-      handler.emit('editorTheme', theme)
-    },
     changeCodeTheme(theme) {
       handler.emit('codeMirrorTheme', theme)
     },
@@ -147,12 +145,15 @@ handler.on("open", async (md) => {
       handler.on('viewerSettings', (settings) => {
         editor.applyViewerSettings(settings);
       });
+      handler.on('theme', (theme) => {
+        editor.setColorTheme(theme);
+      });
       handler.on('markdownConfig', (update) => {
-        if (update.editorTheme !== undefined) {
-          editor.setEditorTheme(update.editorTheme);
+        if (update.theme !== undefined) {
+          editor.setPageTheme(update.theme);
         }
         if (update.codeMirrorTheme !== undefined) {
-          Vditor.setCodeTheme(update.codeMirrorTheme, editor.vditor?.element);
+          editor.setCodeMirrorTheme(update.codeMirrorTheme);
         }
         if (update.mermaidTheme !== undefined) {
           editor.setMermaidTheme(update.mermaidTheme);

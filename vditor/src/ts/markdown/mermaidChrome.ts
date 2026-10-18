@@ -1,6 +1,6 @@
 import { isInsideMermaidThemePopover, registerPopoverOutsideDismiss } from "../ui/chromePopoverDismiss";
 import { MERMAID_THEME_GROUPS } from "../ui/mermaidThemeCatalog";
-import { applyMermaidTheme, resolveMermaidTheme } from "../ui/setMermaidTheme";
+import { applyMermaidTheme, resolveMermaidTheme, shownMermaidTheme } from "../ui/setMermaidTheme";
 import { MERMAID_THEME_PANEL_CLASS } from "../ui/themePickerPanel";
 import { buildMermaidThemePickerPanelHTML, refreshMermaidThemePickerPanel } from "../ui/mermaidThemePickerPanel";
 import { codicon } from "../util/codicon";
@@ -55,10 +55,9 @@ const setThemePanelOpen = (vditor: IVditor, chrome: IMermaidChrome, open: boolea
         }
         const currentTheme = resolveMermaidTheme(vditor.options);
         chrome.themePanel.innerHTML = buildMermaidThemePickerPanelHTML(MERMAID_THEME_GROUPS, currentTheme);
-        syncMermaidPanelTheme(chrome.themePanel, currentTheme);
         chrome.themeWrap.classList.add(MERMAID_THEME_OPEN_CLASS);
         openThemeChrome = chrome;
-        syncMermaidPanelTheme(chrome.themePanel, currentTheme);
+        syncMermaidPanelTheme(chrome.themePanel, shownMermaidTheme(vditor));
     } else if (openThemeChrome === chrome) {
         closeThemePanel();
     }
@@ -73,8 +72,8 @@ const bindThemePanel = (vditor: IVditor, chrome: IMermaidChrome) => {
         }
         const theme = applyMermaidTheme(vditor, button.getAttribute("data-theme") || "");
         refreshAllMermaidThemePanels(theme);
-        chrome.host.setAttribute("data-mermaid-theme", theme);
-        syncMermaidPanelTheme(chrome.themePanel, theme);
+        chrome.host.setAttribute("data-mermaid-theme", shownMermaidTheme(vditor));
+        syncMermaidPanelTheme(chrome.themePanel, shownMermaidTheme(vditor));
     });
 };
 
@@ -138,7 +137,7 @@ export const ensureMermaidHost = (mermaidElement: HTMLElement) => {
 
 export const ensureMermaidChrome = (vditor: IVditor, mermaidElement: HTMLElement) => {
     const host = ensureMermaidHost(mermaidElement);
-    const theme = resolveMermaidTheme(vditor.options);
+    const theme = shownMermaidTheme(vditor);
     host.setAttribute("data-mermaid-theme", theme);
 
     let chrome = chromeMap.get(host);

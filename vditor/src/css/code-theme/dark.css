@@ -1,8 +1,9 @@
-html[data-cm-theme="One Dark"],
-#vditor[data-cm-theme="One Dark"] {
+html[data-cm-theme="dark"],
+#vditor[data-cm-theme="dark"],
+#vditor .vditor-page[data-cm-theme="dark"] {
     /* Surface */
-    --cm-bg-color: #2a2e36;
-    --cm-lang-trigger-bg: #3e4452;
+    --cm-bg-color: #161616;
+    --cm-lang-trigger-bg: #262626;
     --cm-fg-color: #abb2bf;
 
     /* Actions */

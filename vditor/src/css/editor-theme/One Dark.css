@@ -1,9 +1,11 @@
 html[data-editor-theme="One Dark"],
-#vditor[data-editor-theme="One Dark"] {
+#vditor[data-editor-theme="One Dark"],
+#vditor .vditor-page[data-editor-theme="One Dark"],
+#vditor .vditor-ui[data-editor-theme="One Dark"] {
     /* Surface */
-    --bg-color: #282c34;
+    --bg-color: #000000;
     --front-color: #abb2bf;
-    --second-bg-color: #21252b;
+    --second-bg-color: #000000;
     --second-color: #5c6370;
 
     /* Border & Divider */
@@ -26,15 +28,15 @@ html[data-editor-theme="One Dark"],
     --table-border: var(--border-color);
     --table-row-border: var(--border-color);
     --table-header-bg: #2c313a;
-    --table-body-bg: #282c34;
+    --table-body-bg: #000000;
     --table-axis-color: #5c6370;
 
     /* Inline Code */
-    --code-bg-color: #31363f;
+    --code-bg-color: #161616;
     --code-fg-color: var(--front-color);
 
     /* Toolbar & Panel */
-    --toolbar-background-color: #21252b;
+    --toolbar-background-color: #000000;
     --toolbar-icon-color: var(--front-color);
     --toolbar-icon-hover-color: var(--list-hover-color);
     --panel-background-color: var(--bg-color);
@@ -44,7 +46,7 @@ html[data-editor-theme="One Dark"],
     --count-background-color: rgba(171, 178, 191, 0.08);
 
     /* Outline */
-    --outline-bg-color: #2a2e36;
+    --outline-bg-color: #000000;
     --outline-hover-bg: #2f333c;
     --outline-active-bg: #353942;
 
@@ -90,7 +92,9 @@ html[data-editor-theme="One Dark"],
     --scrollbar-thumb-hover: rgba(171, 178, 191, 0.44);
 }
 
-#vditor[data-editor-theme="One Dark"] {
+#vditor[data-editor-theme="One Dark"],
+#vditor .vditor-page[data-editor-theme="One Dark"],
+#vditor .vditor-ui[data-editor-theme="One Dark"] {
     /* IR Syntax */
     --ir-heading-color: #c678dd;
     --ir-title-color: #abb2bf;

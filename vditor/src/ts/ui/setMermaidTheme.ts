@@ -1,51 +1,49 @@
 import {refreshMermaidTheme} from "../markdown/mermaidRender";
+import {isPageDark} from "./colorTheme";
 import {
     MERMAID_THEME_ATTR,
     MERMAID_THEME_AUTO,
     MERMAID_THEME_IDS,
 } from "./mermaidThemeCatalog";
 
-const resolveRoot = (root?: HTMLElement): HTMLElement | null => {
-    if (root) {
-        return root;
-    }
-    return document.getElementById("vditor") ?? document.querySelector(".vditor");
-};
-
 export const normalizeMermaidThemeId = (theme?: string) => {
     if (!theme || theme === "default") {
         return MERMAID_THEME_AUTO;
     }
-    const normalized = MERMAID_THEME_IDS.find((themeId) => themeId.toLowerCase() === theme.toLowerCase());
-    if (normalized) {
-        return normalized;
-    }
     return MERMAID_THEME_IDS.includes(theme) ? theme : MERMAID_THEME_AUTO;
 };
 
+/** The diagrams' theme setting, `auto` included. */
 export const resolveMermaidTheme = (options: {mermaidTheme?: string}) => {
     return normalizeMermaidThemeId(options.mermaidTheme);
 };
 
-export const setMermaidThemeAttr = (theme: string, root?: HTMLElement) => {
-    const resolved = normalizeMermaidThemeId(theme);
-    const element = resolveRoot(root);
-    if (element) {
-        element.setAttribute(MERMAID_THEME_ATTR, resolved);
+/** The theme the diagrams show: `auto` is light or dark, following the page. */
+export const shownMermaidTheme = (vditor: IVditor) => {
+    const theme = resolveMermaidTheme(vditor.options);
+    if (theme !== MERMAID_THEME_AUTO) {
+        return theme;
     }
-    document.documentElement.setAttribute(MERMAID_THEME_ATTR, resolved);
+    return isPageDark(vditor) ? "dark" : "light";
+};
+
+/** Sets the shown theme on the editor, the diagrams and their theme menus. */
+export const syncMermaidTheme = (vditor: IVditor) => {
+    const shown = shownMermaidTheme(vditor);
+    vditor.element.setAttribute(MERMAID_THEME_ATTR, shown);
+    document.documentElement.setAttribute(MERMAID_THEME_ATTR, shown);
+    for (const host of vditor.element.querySelectorAll(".vditor-mermaid-host")) {
+        host.setAttribute(MERMAID_THEME_ATTR, shown);
+    }
+    for (const panel of document.querySelectorAll(".vditor-mermaid-chrome__theme-panel")) {
+        panel.setAttribute(MERMAID_THEME_ATTR, shown);
+    }
 };
 
 export const applyMermaidTheme = (vditor: IVditor, theme: string, notify = true) => {
     const resolved = normalizeMermaidThemeId(theme);
     vditor.options.mermaidTheme = resolved;
-    setMermaidThemeAttr(resolved, vditor.element);
-    for (const host of vditor.element.querySelectorAll(".vditor-mermaid-host")) {
-        host.setAttribute("data-mermaid-theme", resolved);
-    }
-    for (const panel of vditor.element.querySelectorAll(".vditor-mermaid-chrome__theme-panel")) {
-        panel.setAttribute("data-mermaid-theme", resolved);
-    }
+    syncMermaidTheme(vditor);
     refreshMermaidTheme(vditor.element, vditor.options.cdn, vditor);
     if (notify && vditor.options.changeMermaidTheme) {
         vditor.options.changeMermaidTheme(resolved);
@@ -54,7 +52,6 @@ export const applyMermaidTheme = (vditor: IVditor, theme: string, notify = true)
 };
 
 export const initMermaidTheme = (vditor: IVditor) => {
-    const theme = resolveMermaidTheme(vditor.options);
-    vditor.options.mermaidTheme = theme;
-    setMermaidThemeAttr(theme, vditor.element);
+    vditor.options.mermaidTheme = resolveMermaidTheme(vditor.options);
+    syncMermaidTheme(vditor);
 };
