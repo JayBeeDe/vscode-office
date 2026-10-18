@@ -28,8 +28,6 @@
     "common": {
       "failedOpenFile": "ファイルを開けませんでした",
       "officeViewer": "Office Viewer",
-      "switchToLight": "ライトモードに切り替え",
-      "switchToDark": "アダプティブダークモードに切り替え",
       "editInVscode": "VS Code で編集"
     },
     "document": {

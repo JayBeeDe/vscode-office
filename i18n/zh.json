@@ -28,8 +28,6 @@
     "common": {
       "failedOpenFile": "打开文件失败",
       "officeViewer": "Office 查看器",
-      "switchToLight": "切换到浅色模式",
-      "switchToDark": "切换到自适应深色模式",
       "editInVscode": "在 VS Code 中编辑"
     },
     "document": {

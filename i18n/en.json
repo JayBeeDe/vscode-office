@@ -29,10 +29,7 @@
     "common": {
       "failedOpenFile": "Failed to open file",
       "officeViewer": "Office Viewer",
-      "switchToLight": "Switch to light mode",
-      "switchToDark": "Switch to adaptive dark mode",
       "editInVscode": "Edit In VS Code",
-      "switchToDarkHint": "Switch to dark mode (follows the VS Code theme)",
       "previousPage": "Previous page",
       "nextPage": "Next page",
       "save": "Save",

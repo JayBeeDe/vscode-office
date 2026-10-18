@@ -28,8 +28,6 @@
     "common": {
       "failedOpenFile": "Falha ao abrir o arquivo",
       "officeViewer": "Visualizador do Office",
-      "switchToLight": "Alternar para o modo claro",
-      "switchToDark": "Alternar para o modo escuro adaptativo",
       "editInVscode": "Editar no VS Code"
     },
     "document": {
