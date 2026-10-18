@@ -6,7 +6,7 @@ body,
     overflow: hidden;
 }
 
-/* VS Code adaptive mode: sync the webview page background */
+/* dark (vscode-office.theme): sync the webview page background */
 html:has(.word-viewer--vscode-theme),
 html:has(.word-viewer--vscode-theme) body,
 html:has(.word-viewer--vscode-theme) #root {
@@ -70,40 +70,6 @@ html:has(.word-viewer) {
     color: rgba(0, 0, 0, 0.65);
     background: #fffbe6;
     border-bottom: 1px solid #ffe58f;
-}
-
-/* ── Light/dark toggle button (styled after Excel)──── */
-.word-viewer .dark-mode-toggle {
-    position: fixed;
-    top: 18px;
-    right: 18px;
-    z-index: 1000;
-    flex-shrink: 0;
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid rgba(128, 128, 128, 0.4);
-    border-radius: 6px;
-    background-color: rgba(255, 255, 255, 0.85);
-    color: #2c3e50;
-    cursor: pointer;
-    font-size: 13px;
-}
-
-.word-viewer .dark-mode-toggle:hover {
-    background-color: rgba(0, 0, 0, 0.06);
-}
-
-.word-viewer--vscode-theme .dark-mode-toggle {
-    background-color: var(--vscode-editorWidget-background, #252526);
-    color: var(--vscode-editor-foreground, #cccccc);
-    border-color: var(--vscode-editorWidget-border, rgba(128, 128, 128, 0.45));
-}
-
-.word-viewer--vscode-theme .dark-mode-toggle:hover {
-    background-color: var(--vscode-toolbar-hoverBackground, rgba(90, 93, 94, 0.31));
 }
 
 .word-viewer--vscode-theme .word-readonly-banner {

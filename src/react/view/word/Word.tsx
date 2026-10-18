@@ -1,15 +1,13 @@
-import { MoonOutlined, SunOutlined } from "@ant-design/icons";
 import { Alert, Spin } from "antd";
 import { DocxEditor, type DocxEditorRef } from "@eigenpal/docx-editor-react";
 import "@eigenpal/docx-editor-react/styles.css";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { handler, onSaveRequest, vscodeApi } from "../../util/vscode";
+import { handler, onSaveRequest } from "../../util/vscode";
+import { useTheme } from "../../util/theme";
 import { loadOfficeBuffer } from "../../util/loadOfficeContent";
 import { $t, getLanguage, getSection } from "../../i18n/i18nConfig.ts";
 import { LANGUAGES } from "../../../i18n/index.ts";
 import "./Word.css";
-
-type WordColorMode = "light" | "adaptive";
 
 // the editor's toolbar, menus and dialogs: the `document` section of i18n/<language>.json.
 // _lang picks the plural rules: English ones while the language has no strings of its own,
@@ -18,32 +16,6 @@ const EDITOR_STRINGS = {
     ...getSection("document"),
     _lang: "document" in LANGUAGES[getLanguage()] ? getLanguage() : "en",
 };
-
-const WORD_COLOR_MODE_KEY = "office-word-color-mode";
-
-function loadWordColorMode(): WordColorMode {
-    const state = vscodeApi?.getState?.() as { wordColorMode?: WordColorMode } | undefined;
-    if (state?.wordColorMode === "light" || state?.wordColorMode === "adaptive") {
-        return state.wordColorMode;
-    }
-    try {
-        const saved = localStorage.getItem(WORD_COLOR_MODE_KEY);
-        if (saved === "light" || saved === "adaptive") {
-            return saved;
-        }
-    } catch { }
-    return "light";
-}
-
-function saveWordColorMode(mode: WordColorMode) {
-    try {
-        localStorage.setItem(WORD_COLOR_MODE_KEY, mode);
-    } catch { }
-    if (vscodeApi?.setState) {
-        const prev = (vscodeApi.getState?.() ?? {}) as Record<string, unknown>;
-        vscodeApi.setState({ ...prev, wordColorMode: mode });
-    }
-}
 
 interface WordOpenPayload {
     path?: string;
@@ -58,7 +30,7 @@ interface WordOpenPayload {
 export default function Word() {
     const editorRef = useRef<DocxEditorRef>(null);
     const readOnlyRef = useRef(false);
-    const [colorMode, setColorMode] = useState<WordColorMode>(loadWordColorMode);
+    const theme = useTheme();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [readOnly, setReadOnly] = useState(false);
@@ -68,15 +40,8 @@ export default function Word() {
     const [commentsSidebarOpen, setCommentsSidebarOpen] = useState(false);
     const skipCommentsAutoOpenRef = useRef(true);
 
-    const adaptiveColorMode = colorMode === "adaptive";
-
-    const toggleColorMode = () => {
-        setColorMode((prev) => {
-            const next: WordColorMode = prev === "adaptive" ? "light" : "adaptive";
-            saveWordColorMode(next);
-            return next;
-        });
-    };
+    // dark: the toolbars and panels take VS Code's colours (dark-palette.css when VS Code is light)
+    const adaptiveColorMode = theme === "dark";
 
     const emitSave = useCallback((buffer: ArrayBuffer) => {
         const bytes = new Uint8Array(buffer);
@@ -138,15 +103,6 @@ export default function Word() {
 
     return (
         <div className={`word-viewer${adaptiveColorMode ? " word-viewer--vscode-theme" : ""}`}>
-            <button
-                type="button"
-                className="dark-mode-toggle"
-                title={adaptiveColorMode ? $t("common.switchToLight") : $t("common.switchToDarkHint")}
-                aria-label={adaptiveColorMode ? $t("common.switchToLight") : $t("common.switchToDark")}
-                onClick={toggleColorMode}
-            >
-                {adaptiveColorMode ? <SunOutlined /> : <MoonOutlined />}
-            </button>
             <Spin spinning={loading} fullscreen />
             {error && <Alert type="error" message={error} showIcon style={{ margin: 16 }} />}
             {readOnly && !loading && !error && documentBuffer && (
