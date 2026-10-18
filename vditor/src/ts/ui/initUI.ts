@@ -12,7 +12,6 @@ import { setTheme } from "./setTheme";
 import { applyEditorSettings } from "../util/globalLocalStorageSettings";
 import { initSaveToolbarState } from "../util/saveToolbarState";
 import { configureHistoryDeferByDocumentLength } from "../util/historySchedule";
-import { bindTypewriterMode } from "./typewriterMode";
 
 export const initUI = (vditor: IVditor) => {
   purgeLegacyDocumentStateKeys();
@@ -79,7 +78,6 @@ export const initUI = (vditor: IVditor) => {
   bindCacheFocusPersistence(vditor);
   bindDocumentScrollPersistence(vditor);
   bindHistoryInputBufferClick(vditor);
-  bindTypewriterMode(vditor);
 
   const initValue = afterRender(vditor);
   let mode = vditor.options.mode;

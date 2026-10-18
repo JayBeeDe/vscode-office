@@ -72,7 +72,6 @@ import {
 import { WYSIWYG } from "./ts/wysiwyg/index";
 import { input } from "./ts/wysiwyg/input";
 import { ensureEditorBoundaryParagraphs, renderDomByMd } from "./ts/wysiwyg/renderDomByMd";
-import { unbindTypewriterMode } from "./ts/ui/typewriterMode";
 
 class Vditor {
     public static adapterRender = adapterRender;
@@ -576,7 +575,6 @@ class Vditor {
         this.vditor.element.removeAttribute("style");
         this.clearCache();
 
-        unbindTypewriterMode(this.vditor);
         this.vditor.wysiwyg.unbindListener();
     }
 
