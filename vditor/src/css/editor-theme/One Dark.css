@@ -13,7 +13,9 @@ html[data-editor-theme="One Dark"],
     --border-color: #181a1f;
 
     /* Link & State */
-    --link-color: var(--list-hover-color);
+    /* VS Code's accent: links and the text selection */
+    --link-color: var(--vscode-focusBorder, var(--list-hover-color));
+    --selection-bg: color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 40%, transparent);
     --wikilink-color: #c678dd;
     --list-hover-color: #61afef;
     --dropdown-hover-background: #3a3f4b;
@@ -62,10 +64,10 @@ html[data-editor-theme="One Dark"],
     --cm-cursor-fg: var(--list-hover-color);
     --cm-line-number-fg: rgba(171, 178, 191, 0.55);
     --cm-line-number-active-fg: var(--front-color);
-    --cm-selection-bg: rgba(97, 175, 239, 0.35);
-    --cm-selection-bg-focused: rgba(97, 175, 239, 0.48);
-    --cm-selection-bg-inactive: rgba(97, 175, 239, 0.26);
-    --cm-selection-highlight-bg: rgba(97, 175, 239, 0.20);
+    --cm-selection-bg: color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 35%, transparent);
+    --cm-selection-bg-focused: color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 48%, transparent);
+    --cm-selection-bg-inactive: color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 26%, transparent);
+    --cm-selection-highlight-bg: color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 20%, transparent);
 
     /* Embed & Link Card */
     --linkcard-bg: var(--second-bg-color);

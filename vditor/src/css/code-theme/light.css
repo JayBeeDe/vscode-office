@@ -20,9 +20,9 @@ html[data-cm-theme="light"],
     --cm-line-number-active-fg: #383a42;
 
     /* Selection */
-    --cm-selection-bg-inactive: rgba(184, 184, 184, 0.35);
-    --cm-selection-bg-focused: rgba(184, 184, 184, 0.5);
-    --cm-selection-highlight-bg: rgba(184, 184, 184, 0.2);
+    --cm-selection-bg-inactive: color-mix(in srgb, var(--vscode-focusBorder, #0451a5) 22%, transparent);
+    --cm-selection-bg-focused: color-mix(in srgb, var(--vscode-focusBorder, #0451a5) 38%, transparent);
+    --cm-selection-highlight-bg: color-mix(in srgb, var(--vscode-focusBorder, #0451a5) 16%, transparent);
 
     /* Bracket Match */
     --cm-bracket-match-bg: rgba(184, 184, 184, 0.25);
