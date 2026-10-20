@@ -15,7 +15,9 @@ export async function getToolbar(resPath, i18n, onSave = null, isWeb = false) {
         className: 'right',
         icon: codicon(icon),
         click() {
-            handler.emit('export', { type })
+            // VS Code's accent, which the exports use like the editor
+            const accent = getComputedStyle(document.documentElement).getPropertyValue('--vscode-focusBorder').trim()
+            handler.emit('export', { type, accent })
         }
     });
     // the exports need the desktop: Chromium, the file system

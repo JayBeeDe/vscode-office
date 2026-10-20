@@ -16,6 +16,8 @@ const markdownItObsidian = require("./ext/markdown-it-obsidian")
 const markdownItFrontMatterExport = require("./ext/markdown-it-front-matter")
 const { parse } = require("node-html-parser")
 const { exportByType } = require('./html-export')
+// the Mermaid themes of the editor, so that the exported diagrams look the same
+const { buildMermaidInitConfig } = require("../../../vditor/src/ts/markdown/mermaidTheme")
 
 async function convertMarkdown(inputMarkdownFile, config) {
 
@@ -24,7 +26,7 @@ async function convertMarkdown(inputMarkdownFile, config) {
   // without the UTF-8 BOM, or the front matter is not recognised
   const text = fs.readFileSync(inputMarkdownFile).toString().replace(/^\uFEFF/, "")
   const content = convertMarkdownToHtml(inputMarkdownFile, type, text, config)
-  const html = mergeHtml(content, uri, type)
+  const html = mergeHtml(content, uri, type, config)
 
   // insert mermaid script
   let outputHtml = html
@@ -33,7 +35,7 @@ async function convertMarkdown(inputMarkdownFile, config) {
   if (containsMermaid) {
     const mermaidScript = `
     <script src="${getMermaidScriptSrc(type)}"></script>
-    <script>mermaid.initialize({startOnLoad:true});</script>
+    <script>mermaid.initialize(${JSON.stringify({ startOnLoad: true, ...buildMermaidInitConfig(config.mermaidTheme || "light") }).replace(/</g, "\\u003c")});</script>
     `;
     outputHtml = appendHtmlToBody(outputHtml, mermaidScript);
   }
@@ -140,13 +142,18 @@ function convertMarkdownToHtml(filename, type, text, config) {
 /*
  * make html
  */
-function mergeHtml(content, uri, type) {
+function mergeHtml(content, uri, type, config) {
   try {
     const mustache = require("mustache")
     const title = path.basename(uri.fsPath)
     const style = readStyles(type)
     const templatePath = path.join(__dirname, "template", "template.html")
-    return mustache.render(readFile(templatePath), { title, style, content })
+    // the editor's theme variables apply through these attributes (see markdown-theme.css)
+    const editorTheme = config.pageTheme === "dark" ? "One Dark" : "Light"
+    const codeTheme = config.codeTheme === "dark" ? "dark" : "light"
+    const accent = config.accent ? ` style="--vscode-focusBorder: ${config.accent}"` : ""
+    const htmlAttributes = `data-editor-theme="${editorTheme}" data-cm-theme="${codeTheme}"${accent}`
+    return mustache.render(readFile(templatePath), { title, style, content, htmlAttributes })
   } catch (error) {
     showErrorMessage("makeHtml()", error)
     throw error
@@ -265,12 +272,27 @@ function readStyles(type) {
   try {
     const basePath = path.join(__dirname, "styles");
     const katexPath = path.resolve(__dirname, '..', "resource", 'markdown', 'dist', 'js', 'katex', 'katex.min.css');
-    const files = ['arduino-light.css', 'markdown.css', 'markdown-pdf.css']
-    return files.map(file => makeCss(path.join(basePath, file))).join("")
+    const files = ['markdown.css', 'markdown-pdf.css', 'markdown-theme.css']
+    return readEditorThemeVariables()
+      + files.map(file => makeCss(path.join(basePath, file))).join("")
       + makeCss(katexPath, true, type)
   } catch (error) {
     showErrorMessage("readStyles()", error)
   }
+}
+
+/**
+ * The editor's theme variables: the light/dark page and code block themes of the built editor
+ * styles, kept for <html> only (see the data-editor-theme and data-cm-theme attributes).
+ */
+function readEditorThemeVariables() {
+  const css = readFile(path.resolve(__dirname, '..', "resource", 'markdown', 'dist', 'index.css'))
+  const rules = []
+  for (const match of (css || "").matchAll(/html\[data-(?:editor|cm)-theme=[^{]*\{[^}]*\}/g)) {
+    const brace = match[0].indexOf("{")
+    rules.push(match[0].slice(0, brace).split(",")[0] + match[0].slice(brace))
+  }
+  return rules.length ? "\n<style>\n" + rules.join("\n") + "\n</style>\n" : ""
 }
 
 function showErrorMessage(msg, error) {

@@ -392,6 +392,21 @@
 						"default": "auto",
 						"markdownDescription": "Colours of the Markdown editor's page (text, background, code blocks and diagrams); the toolbar, outline and menus follow `#vscode-office.theme#`."
 					},
+					"vscode-office.markdown.exportHtml.theme": {
+						"type": "string",
+						"enum": [
+							"auto",
+							"light",
+							"dark"
+						],
+						"enumDescriptions": [
+							"Follows `vscode-office.markdown.theme`.",
+							"Light page.",
+							"Dark page."
+						],
+						"default": "auto",
+						"markdownDescription": "Colours of the HTML export of a Markdown file. `auto` follows `#vscode-office.markdown.theme#`. PDF and Word exports are always light."
+					},
 					"vscode-office.markdown.codeMirrorTheme": {
 						"type": "string",
 						"enum": [
