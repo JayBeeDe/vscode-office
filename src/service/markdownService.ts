@@ -15,7 +15,11 @@ export type ExportType = 'pdf' | 'html' | 'docx';
 
 interface ExportOption {
     type?: ExportType;
+    /** VS Code's accent (--vscode-focusBorder), as the editor shows it */
+    accent?: string;
 }
+
+type Theme = 'light' | 'dark';
 
 export class MarkdownService {
 
@@ -42,9 +46,16 @@ export class MarkdownService {
 
     public getConfig(option: ExportOption) {
         const top = Global.getConfig("markdown.pdfMarginTop")
-        const { type = 'pdf' } = option;
+        const { type = 'pdf', accent } = option;
         return {
             type,
+            // the page: light, or dark for an HTML export when vscode-office.markdown.exportHtml.theme says so
+            pageTheme: type === 'html' ? this.resolveTheme('markdown.exportHtml.theme', 'markdown.theme', 'theme') : 'light',
+            // code blocks and diagrams follow their settings, `auto` following the editor's page
+            codeTheme: this.resolveTheme('markdown.codeMirrorTheme', 'markdown.theme', 'theme'),
+            mermaidTheme: this.getMermaidTheme(),
+            // a CSS colour only: it goes into the exported HTML
+            accent: /^[#\w(),.%\s-]+$/.test(accent ?? '') ? accent : undefined,
             "styles": [],
             // chromium path
             // PDF needs Chromium; DOCX only uses it, when found, to turn math and diagrams into images
@@ -58,6 +69,27 @@ export class MarkdownService {
             format: "A4",
             margin: { top }
         };
+    }
+
+    /**
+     * The first of these settings set to `light` or `dark`, each one's `auto` following the next
+     * (vscode-office.markdown.theme's follows vscode-office.theme's), then VS Code's own theme.
+     */
+    private resolveTheme(...keys: string[]): Theme {
+        for (const key of keys) {
+            const theme = Global.getConfig<string>(key, 'auto');
+            if (theme === 'light' || theme === 'dark') {
+                return theme;
+            }
+        }
+        const kind = vscode.window.activeColorTheme.kind;
+        return kind === vscode.ColorThemeKind.Dark || kind === vscode.ColorThemeKind.HighContrast ? 'dark' : 'light';
+    }
+
+    /** vscode-office.markdown.mermaidTheme, `auto` following the editor's page like in the editor */
+    private getMermaidTheme(): string {
+        const theme = Global.getConfig<string>('markdown.mermaidTheme', 'auto');
+        return theme && theme !== 'auto' ? theme : this.resolveTheme('markdown.theme', 'theme');
     }
 
     private getPuppeteerArgs(): string[] {

@@ -111,7 +111,8 @@ export async function exportByType(filePath, data, type, config) {
 async function replaceDynamicContentWithImages(data, config = {}, exportFilePath = "") {
     const containsKatex = data.indexOf('class="katex') >= 0 || data.indexOf("class='katex") >= 0
     const containsMermaid = data.indexOf('class="mermaid') >= 0 || data.indexOf("class='mermaid") >= 0
-    if (!containsKatex && !containsMermaid) {
+    // without math or diagrams, Chromium is only needed for the theme colours, when it is there
+    if (!containsKatex && !containsMermaid && !config["executablePath"]) {
         return data
     }
 
@@ -139,6 +140,7 @@ async function replaceDynamicContentWithImages(data, config = {}, exportFilePath
         })
 
         await waitForMermaid(page)
+        await inlineThemeColors(page)
 
         await page.addStyleTag({
             content: `
@@ -167,6 +169,29 @@ async function replaceDynamicContentWithImages(data, config = {}, exportFilePath
         if (!config["debug"] && tmpfilename && isExistsPath(tmpfilename)) {
             fs.unlink(tmpfilename, () => { })
         }
+    }
+}
+
+/**
+ * DOCX keeps inline colours only: copy the colours the theme gives (links, code blocks, quotes,
+ * tables...) onto the elements themselves.
+ */
+async function inlineThemeColors(page) {
+    try {
+        await page.evaluate(() => {
+            const transparent = "rgba(0, 0, 0, 0)"
+            const elements = document.querySelectorAll(
+                "a, h1, h2, h3, h4, h5, h6, blockquote, pre, code, pre span, th, td, mark, .callout, .callout *")
+            for (const element of elements) {
+                const style = getComputedStyle(element)
+                element.style.color = style.color
+                if (style.backgroundColor !== transparent) {
+                    element.style.backgroundColor = style.backgroundColor
+                }
+            }
+        })
+    } catch (error) {
+        showErrorMessage("inlineThemeColors()", error)
     }
 }
 

@@ -1,0 +1,135 @@
+/* The Markdown editor's theme in the exports (HTML, PDF, DOCX). The variables are the editor's own
+   (its light/dark page and code block themes, read from resource/markdown/dist/index.css), set on
+   <html> by markdown-pdf.js through data-editor-theme and data-cm-theme; --vscode-focusBorder is
+   VS Code's accent, sent by the editor. */
+
+body {
+	background-color: var(--bg-color);
+	color: var(--front-color);
+}
+
+a,
+a:hover {
+	color: var(--link-color);
+}
+
+h1,
+h2 {
+	border-bottom-color: var(--border-color);
+}
+
+hr {
+	border-color: var(--hr-bg, var(--border-color));
+}
+
+table > thead > tr > th {
+	background-color: var(--table-header-bg);
+}
+
+table > thead > tr > th,
+table > tbody > tr + tr > td {
+	border-color: var(--table-border, var(--border-color));
+}
+
+blockquote {
+	color: var(--blockquote-color);
+	background: var(--blockquote-bg);
+	border-color: var(--blockquote-border, var(--border-color));
+}
+
+:not(pre):not(.hljs) > code {
+	color: var(--code-fg-color);
+	background-color: var(--code-bg-color);
+	border-radius: 3px;
+	padding: 0 4px;
+}
+
+/* code blocks: vscode-office.markdown.codeMirrorTheme */
+pre,
+pre.hljs {
+	background-color: var(--cm-bg-color);
+	color: var(--cm-fg-color);
+	border-color: var(--border-color);
+}
+
+.hljs-comment,
+.hljs-quote {
+	color: var(--cm-syntax-comment);
+	font-style: italic;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-doctag,
+.hljs-formula {
+	color: var(--cm-syntax-keyword);
+}
+
+.hljs-string,
+.hljs-regexp,
+.hljs-addition,
+.hljs-meta .hljs-string {
+	color: var(--cm-syntax-string);
+}
+
+.hljs-number,
+.hljs-literal {
+	color: var(--cm-syntax-number);
+}
+
+.hljs-built_in,
+.hljs-type,
+.hljs-symbol,
+.hljs-bullet {
+	color: var(--cm-syntax-atom);
+}
+
+.hljs-attr,
+.hljs-attribute,
+.hljs-selector-attr,
+.hljs-selector-pseudo {
+	color: var(--cm-syntax-attribute);
+}
+
+.hljs-variable,
+.hljs-template-variable,
+.hljs-params {
+	color: var(--cm-syntax-variable);
+}
+
+.hljs-property {
+	color: var(--cm-syntax-property);
+}
+
+.hljs-title,
+.hljs-section,
+.hljs-function {
+	color: var(--cm-syntax-def);
+}
+
+.hljs-name,
+.hljs-tag,
+.hljs-selector-id,
+.hljs-selector-class {
+	color: var(--cm-syntax-tag);
+}
+
+.hljs-link {
+	color: var(--cm-syntax-link);
+}
+
+.hljs-deletion {
+	color: var(--cm-syntax-error);
+}
+
+.hljs-punctuation {
+	color: var(--cm-syntax-bracket);
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
