@@ -43,6 +43,14 @@ html:has(.word-viewer) {
     zoom: var(--word-toolbar-zoom);
 }
 
+/* The formatting bar wraps onto a second line when the window is too narrow, rather than scrolling */
+.word-viewer [data-testid="formatting-bar"] {
+    flex-wrap: wrap;
+    row-gap: 2px;
+    overflow: visible;
+    border-radius: 18px;
+}
+
 /* End of the formatting bar: comments, editing mode, etc. (not children of the fe groups) */
 .word-viewer [data-testid="formatting-bar"] > [role="separator"] {
     margin-left: 6px !important;
@@ -162,35 +170,10 @@ html:has(.word-viewer) {
     color: var(--doc-page-text);
 }
 
-/* Toolbar formatting bar (horizontal scrolling) */
+/* Toolbar formatting bar */
 .word-viewer--vscode-theme [data-testid="formatting-bar"] {
     background-color: var(--doc-bg-subtle) !important;
-    scrollbar-color: var(--doc-scrollbar-thumb) var(--doc-scrollbar-track);
-    scrollbar-width: thin;
 }
-
-.word-viewer--vscode-theme [data-testid="formatting-bar"]::-webkit-scrollbar {
-    height: 8px;
-}
-
-.word-viewer--vscode-theme [data-testid="formatting-bar"]::-webkit-scrollbar-track {
-    background: var(--doc-scrollbar-track);
-}
-
-.word-viewer--vscode-theme [data-testid="formatting-bar"]::-webkit-scrollbar-thumb {
-    background: var(--doc-scrollbar-thumb);
-    background-clip: content-box;
-    border: 2px solid transparent;
-    border-radius: 9999px;
-}
-
-.word-viewer--vscode-theme [data-testid="formatting-bar"]:hover::-webkit-scrollbar-thumb {
-    background: var(--doc-scrollbar-thumb-hover);
-    background-clip: content-box;
-    border: 2px solid transparent;
-    border-radius: 9999px;
-}
-
 .word-viewer--vscode-theme .docx-responsive-toolbar {
     scrollbar-color: var(--doc-scrollbar-thumb) var(--doc-scrollbar-track);
     scrollbar-width: thin;
