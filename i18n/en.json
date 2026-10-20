@@ -1282,7 +1282,6 @@
     "paste": "Paste",
     "insertImage": "Insert Image",
     "exportPdf": "Export PDF",
-    "exportPdfWithoutOutline": "Export PDF (Without Outline)",
     "exportDocx": "Export Docx",
     "exportHtml": "Export HTML",
     "showInFolder": "Show in Folder"
