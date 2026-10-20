@@ -45,7 +45,7 @@ handler.on("open", async (md) => {
     toolbar: await getToolbar(rootPath, i18n, () => {
       handler.emit('doSave', getMarkdownValue());
       editor?.markSaved();
-    }),
+    }, isWeb),
     onLinkClick(payload, event) {
       const isCompose = event.metaKey || event.ctrlKey;
       if (payload.action !== "dblclick" && !(payload.action === "click" && isCompose)) {

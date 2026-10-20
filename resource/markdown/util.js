@@ -7,8 +7,23 @@ function loadRes(url) {
 const isMac = navigator.userAgent.includes('Mac OS');
 const shortcutTip = isMac ? '⌘ ^ E' : 'Ctrl Alt E';
 
-export async function getToolbar(resPath, i18n, onSave = null) {
+export async function getToolbar(resPath, i18n, onSave = null, isWeb = false) {
     const codicon = (name) => `<span class="codicon codicon-${name}" aria-hidden="true"></span>`;
+    const exportItem = (name, type, icon) => ({
+        name,
+        tip: i18n[name],
+        className: 'right',
+        icon: codicon(icon),
+        click() {
+            handler.emit('export', { type })
+        }
+    });
+    // the exports need the desktop: Chromium, the file system
+    const exports = isWeb ? [] : [
+        exportItem('exportPdf', 'pdf', 'file-pdf'),
+        exportItem('exportDocx', 'docx', 'file-text'),
+        exportItem('exportHtml', 'html', 'code'),
+    ];
     return [
         'outline',
         "headings",
@@ -35,6 +50,7 @@ export async function getToolbar(resPath, i18n, onSave = null) {
                 onSave?.()
             }
         },
+        ...exports,
         'upload',
         "|",
         // "|",
@@ -197,15 +213,6 @@ export const createContextMenu = (editor) => {
             case 'paste':
                 // the selection is replaced once the host has sent what to paste
                 vscodeEvent.emit('pasteFromClipboard')
-                break
-            case 'exportPdf':
-                vscodeEvent.emit('export', { type: 'pdf' })
-                break
-            case 'exportDocx':
-                vscodeEvent.emit('export', { type: 'docx' })
-                break
-            case 'exportHtml':
-                vscodeEvent.emit('export', { type: 'html' })
                 break
             case 'showInFolder':
                 vscodeEvent.emit('showInFolder')
