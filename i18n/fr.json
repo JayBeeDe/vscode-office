@@ -15,7 +15,6 @@
       "noPasteDirectory": "Le collage de répertoires n'est pas pris en charge.",
       "installXclip": "Vous devez d'abord installer la commande xclip.",
       "wikilinkNotFound": "Cible du wikilink introuvable : {target}",
-      "selectImage": "Sélectionner une image",
       "statusBar": "Ligne {lines} Caractères {chars}"
     }
   },

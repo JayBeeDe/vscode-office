@@ -1,4 +1,4 @@
-import { getToolbar, bindShortcut, createContextMenu, } from "./util.js";
+import { getToolbar, bindShortcut, } from "./util.js";
 import { observeWorkspaceAbsoluteImages, createMarkdownValueReader, restoreWorkspaceBaseUrls, } from "./imagePath.js";
 import { mapVscodeLanguageToVditorLang } from "./lang.js";
 
@@ -162,10 +162,6 @@ handler.on("open", async (md) => {
       handler.on("insertImageMarkdown", (markdown) => {
         editor.insertMarkdown(markdown);
       })
-      handler.on("pasteText", (text) => {
-        if (document.getSelection()?.toString()) { document.execCommand('delete') }
-        editor.insertMarkdown(text);
-      })
       handler.on("gotoBlock", (fragment) => {
         if (fragment) {
           editor.scrollToBlock(fragment);
@@ -178,5 +174,4 @@ handler.on("open", async (md) => {
     }
   })
   bindShortcut(handler, editor, workspaceBaseUrl);
-  createContextMenu(editor)
 }).emit("init")

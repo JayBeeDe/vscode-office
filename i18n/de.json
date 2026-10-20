@@ -15,7 +15,6 @@
       "noPasteDirectory": "Einfügen von Verzeichnissen wird nicht unterstützt.",
       "installXclip": "Sie müssen zuerst den Befehl xclip installieren.",
       "wikilinkNotFound": "Wikilink-Ziel nicht gefunden: {target}",
-      "selectImage": "Bild auswählen",
       "statusBar": "Zeile {lines} Zeichen {chars}"
     }
   },

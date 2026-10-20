@@ -15,7 +15,6 @@
       "noPasteDirectory": "Não é suportado colar diretórios.",
       "installXclip": "Você precisa instalar o comando xclip primeiro.",
       "wikilinkNotFound": "Destino do wikilink não encontrado: {target}",
-      "selectImage": "Selecionar imagem",
       "statusBar": "Linha {lines} Caracteres {chars}"
     }
   },

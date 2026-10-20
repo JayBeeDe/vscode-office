@@ -15,7 +15,6 @@
       "noPasteDirectory": "不支持粘贴目录。",
       "installXclip": "请先安装 xclip 命令。",
       "wikilinkNotFound": "找不到双链目标：{target}",
-      "selectImage": "选择图片",
       "statusBar": "行 {lines} 字数 {chars}"
     }
   },
