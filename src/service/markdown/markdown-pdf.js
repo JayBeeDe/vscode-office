@@ -49,26 +49,10 @@ function getMermaidScriptSrc(type) {
 }
 
 
-/**
- * create toc if not exists.
- */
-function addTocToContent(text, config) {
-  const needOutline = !text.match(/\[toc\]/i) && !config.withoutOutline;
-  if (!needOutline) {
-    return text
-  }
-  const frontMatterMatch = text.match(/^---[\s\S]*?\n---\s*\n?/)
-  if (frontMatterMatch) {
-    return frontMatterMatch[0] + '[toc]\n' + text.slice(frontMatterMatch[0].length)
-  }
-  return `[toc]\n${text}`;
-}
-
 /*
  * convert markdown to html (markdown-it)
  */
 function convertMarkdownToHtml(filename, type, text, config) {
-  if (type == 'pdf') text = addTocToContent(text, config)
   let md = {}
 
   try {

@@ -2,7 +2,6 @@ const fs = require("fs")
 const os = require("os")
 const path = require("path")
 const { pathToFileURL } = require("url")
-const { createOutline } = require("./outline")
 const isDev = process.argv.indexOf('--type=extensionHost') >= 0;
 
 export async function exportHtml(exportFilePath, data) {
@@ -76,6 +75,9 @@ export async function exportByType(filePath, data, type, config) {
             // https://pptr.dev/api/puppeteer.pdfoptions
             const margin = config["margin"] || {};
             const pdfOptions = {
+                // bookmarks from the headings, without a table of contents in the pages
+                outline: true,
+                tagged: true,
                 format: config["format"] || "A4",
                 printBackground: config["printBackground"] || true,
                 margin: {
@@ -90,14 +92,7 @@ export async function exportByType(filePath, data, type, config) {
                 throw error
             })
 
-            let pdfBytes
-            try {
-                pdfBytes = await createOutline(pdf, data)
-            } catch (error) {
-                showErrorMessage("createOutline()", error)
-                pdfBytes = Buffer.from(pdf)
-            }
-            fs.writeFileSync(targetFilePath, pdfBytes)
+            fs.writeFileSync(targetFilePath, Buffer.from(pdf))
         }
     } finally {
         // also when the export fails: no Chromium left running, no temporary file left behind

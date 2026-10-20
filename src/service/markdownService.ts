@@ -15,7 +15,6 @@ export type ExportType = 'pdf' | 'html' | 'docx';
 
 interface ExportOption {
     type?: ExportType;
-    withoutOutline?: boolean;
 }
 
 export class MarkdownService {
@@ -43,11 +42,10 @@ export class MarkdownService {
 
     public getConfig(option: ExportOption) {
         const top = Global.getConfig("markdown.pdfMarginTop")
-        const { type = 'pdf', withoutOutline = false } = option;
+        const { type = 'pdf' } = option;
         return {
             type,
             "styles": [],
-            withoutOutline,
             // chromium path
             // PDF needs Chromium; DOCX only uses it, when found, to turn math and diagrams into images
             "executablePath": type === 'pdf' ? this.getChromiumPath() : type === 'docx' ? this.findChromiumPath() : undefined,
