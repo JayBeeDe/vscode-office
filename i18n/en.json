@@ -15,7 +15,6 @@
       "noPasteDirectory": "Not support paste directory.",
       "installXclip": "You need to install xclip command first.",
       "wikilinkNotFound": "Wikilink target not found: {target}",
-      "selectImage": "Select Image",
       "statusBar": "Line {lines} Count {chars}"
     }
   },
@@ -1277,14 +1276,10 @@
     "aiDelete": "Delete",
     "editInVscode": "Edit In VS Code ({shortcut})",
     "save": "Save",
-    "copyAsHtml": "Copy as HTML",
-    "copyAsPlainText": "Copy as Plain Text",
     "paste": "Paste",
-    "insertImage": "Insert Image",
     "exportPdf": "Export PDF",
     "exportDocx": "Export Docx",
-    "exportHtml": "Export HTML",
-    "showInFolder": "Show in Folder"
+    "exportHtml": "Export HTML"
   },
   "pdf": {
     "switchToLight": "Switch PDF to light mode",

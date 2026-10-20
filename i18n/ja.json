@@ -15,7 +15,6 @@
       "noPasteDirectory": "ディレクトリの貼り付けはサポートされていません。",
       "installXclip": "先に xclip コマンドをインストールしてください。",
       "wikilinkNotFound": "ウィキリンクのターゲットが見つかりません: {target}",
-      "selectImage": "画像を選択",
       "statusBar": "行 {lines} 文字数 {chars}"
     }
   },

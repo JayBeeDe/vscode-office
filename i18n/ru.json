@@ -15,7 +15,6 @@
       "noPasteDirectory": "Вставка каталогов не поддерживается.",
       "installXclip": "Сначала необходимо установить команду xclip.",
       "wikilinkNotFound": "Цель викиссылки не найдена: {target}",
-      "selectImage": "Выбрать изображение",
       "statusBar": "Строка {lines} Символов {chars}"
     }
   },

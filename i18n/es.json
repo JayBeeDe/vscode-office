@@ -15,7 +15,6 @@
       "noPasteDirectory": "No se admite pegar directorios.",
       "installXclip": "Primero debe instalar el comando xclip.",
       "wikilinkNotFound": "Destino del wikilink no encontrado: {target}",
-      "selectImage": "Seleccionar imagen",
       "statusBar": "Línea {lines} Caracteres {chars}"
     }
   },

@@ -254,17 +254,6 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
             handler.emit("update", updatedText)
         }).on("command", (command) => {
             vscode.commands.executeCommand(command)
-        }).on("pasteFromClipboard", async () => {
-            // the context menu Paste: text, or else an image saved next to the document
-            const text = await vscode.env.clipboard.readText();
-            if (text) {
-                handler.emit('pasteText', text);
-                return;
-            }
-            const markdown = await new MarkdownService(this.context).saveClipboardImage(uri);
-            if (markdown) {
-                handler.emit('pasteText', markdown);
-            }
         }).on("searchTag", (tag: string) => {
             if (!tag) return;
             void vscode.commands.executeCommand('workbench.action.findInFiles', {
@@ -299,27 +288,9 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
             if (imageMarkdown) {
                 handler.emit('insertImageMarkdown', imageMarkdown);
             }
-        }).on("insertImage", async () => {
-            const files = await vscode.window.showOpenDialog({
-                canSelectMany: false,
-                filters: { Images: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp', 'ico'] },
-                title: i18n('markdown.selectImage'),
-            });
-            if (!files || files.length === 0) return;
-            const sourceUri = files[0];
-            const ext = parse(sourceUri.fsPath).ext.replace('.', '').toLowerCase() || 'png';
-            const fileBytes = await vscode.workspace.fs.readFile(sourceUri);
-            const imageMarkdown = await this.saveImageAndBuildMarkdown(uri, fileBytes, ext);
-            if (imageMarkdown) {
-                handler.emit('insertImageMarkdown', imageMarkdown);
-            }
         }).on("editInVSCode", (full: boolean) => {
             const side = full ? vscode.ViewColumn.Active : vscode.ViewColumn.Beside;
             vscode.commands.executeCommand('vscode.openWith', uri, "default", side);
-        }).on("showInFolder", () => {
-            if (vscode.env.uiKind !== vscode.UIKind.Web) {
-                vscode.commands.executeCommand('revealFileInOS', uri);
-            }
         }).on("save", (newContent) => {
             // every edit counts, also those typed right after Ctrl+S
             if (newContent === content && pendingDocumentSync === undefined) return;
