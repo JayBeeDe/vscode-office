@@ -266,7 +266,7 @@ body {
   z-index: 11;
 
   .@{css-prefix}-resizer-hover {
-    background-color: rgba(33, 186, 69, .25);
+    background-color: color-mix(in srgb, var(--excel-accent, #0078d4) 25%, transparent);
   }
   .@{css-prefix}-resizer-line {
     position: absolute;
@@ -275,7 +275,7 @@ body {
   &.horizontal {
     cursor: row-resize;
     .@{css-prefix}-resizer-line {
-      border-bottom: 2px dashed rgb(33, 186, 69);
+      border-bottom: 2px dashed var(--excel-accent, #0078d4);
       left: 0;
       bottom: 0;
     }
@@ -283,7 +283,7 @@ body {
   &.vertical {
     cursor: col-resize;
     .@{css-prefix}-resizer-line {
-      border-right: 2px dashed rgb(33, 186, 69);
+      border-right: 2px dashed var(--excel-accent, #0078d4);
       top: 0;
       right: 0;
     }
@@ -338,7 +338,7 @@ body {
     position: absolute;
     z-index: 25;
     pointer-events: none;
-    background: #057c52;
+    background: var(--excel-accent, #0078d4);
   }
 }
 
@@ -381,7 +381,7 @@ body {
       position: absolute;
       width: 6px;
       height: 6px;
-      background: rgb(33, 186, 69);
+      background: var(--excel-accent, #0078d4);
       border: 1px solid #fff;
       box-sizing: border-box;
       pointer-events: auto;
@@ -444,7 +444,7 @@ body {
     &.selected,
     &.dragging,
     &.resizing {
-      outline: 2px dashed rgb(33, 186, 69);
+      outline: 2px dashed var(--excel-accent, #0078d4);
       outline-offset: -2px;
 
       .@{css-prefix}-sheet-image-handle {
@@ -485,8 +485,8 @@ body {
   .@{css-prefix}-selector-area {
     position: absolute;
     box-sizing: border-box;
-    border: 2px solid rgb(33, 186, 69);
-    background: rgba(33, 186, 69, .1);
+    border: 2px solid var(--excel-accent, #0078d4);
+    background: color-mix(in srgb, var(--excel-accent, #0078d4) 10%, transparent);
     z-index: 5;
   }
   &.formula-reference-mode {
@@ -505,7 +505,7 @@ body {
     z-index: 100;
   }
   .@{css-prefix}-selector-clipboard {
-    --clipboard-ant-color: rgb(33, 186, 69);
+    --clipboard-ant-color: var(--excel-accent, #0078d4);
     --clipboard-ant-size: 8px;
     --clipboard-ant-weight: 2px;
     border: none;
@@ -544,25 +544,25 @@ body {
     right: -5px;
     bottom: -5px;
     border: 2px solid rgb(255, 255, 255);
-    background: rgb(33, 186, 69);
+    background: var(--excel-accent, #0078d4);
   }
 }
 .@{css-prefix}-editor {
   z-index: 20;
   &.formula-target-mode {
     .@{css-prefix}-editor-area {
-      border-color: rgb(33, 186, 69);
+      border-color: var(--excel-accent, #0078d4);
       box-shadow:
         0 0 0 2px rgba(255, 255, 255, .95),
-        0 0 0 5px rgba(33, 186, 69, .32),
-        0 0 12px rgba(33, 186, 69, .38);
-      background-color: rgba(33, 186, 69, .08);
+        0 0 0 5px color-mix(in srgb, var(--excel-accent, #0078d4) 32%, transparent),
+        0 0 12px color-mix(in srgb, var(--excel-accent, #0078d4) 38%, transparent);
+      background-color: color-mix(in srgb, var(--excel-accent, #0078d4) 8%, transparent);
     }
   }
   .@{css-prefix}-editor-area {
     position: absolute;
     text-align: left;
-    border: 2px solid rgb(33, 186, 69);
+    border: 2px solid var(--excel-accent, #0078d4);
     box-sizing: border-box;
     line-height: 0;
     z-index: 100;
@@ -831,7 +831,7 @@ body {
     bottom: 0;
     width: 2px;
     height: 28px;
-    background: #057c52;
+    background: var(--excel-accent, #0078d4);
     pointer-events: none;
     z-index: 2;
   }
@@ -959,7 +959,7 @@ body {
     }
 
     &.active {
-      color: #057c52;
+      color: var(--excel-accent, #0078d4);
       background: rgba(5, 124, 82, 0.1);
       font-weight: 600;
     }
@@ -1018,8 +1018,8 @@ body {
 
   &.active {
     background-color: #fff;
-    color: #057c52;
-    border-bottom: 3px solid #057c52;
+    color: var(--excel-accent, #0078d4);
+    border-bottom: 3px solid var(--excel-accent, #0078d4);
   }
 
   &.dragging {

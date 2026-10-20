@@ -38,6 +38,8 @@ body:has(.excel-app) {
     --excel-grid-line: #e1e4e8;
     --excel-muted-line: #d1d5db;
     --excel-locked-indicator: color-mix(in srgb, var(--vscode-charts-green, #3d9970) 42%, transparent);
+    // VS Code's accent: the active cell, the active sheet
+    --excel-accent: var(--vscode-focusBorder, #0078d4);
 
     // Light mode scrollbar
     scrollbar-color: #c7cad1 #f2f3f5;
@@ -348,8 +350,8 @@ body:has(.excel-app) {
             }
 
             &.active {
-                color: #057c52;
-                background: rgba(5, 124, 82, 0.1);
+                color: var(--excel-accent);
+                background: color-mix(in srgb, var(--excel-accent) 10%, transparent);
             }
         }
 
@@ -374,8 +376,8 @@ body:has(.excel-app) {
             }
 
             &.active {
-                background: rgba(5, 124, 82, 0.1);
-                color: #057c52;
+                background: color-mix(in srgb, var(--excel-accent) 10%, transparent);
+                color: var(--excel-accent);
                 border-bottom: none !important;
             }
         }
@@ -395,16 +397,16 @@ body:has(.excel-app) {
 
         &:hover,
         .ant-tabs-tab-btn:active {
-            color: #09885c !important;
+            color: var(--excel-accent) !important;
         }
     }
 
     .ant-tabs .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
-        color: #057c52;
+        color: var(--excel-accent);
     }
 
     .ant-tabs-ink-bar {
-        background-color: #057c52;
+        background-color: var(--excel-accent);
     }
 
     .excel-load-error {
@@ -483,8 +485,8 @@ body:has(.excel-app) {
 
     --excel-footer-reserve: 0px;
 
-    --excel-selection: rgb(33, 186, 69);
-    --excel-selection-fill: rgba(33, 186, 69, 0.1);
+    --excel-selection: var(--excel-accent);
+    --excel-selection-fill: color-mix(in srgb, var(--excel-accent) 10%, transparent);
 
     .x-spreadsheet-selector .x-spreadsheet-selector-area {
         border-color: var(--excel-selection);
@@ -582,10 +584,10 @@ body.office-adaptive .excel-viewer {
     --excel-hover: var(--vscode-list-hoverBackground, rgba(0, 0, 0, 0.06));
     --excel-active-bg: var(--vscode-list-activeSelectionBackground, rgba(0, 120, 212, 0.12));
     --excel-active-fg: var(--vscode-list-activeSelectionForeground, var(--vscode-textLink-foreground, #0563c1));
-    --excel-accent: var(--vscode-textLink-foreground, #3794ff);
+    --excel-accent: var(--vscode-focusBorder, #0078d4);
     --excel-accent-soft: var(--vscode-editor-selectionBackground, rgba(103, 118, 150, 0.38));
-    --excel-selection: var(--vscode-textLink-foreground, #3794ff);
-    --excel-selection-fill: color-mix(in srgb, var(--vscode-textLink-foreground, #3794ff) 22%, transparent);
+    --excel-selection: var(--excel-accent);
+    --excel-selection-fill: color-mix(in srgb, var(--excel-accent) 22%, transparent);
     --excel-scrollbar-track: var(--vscode-editor-background, #ffffff);
     --excel-scrollbar-thumb: var(--vscode-scrollbarSlider-background, rgba(100, 100, 100, 0.4));
     --excel-scrollbar-thumb-hover: var(--vscode-scrollbarSlider-hoverBackground, var(--vscode-scrollbarSlider-background, rgba(100, 100, 100, 0.55)));
@@ -675,7 +677,7 @@ body.office-adaptive .excel-viewer {
     }
 
     .ant-tabs .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
-        color: var(--excel-active-fg);
+        color: var(--excel-accent);
     }
 
     .ant-tabs-ink-bar {
