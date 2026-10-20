@@ -40,13 +40,14 @@ body.office-dark .ppt-viewer.office-viewer-themed {
     --viewer-muted: var(--vscode-descriptionForeground, rgba(204, 204, 204, 0.7));
     --viewer-border: var(--vscode-editorWidget-border, var(--vscode-panel-border, rgba(128, 128, 128, 0.45)));
     --viewer-sider-bg: var(--vscode-sideBar-background, #252526);
-    --viewer-header-bg: var(--vscode-editorGroupHeader-tabsBackground, #252526);
+    /* the "y slides" header and the "Slide x/y" status bar, like the bars around the slide */
+    --viewer-header-bg: #000;
     --viewer-hover: var(--vscode-list-hoverBackground, rgba(90, 93, 94, 0.31));
     --viewer-active-bg: var(--vscode-list-activeSelectionBackground, #292d35);
     --viewer-active-fg: var(--vscode-list-activeSelectionForeground, #d7dae0);
     --viewer-accent: var(--vscode-textLink-foreground, #3794ff);
     --viewer-placeholder: var(--vscode-input-background, #3c3c3c);
-    --viewer-toolbar-bg: var(--vscode-editorGroupHeader-tabsBackground, #252526);
+    --viewer-toolbar-bg: #000;
     --viewer-scrollbar-track: var(--vscode-editor-background, #1e1e1e);
     --viewer-scrollbar-thumb: var(--vscode-scrollbarSlider-background, #797979);
 }
@@ -209,6 +210,11 @@ body.office-dark .ppt-thumb img {
     width: 100%;
     height: 100%;
     background: #fff;
+}
+
+/* the bands around a slide that doesn't fill the canvas: black in a dark vscode-office.theme */
+body.office-dark #ppt-canvas {
+    background: #000;
 }
 
 .ppt-statusbar {
