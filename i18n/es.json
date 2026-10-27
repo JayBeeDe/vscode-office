@@ -30,6 +30,7 @@
       "editInVscode": "Editar en VS Code"
     },
     "document": {
+      "heading": "Título {level}",
       "failedLoad": "Error al cargar el documento"
     },
     "presentation": {

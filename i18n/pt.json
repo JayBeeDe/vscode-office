@@ -30,6 +30,7 @@
       "editInVscode": "Editar no VS Code"
     },
     "document": {
+      "heading": "Título {level}",
       "failedLoad": "Falha ao carregar o documento"
     },
     "presentation": {
@@ -123,8 +124,8 @@
       "strikethrough": "Tachado",
       "fontColor": "Cor da fonte",
       "highlightColor": "Cor de destaque do texto",
-      "insertLink": "Inserir link",
-      "insertLinkShortcut": "Inserir link (Ctrl+K)",
+      "insertLink": "Link",
+      "insertLinkShortcut": "Link (Ctrl+K)",
       "superscript": "Sobrescrito",
       "superscriptShortcut": "Sobrescrito (Ctrl+Shift+=)",
       "subscript": "Subscrito",

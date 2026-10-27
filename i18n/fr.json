@@ -30,6 +30,7 @@
       "editInVscode": "Modifier dans VS Code"
     },
     "document": {
+      "heading": "Titre {level}",
       "failedLoad": "Échec du chargement du document"
     },
     "presentation": {
@@ -123,8 +124,8 @@
       "strikethrough": "Barré",
       "fontColor": "Couleur du texte",
       "highlightColor": "Couleur de surbrillance",
-      "insertLink": "Insérer un lien",
-      "insertLinkShortcut": "Insérer un lien (Ctrl+K)",
+      "insertLink": "Lien",
+      "insertLinkShortcut": "Lien (Ctrl+K)",
       "superscript": "Exposant",
       "superscriptShortcut": "Exposant (Ctrl+Maj+=)",
       "subscript": "Indice",

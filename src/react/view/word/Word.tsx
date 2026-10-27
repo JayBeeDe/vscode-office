@@ -7,6 +7,7 @@ import { useTheme } from "../../util/theme";
 import { loadOfficeBuffer } from "../../util/loadOfficeContent";
 import { $t, getLanguage, getSection } from "../../i18n/i18nConfig.ts";
 import { LANGUAGES } from "../../../i18n/index.ts";
+import DocumentMenuButtons from "./DocumentMenuButtons";
 import "./Word.css";
 
 // the editor's toolbar, menus and dialogs: the `document` section of i18n/<language>.json.
@@ -131,6 +132,7 @@ export default function Word() {
                         colorMode="light"
                         showFileOpen={false}
                         showHelpMenu={false}
+                        toolbarExtra={readOnly ? undefined : <DocumentMenuButtons editorRef={editorRef} onSave={handleSave} />}
                         onChange={() => {
                             if (!readOnlyRef.current) {
                                 handler.emit("change");

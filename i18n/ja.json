@@ -30,6 +30,7 @@
       "editInVscode": "VS Code で編集"
     },
     "document": {
+      "heading": "見出し {level}",
       "failedLoad": "ドキュメントの読み込みに失敗しました"
     },
     "presentation": {

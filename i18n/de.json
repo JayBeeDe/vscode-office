@@ -30,6 +30,7 @@
       "editInVscode": "In VS Code bearbeiten"
     },
     "document": {
+      "heading": "Überschrift {level}",
       "failedLoad": "Dokument konnte nicht geladen werden"
     },
     "presentation": {
@@ -123,8 +124,8 @@
       "strikethrough": "Durchgestrichen",
       "fontColor": "Schriftfarbe",
       "highlightColor": "Texthervorhebungsfarbe",
-      "insertLink": "Link einfügen",
-      "insertLinkShortcut": "Link einfügen (Strg+K)",
+      "insertLink": "Link",
+      "insertLinkShortcut": "Link (Strg+K)",
       "superscript": "Hochgestellt",
       "superscriptShortcut": "Hochgestellt (Strg+Umschalt+=)",
       "subscript": "Tiefgestellt",

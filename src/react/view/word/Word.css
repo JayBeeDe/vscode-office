@@ -43,6 +43,316 @@ html:has(.word-viewer) {
     zoom: var(--word-toolbar-zoom);
 }
 
+/*
+ * No title bar: VS Code's tab names the file, and the File and Insert items are icons of the
+ * formatting bar (DocumentMenuButtons.tsx), which still open the bar's menus, hidden; Print and the
+ * Format menu (text direction) are left out
+ */
+.word-viewer [data-testid="title-bar"] {
+    display: none;
+}
+
+/*
+ * The outline's floating toggle is an icon of the formatting bar (DocumentMenuButtons.tsx), which
+ * still clicks it, hidden; a read-only document has no formatting bar and keeps it
+ */
+.word-viewer:has([data-testid="formatting-bar"]) .docx-outline-toggle {
+    display: none;
+}
+
+/*
+ * The formatting bar's order (DocumentMenuButtons.tsx renders its own groups at the end, tags the
+ * editor's): outline | Save, Undo, Redo || styles | lists | font | text | script | alignment |
+ * paragraph | image and table when selected | insert || zoom ... || editing mode, comments
+ */
+.word-viewer [data-testid="formatting-bar"] > * {
+    order: 13;
+}
+
+.word-viewer [data-testid="formatting-bar"] > .document-toolbar-start {
+    order: 1;
+    padding-left: 0;
+}
+
+.word-viewer [data-testid="formatting-bar"] > [data-document-group="history"] {
+    order: 2;
+    border-right: none;
+}
+
+.word-viewer [data-testid="formatting-bar"] > .document-separator--start {
+    order: 3;
+}
+
+.word-viewer [data-testid="formatting-bar"] > [data-document-group="styles"] {
+    order: 4;
+}
+
+.word-viewer [data-testid="formatting-bar"] > [data-document-group="font"] {
+    order: 6;
+}
+
+.word-viewer [data-testid="formatting-bar"] > [data-document-group="text-formatting"] {
+    order: 7;
+}
+
+.word-viewer [data-testid="formatting-bar"] > [data-document-group="script"] {
+    order: 8;
+}
+
+.word-viewer [data-testid="formatting-bar"] > [data-document-group="alignment"] {
+    order: 9;
+}
+
+.word-viewer [data-testid="formatting-bar"] > [data-document-group="image"] {
+    order: 11;
+}
+
+.word-viewer [data-testid="formatting-bar"] > [data-document-group="table"] {
+    order: 12;
+}
+
+.word-viewer [data-testid="formatting-bar"] > .document-toolbar-insert {
+    order: 13;
+    border-right: none;
+}
+
+.word-viewer [data-testid="formatting-bar"] > .document-separator--insert {
+    order: 14;
+}
+
+.word-viewer [data-testid="formatting-bar"] > [data-document-group="zoom"] {
+    order: 15;
+}
+
+/* (more specific than the separators' margins, below) */
+.word-viewer [data-testid="formatting-bar"] > .document-separator.document-separator--end {
+    order: 16;
+    margin-left: auto !important;
+}
+
+.word-viewer [data-testid="formatting-bar"] > div[style*="position: relative"] {
+    order: 17;
+}
+
+.word-viewer [data-testid="formatting-bar"] > .ep-toolbar-toggle {
+    order: 18;
+}
+
+/*
+ * The editor's lists group split in two, its boxes ordered in the bar: the bullet and numbered lists
+ * after the styles, the indents, the line spacing and Page setup (added to the group) after the
+ * alignments, each drawn like a group
+ */
+.word-viewer [data-document-group="list-formatting"],
+.word-viewer [data-document-group="list-formatting"] > .docx-list-buttons {
+    display: contents !important;
+}
+
+.word-viewer [data-document-group="list-formatting"] > .docx-list-buttons > :nth-child(2) {
+    display: none;
+}
+
+.word-viewer [data-document-group="list-formatting"] > .docx-list-buttons > :first-child {
+    order: 5;
+    padding: 0 0.375rem;
+    border-right: 1px solid hsl(var(--border) / 0.5);
+}
+
+.word-viewer [data-document-group="list-formatting"] > .docx-list-buttons > :nth-child(3),
+.word-viewer [data-document-group="list-formatting"] > [role="combobox"],
+.word-viewer [data-document-group="list-formatting"] > .document-group-items--page-setup {
+    order: 10;
+}
+
+.word-viewer [data-document-group="list-formatting"] > .docx-list-buttons > :nth-child(3) {
+    padding-left: 0.375rem;
+}
+
+.word-viewer [data-document-group="list-formatting"] > .document-group-items--page-setup {
+    padding-right: 0.375rem;
+    border-right: 1px solid hsl(var(--border) / 0.5);
+}
+
+.word-viewer [data-document-group="list-formatting"] > .docx-list-buttons > :first-child,
+.word-viewer [data-document-group="list-formatting"] > .docx-list-buttons > :nth-child(3),
+.word-viewer [data-document-group="list-formatting"] > [role="combobox"],
+.word-viewer [data-document-group="list-formatting"] > .document-group-items--page-setup {
+    align-self: stretch;
+}
+
+.word-viewer--vscode-theme [data-document-group="list-formatting"] > .docx-list-buttons > :first-child,
+.word-viewer--vscode-theme [data-document-group="list-formatting"] > .document-group-items--page-setup {
+    border-right-color: var(--doc-border);
+}
+
+/* the history group is no longer the first one: its left padding back, like the other groups */
+.word-viewer [data-testid="formatting-bar"] > [role="group"]:first-child {
+    padding-left: 0.375rem;
+}
+
+/* The editor's separators give way to DocumentMenuButtons.tsx's */
+.word-viewer [data-testid="formatting-bar"] > [role="separator"]:not(.document-separator) {
+    display: none;
+}
+
+/* Items added to the editor's groups: Save before Undo, Page setup after the line spacing (above) */
+.document-group-items {
+    display: inline-flex;
+    align-items: center;
+    gap: 1px;
+}
+
+.document-group-items--save {
+    order: -1;
+}
+
+/* Insert link is in the Insert group (DocumentMenuButtons.tsx clicks this one) */
+.word-viewer [data-document-group="text-formatting"] > button:last-child {
+    display: none;
+}
+
+/*
+ * Buttons in the place of a group's dropdown: H1 to H5 for the paragraph style, the alignments
+ * (the alignment dropdown's display is inline)
+ */
+.word-viewer [role="group"]:has(> .document-group-buttons) > :not(.document-group-buttons) {
+    display: none !important;
+}
+
+.document-group-buttons {
+    display: inline-flex;
+    align-items: center;
+    gap: 1px;
+}
+
+.document-heading-label {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* The zoom after the Insert group, its percentage dropdown without the -/+ buttons */
+.word-viewer [data-testid="formatting-bar"] > [data-document-group="zoom"] {
+    border-right: none;
+}
+
+.word-viewer [data-document-group="zoom"] button:not([role="combobox"]) {
+    display: none;
+}
+
+/* No Clear formatting button */
+.word-viewer [data-document-group="clear-formatting"] {
+    display: none;
+}
+
+/* The font size dropdown without its -/+ buttons, its box rounded again */
+.word-viewer [data-testid="font-size-decrease"],
+.word-viewer [data-testid="font-size-increase"] {
+    display: none;
+}
+
+/* Its box like the zoom's dropdown: borderless, a down arrow, the same width while typing a size */
+.word-viewer [data-testid="font-size-display"],
+.word-viewer [data-testid="font-size-input"] {
+    width: 3.25rem;
+    border-radius: 0.25rem;
+}
+
+.word-viewer [data-testid="font-size-display"] {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    border: none;
+    background: transparent;
+    color: hsl(var(--foreground));
+    transition: background-color 150ms;
+}
+
+.word-viewer [data-testid="font-size-display"]:hover,
+.word-viewer [data-testid="font-size-display"]:focus {
+    background: hsl(var(--muted) / 0.8);
+}
+
+.word-viewer [data-testid="font-size-display"]::after {
+    content: "";
+    flex-shrink: 0;
+    width: 1rem;
+    height: 1rem;
+    background: hsl(var(--muted-foreground));
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z' clip-rule='evenodd'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+/*
+ * Its list as narrow as the numbers, like the font family's: padded, rounded, tighter items (min-width
+ * is inline). Its items are inline-block buttons, which size the list as if they were all on one line.
+ */
+.word-viewer :has(> [data-testid="font-size-display"]) ~ [role="listbox"],
+.word-viewer :has(> [data-testid="font-size-input"]) ~ [role="listbox"] {
+    min-width: 0 !important;
+    padding: 0.25rem;
+    border-radius: 0.5rem !important;
+    /* still scrolls with the wheel, without a scrollbar */
+    scrollbar-width: none;
+}
+
+.word-viewer :has(> [data-testid="font-size-display"]) ~ [role="listbox"]::-webkit-scrollbar,
+.word-viewer :has(> [data-testid="font-size-input"]) ~ [role="listbox"]::-webkit-scrollbar {
+    display: none;
+}
+
+.word-viewer :has(> [data-testid="font-size-display"]) ~ [role="listbox"] > [role="option"],
+.word-viewer :has(> [data-testid="font-size-input"]) ~ [role="listbox"] > [role="option"] {
+    display: block;
+    padding: 0.375rem 0.5rem;
+    border-radius: 4px;
+}
+
+/* The table size grid of the Insert table icon, like the editor's own menus */
+.document-table-button {
+    position: relative;
+    display: inline-flex;
+}
+
+.document-table-grid {
+    position: absolute;
+    top: calc(100% + 2px);
+    left: 0;
+    z-index: 10000;
+    padding: 8px;
+    background-color: var(--doc-surface);
+    border: 1px solid var(--doc-border);
+    border-radius: 6px;
+    box-shadow: 0 4px 12px var(--doc-shadow);
+}
+
+.document-table-grid__cells {
+    display: grid;
+    gap: 2px;
+}
+
+.document-table-grid__cell {
+    width: 18px;
+    height: 18px;
+    background-color: var(--doc-surface);
+    border: 1px solid var(--doc-border);
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+.document-table-grid__cell--selected {
+    background-color: var(--doc-primary);
+    border-color: var(--doc-primary);
+}
+
+.document-table-grid__size {
+    margin-top: 6px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--doc-text);
+    text-align: center;
+}
+
 /* The formatting bar wraps onto a second line when the window is too narrow, rather than scrolling */
 .word-viewer [data-testid="formatting-bar"] {
     flex-wrap: wrap;
@@ -144,16 +454,11 @@ html:has(.word-viewer) {
     background-color: var(--doc-bg);
 }
 
-/* Title bar / toolbar / menu bar */
-.word-viewer--vscode-theme [data-testid="editor-toolbar"],
-.word-viewer--vscode-theme [data-testid="title-bar"] {
+/* Toolbar */
+.word-viewer--vscode-theme [data-testid="editor-toolbar"] {
     background-color: var(--doc-surface) !important;
     color: var(--doc-text);
     border-color: var(--doc-border);
-}
-
-.word-viewer--vscode-theme [data-testid="title-bar"] [role="menubar"] button {
-    color: var(--doc-text);
 }
 
 .word-viewer--vscode-theme .docx-editor__scroll-container {
@@ -218,7 +523,6 @@ html:has(.word-viewer) {
 }
 
 .word-viewer--vscode-theme .ep-root [data-testid="editor-toolbar"].bg-doc-surface,
-.word-viewer--vscode-theme .ep-root [data-testid="title-bar"].bg-doc-surface,
 .word-viewer--vscode-theme .ep-root .bg-doc-surface {
     background-color: var(--doc-surface) !important;
 }
