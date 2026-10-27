@@ -19,10 +19,10 @@ type Leaves<T, P extends string = ''> = {
     [K in keyof T & string]: T[K] extends string | readonly string[] ? `${P}${K}` : Leaves<T[K], `${P}${K}.`>;
 }[keyof T & string];
 
-/** Every dotted key of the English file, e.g. `host.markdown.exportStart`. */
+/** Every dotted key of the English file, e.g. `host.markdown.exportSuccess`. */
 export type MessageKey = Leaves<Messages>;
 
-/** The keys of one section relative to it, e.g. `SectionKey<'host'>` gives `markdown.exportStart`. */
+/** The keys of one section relative to it, e.g. `SectionKey<'host'>` gives `markdown.exportSuccess`. */
 export type SectionKey<S extends string, K = MessageKey> = K extends `${S}.${infer R}` ? R : never;
 
 export type MessageVars = Record<string, string | number>;

@@ -7,10 +7,15 @@
       "confirmOpenLink": "Open \"{url}\"? This link points outside the web and may open a file or run a program."
     },
     "markdown": {
-      "exportStart": "Starting export markdown to {type}.",
-      "exportSuccess": "Export markdown to {type} success!",
+      "exporting": "Exporting markdown to {type}...",
+      "exportSuccess": "Exported markdown to {type}: {path}",
       "exportFailed": "Export markdown to {type} failed: {error}",
-      "noChromium": "Not chromium found, export fail.",
+      "noChromium": "Chromium not found: exporting Markdown to {type} needs it. Set its path in vscode-office.markdown.export.chromiumPath.",
+      "noChromiumDocx": "Chromium not found: the DOCX export keeps math and diagrams as text. Set its path in vscode-office.markdown.export.chromiumPath.",
+      "noChromiumAt": "Chromium not found at {path}: exporting Markdown to {type} needs it. Fix vscode-office.markdown.export.chromiumPath.",
+      "noChromiumDocxAt": "Chromium not found at {path}: the DOCX export keeps math and diagrams as text. Fix vscode-office.markdown.export.chromiumPath.",
+      "openSettings": "Open Settings",
+      "openFile": "Open File",
       "noClipboardImage": "There is not an image in the clipboard.",
       "noPasteDirectory": "Not support paste directory.",
       "installXclip": "You need to install xclip command first.",

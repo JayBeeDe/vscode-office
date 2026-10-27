@@ -72,6 +72,13 @@ export async function getToolbar(resPath, i18n, onSave = null, isWeb = false) {
     ]
 }
 
+/** Grays out the PDF and DOCX export buttons while one of those exports runs; clicks are then ignored */
+export function disableSlowExports(disabled) {
+    for (const button of document.querySelectorAll('.vditor-toolbar [data-type="exportPdf"], .vditor-toolbar [data-type="exportDocx"]')) {
+        button.classList.toggle('vditor-menu--disabled', disabled);
+    }
+}
+
 function matchShortcut(hotkey, event) {
 
     const matchAlt = hotkey.match(/!/) != null == event.altKey

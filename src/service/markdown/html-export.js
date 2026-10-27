@@ -20,6 +20,7 @@ export async function exportDocx(exportFilePath, data, config) {
 
 /*
  * export a html to a pdf file
+ * @returns the path of the exported file
  */
 export async function exportByType(filePath, data, type, config) {
 
@@ -30,9 +31,10 @@ export async function exportByType(filePath, data, type, config) {
     // export html
     if (type == "html") {
         exportHtml(targetFilePath, data)
-        return
+        return targetFilePath
     } else if (type == "docx") {
-        return exportDocx(targetFilePath, data, config)
+        await exportDocx(targetFilePath, data, config)
+        return targetFilePath
     }
 
     // Linux: keep temp html beside the markdown file (snap/isolated browsers often cannot read /tmp)
@@ -105,7 +107,7 @@ export async function exportByType(filePath, data, type, config) {
     }
 
     console.log("[pretty-md-pdf] Exported to file: " + targetFilePath)
-
+    return targetFilePath
 }
 
 async function replaceDynamicContentWithImages(data, config = {}, exportFilePath = "") {

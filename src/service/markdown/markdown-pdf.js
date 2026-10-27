@@ -40,7 +40,7 @@ async function convertMarkdown(inputMarkdownFile, config) {
     outputHtml = appendHtmlToBody(outputHtml, mermaidScript);
   }
 
-  await exportByType(inputMarkdownFile, outputHtml, type, config)
+  return exportByType(inputMarkdownFile, outputHtml, type, config)
 }
 
 function getMermaidScriptSrc(type) {
@@ -308,7 +308,7 @@ export const convertMd = async (options) => {
   const config = options.config
   options.outputFileType = config.type[0]
   console.log(`[pretty-md-pdf] Converting markdown file: ${options.markdownFilePath}`)
-  await convertMarkdown(
+  return convertMarkdown(
     path.resolve(options.markdownFilePath),
     config
   )
