@@ -30,6 +30,7 @@
       "editInVscode": "Редактировать в VS Code"
     },
     "document": {
+      "heading": "Заголовок {level}",
       "failedLoad": "Не удалось загрузить документ"
     },
     "presentation": {

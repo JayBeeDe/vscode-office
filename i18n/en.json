@@ -37,6 +37,7 @@
       "readOnlyBadge": "Read-only"
     },
     "document": {
+      "heading": "Heading {level}",
       "failedLoad": "Failed to load document"
     },
     "presentation": {
@@ -165,8 +166,8 @@
       "strikethrough": "Strikethrough",
       "fontColor": "Font Color",
       "highlightColor": "Text Highlight Color",
-      "insertLink": "Insert link",
-      "insertLinkShortcut": "Insert link (Ctrl+K)",
+      "insertLink": "Link",
+      "insertLinkShortcut": "Link (Ctrl+K)",
       "superscript": "Superscript",
       "superscriptShortcut": "Superscript (Ctrl+Shift+=)",
       "subscript": "Subscript",

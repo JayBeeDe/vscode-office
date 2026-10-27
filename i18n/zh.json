@@ -30,6 +30,7 @@
       "editInVscode": "在 VS Code 中编辑"
     },
     "document": {
+      "heading": "标题 {level}",
       "failedLoad": "加载文档失败"
     },
     "presentation": {
@@ -133,8 +134,8 @@
       "strikethrough": "删除线",
       "fontColor": "字体颜色",
       "highlightColor": "文本突出显示颜色",
-      "insertLink": "插入链接",
-      "insertLinkShortcut": "插入链接(Ctrl+K)",
+      "insertLink": "链接",
+      "insertLinkShortcut": "链接(Ctrl+K)",
       "superscript": "上标",
       "superscriptShortcut": "上标(Ctrl+Shift+=)",
       "subscript": "下标",
