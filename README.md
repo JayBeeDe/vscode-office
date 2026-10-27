@@ -37,7 +37,7 @@ To use the built-in VS Code Markdown editor instead, add this to your `settings.
 }
 ```
 
-Right-click in the editor to export Markdown to PDF, DOCX, or HTML. PDF export requires Chromium; set the browser path with `vscode-office.markdown.chromiumPath`.
+Right-click in the editor to export Markdown to PDF, DOCX, or HTML. PDF export requires Chromium, and DOCX export uses it to keep math and diagrams as images; set the browser path with `vscode-office.markdown.export.chromiumPath`.
 
 ![Export Markdown](image/README-CN/1685418034035.png)
 

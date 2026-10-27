@@ -1,4 +1,4 @@
-import { getToolbar, bindShortcut, } from "./util.js";
+import { getToolbar, bindShortcut, disableSlowExports, } from "./util.js";
 import { observeWorkspaceAbsoluteImages, createMarkdownValueReader, restoreWorkspaceBaseUrls, } from "./imagePath.js";
 import { mapVscodeLanguageToVditorLang } from "./lang.js";
 
@@ -10,7 +10,7 @@ function findReferenceDefinition(markdown, label) {
 }
 
 handler.on("open", async (md) => {
-  const { content, rootPath, workspaceBaseUrl, documentCacheId, pendingFragment, shouldRestoreFocus, config, fileName } = md;
+  const { content, rootPath, workspaceBaseUrl, documentCacheId, pendingFragment, shouldRestoreFocus, config, fileName, exporting } = md;
   window.__officeMarkdownFileName = fileName || 'Note';
   const {
     language, i18n, isWeb, isDev, markdown,
@@ -113,6 +113,8 @@ handler.on("open", async (md) => {
     },
     after() {
       observeWorkspaceAbsoluteImages(document.getElementById('vditor'), workspaceBaseUrl);
+      disableSlowExports(!!exporting);
+      handler.on('exporting', disableSlowExports);
       handler.on('theme', (theme) => {
         editor.setColorTheme(theme);
       });

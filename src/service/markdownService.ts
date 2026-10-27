@@ -7,6 +7,7 @@ import { copyFileSync, existsSync, lstatSync, mkdirSync, renameSync } from 'fs';
 import { homedir } from 'os';
 import path, { dirname, extname, isAbsolute, join, parse } from 'path';
 import * as vscode from 'vscode';
+import { broadcastToMarkdownWebviews } from './markdown/blockScroll';
 import { Holder } from './markdown/holder';
 import { convertMd } from "./markdown/markdown-pdf";
 import { Global, i18n } from "@/common/global";
@@ -23,6 +24,9 @@ type Theme = 'light' | 'dark';
 
 export class MarkdownService {
 
+    /** a PDF or DOCX export is running: one at a time, their buttons are disabled meanwhile */
+    public static exporting = false;
+
     constructor(private context: vscode.ExtensionContext) {
     }
 
@@ -32,19 +36,42 @@ export class MarkdownService {
      */
     public async exportMarkdown(uri: vscode.Uri, option: ExportOption = {}) {
         const { type = 'pdf' } = option;
-        try {
-            if (type != 'html') { // HTML export is fast, no need to wait
-                vscode.window.showInformationMessage(i18n('markdown.exportStart', { type }))
+        if (type !== 'html' && MarkdownService.exporting) {
+            return;
+        }
+        // PDF is made with Chromium, DOCX uses it for math and diagrams: without one, point to the setting
+        const executablePath = type === 'html' ? undefined : this.getChromiumPath();
+        if (type !== 'html' && !executablePath) {
+            this.showNoChromium(type);
+            if (type === 'pdf') {
+                return;
             }
-            await convertMd({ markdownFilePath: uri.fsPath, config: this.getConfig(option) })
-            vscode.window.showInformationMessage(i18n('markdown.exportSuccess', { type }))
+        }
+        const convert = () => convertMd({ markdownFilePath: uri.fsPath, config: this.getConfig(option, executablePath) });
+        if (type !== 'html') {
+            MarkdownService.setExporting(true);
+        }
+        try {
+            // HTML is written at once; PDF and DOCX show a spinner in the status bar meanwhile
+            const exportPath: string = type === 'html' ? await convert() : await vscode.window.withProgress(
+                { location: vscode.ProgressLocation.Window, title: i18n('markdown.exporting', { type }) }, convert)
+            this.showExportSuccess(type, exportPath);
         } catch (error) {
             Output.log(error)
             vscode.window.showErrorMessage(i18n('markdown.exportFailed', { type, error: error instanceof Error ? error.message : String(error) }))
+        } finally {
+            if (type !== 'html') {
+                MarkdownService.setExporting(false);
+            }
         }
     }
 
-    public getConfig(option: ExportOption) {
+    private static setExporting(exporting: boolean) {
+        MarkdownService.exporting = exporting;
+        broadcastToMarkdownWebviews('exporting', exporting);
+    }
+
+    public getConfig(option: ExportOption, executablePath?: string) {
         const top = Global.getConfig("markdown.pdfMarginTop")
         const { type = 'pdf', accent } = option;
         return {
@@ -57,9 +84,8 @@ export class MarkdownService {
             // a CSS colour only: it goes into the exported HTML
             accent: /^[#\w(),.%\s-]+$/.test(accent ?? '') ? accent : undefined,
             "styles": [],
-            // chromium path
-            // PDF needs Chromium; DOCX only uses it, when found, to turn math and diagrams into images
-            "executablePath": type === 'pdf' ? this.getChromiumPath() : type === 'docx' ? this.findChromiumPath() : undefined,
+            // chromium path, found by exportMarkdown for PDF and DOCX
+            "executablePath": executablePath,
             // puppeteer launch args (useful for Linux servers running as root)
             "puppeteerArgs": this.getPuppeteerArgs(),
             // Set `true` to convert `\n` in paragraphs into `<br>`.
@@ -131,18 +157,40 @@ export class MarkdownService {
         "/usr/bin/microsoft-edge",
     ]
 
-    private findChromiumPath(): string | undefined {
-        try {
-            return this.getChromiumPath();
-        } catch {
-            return undefined;
+    private async showExportSuccess(type: ExportType, exportPath: string) {
+        const openFile = i18n('markdown.openFile');
+        const choice = await vscode.window.showInformationMessage(i18n('markdown.exportSuccess', { type, path: exportPath }), openFile);
+        if (choice === openFile) {
+            vscode.commands.executeCommand('vscode.open', vscode.Uri.file(exportPath));
         }
     }
 
-    private getChromiumPath() {
-        const chromiumPath = Global.getConfig<string>("markdown.chromiumPath")
-        const paths = [chromiumPath, ...this.paths]
-        for (const path of paths) {
+    private async showNoChromium(type: ExportType) {
+        const openSettings = i18n('markdown.openSettings');
+        // a configured path that does not exist is named, an empty setting means none was found
+        const configuredPath = Global.getConfig<string>("markdown.export.chromiumPath")?.trim();
+        const choice = type === 'pdf'
+            ? await vscode.window.showErrorMessage(configuredPath
+                ? i18n('markdown.noChromiumAt', { type, path: configuredPath })
+                : i18n('markdown.noChromium', { type }), openSettings)
+            : await vscode.window.showWarningMessage(configuredPath
+                ? i18n('markdown.noChromiumDocxAt', { path: configuredPath })
+                : i18n('markdown.noChromiumDocx'), openSettings);
+        if (choice === openSettings) {
+            vscode.commands.executeCommand('workbench.action.openSettings', 'vscode-office.markdown.export.chromiumPath');
+        }
+    }
+
+    /**
+     * vscode-office.markdown.export.chromiumPath when set, undefined if it does not exist: a wrong
+     * path must be reported, not replaced; when empty, the usual install locations
+     */
+    private getChromiumPath(): string | undefined {
+        const chromiumPath = Global.getConfig<string>("markdown.export.chromiumPath")?.trim()
+        if (chromiumPath) {
+            return existsSync(chromiumPath) ? chromiumPath : undefined;
+        }
+        for (const path of this.paths) {
             if (existsSync(path)) {
                 console.debug(`using chromium path is ${path}`)
                 return path;
@@ -152,10 +200,8 @@ export class MarkdownService {
             const chromePath = chromeFinder();
             console.debug(`using chrome path is ${chromePath}`)
             return chromePath;
-        } catch (e) {
-            const msg = i18n('markdown.noChromium');
-            vscode.window.showErrorMessage(msg)
-            throw new Error(msg)
+        } catch {
+            return undefined;
         }
     }
 

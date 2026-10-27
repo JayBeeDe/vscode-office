@@ -7,10 +7,15 @@
       "confirmOpenLink": "「{url}」を開きますか？このリンクは Web 以外を指しており、ファイルを開いたりプログラムを実行したりする可能性があります。"
     },
     "markdown": {
-      "exportStart": "Markdown を {type} にエクスポートしています...",
-      "exportSuccess": "Markdown の {type} へのエクスポートに成功しました！",
+      "exporting": "Markdown を {type} にエクスポートしています...",
+      "exportSuccess": "Markdown を {type} にエクスポートしました: {path}",
       "exportFailed": "Markdown の {type} へのエクスポートに失敗しました: {error}",
-      "noChromium": "Chromium が見つかりません。エクスポートに失敗しました。",
+      "noChromium": "Chromium が見つかりません。Markdown を {type} にエクスポートするには Chromium が必要です。vscode-office.markdown.export.chromiumPath にパスを設定してください。",
+      "noChromiumDocx": "Chromium が見つかりません。DOCX エクスポートでは数式と図がテキストのままになります。vscode-office.markdown.export.chromiumPath にパスを設定してください。",
+      "noChromiumAt": "{path} に Chromium が見つかりません。Markdown を {type} にエクスポートするには Chromium が必要です。vscode-office.markdown.export.chromiumPath を修正してください。",
+      "noChromiumDocxAt": "{path} に Chromium が見つかりません。DOCX エクスポートでは数式と図がテキストのままになります。vscode-office.markdown.export.chromiumPath を修正してください。",
+      "openSettings": "設定を開く",
+      "openFile": "ファイルを開く",
       "noClipboardImage": "クリップボードに画像がありません。",
       "noPasteDirectory": "ディレクトリの貼り付けはサポートされていません。",
       "installXclip": "先に xclip コマンドをインストールしてください。",

@@ -7,10 +7,15 @@
       "confirmOpenLink": "打开“{url}”？此链接并非指向网页，可能会打开文件或运行程序。"
     },
     "markdown": {
-      "exportStart": "正在开始导出 Markdown 为 {type}。",
-      "exportSuccess": "导出 Markdown 为 {type} 成功！",
+      "exporting": "正在导出 Markdown 为 {type}...",
+      "exportSuccess": "已导出 Markdown 为 {type}：{path}",
       "exportFailed": "导出 Markdown 为 {type} 失败：{error}",
-      "noChromium": "未找到 Chromium，导出失败。",
+      "noChromium": "未找到 Chromium：导出 Markdown 为 {type} 需要它。请在 vscode-office.markdown.export.chromiumPath 中设置其路径。",
+      "noChromiumDocx": "未找到 Chromium：DOCX 导出中的公式和图表将保留为文本。请在 vscode-office.markdown.export.chromiumPath 中设置其路径。",
+      "noChromiumAt": "在 {path} 未找到 Chromium：导出 Markdown 为 {type} 需要它。请修正 vscode-office.markdown.export.chromiumPath。",
+      "noChromiumDocxAt": "在 {path} 未找到 Chromium：DOCX 导出中的公式和图表将保留为文本。请修正 vscode-office.markdown.export.chromiumPath。",
+      "openSettings": "打开设置",
+      "openFile": "打开文件",
       "noClipboardImage": "剪贴板中没有图片。",
       "noPasteDirectory": "不支持粘贴目录。",
       "installXclip": "请先安装 xclip 命令。",

@@ -7,10 +7,15 @@
       "confirmOpenLink": "Abrir \"{url}\"? Este link não aponta para a web e pode abrir um arquivo ou executar um programa."
     },
     "markdown": {
-      "exportStart": "Iniciando exportação de Markdown para {type}.",
-      "exportSuccess": "Exportação de Markdown para {type} concluída com sucesso!",
+      "exporting": "Exportando Markdown para {type}...",
+      "exportSuccess": "Markdown exportado para {type}: {path}",
       "exportFailed": "Falha ao exportar Markdown para {type}: {error}",
-      "noChromium": "Chromium não encontrado, falha na exportação.",
+      "noChromium": "Chromium não encontrado: a exportação de Markdown para {type} precisa dele. Defina o caminho em vscode-office.markdown.export.chromiumPath.",
+      "noChromiumDocx": "Chromium não encontrado: a exportação DOCX mantém fórmulas e diagramas como texto. Defina o caminho em vscode-office.markdown.export.chromiumPath.",
+      "noChromiumAt": "Chromium não encontrado em {path}: a exportação de Markdown para {type} precisa dele. Corrija vscode-office.markdown.export.chromiumPath.",
+      "noChromiumDocxAt": "Chromium não encontrado em {path}: a exportação DOCX mantém fórmulas e diagramas como texto. Corrija vscode-office.markdown.export.chromiumPath.",
+      "openSettings": "Abrir configurações",
+      "openFile": "Abrir arquivo",
       "noClipboardImage": "Não há imagem na área de transferência.",
       "noPasteDirectory": "Não é suportado colar diretórios.",
       "installXclip": "Você precisa instalar o comando xclip primeiro.",

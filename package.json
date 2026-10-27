@@ -597,9 +597,9 @@
 				"title": "Markdown PDF",
 				"order": 2,
 				"properties": {
-					"vscode-office.markdown.chromiumPath": {
+					"vscode-office.markdown.export.chromiumPath": {
 						"type": "string",
-						"description": "Set the chromium browser location for exporting markdown pdf."
+						"markdownDescription": "Path of the Chromium-based browser (Chromium, Chrome, Edge, Brave...) the PDF and DOCX exports use. When empty, the usual install locations are searched; a path that does not exist is reported, not replaced."
 					},
 					"vscode-office.markdown.puppeteerArgs": {
 						"type": "array",

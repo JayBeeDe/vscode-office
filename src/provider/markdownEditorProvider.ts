@@ -239,6 +239,8 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
                 documentCacheId: `${uri.scheme}:${uri.toString()}`,
                 pendingFragment: consumePendingBlockScroll(uri),
                 shouldRestoreFocus: config.get<boolean>("restoreViewState", true),
+                // a PDF or DOCX export started from another panel
+                exporting: MarkdownService.exporting,
                 config: this.getMarkdownWebviewConfig(config),
             })
             this.countOwner = handler;
