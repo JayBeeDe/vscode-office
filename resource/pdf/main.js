@@ -109,50 +109,58 @@
 
   const strings = window.officePdfStrings || {};
 
-  // vscode-office.theme: the toolbars, the sidebar and the menus are light or dark; the pages keep
-  // their colours (the dark mode button inverts them)
-  function setupTheme() {
-    let setting = window.officePdfTheme || 'auto';
-    const isVscodeDark = () => {
-      const kind = document.body.getAttribute('data-vscode-theme-kind')
-        || ['vscode-high-contrast-light', 'vscode-light', 'vscode-high-contrast', 'vscode-dark']
-          .find((name) => document.body.classList.contains(name));
-      return kind === 'vscode-dark' || kind === 'vscode-high-contrast';
-    };
-    const apply = () => {
-      const vscodeDark = isVscodeDark();
-      const dark = setting === 'dark' || (setting === 'auto' && vscodeDark);
-      document.body.classList.toggle('office-adaptive-theme', dark);
-      // VS Code's colours are light ones then: ../theme/dark-palette.css replaces them
-      document.body.classList.toggle('office-forced-dark', dark && !vscodeDark);
-    };
-    apply();
-    handler.on('theme', (value) => {
-      setting = value;
-      apply();
-    });
-    new MutationObserver(apply).observe(document.body, { attributes: true, attributeFilter: ['class', 'data-vscode-theme-kind'] });
+  // vscode-office.theme: the toolbars, the sidebar and the menus are light or dark.
+  // vscode-office.pdf.theme: the pages' colours, inverted when dark (`office-dark`); `auto`
+  // follows vscode-office.theme. The dark mode button sets it.
+  let uiTheme = window.officePdfTheme || 'auto';
+  let pageTheme = window.officePdfPageTheme || 'auto';
+
+  const isVscodeDark = () => {
+    const kind = document.body.getAttribute('data-vscode-theme-kind')
+      || ['vscode-high-contrast-light', 'vscode-light', 'vscode-high-contrast', 'vscode-dark']
+        .find((name) => document.body.classList.contains(name));
+    return kind === 'vscode-dark' || kind === 'vscode-high-contrast';
+  };
+  const isDark = (setting) => setting === 'dark' || (setting === 'auto' && isVscodeDark());
+  const isPageDark = () => isDark(pageTheme === 'auto' ? uiTheme : pageTheme);
+
+  function applyThemes() {
+    const vscodeDark = isVscodeDark();
+    const dark = isDark(uiTheme);
+    document.body.classList.toggle('office-adaptive-theme', dark);
+    // VS Code's colours are light ones then: ../theme/dark-palette.css replaces them
+    document.body.classList.toggle('office-forced-dark', dark && !vscodeDark);
+
+    const pageDark = isPageDark();
+    document.body.classList.toggle('office-dark', pageDark);
+    const btn = document.getElementById('darkModeToggle');
+    if (btn) {
+      btn.classList.toggle('toggled', pageDark);
+      btn.innerHTML = pageDark ? BULB_ICON : MOON_ICON;
+      btn.title = `${pageDark ? strings.switchToLight : strings.switchToDark} (Ctrl/Cmd+L)`; // i18n-ignore: the shortcut
+      btn.setAttribute('aria-label', pageDark ? strings.switchToLight : strings.switchToDark);
+    }
   }
 
+  function setupTheme() {
+    applyThemes();
+    handler.on('theme', (value) => {
+      uiTheme = value;
+      applyThemes();
+    });
+    handler.on('pdfTheme', (value) => {
+      pageTheme = value;
+      applyThemes();
+    });
+    new MutationObserver(applyThemes).observe(document.body, { attributes: true, attributeFilter: ['class', 'data-vscode-theme-kind'] });
+  }
+
+  // the dark mode button and Ctrl/Cmd+L save the other theme in vscode-office.pdf.theme
   function setupDarkMode() {
-    const STORAGE_KEY = 'office-pdf-dark-mode';
-    const apply = (on) => {
-      document.body.classList.toggle('office-dark', on);
-      const btn = document.getElementById('darkModeToggle');
-      if (btn) {
-        btn.classList.toggle('toggled', on);
-        btn.innerHTML = on ? BULB_ICON : MOON_ICON;
-        btn.title = `${on ? strings.switchToLight : strings.switchToDark} (Ctrl/Cmd+L)`; // i18n-ignore: the shortcut
-        btn.setAttribute('aria-label', on ? strings.switchToLight : strings.switchToDark);
-      }
-    };
-    let enabled = false;
-    try { enabled = localStorage.getItem(STORAGE_KEY) === '1'; } catch (e) { }
-    apply(enabled);
     const toggle = () => {
-      enabled = !enabled;
-      try { localStorage.setItem(STORAGE_KEY, enabled ? '1' : '0'); } catch (e) { }
-      apply(enabled);
+      pageTheme = isPageDark() ? 'light' : 'dark';
+      applyThemes();
+      handler.emit('pdfTheme', pageTheme);
     };
     const btn = document.getElementById('darkModeToggle');
     if (btn) btn.addEventListener('click', toggle);
