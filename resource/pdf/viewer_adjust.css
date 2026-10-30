@@ -33,7 +33,7 @@
     display: inline-block;
     padding: 0 !important;
     overflow: visible !important;
-    margin: 2px 2px 0 !important;
+    margin: 0 2px !important;
     border: 1px solid var(--field-border-color) !important;
     box-sizing: border-box;
     background: transparent !important;
@@ -695,67 +695,149 @@ body.office-adaptive-theme #darkModeToggle.toolbarButton.toggled:hover {
     mask-image: var(--toolbarButton-search-icon);
 }
 
-.secondaryToolbarButton.firstPage::before {
+.toolbarButton.firstPage::before {
     -webkit-mask-image: var(--secondaryToolbarButton-firstPage-icon);
     mask-image: var(--secondaryToolbarButton-firstPage-icon);
 }
 
-.secondaryToolbarButton.lastPage::before {
+.toolbarButton.lastPage::before {
     -webkit-mask-image: var(--secondaryToolbarButton-lastPage-icon);
     mask-image: var(--secondaryToolbarButton-lastPage-icon);
 }
 
-.secondaryToolbarButton.rotateCcw::before {
+.toolbarButton.rotateCcw::before {
     -webkit-mask-image: var(--secondaryToolbarButton-rotateCcw-icon);
     mask-image: var(--secondaryToolbarButton-rotateCcw-icon);
 }
 
-.secondaryToolbarButton.rotateCw::before {
+.toolbarButton.rotateCw::before {
     -webkit-mask-image: var(--secondaryToolbarButton-rotateCw-icon);
     mask-image: var(--secondaryToolbarButton-rotateCw-icon);
 }
 
-.secondaryToolbarButton.selectTool::before {
+.toolbarButton.selectTool::before {
     -webkit-mask-image: var(--secondaryToolbarButton-selectTool-icon);
     mask-image: var(--secondaryToolbarButton-selectTool-icon);
 }
 
-.secondaryToolbarButton.handTool::before {
+.toolbarButton.handTool::before {
     -webkit-mask-image: var(--secondaryToolbarButton-handTool-icon);
     mask-image: var(--secondaryToolbarButton-handTool-icon);
 }
 
-.secondaryToolbarButton.scrollVertical::before {
+.toolbarButton.scrollVertical::before {
     -webkit-mask-image: var(--secondaryToolbarButton-scrollVertical-icon);
     mask-image: var(--secondaryToolbarButton-scrollVertical-icon);
 }
 
-.secondaryToolbarButton.scrollHorizontal::before {
+.toolbarButton.scrollHorizontal::before {
     -webkit-mask-image: var(--secondaryToolbarButton-scrollHorizontal-icon);
     mask-image: var(--secondaryToolbarButton-scrollHorizontal-icon);
 }
 
-.secondaryToolbarButton.scrollWrapped::before {
+.toolbarButton.scrollWrapped::before {
     -webkit-mask-image: var(--secondaryToolbarButton-scrollWrapped-icon);
     mask-image: var(--secondaryToolbarButton-scrollWrapped-icon);
 }
 
-.secondaryToolbarButton.spreadNone::before {
+.toolbarButton.spreadNone::before {
     -webkit-mask-image: var(--secondaryToolbarButton-spreadNone-icon);
     mask-image: var(--secondaryToolbarButton-spreadNone-icon);
 }
 
-.secondaryToolbarButton.spreadOdd::before {
+.toolbarButton.spreadOdd::before {
     -webkit-mask-image: var(--secondaryToolbarButton-spreadOdd-icon);
     mask-image: var(--secondaryToolbarButton-spreadOdd-icon);
 }
 
-.secondaryToolbarButton.spreadEven::before {
+.toolbarButton.spreadEven::before {
     -webkit-mask-image: var(--secondaryToolbarButton-spreadEven-icon);
     mask-image: var(--secondaryToolbarButton-spreadEven-icon);
 }
 
-.secondaryToolbarButton.documentProperties::before {
+.toolbarButton.documentProperties::before {
     -webkit-mask-image: var(--secondaryToolbarButton-documentProperties-icon);
     mask-image: var(--secondaryToolbarButton-documentProperties-icon);
+}
+
+/*
+ * The Tools menu's items are in the toolbar (viewer.html): the menu, its button and its copies of
+ * the toolbar's buttons are hidden
+ */
+#secondaryToolbar,
+#secondaryToolbarToggle {
+    display: none !important;
+}
+
+/*
+ * The toolbar in a row: the left buttons and the tools from the left, the zoom and the theme toggle
+ * on the right (#toolbarViewerMiddle, PDF.js centers it over the toolbar). A toolbar too narrow for
+ * them all scrolls the tools.
+ */
+#toolbarViewer {
+    display: flex;
+    align-items: flex-start;
+}
+
+html[dir] #toolbarViewerLeft,
+html[dir] #toolbarViewerRight,
+#toolbarViewerMiddle {
+    float: none;
+    flex: none;
+}
+
+#toolbarViewerLeft {
+    order: 1;
+}
+
+#toolbarViewerMiddle {
+    order: 3;
+    display: flex;
+    align-items: center;
+    height: 32px;
+    position: static;
+    transform: none;
+    margin: 0 0 0 auto;
+    padding-left: 8px;
+}
+
+#toolbarViewerRight {
+    order: 2;
+    display: flex;
+    align-items: center;
+    height: 32px;
+    min-width: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+}
+
+/* (more specific than flex: none, above) */
+html[dir] #toolbarViewerRight {
+    flex-shrink: 1;
+}
+
+#toolbarViewerRight::-webkit-scrollbar {
+    display: none;
+}
+
+/* centered in the toolbar's height, whatever margins PDF.js gives them */
+html[dir] #toolbarViewerRight > *,
+html[dir] #toolbarViewerMiddle > :not(#scaleSelectContainer) {
+    flex: none;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+/* The zoom's -/+ buttons: the zoom dropdown has the levels, Ctrl +/- still zooms (PDF.js needs the buttons) */
+#toolbarViewerMiddle > .splitToolbarButton:has(#zoomIn) {
+    display: none;
+}
+
+/* The tools' groups, spaced like the toolbar's other buttons */
+html[dir] .office-tools-group {
+    display: flex;
+    align-items: center;
+    background: transparent !important;
+    margin-right: 4px;
 }
