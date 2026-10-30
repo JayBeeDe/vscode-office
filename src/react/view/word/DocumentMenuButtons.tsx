@@ -2,7 +2,7 @@ import { getCachedNumberingMap } from "@eigenpal/docx-editor-core/docx";
 import { applyStyle, setAlignment } from "@eigenpal/docx-editor-core/prosemirror/commands";
 import { createStyleResolver } from "@eigenpal/docx-editor-core/prosemirror/styles";
 import { useTranslation, type DocxEditorRef } from "@eigenpal/docx-editor-react";
-import { ToolbarButton, ToolbarGroup } from "@eigenpal/docx-editor-react/ui";
+import { ColorPicker, ToolbarButton, ToolbarGroup, type ColorPickerProps } from "@eigenpal/docx-editor-react/ui";
 import { useEffect, useMemo, useRef, useState, type ReactNode, type RefObject } from "react";
 import { createPortal } from "react-dom";
 import { $t } from "../../i18n/i18nConfig.ts";
@@ -364,6 +364,63 @@ function LinkButton() {
     );
 }
 
+type PickedColor = Parameters<NonNullable<ColorPickerProps["onChange"]>>[0];
+
+// the text watermark's color when none is set, the dialog's: Automatic in the picker
+const WATERMARK_AUTO_COLOR = "C0C0C0";
+
+/** Sets the value of a field the editor's React renders, as if typed in it: its onChange runs */
+function typeInto(input: HTMLInputElement, value: string) {
+    Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")?.set?.call(input, value);
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+}
+
+/**
+ * The text watermark's color: the font color's picker beside the browser's field, hidden (Word.css),
+ * a pick typed into the field so the dialog applies it as its own
+ */
+function WatermarkColorPicker({ theme }: { theme: ColorPickerProps["theme"] }) {
+    const { t } = useTranslation();
+    const title = t("dialogs.watermark.title");
+    const input = useEditorElement(() => Array.from(document.querySelectorAll('[role="dialog"]'))
+        .find(dialog => dialog.getAttribute("aria-label") === title)
+        ?.querySelector<HTMLInputElement>('input[type="color"]') ?? null);
+    const [slot] = useState(() => {
+        const span = document.createElement("span");
+        span.className = "document-watermark-color";
+        return span;
+    });
+    const [color, setColor] = useState("");
+
+    useEffect(() => {
+        if (!input) return;
+        input.after(slot);
+        // the dialog sets the watermark's color once open, without an input event: React writes
+        // the value attribute too
+        const update = () => setColor(input.value.replace(/^#/, "").toUpperCase());
+        update();
+        const observer = new MutationObserver(update);
+        observer.observe(input, { attributes: true, attributeFilter: ["value"] });
+        input.addEventListener("input", update);
+        return () => {
+            observer.disconnect();
+            input.removeEventListener("input", update);
+            slot.remove();
+        };
+    }, [input, slot]);
+
+    // theme colors come with their rgb
+    const pick = (picked: PickedColor) => {
+        const hex = typeof picked === "string" ? picked : picked.auto ? WATERMARK_AUTO_COLOR : picked.rgb;
+        if (input && hex) typeInto(input, `#${hex.toLowerCase()}`);
+    };
+
+    return input && createPortal(
+        <ColorPicker mode="text" splitButton={false} value={color} onChange={pick} theme={theme} title={t("dialogs.watermark.colorLabel")} />,
+        slot,
+    );
+}
+
 /** The editor's groups, tagged for Word.css to order them */
 function useFormattingGroups() {
     const history = useFormattingGroup("formattingBar.groups.history", "history");
@@ -430,6 +487,7 @@ export default function DocumentMenuButtons({ editorRef, onSave }: { editorRef: 
             </ToolbarGroup>
             <div role="separator" className="w-px h-6 bg-border mx-1.5 document-separator document-separator--insert" />
             <div role="separator" className="w-px h-6 bg-border mx-1.5 document-separator document-separator--end" />
+            <WatermarkColorPicker theme={docx?.package.theme ?? null} />
         </>
     );
 }

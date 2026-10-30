@@ -306,6 +306,8 @@ html:has(.word-viewer) {
     display: block;
     padding: 0.375rem 0.5rem;
     border-radius: 4px;
+    /* buttons without a text color class, black otherwise */
+    color: var(--doc-text);
 }
 
 /* The table size grid of the Insert table icon, like the editor's own menus */
@@ -396,24 +398,29 @@ html:has(.word-viewer) {
     border-bottom-color: var(--vscode-panel-border, var(--vscode-editorWidget-border));
 }
 
-/* ── VS Code theme → docx-editor (variables are defined on .ep-root)── */
+/*
+ * ── VS Code theme → docx-editor (variables are defined on .ep-root)──
+ * Scoped from html: the select dropdowns (paragraph style, font size, zoom...) are portaled into
+ * their own .ep-root under body, outside .word-viewer
+ */
 .word-viewer--vscode-theme {
     font-family: var(--vscode-font-family, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
     font-size: var(--vscode-font-size, 13px);
 }
 
-.word-viewer--vscode-theme .ep-root {
+html:has(.word-viewer--vscode-theme) .ep-root {
     --doc-surface: var(--vscode-editorGroupHeader-tabsBackground, var(--vscode-sideBar-background, var(--vscode-editor-background)));
     --doc-card: var(--vscode-sideBar-background, var(--vscode-editorWidget-background, var(--vscode-editor-background)));
     --doc-bg: var(--vscode-editor-background);
     --doc-bg-subtle: var(--vscode-sideBarSectionHeader-background, var(--vscode-editorGroupHeader-tabsBackground, var(--vscode-sideBar-background)));
     --doc-bg-hover: var(--vscode-toolbar-hoverBackground, var(--vscode-list-hoverBackground, color-mix(in srgb, var(--vscode-foreground) 6%, transparent)));
     --doc-bg-input: var(--vscode-input-background, var(--vscode-editor-background));
-    --doc-primary: var(--vscode-textLink-foreground);
-    --doc-primary-hover: var(--vscode-textLink-activeForeground, var(--vscode-textLink-foreground));
-    --doc-primary-light: color-mix(in srgb, var(--vscode-textLink-foreground) 18%, transparent);
-    --doc-accent: var(--vscode-textLink-foreground);
-    --doc-accent-bg: color-mix(in srgb, var(--vscode-textLink-foreground) 14%, var(--vscode-editor-background));
+    /* the theme's accent, like the spreadsheet's: its link color can be another hue */
+    --doc-primary: var(--vscode-focusBorder, var(--vscode-textLink-foreground));
+    --doc-primary-hover: color-mix(in srgb, var(--doc-primary) 85%, black);
+    --doc-primary-light: color-mix(in srgb, var(--doc-primary) 18%, transparent);
+    --doc-accent: var(--doc-primary);
+    --doc-accent-bg: color-mix(in srgb, var(--doc-primary) 14%, var(--vscode-editor-background));
     --doc-on-primary: var(--vscode-button-foreground, #ffffff);
     --doc-toggle-active-bg: var(--doc-primary-light);
     --doc-toggle-active-fg: var(--doc-primary);
@@ -441,7 +448,7 @@ html:has(.word-viewer) {
     --doc-shadow-lg: 0 10px 15px -3px var(--vscode-widget-shadow, rgba(0, 0, 0, 0.2)), 0 4px 6px -4px var(--vscode-widget-shadow, rgba(0, 0, 0, 0.2));
     --doc-overlay: color-mix(in srgb, var(--vscode-foreground, var(--vscode-editor-foreground)) 40%, transparent);
     --doc-focus-ring: color-mix(in srgb, var(--vscode-focusBorder, var(--vscode-textLink-foreground)) 45%, transparent);
-    --doc-selection: color-mix(in srgb, var(--vscode-textLink-foreground) 30%, transparent);
+    --doc-selection: color-mix(in srgb, var(--doc-primary) 30%, transparent);
     --doc-scrollbar-size: 14px;
     --doc-scrollbar-thumb: var(--vscode-scrollbarSlider-background);
     --doc-scrollbar-thumb-hover: var(--vscode-scrollbarSlider-hoverBackground);
@@ -507,100 +514,257 @@ html:has(.word-viewer) {
 }
 
 /* Toolbar buttons */
-.word-viewer--vscode-theme .ep-root .ep-toolbar-toggle {
+html:has(.word-viewer--vscode-theme) .ep-root .ep-toolbar-toggle {
     color: var(--doc-text-muted) !important;
 }
 
-.word-viewer--vscode-theme .ep-root .ep-toolbar-toggle:hover {
+html:has(.word-viewer--vscode-theme) .ep-root .ep-toolbar-toggle:hover {
     color: var(--doc-text) !important;
     background-color: var(--doc-bg-hover) !important;
 }
 
 /* shadcn / tailwind utility class overrides */
-.word-viewer--vscode-theme .ep-root .bg-background,
-.word-viewer--vscode-theme .ep-root .bg-doc-bg {
+html:has(.word-viewer--vscode-theme) .ep-root .bg-background,
+html:has(.word-viewer--vscode-theme) .ep-root .bg-doc-bg {
     background-color: var(--doc-bg) !important;
 }
 
-.word-viewer--vscode-theme .ep-root [data-testid="editor-toolbar"].bg-doc-surface,
-.word-viewer--vscode-theme .ep-root .bg-doc-surface {
+html:has(.word-viewer--vscode-theme) .ep-root [data-testid="editor-toolbar"].bg-doc-surface,
+html:has(.word-viewer--vscode-theme) .ep-root .bg-doc-surface {
     background-color: var(--doc-surface) !important;
 }
 
-.word-viewer--vscode-theme .ep-root .bg-popover,
-.word-viewer--vscode-theme .ep-root .bg-card {
+html:has(.word-viewer--vscode-theme) .ep-root .bg-popover,
+html:has(.word-viewer--vscode-theme) .ep-root .bg-card {
     background-color: var(--doc-surface) !important;
 }
 
-.word-viewer--vscode-theme .ep-root .bg-muted,
-.word-viewer--vscode-theme .ep-root .bg-doc-bg-subtle,
-.word-viewer--vscode-theme .ep-root [data-testid="formatting-bar"].bg-muted {
+html:has(.word-viewer--vscode-theme) .ep-root .bg-muted,
+html:has(.word-viewer--vscode-theme) .ep-root .bg-doc-bg-subtle,
+html:has(.word-viewer--vscode-theme) .ep-root [data-testid="formatting-bar"].bg-muted {
     background-color: var(--doc-bg-subtle) !important;
 }
 
-.word-viewer--vscode-theme .ep-root .bg-doc-bg-hover,
-.word-viewer--vscode-theme .ep-root .hover\:bg-doc-bg-hover:hover,
-.word-viewer--vscode-theme .ep-root .hover\:bg-accent:hover,
-.word-viewer--vscode-theme .ep-root .hover\:bg-muted:hover,
-.word-viewer--vscode-theme .ep-root .hover\:bg-muted\/80:hover {
+html:has(.word-viewer--vscode-theme) .ep-root .bg-doc-bg-hover,
+html:has(.word-viewer--vscode-theme) .ep-root .hover\:bg-doc-bg-hover:hover,
+html:has(.word-viewer--vscode-theme) .ep-root .hover\:bg-accent:hover,
+html:has(.word-viewer--vscode-theme) .ep-root .hover\:bg-muted:hover,
+html:has(.word-viewer--vscode-theme) .ep-root .focus\:bg-muted:focus,
+html:has(.word-viewer--vscode-theme) .ep-root .hover\:bg-muted\/80:hover {
     background-color: var(--doc-bg-hover) !important;
 }
 
-.word-viewer--vscode-theme .ep-root .bg-primary {
+html:has(.word-viewer--vscode-theme) .ep-root .bg-primary {
     background-color: var(--doc-primary) !important;
 }
 
-.word-viewer--vscode-theme .ep-root .bg-doc-bg-input,
-.word-viewer--vscode-theme .ep-root .focus\:bg-doc-bg-input:focus {
+html:has(.word-viewer--vscode-theme) .ep-root .bg-doc-bg-input,
+html:has(.word-viewer--vscode-theme) .ep-root .focus\:bg-doc-bg-input:focus {
     background-color: var(--doc-bg-input) !important;
 }
 
-.word-viewer--vscode-theme .ep-root .text-foreground,
-.word-viewer--vscode-theme .ep-root .text-doc-text,
-.word-viewer--vscode-theme .ep-root .hover\:text-foreground:hover,
-.word-viewer--vscode-theme .ep-root .hover\:text-accent-foreground:hover {
+html:has(.word-viewer--vscode-theme) .ep-root .text-foreground,
+html:has(.word-viewer--vscode-theme) .ep-root .text-doc-text,
+html:has(.word-viewer--vscode-theme) .ep-root .hover\:text-foreground:hover,
+html:has(.word-viewer--vscode-theme) .ep-root .hover\:text-accent-foreground:hover {
     color: var(--doc-text) !important;
 }
 
-.word-viewer--vscode-theme .ep-root .text-muted-foreground,
-.word-viewer--vscode-theme .ep-root .text-doc-text-muted {
+html:has(.word-viewer--vscode-theme) .ep-root .text-muted-foreground,
+html:has(.word-viewer--vscode-theme) .ep-root .text-doc-text-muted {
     color: var(--doc-text-muted) !important;
 }
 
-.word-viewer--vscode-theme .ep-root .text-popover-foreground,
-.word-viewer--vscode-theme .ep-root .text-secondary-foreground {
+html:has(.word-viewer--vscode-theme) .ep-root .text-popover-foreground,
+html:has(.word-viewer--vscode-theme) .ep-root .text-secondary-foreground {
     color: var(--doc-text) !important;
 }
 
-.word-viewer--vscode-theme .ep-root .text-primary-foreground {
+html:has(.word-viewer--vscode-theme) .ep-root .text-primary-foreground {
     color: var(--doc-on-primary) !important;
 }
 
-.word-viewer--vscode-theme .ep-root .text-primary {
+html:has(.word-viewer--vscode-theme) .ep-root .text-primary {
     color: var(--doc-primary) !important;
 }
 
-.word-viewer--vscode-theme .ep-root .ep-toolbar-toggle[data-active="true"],
-.word-viewer--vscode-theme .ep-root .ep-toolbar-toggle[data-active="true"]:hover {
+html:has(.word-viewer--vscode-theme) .ep-root .ep-toolbar-toggle[data-active="true"],
+html:has(.word-viewer--vscode-theme) .ep-root .ep-toolbar-toggle[data-active="true"]:hover {
     background-color: var(--doc-toggle-active-bg) !important;
     color: var(--doc-primary) !important;
 }
 
-.word-viewer--vscode-theme .ep-root .text-destructive {
+html:has(.word-viewer--vscode-theme) .ep-root .text-destructive {
     color: var(--doc-error) !important;
 }
 
-.word-viewer--vscode-theme .ep-root .border-border,
-.word-viewer--vscode-theme .ep-root .border-input,
-.word-viewer--vscode-theme .ep-root .border-border\/50,
-.word-viewer--vscode-theme .ep-root .hover\:border-input:hover {
+html:has(.word-viewer--vscode-theme) .ep-root .border-border,
+html:has(.word-viewer--vscode-theme) .ep-root .border-input,
+html:has(.word-viewer--vscode-theme) .ep-root .border-border\/50,
+html:has(.word-viewer--vscode-theme) .ep-root .hover\:border-input:hover {
     border-color: var(--doc-border) !important;
 }
 
-.word-viewer--vscode-theme .ep-root .ring-ring,
-.word-viewer--vscode-theme .ep-root .focus\:ring-ring:focus,
-.word-viewer--vscode-theme .ep-root .focus-visible\:ring-ring:focus-visible {
+html:has(.word-viewer--vscode-theme) .ep-root .ring-ring,
+html:has(.word-viewer--vscode-theme) .ep-root .focus\:ring-ring:focus,
+html:has(.word-viewer--vscode-theme) .ep-root .focus-visible\:ring-ring:focus-visible {
     --tw-ring-color: var(--doc-focus-ring) !important;
+}
+
+/*
+ * Dialog buttons and fields without colors of their own (Cancel and the fields of Page setup, Table
+ * and Image properties...): the browser's, black on white. :where keeps it under their inline styles
+ * and utility classes.
+ */
+:where(html:has(.word-viewer--vscode-theme) .ep-root [role="dialog"]) button {
+    background-color: var(--doc-surface);
+    color: var(--doc-text);
+}
+
+/*
+ * Their primary button (Apply, OK...), the accent inline, darker on hover (not VS Code's button
+ * colors: a theme's button background can be black)
+ */
+html:has(.word-viewer--vscode-theme) .ep-root [role="dialog"] button[style*="background-color: var(--doc-primary)"] {
+    background-color: var(--doc-primary) !important;
+    border-color: var(--doc-primary) !important;
+    color: var(--doc-on-primary) !important;
+}
+
+html:has(.word-viewer--vscode-theme) .ep-root [role="dialog"] button[style*="background-color: var(--doc-primary)"]:hover:not(:disabled) {
+    background-color: var(--doc-primary-hover) !important;
+    border-color: var(--doc-primary-hover) !important;
+}
+
+:where(html:has(.word-viewer--vscode-theme) .ep-root [role="dialog"]) :is(input, select, textarea) {
+    background-color: var(--doc-bg-input);
+    color: var(--vscode-input-foreground, var(--doc-text));
+}
+
+/*
+ * Their file fields (Watermark picture...): the browser's grey button on a field's background, like
+ * the dialogs' Cancel button instead, the file name beside it
+ */
+html:has(.word-viewer--vscode-theme) .ep-root [role="dialog"] input[type="file"] {
+    background-color: transparent;
+    color: var(--doc-text-muted);
+    font-family: inherit;
+    font-size: 13px;
+}
+
+html:has(.word-viewer--vscode-theme) .ep-root [role="dialog"] input[type="file"]::file-selector-button {
+    margin-right: 8px;
+    padding: 6px 16px;
+    border: 1px solid var(--doc-border);
+    border-radius: 4px;
+    background-color: var(--doc-surface);
+    color: var(--doc-text);
+    font: inherit;
+    cursor: pointer;
+}
+
+html:has(.word-viewer--vscode-theme) .ep-root [role="dialog"] input[type="file"]::file-selector-button:hover {
+    background-color: var(--doc-bg-hover);
+}
+
+html:has(.word-viewer--vscode-theme) .ep-root [role="dialog"] input[type="file"]:focus-visible {
+    outline: none;
+}
+
+html:has(.word-viewer--vscode-theme) .ep-root [role="dialog"] input[type="file"]:focus-visible::file-selector-button {
+    outline: 1px solid var(--vscode-focusBorder, var(--doc-primary));
+    outline-offset: 1px;
+}
+
+/* The text watermark's color field: the font color's picker beside it instead (DocumentMenuButtons) */
+.ep-root [role="dialog"] input[type="color"]:has(+ .document-watermark-color) {
+    display: none;
+}
+
+/*
+ * Its color row right after the text, before the font: at the bottom, the picker's palette went
+ * past the window
+ */
+.ep-root [role="dialog"] div:has(> div > .document-watermark-color) > * {
+    order: 2;
+}
+
+.ep-root [role="dialog"] div:has(> div > .document-watermark-color) > :first-child {
+    order: 0;
+}
+
+.ep-root [role="dialog"] div:has(> div > .document-watermark-color) > div:has(> .document-watermark-color) {
+    order: 1;
+}
+
+/* Their radio buttons, checkboxes and sliders (Watermark...), the system's blue natively */
+html:has(.word-viewer--vscode-theme) .ep-root [role="dialog"] {
+    accent-color: var(--doc-primary);
+}
+
+/*
+ * The lists of their dropdowns (Page setup size and orientation...), the system's blue highlight
+ * natively: Chromium's customizable select, a native list where it isn't supported
+ */
+html:has(.word-viewer--vscode-theme) .ep-root [role="dialog"] select,
+html:has(.word-viewer--vscode-theme) .ep-root [role="dialog"] select::picker(select) {
+    appearance: base-select;
+}
+
+html:has(.word-viewer--vscode-theme) .ep-root [role="dialog"] select::picker(select) {
+    background-color: var(--doc-surface);
+    color: var(--doc-text);
+    border: 1px solid var(--doc-border);
+    border-radius: 4px;
+    box-shadow: 0 4px 12px var(--doc-shadow);
+}
+
+html:has(.word-viewer--vscode-theme) .ep-root [role="dialog"] select option {
+    padding: 4px 8px;
+    background-color: transparent;
+    color: var(--doc-text);
+}
+
+html:has(.word-viewer--vscode-theme) .ep-root [role="dialog"] select option:checked {
+    background-color: var(--doc-primary-light);
+}
+
+html:has(.word-viewer--vscode-theme) .ep-root [role="dialog"] select option:is(:hover, :focus-visible) {
+    background-color: var(--doc-primary);
+    color: var(--doc-on-primary);
+    outline: none;
+}
+
+/*
+ * The up/down arrows of the number fields (Page setup margins...), white on hover natively: drawn
+ * with gradients to take the theme's colors, the browser still steps on a click in either half
+ */
+html:has(.word-viewer--vscode-theme) .ep-root [role="dialog"] input[type="number"]::-webkit-inner-spin-button {
+    --doc-spin-arrow: var(--doc-text-muted);
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    align-self: stretch;
+    margin-left: 4px;
+    border-radius: 2px;
+    cursor: default;
+    background-repeat: no-repeat;
+    background-size: 4px 4px;
+    background-image:
+        linear-gradient(to top left, var(--doc-spin-arrow) 50%, transparent 50%),
+        linear-gradient(to top right, var(--doc-spin-arrow) 50%, transparent 50%),
+        linear-gradient(to bottom left, var(--doc-spin-arrow) 50%, transparent 50%),
+        linear-gradient(to bottom right, var(--doc-spin-arrow) 50%, transparent 50%);
+    background-position:
+        left 2px top calc(50% - 3px),
+        left 6px top calc(50% - 3px),
+        left 2px top calc(50% + 3px),
+        left 6px top calc(50% + 3px);
+}
+
+html:has(.word-viewer--vscode-theme) .ep-root [role="dialog"] input[type="number"]::-webkit-inner-spin-button:hover {
+    --doc-spin-arrow: var(--doc-on-primary);
+    background-color: var(--doc-primary);
 }
 
 /* Selection / table focus */
@@ -634,6 +798,18 @@ html:has(.word-viewer) {
 .word-viewer--vscode-theme .docx-hyperlink::-moz-selection {
     background-color: var(--doc-selection) !important;
     color: inherit !important;
+}
+
+/* Everywhere else in the editor (toolbar fields, dialogs, menus...), the system's blue otherwise */
+.word-viewer--vscode-theme ::selection,
+html:has(.word-viewer--vscode-theme) .ep-root ::selection {
+    /* the variables are on .ep-root, the viewer's own menus are outside */
+    background-color: var(--doc-selection, color-mix(in srgb, var(--vscode-focusBorder, var(--vscode-textLink-foreground)) 30%, transparent));
+}
+
+/* The selection painted over the pages, blue inline */
+.word-viewer--vscode-theme [data-testid="selection-overlay"] > [data-testid^="selection-rect-"] {
+    background-color: var(--doc-selection) !important;
 }
 
 .word-viewer--vscode-theme .layout-table-cell-selected {

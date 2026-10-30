@@ -18,6 +18,9 @@ const EDITOR_STRINGS = {
     _lang: "document" in LANGUAGES[getLanguage()] ? getLanguage() : "en",
 };
 
+// no preset texts in the Watermark dialog: its dropdown only filled the text field
+const WATERMARK_PRESETS: readonly string[] = [];
+
 interface WordOpenPayload {
     path?: string;
     buffer?: number[];
@@ -132,6 +135,7 @@ export default function Word() {
                         colorMode="light"
                         showFileOpen={false}
                         showHelpMenu={false}
+                        watermarkPresets={WATERMARK_PRESETS}
                         toolbarExtra={readOnly ? undefined : <DocumentMenuButtons editorRef={editorRef} onSave={handleSave} />}
                         onChange={() => {
                             if (!readOnlyRef.current) {
