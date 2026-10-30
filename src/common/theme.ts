@@ -27,6 +27,11 @@ export function getDocumentTheme(): Theme {
     return readTheme('document.theme');
 }
 
+/** The `vscode-office.pdf.theme` setting: the PDF pages' colours, `auto` following `vscode-office.theme`. */
+export function getPdfTheme(): Theme {
+    return readTheme('pdf.theme');
+}
+
 /** Sends `theme` to the page whenever `vscode-office.theme` changes. */
 export function bindTheme(handler: Handler) {
     const subscription = vscode.workspace.onDidChangeConfiguration((event) => {
@@ -38,37 +43,34 @@ export function bindTheme(handler: Handler) {
 }
 
 /**
- * Keeps the document editor's page theme in sync: sends `documentTheme` whenever the setting
- * changes, and saves the theme the toolbar's light/dark button picks in the user settings.
+ * Keeps a viewer's page theme in sync: sends `event` whenever the `vscode-office.<key>` setting
+ * changes, and saves the theme the viewer picks (an `event` it sends) in the user settings.
  */
-export function bindDocumentTheme(handler: Handler) {
-    const subscription = vscode.workspace.onDidChangeConfiguration((event) => {
-        if (event.affectsConfiguration('vscode-office.document.theme')) {
-            handler.emit('documentTheme', getDocumentTheme());
+function bindPageTheme(handler: Handler, key: string, event: string) {
+    const subscription = vscode.workspace.onDidChangeConfiguration((change) => {
+        if (change.affectsConfiguration(`vscode-office.${key}`)) {
+            handler.emit(event, readTheme(key));
         }
     });
     handler.panel.onDidDispose(() => subscription.dispose());
-    handler.on('documentTheme', async (theme: unknown) => {
+    handler.on(event, async (theme: unknown) => {
         if (isTheme(theme)) {
-            await Global.updateConfig('document.theme', theme);
+            await Global.updateConfig(key, theme);
         }
     });
 }
 
-/**
- * Keeps the EPUB reader's page theme in sync: sends `epubTheme` whenever the setting changes, and
- * saves the theme the reader's "Themes" choice picks in the user settings.
- */
+/** The document editor's page theme, `documentTheme`: its toolbar's light/dark button sets it. */
+export function bindDocumentTheme(handler: Handler) {
+    bindPageTheme(handler, 'document.theme', 'documentTheme');
+}
+
+/** The EPUB reader's page theme, `epubTheme`: its "Themes" choice sets it. */
 export function bindEpubTheme(handler: Handler) {
-    const subscription = vscode.workspace.onDidChangeConfiguration((event) => {
-        if (event.affectsConfiguration('vscode-office.epub.theme')) {
-            handler.emit('epubTheme', getEpubTheme());
-        }
-    });
-    handler.panel.onDidDispose(() => subscription.dispose());
-    handler.on('epubTheme', async (theme: unknown) => {
-        if (isTheme(theme)) {
-            await Global.updateConfig('epub.theme', theme);
-        }
-    });
+    bindPageTheme(handler, 'epub.theme', 'epubTheme');
+}
+
+/** The PDF viewer's page theme, `pdfTheme`: its dark mode button and Ctrl/Cmd+L set it. */
+export function bindPdfTheme(handler: Handler) {
+    bindPageTheme(handler, 'pdf.theme', 'pdfTheme');
 }
