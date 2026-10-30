@@ -38,7 +38,10 @@
     },
     "document": {
       "heading": "Heading {level}",
-      "failedLoad": "Failed to load document"
+      "failedLoad": "Failed to load document",
+      "pageTheme": "Page colors",
+      "darkPages": "Dark pages",
+      "lightPages": "Light pages"
     },
     "presentation": {
       "failedLoad": "Failed to load presentation",

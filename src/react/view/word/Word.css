@@ -63,7 +63,8 @@ html:has(.word-viewer) {
 /*
  * The formatting bar's order (DocumentMenuButtons.tsx renders its own groups at the end, tags the
  * editor's): outline | Save, Undo, Redo || styles | lists | font | text | script | alignment |
- * paragraph | image and table when selected | insert || zoom ... || editing mode, comments
+ * paragraph | image and table when selected | insert || zoom ... light/dark pages || editing mode,
+ * comments
  */
 .word-viewer [data-testid="formatting-bar"] > * {
     order: 13;
@@ -124,18 +125,26 @@ html:has(.word-viewer) {
     order: 15;
 }
 
-/* (more specific than the separators' margins, below) */
-.word-viewer [data-testid="formatting-bar"] > .document-separator.document-separator--end {
+.word-viewer [data-testid="formatting-bar"] > .document-toolbar-page-theme {
     order: 16;
-    margin-left: auto !important;
+    margin-left: auto;
+    border-right: none;
 }
 
-.word-viewer [data-testid="formatting-bar"] > div[style*="position: relative"] {
+.word-viewer [data-testid="formatting-bar"] > .document-toolbar-page-theme .anticon {
+    font-size: 16px;
+}
+
+.word-viewer [data-testid="formatting-bar"] > .document-separator--end {
     order: 17;
 }
 
-.word-viewer [data-testid="formatting-bar"] > .ep-toolbar-toggle {
+.word-viewer [data-testid="formatting-bar"] > div[style*="position: relative"] {
     order: 18;
+}
+
+.word-viewer [data-testid="formatting-bar"] > .ep-toolbar-toggle {
+    order: 19;
 }
 
 /*
@@ -453,9 +462,6 @@ html:has(.word-viewer--vscode-theme) .ep-root {
     --doc-scrollbar-thumb: var(--vscode-scrollbarSlider-background);
     --doc-scrollbar-thumb-hover: var(--vscode-scrollbarSlider-hoverBackground);
     --doc-scrollbar-track: transparent;
-    --doc-page-bg: var(--vscode-tab-inactiveBackground, var(--vscode-editorGroupHeader-tabsBackground, #e8e8e8));
-    --doc-page-text: var(--vscode-editor-foreground);
-    --doc-caret: var(--vscode-input-foreground, var(--vscode-editor-foreground));
 
     color: var(--doc-text);
     background-color: var(--doc-bg);
@@ -470,16 +476,6 @@ html:has(.word-viewer--vscode-theme) .ep-root {
 
 .word-viewer--vscode-theme .docx-editor__scroll-container {
     background-color: var(--doc-bg) !important;
-}
-
-/* Document page text color */
-.word-viewer--vscode-theme .layout-page,
-.word-viewer--vscode-theme .layout-page-content,
-.word-viewer--vscode-theme .layout-page-header,
-.word-viewer--vscode-theme .layout-page-footer,
-.word-viewer--vscode-theme .docx-paragraph,
-.word-viewer--vscode-theme .docx-run {
-    color: var(--doc-page-text);
 }
 
 /* Toolbar formatting bar */
@@ -829,4 +825,29 @@ html:has(.word-viewer--vscode-theme) .ep-root ::selection {
 .word-viewer--vscode-theme .layout-table-edge-handle-right.dragging,
 .word-viewer--vscode-theme .layout-table-edge-handle-right:hover {
     background-color: var(--doc-focus-ring);
+}
+
+/*
+ * ── Dark pages (vscode-office.document.theme) ──
+ * White pages with the document's colours, shown inverted: black pages, light text, hues kept. The
+ * pictures are inverted back, and printing shows the document as it is. The selection and the caret
+ * are drawn over the pages, not inverted: the caret is turned light.
+ */
+.word-viewer--dark-pages .layout-page {
+    filter: invert(1) hue-rotate(180deg);
+}
+
+.word-viewer--dark-pages .layout-page :is(img, svg, canvas, video, [data-no-color-invert]) {
+    filter: invert(1) hue-rotate(180deg);
+}
+
+.word-viewer--dark-pages .ep-root {
+    --doc-caret: #ffffff;
+}
+
+@media print {
+    .word-viewer--dark-pages .layout-page,
+    .word-viewer--dark-pages .layout-page :is(img, svg, canvas, video, [data-no-color-invert]) {
+        filter: none;
+    }
 }

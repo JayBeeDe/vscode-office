@@ -369,7 +369,7 @@
 							"Always dark."
 						],
 						"default": "auto",
-						"markdownDescription": "Theme of every viewer and editor of the extension. The EPUB pages follow `#vscode-office.epub.theme#` and the Markdown pages `#vscode-office.markdown.theme#`."
+						"markdownDescription": "Theme of every viewer and editor of the extension. The EPUB pages follow `#vscode-office.epub.theme#`, the Markdown pages `#vscode-office.markdown.theme#` and the document pages `#vscode-office.document.theme#`."
 					}
 				}
 			},
@@ -634,6 +634,27 @@
 						],
 						"default": "auto",
 						"markdownDescription": "Colours of the EPUB reader's pages; the menus follow `#vscode-office.theme#`. The reader's \"Themes\" choice changes this setting in the user settings; a workspace value overrides it."
+					}
+				}
+			},
+			{
+				"title": "Document",
+				"order": 4,
+				"properties": {
+					"vscode-office.document.theme": {
+						"type": "string",
+						"enum": [
+							"auto",
+							"light",
+							"dark"
+						],
+						"enumDescriptions": [
+							"Follows `vscode-office.theme`.",
+							"White pages, the document's own colours.",
+							"Black pages, the document's colours shown inverted."
+						],
+						"default": "auto",
+						"markdownDescription": "Colours of the document editor's pages (Word files); the toolbar and menus follow `#vscode-office.theme#`. Only the display changes: the document's colours are kept as they are, for saving and printing. The toolbar's light/dark button changes this setting in the user settings; a workspace value overrides it."
 					}
 				}
 			}

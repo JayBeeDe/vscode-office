@@ -7,7 +7,7 @@ import { OfficeDocument } from './handlers/officeDocument';
 import { extensionResource, getExtensionResourceRoots, readExtensionText } from '@/common/extensionResource';
 import { resolveLanguage } from '@/i18n';
 import { getPdfViewerStrings } from './pdfViewerStrings';
-import { bindEpubTheme, bindTheme, getTheme } from '@/common/theme';
+import { bindDocumentTheme, bindEpubTheme, bindTheme, getTheme } from '@/common/theme';
 
 /**
  * support view office files
@@ -86,6 +86,7 @@ export class OfficeViewerProvider implements vscode.CustomEditorProvider<OfficeD
 			case '.dotm':
 			case '.dotx':
 				route = 'word';
+				bindDocumentTheme(handler);
 				break;
 			case '.pptx':
 			case '.pptm':

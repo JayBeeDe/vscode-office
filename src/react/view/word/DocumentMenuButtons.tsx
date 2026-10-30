@@ -1,3 +1,4 @@
+import { MoonOutlined, SunOutlined } from "@ant-design/icons";
 import { getCachedNumberingMap } from "@eigenpal/docx-editor-core/docx";
 import { applyStyle, setAlignment } from "@eigenpal/docx-editor-core/prosemirror/commands";
 import { createStyleResolver } from "@eigenpal/docx-editor-core/prosemirror/styles";
@@ -439,10 +440,16 @@ function useFormattingGroups() {
  * The formatting bar, ordered by Word.css: the outline's toggle; Save, Undo and Redo; the headings
  * in the place of their dropdown; the lists; the fonts and text formatting; the alignments in the
  * place of their dropdown; the indents, the line spacing and Page setup; the link and the Insert
- * menu's items; the zoom; the editing mode and the comments on the far right. The File and Insert
- * menus' items open the hidden menus.
+ * menu's items; the zoom; the pages' light/dark button, the editing mode and the comments on the
+ * far right. The File and Insert menus' items open the hidden menus.
  */
-export default function DocumentMenuButtons({ editorRef, onSave }: { editorRef: RefObject<DocxEditorRef | null>; onSave: () => void }) {
+export default function DocumentMenuButtons({ editorRef, onSave, darkPages, onToggleDarkPages }: {
+    editorRef: RefObject<DocxEditorRef | null>;
+    onSave: () => void;
+    /** vscode-office.document.theme, resolved; the button sets it */
+    darkPages: boolean;
+    onToggleDarkPages: () => void;
+}) {
     const { t } = useTranslation();
     const { docx, selection } = useEditorState(editorRef);
     const { history, listFormatting } = useFormattingGroups();
@@ -486,6 +493,11 @@ export default function DocumentMenuButtons({ editorRef, onSave }: { editorRef: 
                 {menuItem(insert, "watermark")}
             </ToolbarGroup>
             <div role="separator" className="w-px h-6 bg-border mx-1.5 document-separator document-separator--insert" />
+            <ToolbarGroup label={$t("document.pageTheme")} className="document-toolbar-page-theme">
+                <ToolbarButton title={darkPages ? $t("document.lightPages") : $t("document.darkPages")} onClick={onToggleDarkPages}>
+                    {darkPages ? <SunOutlined /> : <MoonOutlined />}
+                </ToolbarButton>
+            </ToolbarGroup>
             <div role="separator" className="w-px h-6 bg-border mx-1.5 document-separator document-separator--end" />
             <WatermarkColorPicker theme={docx?.package.theme ?? null} />
         </>

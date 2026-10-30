@@ -3,7 +3,8 @@ import { DocxEditor, type DocxEditorRef } from "@eigenpal/docx-editor-react";
 import "@eigenpal/docx-editor-react/styles.css";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { handler, onSaveRequest } from "../../util/vscode";
-import { useTheme } from "../../util/theme";
+import { type ThemeSetting, toThemeSetting, useTheme } from "../../util/theme";
+import { getConfigs } from "../../util/vscodeConfig";
 import { loadOfficeBuffer } from "../../util/loadOfficeContent";
 import { $t, getLanguage, getSection } from "../../i18n/i18nConfig.ts";
 import { LANGUAGES } from "../../../i18n/index.ts";
@@ -46,6 +47,9 @@ export default function Word() {
 
     // dark: the toolbars and panels take VS Code's colours (dark-palette.css when VS Code is light)
     const adaptiveColorMode = theme === "dark";
+    // the pages follow vscode-office.document.theme, `auto` following vscode-office.theme like the toolbars
+    const [pageThemeSetting, setPageThemeSetting] = useState<ThemeSetting>(() => toThemeSetting(getConfigs()?.documentTheme));
+    const darkPages = (pageThemeSetting === "auto" ? theme : pageThemeSetting) === "dark";
 
     const emitSave = useCallback((buffer: ArrayBuffer) => {
         const bytes = new Uint8Array(buffer);
@@ -101,12 +105,16 @@ export default function Word() {
     }, [loadDocument]);
 
     useEffect(() => {
+        handler.on("documentTheme", (value: unknown) => setPageThemeSetting(toThemeSetting(value)));
+    }, []);
+
+    useEffect(() => {
         // Ctrl+S goes through VS Code, which asks for the content
         onSaveRequest(() => handleSave());
     }, [handleSave]);
 
     return (
-        <div className={`word-viewer${adaptiveColorMode ? " word-viewer--vscode-theme" : ""}`}>
+        <div className={`word-viewer${adaptiveColorMode ? " word-viewer--vscode-theme" : ""}${darkPages ? " word-viewer--dark-pages" : ""}`}>
             <Spin spinning={loading} fullscreen />
             {error && <Alert type="error" message={error} showIcon style={{ margin: 16 }} />}
             {readOnly && !loading && !error && documentBuffer && (
@@ -136,7 +144,14 @@ export default function Word() {
                         showFileOpen={false}
                         showHelpMenu={false}
                         watermarkPresets={WATERMARK_PRESETS}
-                        toolbarExtra={readOnly ? undefined : <DocumentMenuButtons editorRef={editorRef} onSave={handleSave} />}
+                        toolbarExtra={readOnly ? undefined : (
+                            <DocumentMenuButtons
+                                editorRef={editorRef}
+                                onSave={handleSave}
+                                darkPages={darkPages}
+                                onToggleDarkPages={() => handler.emit("documentTheme", darkPages ? "light" : "dark")}
+                            />
+                        )}
                         onChange={() => {
                             if (!readOnlyRef.current) {
                                 handler.emit("change");

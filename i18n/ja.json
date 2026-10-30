@@ -31,7 +31,10 @@
     },
     "document": {
       "heading": "見出し {level}",
-      "failedLoad": "ドキュメントの読み込みに失敗しました"
+      "failedLoad": "ドキュメントの読み込みに失敗しました",
+      "pageTheme": "ページの色",
+      "darkPages": "ダークページ",
+      "lightPages": "ライトページ"
     },
     "presentation": {
       "failedLoad": "プレゼンテーションの読み込みに失敗しました",
