@@ -412,6 +412,24 @@
     });
   }
 
+  /**
+   * The toolbar's right part scrolls when the window is too narrow for all its buttons (its
+   * scrollbar is hidden, viewer_adjust.css): the mouse wheel scrolls it sideways
+   */
+  function setupToolbarRightScroll() {
+    const right = document.getElementById('toolbarViewerRight');
+    if (!right) {
+      return;
+    }
+    right.addEventListener('wheel', (event) => {
+      if (right.scrollWidth <= right.clientWidth || Math.abs(event.deltaX) > Math.abs(event.deltaY)) {
+        return;
+      }
+      event.preventDefault();
+      right.scrollLeft += event.deltaY;
+    }, { passive: false });
+  }
+
   function toUint8Array(buffer) {
     if (!buffer) {
       return null;
@@ -457,6 +475,7 @@
     setupTheme();
     setupDarkMode();
     setupCustomScaleSelect();
+    setupToolbarRightScroll();
     PDFViewerApplication.initializedPromise.then(() => {
       initSidebarResize();
       setupSidebarOpenStatePersistence();
