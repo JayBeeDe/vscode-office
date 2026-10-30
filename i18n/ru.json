@@ -31,7 +31,10 @@
     },
     "document": {
       "heading": "Заголовок {level}",
-      "failedLoad": "Не удалось загрузить документ"
+      "failedLoad": "Не удалось загрузить документ",
+      "pageTheme": "Цвета страниц",
+      "darkPages": "Тёмные страницы",
+      "lightPages": "Светлые страницы"
     },
     "presentation": {
       "failedLoad": "Не удалось загрузить презентацию",

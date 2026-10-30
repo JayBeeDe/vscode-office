@@ -31,7 +31,10 @@
     },
     "document": {
       "heading": "Título {level}",
-      "failedLoad": "Error al cargar el documento"
+      "failedLoad": "Error al cargar el documento",
+      "pageTheme": "Colores de página",
+      "darkPages": "Páginas oscuras",
+      "lightPages": "Páginas claras"
     },
     "presentation": {
       "failedLoad": "Error al cargar la presentación",

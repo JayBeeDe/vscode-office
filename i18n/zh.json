@@ -31,7 +31,10 @@
     },
     "document": {
       "heading": "标题 {level}",
-      "failedLoad": "加载文档失败"
+      "failedLoad": "加载文档失败",
+      "pageTheme": "页面颜色",
+      "darkPages": "深色页面",
+      "lightPages": "浅色页面"
     },
     "presentation": {
       "failedLoad": "加载演示文稿失败",

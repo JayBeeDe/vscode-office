@@ -31,7 +31,10 @@
     },
     "document": {
       "heading": "Überschrift {level}",
-      "failedLoad": "Dokument konnte nicht geladen werden"
+      "failedLoad": "Dokument konnte nicht geladen werden",
+      "pageTheme": "Seitenfarben",
+      "darkPages": "Dunkle Seiten",
+      "lightPages": "Helle Seiten"
     },
     "presentation": {
       "failedLoad": "Präsentation konnte nicht geladen werden",

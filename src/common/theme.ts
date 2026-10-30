@@ -22,6 +22,11 @@ export function getEpubTheme(): Theme {
     return readTheme('epub.theme');
 }
 
+/** The `vscode-office.document.theme` setting: the document pages' colours, `auto` following `vscode-office.theme`. */
+export function getDocumentTheme(): Theme {
+    return readTheme('document.theme');
+}
+
 /** Sends `theme` to the page whenever `vscode-office.theme` changes. */
 export function bindTheme(handler: Handler) {
     const subscription = vscode.workspace.onDidChangeConfiguration((event) => {
@@ -30,6 +35,24 @@ export function bindTheme(handler: Handler) {
         }
     });
     handler.panel.onDidDispose(() => subscription.dispose());
+}
+
+/**
+ * Keeps the document editor's page theme in sync: sends `documentTheme` whenever the setting
+ * changes, and saves the theme the toolbar's light/dark button picks in the user settings.
+ */
+export function bindDocumentTheme(handler: Handler) {
+    const subscription = vscode.workspace.onDidChangeConfiguration((event) => {
+        if (event.affectsConfiguration('vscode-office.document.theme')) {
+            handler.emit('documentTheme', getDocumentTheme());
+        }
+    });
+    handler.panel.onDidDispose(() => subscription.dispose());
+    handler.on('documentTheme', async (theme: unknown) => {
+        if (isTheme(theme)) {
+            await Global.updateConfig('document.theme', theme);
+        }
+    });
 }
 
 /**
