@@ -169,18 +169,44 @@
     return Number.isFinite(width) ? width : SIDEBAR_DEFAULT_WIDTH;
   }
 
-  function setSidebarWidth(width) {
+  function setSidebarWidth(width, minWidth = SIDEBAR_MIN_WIDTH) {
     const outerContainer = document.getElementById('outerContainer');
     if (!outerContainer) {
       return;
     }
-    const maxWidth = Math.max(SIDEBAR_MIN_WIDTH, Math.floor(outerContainer.clientWidth / 2));
-    const nextWidth = Math.min(Math.max(width, SIDEBAR_MIN_WIDTH), maxWidth);
+    const maxWidth = Math.max(minWidth, Math.floor(outerContainer.clientWidth / 2));
+    const nextWidth = Math.min(Math.max(width, minWidth), maxWidth);
     document.documentElement.style.setProperty(SIDEBAR_WIDTH_VAR, `${nextWidth}px`);
     if (window.PDFViewerApplication?.eventBus) {
       PDFViewerApplication.eventBus.dispatch('resize', { source: window });
     }
     return nextWidth;
+  }
+
+  // The sidebar is as wide as the thumbnails when it shows them (it cannot be resized then), and
+  // as the outline's width otherwise: 270px, or the width it is dragged to while the PDF is open
+  const THUMBNAIL_WIDTH = 114; // PDF.js's 98px thumbnails, their 1px border and 7px ring
+  let outlineWidth = SIDEBAR_DEFAULT_WIDTH;
+
+  const isThumbnailsSidebar = () => PDFViewerApplication.pdfSidebar.active === SIDEBAR_VIEW_THUMBS;
+
+  function thumbnailsSidebarWidth() {
+    const view = document.getElementById('thumbnailView');
+    const thumbnail = view.querySelector('.thumbnail');
+    const style = getComputedStyle(view);
+    const scrollbar = view.offsetWidth - view.clientWidth;
+    return Math.ceil((thumbnail?.getBoundingClientRect().width || THUMBNAIL_WIDTH)
+      + parseFloat(style.paddingLeft) + parseFloat(style.paddingRight) + scrollbar);
+  }
+
+  function fitSidebarToView() {
+    const thumbnails = isThumbnailsSidebar();
+    document.getElementById('outerContainer')?.classList.toggle('office-sidebar-thumbnails', thumbnails);
+    if (thumbnails) {
+      setSidebarWidth(thumbnailsSidebarWidth(), 0);
+    } else if (getSidebarWidth() !== outlineWidth) {
+      setSidebarWidth(outlineWidth);
+    }
   }
 
   // The zoom field (5 to 500%) between its -/+ buttons, and the Page Fit and Page Width buttons, in
@@ -263,6 +289,8 @@
     }
 
     resizer.classList.remove('hidden');
+    PDFViewerApplication.eventBus.on('sidebarviewchanged', fitSidebarToView);
+    fitSidebarToView();
 
     let dragging = false;
     let startX = 0;
@@ -300,7 +328,7 @@
         }
         activePointerId = null;
       }
-      setSidebarWidth(getSidebarWidth());
+      outlineWidth = setSidebarWidth(getSidebarWidth());
     };
 
     const onVisibilityChange = () => {

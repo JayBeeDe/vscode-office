@@ -247,11 +247,28 @@ body.office-adaptive-theme #outlineView .treeItem > a {
     border-radius: 4px;
 }
 
+/*
+ * The outline as wide as the sidebar: PDF.js gives its items the whole width and then their 20px
+ * padding, which always showed a horizontal scrollbar. A word too long for the width wraps.
+ */
+#outlineView .treeItem > a {
+    box-sizing: border-box;
+    min-width: 100%;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+}
+
+/* the sidebar is as wide as the thumbnails (main.js): a 6px margin, and the scrollbar's room */
 #thumbnailView {
-    width: calc(100% - 32px) !important;
-    padding-right: 16px !important;
-    padding-left: 16px !important;
+    width: calc(100% - 12px) !important;
+    padding-right: 6px !important;
+    padding-left: 6px !important;
     overflow-y: auto !important;
+    scrollbar-gutter: stable;
+}
+
+#outerContainer.office-sidebar-thumbnails #sidebarResizer {
+    display: none;
 }
 
 #thumbnailView > a {
