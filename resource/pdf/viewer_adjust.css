@@ -27,129 +27,6 @@
     border-radius: var(--pdf-btn-radius) !important;
 }
 
-#toolbarContainer .office-scale-select.dropdownToolbarButton,
-#scaleSelectContainer.office-scale-select {
-    position: relative;
-    display: inline-block;
-    padding: 0 !important;
-    overflow: visible !important;
-    margin: 0 2px !important;
-    border: 1px solid var(--field-border-color) !important;
-    box-sizing: border-box;
-    background: transparent !important;
-}
-
-#toolbarContainer .office-scale-select.dropdownToolbarButton::after {
-    display: none !important;
-}
-
-.office-scale-select-native {
-    position: absolute !important;
-    width: 1px !important;
-    height: 1px !important;
-    margin: -1px !important;
-    padding: 0 !important;
-    overflow: hidden !important;
-    clip: rect(0, 0, 0, 0) !important;
-    white-space: nowrap !important;
-    border: 0 !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
-}
-
-.office-scale-select-trigger {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    width: 100%;
-    height: 26px;
-    margin: 0;
-    padding: 0 8px;
-    border: none;
-    border-radius: var(--pdf-btn-radius);
-    background-color: var(--dropdown-btn-bg-color) !important;
-    color: var(--field-color) !important;
-    font-family: inherit;
-    font-size: 12px;
-    line-height: 26px;
-    cursor: pointer;
-    box-sizing: border-box;
-}
-
-.office-scale-select-trigger:hover,
-.office-scale-select.open .office-scale-select-trigger {
-    background-color: var(--office-hover-bg) !important;
-    color: var(--office-hover-fg) !important;
-}
-
-body.office-adaptive-theme .office-scale-select-trigger:hover,
-body.office-adaptive-theme .office-scale-select.open .office-scale-select-trigger {
-    background-color: var(--vscode-toolbar-hoverBackground) !important;
-    color: var(--vscode-foreground) !important;
-}
-
-.office-scale-select-label {
-    flex: 1;
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    text-align: left;
-}
-
-.office-scale-select-arrow {
-    flex-shrink: 0;
-    width: 0;
-    height: 0;
-    border-left: 4px solid transparent;
-    border-right: 4px solid transparent;
-    border-top: 5px solid currentColor;
-    opacity: 0.65;
-    transition: transform 0.15s ease;
-}
-
-.office-scale-select.open .office-scale-select-arrow {
-    transform: rotate(180deg);
-}
-
-.office-scale-select-menu {
-    position: absolute;
-    top: calc(100% + 4px);
-    left: 0;
-    min-width: 100%;
-    max-height: 300px;
-    margin: 0;
-    padding: 4px;
-    overflow-y: auto;
-    list-style: none;
-    z-index: 40000;
-    background-color: var(--doorhanger-bg-color) !important;
-    color: var(--main-color) !important;
-    border: 1px solid var(--doorhanger-border-color) !important;
-    border-radius: var(--pdf-segment-radius) !important;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.16);
-    box-sizing: border-box;
-}
-
-.office-scale-select-item {
-    padding: 6px 10px;
-    border-radius: 4px;
-    cursor: pointer;
-    white-space: nowrap;
-    user-select: none;
-}
-
-.office-scale-select-item:hover {
-    background-color: var(--office-hover-bg) !important;
-    color: var(--office-hover-fg) !important;
-}
-
-.office-scale-select-item.selected {
-    background-color: var(--office-toolbar-active-bg) !important;
-    color: var(--office-toolbar-active-fg) !important;
-}
-
 #toolbarViewerMiddle .splitToolbarButton,
 #toolbarViewerLeft .splitToolbarButton,
 .office-theme-toggle-group {
@@ -158,10 +35,6 @@ body.office-adaptive-theme .office-scale-select.open .office-scale-select-trigge
 
 .office-theme-toggle-group{
     margin-right: 8px;
-}
-
-#toolbarContainer .office-scale-select.dropdownToolbarButton:hover {
-    background: transparent !important;
 }
 
 .office-theme-toggle-group > .toolbarButton {
@@ -174,7 +47,7 @@ body:not(.office-adaptive-theme) {
     scrollbar-color: rgb(184 184 184) rgb(212 212 215) !important;
 }
 
-body:not(.office-adaptive-theme) :is(#viewerContainer, #viewsManagerContent, #sidebarContent, .office-scale-select-menu) {
+body:not(.office-adaptive-theme) :is(#viewerContainer, #viewsManagerContent, #sidebarContent) {
     scrollbar-color: rgb(184 184 184) rgb(212 212 215) !important;
 }
 
@@ -281,23 +154,6 @@ body.office-adaptive-theme :is(.toolbarField, .toolbarField.pageNumber, #findInp
     border-radius: var(--pdf-btn-radius) !important;
 }
 
-body.office-adaptive-theme .office-scale-select-trigger {
-    font-size: var(--vscode-font-size, 12px);
-}
-
-body.office-adaptive-theme .office-scale-select-menu {
-    color: var(--vscode-menu-foreground, var(--vscode-foreground)) !important;
-    box-shadow: 0 4px 16px color-mix(in srgb, var(--vscode-foreground) 12%, transparent);
-}
-
-body.office-adaptive-theme .office-scale-select-item:hover {
-    background-color: var(--vscode-list-hoverBackground) !important;
-    color: var(--vscode-list-hoverForeground, var(--vscode-foreground)) !important;
-}
-
-body.office-adaptive-theme .office-scale-select-item.selected {
-    background-color: var(--vscode-list-activeSelectionBackground) !important;
-    color: var(--vscode-list-activeSelectionForeground) !important;
 }
 
 body.office-adaptive-theme :is(.toolbarButton, .splitToolbarButton > .toolbarButton, .overlayButton, .findbar button, .secondaryToolbarButton):hover {
@@ -500,6 +356,33 @@ body.office-dark #mainContainer {
 body.office-dark .pdfViewer .page canvas,
 body.office-dark #thumbnailView .thumbnailImage {
     filter: brightness(0.92) invert(1) hue-rotate(180deg);
+}
+
+/*
+ * The pages against the view's top and left edges, at any zoom: no transparent border around them
+ * (PDF.js spaces them with it), a 6px gap below each page, and on its right side by side
+ */
+.pdfViewer .page {
+    margin: 0 auto 6px auto;
+    border: 0;
+}
+
+.pdfViewer.scrollHorizontal,
+.pdfViewer.scrollWrapped,
+.pdfViewer .spread {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.pdfViewer .spread .page,
+.pdfViewer.scrollHorizontal .page,
+.pdfViewer.scrollWrapped .page {
+    margin: 0 6px 6px 0;
+}
+
+.pdfViewer .spread .page:last-child,
+.pdfViewer.scrollHorizontal .page:last-child {
+    margin-right: 0;
 }
 
 /* Dim the bright page border/shadow in dark mode */
@@ -725,6 +608,19 @@ body.office-adaptive-theme #darkModeToggle.toolbarButton.toggled:hover {
     mask-image: var(--secondaryToolbarButton-handTool-icon);
 }
 
+/* Page Fit: the whole page inside the view's corners; Page Width: the page between two arrows */
+.toolbarButton.pageFit::before {
+    --office-page-fit-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='black' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1.5 4.5v-3h3M11.5 1.5h3v3M14.5 11.5v3h-3M4.5 14.5h-3v-3'/%3E%3Crect x='5' y='4' width='6' height='8' rx='0.5'/%3E%3C/svg%3E");
+    -webkit-mask-image: var(--office-page-fit-icon);
+    mask-image: var(--office-page-fit-icon);
+}
+
+.toolbarButton.pageWidth::before {
+    --office-page-width-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='black' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='4' y='1.5' width='8' height='13' rx='0.5'/%3E%3Cpath d='M1 8h14M2.5 6.5L1 8l1.5 1.5M13.5 6.5L15 8l-1.5 1.5'/%3E%3C/svg%3E");
+    -webkit-mask-image: var(--office-page-width-icon);
+    mask-image: var(--office-page-width-icon);
+}
+
 .toolbarButton.scrollVertical::before {
     -webkit-mask-image: var(--secondaryToolbarButton-scrollVertical-icon);
     mask-image: var(--secondaryToolbarButton-scrollVertical-icon);
@@ -823,15 +719,66 @@ html[dir] #toolbarViewerRight {
 
 /* centered in the toolbar's height, whatever margins PDF.js gives them */
 html[dir] #toolbarViewerRight > *,
-html[dir] #toolbarViewerMiddle > :not(#scaleSelectContainer) {
+html[dir] #toolbarViewerMiddle > * {
     flex: none;
     margin-top: 0;
     margin-bottom: 0;
 }
 
-/* The zoom's -/+ buttons: the zoom dropdown has the levels, Ctrl +/- still zooms (PDF.js needs the buttons) */
+/* The zoom's -/+ buttons: the zoom field has the level, Ctrl +/- still zooms (PDF.js needs the buttons) */
 #toolbarViewerMiddle > .splitToolbarButton:has(#zoomIn) {
     display: none;
+}
+
+/* The zoom field: a percentage, without the number spinner */
+html[dir] .office-zoom-field {
+    display: flex;
+    align-items: center;
+    margin: 0 0 0 4px;
+}
+
+.office-zoom-field > #zoomValue {
+    -moz-appearance: textfield;
+    appearance: textfield;
+    /* 3 digits: 500 at most */
+    box-sizing: content-box;
+    width: 3ch;
+    padding: 4px 5px;
+    margin: 0 2px;
+    text-align: right;
+}
+
+.office-zoom-field > #zoomValue::-webkit-inner-spin-button,
+.office-zoom-field > #zoomValue::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.office-zoom-field > .toolbarLabel {
+    min-width: 0;
+    padding: 0;
+    margin: 0;
+}
+
+/* narrower than the other buttons, close to the field (the icons, ::before, are placed in their button) */
+.office-zoom-field > .toolbarButton {
+    position: relative;
+    float: none;
+    width: 22px;
+    margin: 0;
+}
+
+html[dir] .office-zoom-field > .toolbarButton::before {
+    left: 3px;
+    right: auto;
+}
+
+html[dir] .office-fit-group {
+    display: flex;
+    align-items: center;
+    background: transparent !important;
+    margin-left: 0;
+    margin-right: 4px;
 }
 
 /* The tools' groups, spaced like the toolbar's other buttons */

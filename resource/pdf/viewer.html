@@ -47,6 +47,7 @@ See https://github.com/adobe-type-tools/cmap-resources
   <script>window.officePdfTool = {{pdfTool}};</script>
   <script>window.officePdfScrolling = {{pdfScrolling}};</script>
   <script>window.officePdfSpread = {{pdfSpread}};</script>
+  <script>window.officePdfZoom = {{pdfZoom}};</script>
   <script src="main.js"></script>
 </head>
 
@@ -286,40 +287,38 @@ See https://github.com/adobe-type-tools/cmap-resources
                   <span data-l10n-id="zoom_in_label">Zoom In</span>
                 </button>
               </div>
-              <span id="scaleSelectContainer" class="dropdownToolbarButton office-scale-select">
-                <select id="scaleSelect" class="office-scale-select-native" title="Zoom" tabindex="-1" data-l10n-id="zoom">
-                  <option id="pageAutoOption" title="" value="auto" selected="selected" data-l10n-id="page_scale_auto">
-                    Automatic Zoom</option>
-                  <option id="pageActualOption" title="" value="page-actual" data-l10n-id="page_scale_actual">Actual
-                    Size</option>
+              <!-- PDF.js needs the zoom dropdown: hidden, the zoom field and the fit buttons replace it -->
+              <span id="scaleSelectContainer" class="dropdownToolbarButton office-scale-select" hidden>
+                <select id="scaleSelect" title="Zoom" tabindex="-1" data-l10n-id="zoom">
                   <option id="pageFitOption" title="" value="page-fit" data-l10n-id="page_scale_fit">Page Fit</option>
-                  <option id="pageWidthOption" title="" value="page-width" data-l10n-id="page_scale_width">Page Width
-                  </option>
+                  <option id="pageWidthOption" title="" value="page-width" selected="selected" data-l10n-id="page_scale_width">Page Width</option>
                   <option id="customScaleOption" title="" value="custom" disabled="disabled" hidden="true"></option>
-                  <option title="" value="0.5" data-l10n-id="page_scale_percent" data-l10n-args='{ "scale": 50 }'>50%
-                  </option>
-                  <option title="" value="0.75" data-l10n-id="page_scale_percent" data-l10n-args='{ "scale": 75 }'>75%
-                  </option>
-                  <option title="" value="1" data-l10n-id="page_scale_percent" data-l10n-args='{ "scale": 100 }'>100%
-                  </option>
-                  <option title="" value="1.25" data-l10n-id="page_scale_percent" data-l10n-args='{ "scale": 125 }'>125%
-                  </option>
-                  <option title="" value="1.5" data-l10n-id="page_scale_percent" data-l10n-args='{ "scale": 150 }'>150%
-                  </option>
-                  <option title="" value="2" data-l10n-id="page_scale_percent" data-l10n-args='{ "scale": 200 }'>200%
-                  </option>
-                  <option title="" value="3" data-l10n-id="page_scale_percent" data-l10n-args='{ "scale": 300 }'>300%
-                  </option>
-                  <option title="" value="4" data-l10n-id="page_scale_percent" data-l10n-args='{ "scale": 400 }'>400%
-                  </option>
                 </select>
-                <button type="button" id="scaleSelectTrigger" class="office-scale-select-trigger" title="Zoom"
-                  tabindex="37" aria-haspopup="listbox" aria-expanded="false">
-                  <span id="scaleSelectLabel" class="office-scale-select-label">Automatic Zoom</span>
-                  <span class="office-scale-select-arrow" aria-hidden="true"></span>
-                </button>
-                <ul id="scaleSelectMenu" class="office-scale-select-menu hidden" role="listbox"></ul>
               </span>
+              <span class="office-zoom-field">
+                <button id="zoomStepOut" class="toolbarButton zoomOut" type="button" title="Zoom Out" tabindex="37"
+                  data-l10n-id="zoom_out">
+                  <span data-l10n-id="zoom_out_label">Zoom Out</span>
+                </button>
+                <input type="number" id="zoomValue" class="toolbarField" title="Zoom" min="5" max="500" step="1"
+                  tabindex="37" data-l10n-id="zoom" autocomplete="off">
+                <span class="toolbarLabel" aria-hidden="true">%</span>
+                <button id="zoomStepIn" class="toolbarButton zoomIn" type="button" title="Zoom In" tabindex="37"
+                  data-l10n-id="zoom_in">
+                  <span data-l10n-id="zoom_in_label">Zoom In</span>
+                </button>
+              </span>
+              <div class="splitToolbarButton office-fit-group">
+                <button id="zoomPageFit" class="toolbarButton pageFit" type="button" title="Page Fit" tabindex="37"
+                  data-l10n-id="zoom_page_fit">
+                  <span data-l10n-id="zoom_page_fit_label">Page Fit</span>
+                </button>
+                <button id="zoomPageWidth" class="toolbarButton pageWidth" type="button" title="Page Width" tabindex="37"
+                  data-l10n-id="zoom_page_width">
+                  <span data-l10n-id="zoom_page_width_label">Page Width</span>
+                </button>
+              </div>
+              <div class="verticalToolbarSeparator"></div>
               <div class="splitToolbarButton office-theme-toggle-group">
                 <button id="darkModeToggle" class="toolbarButton" title="Switch PDF to dark mode (Ctrl/Cmd+L)" tabindex="38" aria-label="Switch PDF to dark mode"></button>
               </div>

@@ -694,7 +694,7 @@ const PDFViewerApplication = {
       return;
     }
 
-    this.pdfViewer.currentScaleValue = _ui_utils.DEFAULT_SCALE_VALUE;
+    this.pdfViewer.currentScaleValue = _app_options.AppOptions.get("defaultZoomValue") || _ui_utils.DEFAULT_SCALE_VALUE;
   },
 
   get pagesCount() {
@@ -1987,7 +1987,7 @@ function webViewerResize() {
 
   const currentScaleValue = pdfViewer.currentScaleValue;
 
-  if (currentScaleValue === "auto" || currentScaleValue === "page-fit" || currentScaleValue === "page-width") {
+  if (currentScaleValue === "page-fit" || currentScaleValue === "page-width") {
     pdfViewer.currentScaleValue = currentScaleValue;
   }
 
@@ -2660,13 +2660,13 @@ exports.moveToEndOfArray = moveToEndOfArray;
 exports.WaitOnType = exports.animationStarted = exports.ProgressBar = exports.EventBus = exports.NullL10n = exports.SpreadMode = exports.ScrollMode = exports.TextLayerMode = exports.RendererType = exports.PresentationModeState = exports.VERTICAL_PADDING = exports.SCROLLBAR_PADDING = exports.MAX_AUTO_SCALE = exports.UNKNOWN_SCALE = exports.MAX_SCALE = exports.MIN_SCALE = exports.DEFAULT_SCALE = exports.DEFAULT_SCALE_VALUE = exports.CSS_UNITS = exports.AutoPrintRegExp = void 0;
 const CSS_UNITS = 96.0 / 72.0;
 exports.CSS_UNITS = CSS_UNITS;
-const DEFAULT_SCALE_VALUE = "auto";
+const DEFAULT_SCALE_VALUE = "page-width";
 exports.DEFAULT_SCALE_VALUE = DEFAULT_SCALE_VALUE;
 const DEFAULT_SCALE = 1.0;
 exports.DEFAULT_SCALE = DEFAULT_SCALE;
-const MIN_SCALE = 0.1;
+const MIN_SCALE = 0.05;
 exports.MIN_SCALE = MIN_SCALE;
-const MAX_SCALE = 10.0;
+const MAX_SCALE = 5.0;
 exports.MAX_SCALE = MAX_SCALE;
 const UNKNOWN_SCALE = 0;
 exports.UNKNOWN_SCALE = UNKNOWN_SCALE;
@@ -9366,6 +9366,11 @@ class BaseViewer {
   }
 
   _setScale(value, noScroll = false) {
+    // no Automatic Zoom nor Actual Size: the zoom saved for a PDF or a link may still name them
+    if (value === "auto" || value === "page-actual") {
+      value = _ui_utils.DEFAULT_SCALE_VALUE;
+    }
+
     let scale = parseFloat(value);
 
     if (scale > 0) {
@@ -9389,12 +9394,13 @@ class BaseViewer {
       const pageHeightScale = (this.container.clientHeight - vPadding) / currentPage.height * currentPage.scale;
 
       switch (value) {
-        case "page-actual":
-          scale = 1;
-          break;
-
         case "page-width":
-          scale = pageWidthScale;
+          if (this._isScrollModeHorizontal || noPadding) {
+            scale = pageWidthScale;
+          } else {
+            // the view's whole width, as a whole percentage: _fitPageWidth lowers it until it fits
+            scale = Math.floor(this.container.clientWidth / currentPage.width * currentPage.scale * 100) / 100;
+          }
           break;
 
         case "page-height":
@@ -9405,17 +9411,39 @@ class BaseViewer {
           scale = Math.min(pageWidthScale, pageHeightScale);
           break;
 
-        case "auto":
-          const horizontalScale = (0, _ui_utils.isPortraitOrientation)(currentPage) ? pageWidthScale : Math.min(pageHeightScale, pageWidthScale);
-          scale = Math.min(_ui_utils.MAX_AUTO_SCALE, horizontalScale);
-          break;
-
         default:
           console.error(`${this._name}._setScale: "${value}" is an unknown zoom value.`);
           return;
       }
 
       this._setScaleUpdatePages(scale, value, noScroll, true);
+
+      if (value === "page-width" && !this._isScrollModeHorizontal && !noPadding) {
+        this._fitPageWidth(scale, noScroll);
+      }
+    }
+  }
+
+  /**
+   * Page Width: the largest whole percentage at which the pages fit the view's width, without a
+   * horizontal scrollbar. A first guess from the overflow, then 1% lower at a time.
+   */
+  _fitPageWidth(scale, noScroll) {
+    const container = this.container;
+    const overflows = () => container.scrollWidth > container.clientWidth;
+
+    if (overflows()) {
+      const guess = Math.floor(scale * container.clientWidth / container.scrollWidth * 100) / 100;
+
+      if (guess < scale) {
+        scale = Math.max(_ui_utils.MIN_SCALE, guess);
+        this._setScaleUpdatePages(scale, "page-width", noScroll, true);
+      }
+    }
+
+    for (let i = 0; i < 100 && overflows() && scale > _ui_utils.MIN_SCALE; i++) {
+      scale = Math.max(_ui_utils.MIN_SCALE, Math.round(scale * 100 - 1) / 100);
+      this._setScaleUpdatePages(scale, "page-width", noScroll, true);
     }
   }
 
@@ -11673,7 +11701,7 @@ class Toolbar {
       items,
       l10n
     } = this;
-    const predefinedValuesPromise = Promise.all([l10n.get("page_scale_auto", null, "Automatic Zoom"), l10n.get("page_scale_actual", null, "Actual Size"), l10n.get("page_scale_fit", null, "Page Fit"), l10n.get("page_scale_width", null, "Page Width")]);
+    const predefinedValuesPromise = Promise.all([l10n.get("page_scale_fit", null, "Page Fit"), l10n.get("page_scale_width", null, "Page Width")]);
     let canvas = document.createElement("canvas");
     canvas.mozOpaque = true;
     let ctx = canvas.getContext("2d", {

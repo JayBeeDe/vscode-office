@@ -38,6 +38,15 @@ export function getPdfSpread(): PdfSpread {
     return (PDF_SPREADS as readonly string[]).includes(value) ? value as PdfSpread : 'none';
 }
 
+export const PDF_ZOOMS = ['page-width', 'page-fit'] as const;
+export type PdfZoom = typeof PDF_ZOOMS[number];
+
+/** The `vscode-office.pdf.zoom` setting: the zoom a PDF opens with, read when the viewer opens. */
+export function getPdfZoom(): PdfZoom {
+    const value = Global.getConfig<string>('pdf.zoom', 'page-width');
+    return (PDF_ZOOMS as readonly string[]).includes(value) ? value as PdfZoom : 'page-width';
+}
+
 /** Sends `pdfSidebar` to the PDF viewer whenever the setting changes: it applies from the next opening. */
 export function bindPdfSidebar(handler: Handler) {
     const subscription = vscode.workspace.onDidChangeConfiguration((event) => {

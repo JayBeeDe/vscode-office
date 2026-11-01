@@ -1320,8 +1320,6 @@
       "scale": {
         "width": "Page Width",
         "fit": "Page Fit",
-        "auto": "Automatic Zoom",
-        "actual": "Actual Size",
         "percent": "{scale}%"
       }
     },
@@ -1335,6 +1333,14 @@
       "in": {
         "@title": "Zoom In",
         "label": "Zoom In"
+      },
+      "page_fit": {
+        "@title": "Page Fit",
+        "label": "Page Fit"
+      },
+      "page_width": {
+        "@title": "Page Width",
+        "label": "Page Width"
       }
     },
     "presentation_mode": {

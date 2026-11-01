@@ -1248,8 +1248,6 @@
       "scale": {
         "width": "适合页宽",
         "fit": "适合页面",
-        "auto": "自动缩放",
-        "actual": "实际大小",
         "percent": "{scale}%"
       }
     },
@@ -1263,6 +1261,14 @@
       "in": {
         "@title": "放大",
         "label": "放大"
+      },
+      "page_fit": {
+        "@title": "适合页面",
+        "label": "适合页面"
+      },
+      "page_width": {
+        "@title": "适合页宽",
+        "label": "适合页宽"
       }
     },
     "presentation_mode": {

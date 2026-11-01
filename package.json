@@ -738,6 +738,19 @@
 						],
 						"default": "none",
 						"markdownDescription": "Whether the PDF viewer joins the pages in pairs (spreads) when a PDF opens. The viewer's spread choices change it for the open PDF only."
+					},
+					"vscode-office.pdf.zoom": {
+						"type": "string",
+						"enum": [
+							"page-width",
+							"page-fit"
+						],
+						"enumDescriptions": [
+							"The pages as wide as the view, without a horizontal scrollbar.",
+							"A whole page visible at once."
+						],
+						"default": "page-width",
+						"markdownDescription": "The zoom the PDF viewer opens a PDF with, and the one Ctrl/Cmd+0 goes back to. The toolbar's zoom changes it for the open PDF only."
 					}
 				}
 			}
