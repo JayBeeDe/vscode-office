@@ -3450,7 +3450,8 @@ const defaultOptions = {
     kind: OptionKind.VIEWER + OptionKind.PREFERENCE
   },
   disableHistory: {
-    value: false,
+    // no history of the positions in the PDF (back/forward), kept in the browser's history state
+    value: true,
     kind: OptionKind.VIEWER
   },
   disablePageLabels: {
@@ -11792,13 +11793,15 @@ class ViewHistory {
     });
   }
 
-  async _writeToStorage() {
-    const databaseStr = JSON.stringify(this.database);
-    localStorage.setItem("pdfjs.history", databaseStr);
-  }
+  // no history: nothing is kept about the PDFs opened (the history earlier versions kept is removed)
+  async _writeToStorage() {}
 
   async _readFromStorage() {
-    return localStorage.getItem("pdfjs.history");
+    try {
+      localStorage.removeItem("pdfjs.history");
+    } catch (e) {}
+
+    return null;
   }
 
   async set(name, val) {

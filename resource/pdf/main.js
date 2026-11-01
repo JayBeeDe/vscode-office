@@ -4,26 +4,12 @@
   const SIDEBAR_WIDTH_VAR = '--sidebar-width';
   const SIDEBAR_MIN_WIDTH = 200;
   const SIDEBAR_DEFAULT_WIDTH = 270;
-  const SIDEBAR_STORAGE_KEY = 'vscode-office.pdf.sidebarWidth';
-  function loadSidebarWidth() {
-    try {
-      const saved = localStorage.getItem(SIDEBAR_STORAGE_KEY);
-      if (!saved) {
-        return null;
-      }
-      const width = parseInt(saved, 10);
-      return Number.isFinite(width) ? width : null;
-    } catch {
-      return null;
-    }
-  }
-
-  function saveSidebarWidth(width) {
-    try {
-      localStorage.setItem(SIDEBAR_STORAGE_KEY, String(width));
-    } catch {
-      // ignore storage errors
-    }
+  // the sidebar opens 270px wide with every PDF: the width it is dragged to is not kept (the one
+  // earlier versions kept is removed)
+  try {
+    localStorage.removeItem('vscode-office.pdf.sidebarWidth');
+  } catch {
+    // ignore storage errors
   }
 
   // vscode-office.pdf.sidebar: `<none|always|auto>-<outlines|thumbnails>`. The first part says
@@ -183,7 +169,7 @@
     return Number.isFinite(width) ? width : SIDEBAR_DEFAULT_WIDTH;
   }
 
-  function setSidebarWidth(width, persist = false) {
+  function setSidebarWidth(width) {
     const outerContainer = document.getElementById('outerContainer');
     if (!outerContainer) {
       return;
@@ -191,20 +177,10 @@
     const maxWidth = Math.max(SIDEBAR_MIN_WIDTH, Math.floor(outerContainer.clientWidth / 2));
     const nextWidth = Math.min(Math.max(width, SIDEBAR_MIN_WIDTH), maxWidth);
     document.documentElement.style.setProperty(SIDEBAR_WIDTH_VAR, `${nextWidth}px`);
-    if (persist) {
-      saveSidebarWidth(nextWidth);
-    }
     if (window.PDFViewerApplication?.eventBus) {
       PDFViewerApplication.eventBus.dispatch('resize', { source: window });
     }
     return nextWidth;
-  }
-
-  function restoreSidebarWidth() {
-    const saved = loadSidebarWidth();
-    if (saved != null) {
-      setSidebarWidth(saved);
-    }
   }
 
   // The zoom field (5 to 500%) between its -/+ buttons, and the Page Fit and Page Width buttons, in
@@ -287,7 +263,6 @@
     }
 
     resizer.classList.remove('hidden');
-    restoreSidebarWidth();
 
     let dragging = false;
     let startX = 0;
@@ -325,7 +300,7 @@
         }
         activePointerId = null;
       }
-      setSidebarWidth(getSidebarWidth(), true);
+      setSidebarWidth(getSidebarWidth());
     };
 
     const onVisibilityChange = () => {
@@ -427,6 +402,9 @@
       // vscode-office.pdf.zoom: the zoom every PDF opens with (rather than the one it was last
       // viewed with), and the one Ctrl/Cmd+0 goes back to
       PDFViewerApplicationOptions.set('defaultZoomValue', window.officePdfZoom || 'page-width');
+      // every PDF opens at its beginning: not where it was last viewed, nor at the destination the
+      // PDF asks to open at (viewOnLoad 1, INITIAL)
+      PDFViewerApplicationOptions.set('viewOnLoad', 1);
       setupZoom();
       const optsOnLoad = () => {
         PDFViewerApplication.pdfCursorTools.switchTool(cursorTools(window.officePdfTool))
