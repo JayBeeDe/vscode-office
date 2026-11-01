@@ -11,6 +11,15 @@ export function getPdfSidebar(): PdfSidebar {
     return (PDF_SIDEBARS as readonly string[]).includes(value) ? value as PdfSidebar : 'auto-outlines';
 }
 
+export const PDF_TOOLS = ['hand', 'selection'] as const;
+export type PdfTool = typeof PDF_TOOLS[number];
+
+/** The `vscode-office.pdf.tool` setting: the cursor tool a PDF opens with, read when the viewer opens. */
+export function getPdfTool(): PdfTool {
+    const value = Global.getConfig<string>('pdf.tool', 'hand');
+    return (PDF_TOOLS as readonly string[]).includes(value) ? value as PdfTool : 'hand';
+}
+
 /** Sends `pdfSidebar` to the PDF viewer whenever the setting changes: it applies from the next opening. */
 export function bindPdfSidebar(handler: Handler) {
     const subscription = vscode.workspace.onDidChangeConfiguration((event) => {

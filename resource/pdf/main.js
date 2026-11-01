@@ -78,9 +78,9 @@
     });
   }
 
+  // vscode-office.pdf.tool: 'hand' (1) scrolls by dragging the pages, 'selection' (0) selects text
   function cursorTools(name) {
-    // 'hand' allows scrolling by dragging up and down; 0 allows selecting text
-    return name === 'hand' ? 1 : 0
+    return name === 'selection' ? 0 : 1
   }
   function scrollMode(name) {
     switch (name) {
@@ -491,7 +491,7 @@
       initSidebarResize();
       setupSidebar();
       const optsOnLoad = () => {
-        PDFViewerApplication.pdfCursorTools.switchTool(cursorTools('select'))
+        PDFViewerApplication.pdfCursorTools.switchTool(cursorTools(window.officePdfTool))
         PDFViewerApplication.pdfViewer.scrollMode = scrollMode('vertical')
         PDFViewerApplication.pdfViewer.spreadMode = spreadMode('none')
         PDFViewerApplication.eventBus.off('documentloaded', optsOnLoad)

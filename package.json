@@ -695,6 +695,19 @@
 						],
 						"default": "auto-outlines",
 						"markdownDescription": "Whether the PDF viewer's sidebar is open when a PDF opens, and the view (outline or thumbnails) it shows each time it opens. The outline view is empty for a PDF without an outline."
+					},
+					"vscode-office.pdf.tool": {
+						"type": "string",
+						"enum": [
+							"hand",
+							"selection"
+						],
+						"enumDescriptions": [
+							"Hand tool: dragging the pages scrolls them.",
+							"Text selection tool: dragging over the text selects it."
+						],
+						"default": "hand",
+						"markdownDescription": "The cursor tool the PDF viewer starts with when a PDF opens. The toolbar's tool buttons switch it for the open PDF only."
 					}
 				}
 			}
