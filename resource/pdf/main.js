@@ -5,9 +5,6 @@
   const SIDEBAR_MIN_WIDTH = 200;
   const SIDEBAR_DEFAULT_WIDTH = 270;
   const SIDEBAR_STORAGE_KEY = 'vscode-office.pdf.sidebarWidth';
-  const SIDEBAR_OPEN_STORAGE_KEY = 'vscode-office.pdf.sidebarOpen';
-  let sidebarOpenStateReady = false;
-
   function loadSidebarWidth() {
     try {
       const saved = localStorage.getItem(SIDEBAR_STORAGE_KEY);
@@ -29,48 +26,54 @@
     }
   }
 
-  function loadSidebarOpenState() {
-    try {
-      const saved = localStorage.getItem(SIDEBAR_OPEN_STORAGE_KEY);
-      if (saved !== '1' && saved !== '0') {
-        return null;
+  // vscode-office.pdf.sidebar: `<none|always|auto>-<outlines|thumbnails>`. The first part says
+  // whether the sidebar opens with the document (`auto`: when it has an outline), the second the
+  // view it shows whenever it opens, an empty outline if the document has none
+  let sidebarSetting = window.officePdfSidebar || 'auto-outlines';
+  const SIDEBAR_VIEW_THUMBS = 1;
+  const SIDEBAR_VIEW_OUTLINE = 2;
+
+  const sidebarView = () => sidebarSetting.endsWith('-thumbnails') ? SIDEBAR_VIEW_THUMBS : SIDEBAR_VIEW_OUTLINE;
+
+  /** Shows the setting's view, the outline even when it is empty (its button is disabled then). */
+  function showSidebarView() {
+    const sidebar = PDFViewerApplication.pdfSidebar;
+    const disabled = sidebar.outlineButton.disabled;
+    sidebar.outlineButton.disabled = false;
+    sidebar.switchView(sidebarView());
+    sidebar.outlineButton.disabled = disabled;
+  }
+
+  function setupSidebar() {
+    const sidebar = PDFViewerApplication.pdfSidebar;
+    const open = sidebar.open.bind(sidebar);
+    sidebar.open = () => {
+      if (!sidebar.isOpen) {
+        showSidebarView();
       }
-      return saved === '1';
-    } catch {
-      return null;
-    }
-  }
-
-  function saveSidebarOpenState(open) {
-    try {
-      localStorage.setItem(SIDEBAR_OPEN_STORAGE_KEY, open ? '1' : '0');
-    } catch {
-      // ignore storage errors
-    }
-  }
-
-  function restoreSidebarOpenState() {
-    const saved = loadSidebarOpenState();
-    if (saved === true) {
-      PDFViewerApplication.pdfSidebar.open();
-      return;
-    }
-    if (saved === false) {
-      PDFViewerApplication.pdfSidebar.close();
-      return;
-    }
-    if (window.innerWidth > 900) {
-      PDFViewerApplication.pdfSidebar.open();
-    }
-  }
-
-  function setupSidebarOpenStatePersistence() {
-    if (!window.PDFViewerApplication?.eventBus) {
-      return;
-    }
-    PDFViewerApplication.eventBus.on('sidebarviewchanged', (event) => {
-      if (sidebarOpenStateReady) {
-        saveSidebarOpenState(event.view !== 0);
+      open();
+    };
+    handler.on('pdfSidebar', (value) => {
+      sidebarSetting = value;
+    });
+    const { eventBus } = PDFViewerApplication;
+    eventBus.on('documentloaded', () => {
+      if (sidebarSetting.startsWith('always-')) {
+        sidebar.open();
+      } else if (sidebarSetting.startsWith('none-')) {
+        sidebar.close();
+      }
+    });
+    eventBus.on('outlineloaded', ({ outlineCount }) => {
+      if (sidebarSetting.startsWith('auto-')) {
+        if (outlineCount) {
+          sidebar.open();
+        } else {
+          sidebar.close();
+        }
+      } else if (sidebar.isOpen) {
+        // pdf.js shows the thumbnails when the document has no outline
+        showSidebarView();
       }
     });
   }
@@ -486,13 +489,11 @@
     setupToolbarRightScroll();
     PDFViewerApplication.initializedPromise.then(() => {
       initSidebarResize();
-      setupSidebarOpenStatePersistence();
+      setupSidebar();
       const optsOnLoad = () => {
         PDFViewerApplication.pdfCursorTools.switchTool(cursorTools('select'))
         PDFViewerApplication.pdfViewer.scrollMode = scrollMode('vertical')
         PDFViewerApplication.pdfViewer.spreadMode = spreadMode('none')
-        restoreSidebarOpenState()
-        sidebarOpenStateReady = true
         PDFViewerApplication.eventBus.off('documentloaded', optsOnLoad)
       }
       PDFViewerApplication.eventBus.on('documentloaded', optsOnLoad)

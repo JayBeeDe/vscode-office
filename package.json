@@ -676,6 +676,25 @@
 						],
 						"default": "auto",
 						"markdownDescription": "Colours of the PDF viewer's pages; the toolbar and the sidebar follow `#vscode-office.theme#`. The viewer's dark mode button (Ctrl/Cmd+L) changes this setting in the user settings; a workspace value overrides it."
+					},
+					"vscode-office.pdf.sidebar": {
+						"type": "string",
+						"enum": [
+							"auto-outlines",
+							"always-outlines",
+							"always-thumbnails",
+							"none-outlines",
+							"none-thumbnails"
+						],
+						"enumDescriptions": [
+							"Opens with the outline when the PDF has one; opening the sidebar shows the outline.",
+							"Always opens with the outline, empty when the PDF has none; opening the sidebar shows the outline.",
+							"Always opens with the thumbnails; opening the sidebar shows the thumbnails.",
+							"Closed when a PDF opens; opening the sidebar shows the outline.",
+							"Closed when a PDF opens; opening the sidebar shows the thumbnails."
+						],
+						"default": "auto-outlines",
+						"markdownDescription": "Whether the PDF viewer's sidebar is open when a PDF opens, and the view (outline or thumbnails) it shows each time it opens. The outline view is empty for a PDF without an outline."
 					}
 				}
 			}

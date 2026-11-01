@@ -638,7 +638,8 @@ const PDFViewerApplication = {
       pdfViewer: this.pdfViewer,
       pdfThumbnailViewer: this.pdfThumbnailViewer,
       eventBus,
-      l10n: this.l10n
+      l10n: this.l10n,
+      disableNotification: true
     });
     this.pdfSidebar.onToggled = this.forceRendering.bind(this);
     this.pdfSidebarResizer = new _pdf_sidebar_resizer.PDFSidebarResizer(appConfig.sidebarResizer, eventBus, this.l10n);
@@ -3506,7 +3507,7 @@ const defaultOptions = {
     kind: OptionKind.VIEWER + OptionKind.PREFERENCE
   },
   sidebarViewOnLoad: {
-    value: -1,
+    value: 0,
     kind: OptionKind.VIEWER + OptionKind.PREFERENCE
   },
   scrollModeOnLoad: {
@@ -7474,10 +7475,6 @@ class PDFOutlineViewer {
         outlineCount++;
       }
     }
-    if(outlineCount>1){
-      PDFViewerApplication.pdfSidebar.switchView(2, true);
-    }
-
     if (hasAnyNesting) {
       this.container.classList.add("outlineWithDeepNesting");
       this.lastToggleIsShow = fragment.querySelectorAll(".treeItemsHidden").length === 0;
@@ -11896,7 +11893,7 @@ function getDefaultPreferences() {
       "pdfBugEnabled": false,
       "renderer": "canvas",
       "renderInteractiveForms": false,
-      "sidebarViewOnLoad": -1,
+      "sidebarViewOnLoad": 0,
       "scrollModeOnLoad": -1,
       "spreadModeOnLoad": -1,
       "textLayerMode": 1,

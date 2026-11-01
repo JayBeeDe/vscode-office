@@ -7,6 +7,7 @@ import { OfficeDocument } from './handlers/officeDocument';
 import { extensionResource, getExtensionResourceRoots, readExtensionText } from '@/common/extensionResource';
 import { resolveLanguage } from '@/i18n';
 import { getPdfViewerStrings } from './pdfViewerStrings';
+import { bindPdfSidebar, getPdfSidebar } from './pdfSidebar';
 import { bindDocumentTheme, bindEpubTheme, bindPdfTheme, bindTheme, getPdfTheme, getTheme } from '@/common/theme';
 
 /**
@@ -98,6 +99,7 @@ export class OfficeViewerProvider implements vscode.CustomEditorProvider<OfficeD
 				break;
 			case '.pdf':
 				bindPdfTheme(handler);
+				bindPdfSidebar(handler);
 				void this.loadPdfViewer(webview);
 				break;
 			case '.epub':
@@ -124,7 +126,8 @@ export class OfficeViewerProvider implements vscode.CustomEditorProvider<OfficeD
 			.replace('{{i18n}}', () => strings.buttons)
 			.replace('{{l10n}}', () => strings.l10n)
 			.replace('{{theme}}', () => JSON.stringify(getTheme()))
-			.replace('{{pdfTheme}}', () => JSON.stringify(getPdfTheme()));
+			.replace('{{pdfTheme}}', () => JSON.stringify(getPdfTheme()))
+			.replace('{{pdfSidebar}}', () => JSON.stringify(getPdfSidebar()));
 	}
 
 	private getBaseUrl(webview: vscode.Webview, path: string) {
