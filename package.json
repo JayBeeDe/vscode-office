@@ -708,6 +708,36 @@
 						],
 						"default": "hand",
 						"markdownDescription": "The cursor tool the PDF viewer starts with when a PDF opens. The toolbar's tool buttons switch it for the open PDF only."
+					},
+					"vscode-office.pdf.scrolling": {
+						"type": "string",
+						"enum": [
+							"vertical",
+							"horizontal",
+							"wrapped"
+						],
+						"enumDescriptions": [
+							"The pages one below the other.",
+							"The pages side by side, scrolled sideways.",
+							"As many pages per row as fit, the rows one below the other."
+						],
+						"default": "vertical",
+						"markdownDescription": "How the PDF viewer lays out the pages to scroll through when a PDF opens. The viewer's scrolling choices change it for the open PDF only."
+					},
+					"vscode-office.pdf.spread": {
+						"type": "string",
+						"enum": [
+							"none",
+							"odd",
+							"even"
+						],
+						"enumDescriptions": [
+							"Each page on its own.",
+							"Pages joined in pairs starting with an odd page: 1-2, 3-4…",
+							"Pages joined in pairs starting with an even page: 1 alone, then 2-3, 4-5…, like a book with its cover."
+						],
+						"default": "none",
+						"markdownDescription": "Whether the PDF viewer joins the pages in pairs (spreads) when a PDF opens. The viewer's spread choices change it for the open PDF only."
 					}
 				}
 			}

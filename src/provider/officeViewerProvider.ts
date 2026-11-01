@@ -7,7 +7,7 @@ import { OfficeDocument } from './handlers/officeDocument';
 import { extensionResource, getExtensionResourceRoots, readExtensionText } from '@/common/extensionResource';
 import { resolveLanguage } from '@/i18n';
 import { getPdfViewerStrings } from './pdfViewerStrings';
-import { bindPdfSidebar, getPdfSidebar, getPdfTool } from './pdfSettings';
+import { bindPdfSidebar, getPdfScrolling, getPdfSidebar, getPdfSpread, getPdfTool } from './pdfSettings';
 import { bindDocumentTheme, bindEpubTheme, bindPdfTheme, bindTheme, getPdfTheme, getTheme } from '@/common/theme';
 
 /**
@@ -128,7 +128,9 @@ export class OfficeViewerProvider implements vscode.CustomEditorProvider<OfficeD
 			.replace('{{theme}}', () => JSON.stringify(getTheme()))
 			.replace('{{pdfTheme}}', () => JSON.stringify(getPdfTheme()))
 			.replace('{{pdfSidebar}}', () => JSON.stringify(getPdfSidebar()))
-			.replace('{{pdfTool}}', () => JSON.stringify(getPdfTool()));
+			.replace('{{pdfTool}}', () => JSON.stringify(getPdfTool()))
+			.replace('{{pdfScrolling}}', () => JSON.stringify(getPdfScrolling()))
+			.replace('{{pdfSpread}}', () => JSON.stringify(getPdfSpread()));
 	}
 
 	private getBaseUrl(webview: vscode.Webview, path: string) {

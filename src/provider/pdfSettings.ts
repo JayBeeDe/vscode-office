@@ -20,6 +20,24 @@ export function getPdfTool(): PdfTool {
     return (PDF_TOOLS as readonly string[]).includes(value) ? value as PdfTool : 'hand';
 }
 
+export const PDF_SCROLLINGS = ['vertical', 'horizontal', 'wrapped'] as const;
+export type PdfScrolling = typeof PDF_SCROLLINGS[number];
+
+/** The `vscode-office.pdf.scrolling` setting: the scroll mode a PDF opens with, read when the viewer opens. */
+export function getPdfScrolling(): PdfScrolling {
+    const value = Global.getConfig<string>('pdf.scrolling', 'vertical');
+    return (PDF_SCROLLINGS as readonly string[]).includes(value) ? value as PdfScrolling : 'vertical';
+}
+
+export const PDF_SPREADS = ['none', 'odd', 'even'] as const;
+export type PdfSpread = typeof PDF_SPREADS[number];
+
+/** The `vscode-office.pdf.spread` setting: the page spreads a PDF opens with, read when the viewer opens. */
+export function getPdfSpread(): PdfSpread {
+    const value = Global.getConfig<string>('pdf.spread', 'none');
+    return (PDF_SPREADS as readonly string[]).includes(value) ? value as PdfSpread : 'none';
+}
+
 /** Sends `pdfSidebar` to the PDF viewer whenever the setting changes: it applies from the next opening. */
 export function bindPdfSidebar(handler: Handler) {
     const subscription = vscode.workspace.onDidChangeConfiguration((event) => {

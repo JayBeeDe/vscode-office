@@ -82,6 +82,7 @@
   function cursorTools(name) {
     return name === 'selection' ? 0 : 1
   }
+  // vscode-office.pdf.scrolling
   function scrollMode(name) {
     switch (name) {
       case 'vertical':
@@ -94,6 +95,7 @@
         return -1
     }
   }
+  // vscode-office.pdf.spread
   function spreadMode(name) {
     switch (name) {
       case 'none':
@@ -492,8 +494,8 @@
       setupSidebar();
       const optsOnLoad = () => {
         PDFViewerApplication.pdfCursorTools.switchTool(cursorTools(window.officePdfTool))
-        PDFViewerApplication.pdfViewer.scrollMode = scrollMode('vertical')
-        PDFViewerApplication.pdfViewer.spreadMode = spreadMode('none')
+        PDFViewerApplication.pdfViewer.scrollMode = scrollMode(window.officePdfScrolling || 'vertical')
+        PDFViewerApplication.pdfViewer.spreadMode = spreadMode(window.officePdfSpread || 'none')
         PDFViewerApplication.eventBus.off('documentloaded', optsOnLoad)
       }
       PDFViewerApplication.eventBus.on('documentloaded', optsOnLoad)
