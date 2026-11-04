@@ -233,15 +233,32 @@ const padTables = (markdown: string) => {
 };
 
 /**
+ * Lute drops the space before the first inline element of a table cell (`x, \`code\``,
+ * `see **bold**`, `a [link](u)`...): shown and written glued (`x,\`code\``). A zero-width space
+ * after it keeps it; Lute uses that character itself and doesn't write it.
+ */
+const keepSpacesInTableCells = (markdown: string) => {
+    const lines = splitLines(markdown);
+    for (const line of lines) {
+        if (line.code || !/^\s*\|.*\|\s*$/.test(line.text) || DELIMITER_RE.test(line.text)) {
+            continue;
+        }
+        line.text = line.text.replace(/(\S) (?=`|\*|_(?=\S)|!?\[|\$|~~|==)/g, "$1 \u200b");
+    }
+    return joinLines(lines);
+};
+
+/**
  * Prepares the Markdown before Lute reads it: when the editor opens a file, and before the
- * formatted text is read back. Without it, Lute drops `<br>`, `<img>` and the extra table cells.
+ * formatted text is read back. Without it, Lute drops `<br>`, `<img>`, the extra table cells and
+ * the space before the first inline element of a table cell.
  */
 export const prepareMarkdown = (markdown: string) => {
     if (typeof markdown !== "string") {
         return markdown;
     }
     try {
-        return padTables(hardBreaksToParagraphs(convertInlineHtml(markdown.replace(/\r\n?/g, "\n"))));
+        return keepSpacesInTableCells(padTables(hardBreaksToParagraphs(convertInlineHtml(markdown.replace(/\r\n?/g, "\n")))));
     } catch {
         return markdown;
     }
