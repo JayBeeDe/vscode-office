@@ -4,6 +4,7 @@ import { Handler } from "@/common/handler";
 import { isUriReadOnly } from '@/common/fileReadOnly';
 import { Uri, workspace } from 'vscode';
 import { i18n } from '@/common/global';
+import { openInEditor } from '@/service/markdown/searchReveal';
 import { emitFileOfficeOpen, emitVirtualOfficeOpen, isVirtualUri } from '@/provider/handlers/officeContent';
 import { OfficeDocument } from '@/provider/handlers/officeDocument';
 
@@ -42,7 +43,7 @@ async function openLink(documentUri: Uri, link: string) {
             } catch {
                 // keep the raw path
             }
-            await vscode.commands.executeCommand('vscode.open', Uri.joinPath(documentUri, '..', decoded));
+            await openInEditor(Uri.joinPath(documentUri, '..', decoded));
         }
         return;
     }

@@ -11,6 +11,7 @@ import { broadcastToMarkdownWebviews } from './markdown/blockScroll';
 import { Holder } from './markdown/holder';
 import { convertMd } from "./markdown/markdown-pdf";
 import { Global, i18n } from "@/common/global";
+import { openMarkdownAsText } from './markdown/searchReveal';
 
 export type ExportType = 'pdf' | 'html' | 'docx';
 
@@ -345,8 +346,11 @@ export class MarkdownService {
     public switchEditor(uri: vscode.Uri) {
         const editor = vscode.window.activeTextEditor;
         if (!uri) uri = editor?.document.uri;
-        const type = editor ? 'cweijan.markdownViewer' : 'default';
-        vscode.commands.executeCommand('vscode.openWith', uri, type);
+        if (editor) {
+            vscode.commands.executeCommand('vscode.openWith', uri, 'cweijan.markdownViewer');
+        } else {
+            void openMarkdownAsText(uri, vscode.ViewColumn.Active);
+        }
     }
 
 }

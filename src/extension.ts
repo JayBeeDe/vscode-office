@@ -3,6 +3,7 @@ import { Global } from './common/global';
 import { MarkdownEditorProvider } from './provider/markdownEditorProvider';
 import { OfficeViewerProvider } from './provider/officeViewerProvider';
 import { MarkdownService } from './service/markdownService';
+import { bindMarkdownSearchReveal } from './service/markdown/searchReveal';
 import { switchCsvEditor } from './service/csvService';
 import { FileUtil } from './common/fileUtil';
 import { ReactApp } from './common/reactApp';
@@ -10,6 +11,7 @@ import { ReactApp } from './common/reactApp';
 export async function activate(context: vscode.ExtensionContext) {
 	await Global.init(context);
 	const viewOption = { webviewOptions: { retainContextWhenHidden: true } };
+	bindMarkdownSearchReveal(context);
 	FileUtil.init(context)
 	ReactApp.init(context)
 	const markdownService = new MarkdownService(context);

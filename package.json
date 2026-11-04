@@ -450,6 +450,11 @@
 						"default": true,
 						"markdownDescription": "Restore caret focus when opening a Markdown file. Scroll position is always restored."
 					},
+					"vscode-office.markdown.openSearchResults": {
+						"type": "boolean",
+						"default": false,
+						"markdownDescription": "Open a Markdown file clicked in VS Code's Search view in the Markdown editor at the match, highlighted by its find bar. VS Code gives the match only to a text editor, so every Markdown file then opens as text for a moment before the Markdown editor replaces it. Turning this on adds `\"*.md\": \"default\"` and `\"*.markdown\": \"default\"` to `#workbench.editorAssociations#` in the user settings, and turning it off removes them."
+					},
 					"vscode-office.markdown.workspacePathAsImageBasePath": {
 						"type": "boolean",
 						"default": false,

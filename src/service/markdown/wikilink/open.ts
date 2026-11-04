@@ -8,6 +8,7 @@ import { WIKI_URI_PREFIX } from './constants';
 import { parseWikiLinkUri } from './parse';
 import { resolveWikiLinkFile } from './resolve';
 import { i18n } from '@/common/global';
+import { openInEditor } from '@/service/markdown/searchReveal';
 
 export async function openWikiLink(currentUri: vscode.Uri, wikiUri: string): Promise<void> {
     const target = parseWikiLinkUri(wikiUri);
@@ -29,7 +30,7 @@ export async function openWikiLink(currentUri: vscode.Uri, wikiUri: string): Pro
         setPendingBlockScroll(baseUri, target.fragment);
     }
 
-    await vscode.commands.executeCommand('vscode.open', baseUri, { preview: false });
+    await openInEditor(baseUri);
 
     if (hasExistingWebview && target.fragment) {
         notifyBlockScroll(baseUri, target.fragment);

@@ -10,6 +10,7 @@ import { ReactApp } from './common/reactApp';
 import { MarkdownEditorProvider } from './provider/markdownEditorProvider';
 import { OfficeViewerProvider } from './provider/officeViewerProvider';
 import { MarkdownService } from './service/markdownService';
+import { bindMarkdownSearchReveal } from './service/markdown/searchReveal';
 import { switchCsvEditor } from './service/csvService';
 
 export async function activate(context: vscode.ExtensionContext) {
@@ -19,6 +20,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	ReactApp.init(context);
 
 	const viewOption = { webviewOptions: { retainContextWhenHidden: true } };
+	bindMarkdownSearchReveal(context);
 	const markdownService = new MarkdownService(context);
 	const markdownEditorProvider = new MarkdownEditorProvider(context, { isWeb: true });
 	const viewerInstance = new OfficeViewerProvider(context);

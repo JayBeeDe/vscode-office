@@ -847,4 +847,19 @@ export class FindBar {
     public isVisible() {
         return this.element.style.display === "flex";
     }
+
+    /**
+     * Shows the find bar searching `text` literally (no case, word or regex option), on its match
+     * number `index` (0-based): a search result opened from VS Code. The editor keeps the focus.
+     */
+    public revealMatch(text: string, index: number) {
+        this.options = { matchCase: false, wholeWord: false, regex: false };
+        this.element.querySelectorAll<HTMLElement>("[data-option]").forEach((button) => {
+            button.classList.remove("vditor-find-bar__option--active");
+            button.setAttribute("aria-pressed", "false");
+        });
+        this.input.value = text;
+        this.show(false);
+        this.search(index);
+    }
 }

@@ -18,6 +18,8 @@ export class Find extends MenuItem {
             return findBar;
         };
 
+        vditor.revealFindMatch = (text: string, index: number) => getOrCreateBar().revealMatch(text, index);
+
         btn.addEventListener(getEventName(), (e) => {
             e.preventDefault();
             const bar = getOrCreateBar();

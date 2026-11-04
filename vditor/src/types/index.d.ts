@@ -592,6 +592,8 @@ interface IEChart {
 
 interface IVditor {
     element: HTMLElement;
+    /** opens the find bar on a text's match, set by the toolbar's find button */
+    revealFindMatch?: (text: string, index: number) => void;
     options: IOptions;
     originalInnerHTML: string;
     lute: Lute | undefined;

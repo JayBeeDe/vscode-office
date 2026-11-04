@@ -10,7 +10,17 @@ function findReferenceDefinition(markdown, label) {
 }
 
 handler.on("open", async (md) => {
-  const { content, rootPath, workspaceBaseUrl, documentCacheId, pendingFragment, shouldRestoreFocus, config, fileName, exporting } = md;
+  /**
+   * Shows a search result: the find bar on the match. The match's number among the source's
+   * occurrences is its number among the rendered ones, unless markup (a link's URL, a code block's
+   * hidden text) holds some: then the last one is shown.
+   */
+  const revealMatch = ({ text, occurrence }) => {
+    if (text) {
+      editor.revealFindMatch(text, occurrence);
+    }
+  };
+  const { content, rootPath, workspaceBaseUrl, documentCacheId, pendingFragment, pendingMatch, shouldRestoreFocus, config, fileName, exporting } = md;
   window.__officeMarkdownFileName = fileName || 'Note';
   const {
     language, i18n, isWeb, isDev, markdown,
@@ -169,9 +179,14 @@ handler.on("open", async (md) => {
           editor.scrollToBlock(fragment);
         }
       })
+      // a search result clicked in VS Code's Search view
+      handler.on("revealMatch", revealMatch)
       editor.restoreDocumentSession(true, !!shouldRestoreFocus)
       if (pendingFragment) {
         editor.scrollToBlock(pendingFragment);
+      }
+      if (pendingMatch) {
+        revealMatch(pendingMatch);
       }
     }
   })

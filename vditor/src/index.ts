@@ -246,6 +246,14 @@ class Vditor {
         return scrollToBlockUtil(this.vditor, fragment);
     }
 
+    /**
+     * Shows the find bar on `text`'s match number `index` (0-based), highlighted like a search in
+     * the editor: a search result opened from VS Code.
+     */
+    public revealFindMatch(text: string, index: number) {
+        this.vditor.revealFindMatch?.(text, index);
+    }
+
     /** Whether an upload is still in progress */
     public isUploading() {
         return this.vditor.upload.isUploading;

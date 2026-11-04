@@ -18,6 +18,7 @@ import {
     unregisterMarkdownWebview,
 } from '@/service/markdown/blockScroll';
 import { parseWebviewResourceUri } from '@/common/webviewUri';
+import { consumePendingMatch, openInEditor, openMarkdownAsText } from '@/service/markdown/searchReveal';
 
 function getRuntimePlatform(): string {
     if (typeof process !== 'undefined' && process.platform) {
@@ -238,6 +239,8 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
                 workspaceBaseUrl: workspaceUri ? webview.asWebviewUri(workspaceUri).toString().replace(/\?.+$/, '') : '',
                 documentCacheId: `${uri.scheme}:${uri.toString()}`,
                 pendingFragment: consumePendingBlockScroll(uri),
+                // a search result clicked in the Search view: the editor's find bar shows it
+                pendingMatch: consumePendingMatch(uri),
                 shouldRestoreFocus: config.get<boolean>("restoreViewState", true),
                 // a PDF or DOCX export started from another panel
                 exporting: MarkdownService.exporting,
@@ -270,7 +273,7 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
             }
             const localUri = parseWebviewResourceUri(linkUri, uri, this.getWorkspaceUriByFileUtil(uri));
             if (localUri) {
-                vscode.commands.executeCommand('vscode.open', localUri, { preview: false });
+                void openInEditor(localUri);
             } else {
                 vscode.env.openExternal(vscode.Uri.parse(linkUri));
             }
@@ -292,7 +295,7 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
             }
         }).on("editInVSCode", (full: boolean) => {
             const side = full ? vscode.ViewColumn.Active : vscode.ViewColumn.Beside;
-            vscode.commands.executeCommand('vscode.openWith', uri, "default", side);
+            void openMarkdownAsText(uri, side);
         }).on("save", (newContent) => {
             // every edit counts, also those typed right after Ctrl+S
             if (newContent === content && pendingDocumentSync === undefined) return;
