@@ -8,6 +8,10 @@ body,
     overflow: hidden;
 }
 
+.epub-viewer ::selection {
+    background: color-mix(in srgb, var(--epub-accent) 30%, transparent);
+}
+
 .epub-viewer .epub-reader-host iframe {
     border: none;
 }
@@ -53,9 +57,16 @@ body,
     outline: none;
 }
 
-.epub-viewer .loc-input:hover,
-.epub-viewer .loc-input:focus {
+.epub-viewer .loc-input:hover {
     border-bottom-color: rgba(0, 0, 0, 0.25);
+}
+
+.epub-viewer .loc-input:focus {
+    border-bottom-color: var(--epub-accent);
+}
+
+.epub-viewer .epub-loading .ant-spin-dot-item {
+    background-color: var(--epub-accent);
 }
 
 .epub-viewer .loc-total {
@@ -96,6 +107,8 @@ body,
     font-size: 14px;
     --epub-muted: rgba(0, 0, 0, 0.62);
     --epub-nav-width: 56px;
+    /* VS Code's accent, like the spreadsheet's and the document's: the active tab and chapter, the links */
+    --epub-accent: var(--vscode-focusBorder, var(--vscode-textLink-foreground, #1565C0));
     background: #fff;
     color: #000;
 }
@@ -510,8 +523,8 @@ body,
 }
 
 .epub-viewer .sidebar .tab-list .item.active {
-    color: #1565C0;
-    border-bottom: 2px solid #1565C0;
+    color: var(--epub-accent);
+    border-bottom: 2px solid var(--epub-accent);
 }
 
 .epub-viewer .sidebar .tab-list .item .icon {
@@ -580,7 +593,7 @@ body,
 }
 
 .epub-viewer .sidebar .toc-list .item.active {
-    color: #1565C0;
+    color: var(--epub-accent);
     background: rgba(0, 0, 0, 0.05);
 }
 
@@ -678,8 +691,7 @@ body,
 
 .epub-viewer .sidebar .search-results .item .pbar .pbar-inner {
     height: 1px;
-    background: rgba(0, 0, 0, 0.5);
-    box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+    background: var(--epub-accent);
 }
 
 .epub-viewer .sidebar .info {
@@ -776,11 +788,17 @@ body,
     opacity: 0.7;
 }
 
-.epub-viewer .sidebar .settings .chips .chip:hover,
-.epub-viewer .sidebar .settings .chips .chip.active {
+.epub-viewer .sidebar .settings .chips .chip:hover {
     border: 1px solid rgba(0, 0, 0, 0.35);
     background: rgba(0, 0, 0, 0.05);
     box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.15);
+}
+
+/* the chosen chip: the accent's ring (the theme chips keep their page colours) */
+.epub-viewer .sidebar .settings .chips .chip.active,
+body.office-dark .epub-viewer .sidebar .settings .chips .chip.active {
+    border: 1px solid var(--epub-accent);
+    box-shadow: 0 0 0 1px var(--epub-accent);
 }
 
 .epub-viewer .sidebar,
@@ -839,7 +857,7 @@ body,
 .epub-viewer .sidebar .settings .setting-content a,
 .epub-viewer .sidebar .settings .setting-content a:link,
 .epub-viewer .sidebar .settings .setting-content a:visited {
-    color: #1565C0;
+    color: var(--epub-accent);
     text-decoration: none;
 }
 
@@ -875,7 +893,6 @@ body.office-dark .epub-viewer {
     --epub-dark-border: #333333;
     --epub-dark-hover: rgba(255, 255, 255, 0.08);
     --epub-dark-active: rgba(255, 255, 255, 0.14);
-    --epub-dark-accent: #4daafc;
 }
 
 body.office-dark .epub-viewer button:hover,
@@ -890,8 +907,7 @@ body.office-dark .epub-viewer .sidebar .tab-list .item:active {
     background: var(--epub-dark-active);
 }
 
-body.office-dark .epub-viewer .loc-input:hover,
-body.office-dark .epub-viewer .loc-input:focus {
+body.office-dark .epub-viewer .loc-input:hover {
     border-bottom-color: rgba(255, 255, 255, 0.35);
 }
 
@@ -918,8 +934,8 @@ body.office-dark .epub-viewer .sidebar .tab-list .item.active,
 body.office-dark .epub-viewer .sidebar .toc-list .item.active,
 body.office-dark .epub-viewer .sidebar .settings .setting-content a:link,
 body.office-dark .epub-viewer .sidebar .settings .setting-content a:visited {
-    color: var(--epub-dark-accent);
-    border-bottom-color: var(--epub-dark-accent);
+    color: var(--epub-accent);
+    border-bottom-color: var(--epub-accent);
 }
 
 body.office-dark .epub-viewer .sidebar .toc-list .item.active {
@@ -949,10 +965,6 @@ body.office-dark .epub-viewer .sidebar .search-results .item .pbar {
     background: var(--epub-dark-border);
 }
 
-body.office-dark .epub-viewer .sidebar .search-results .item .pbar .pbar-inner {
-    background: rgba(255, 255, 255, 0.6);
-}
-
 body.office-dark .epub-viewer .dictionary,
 body.office-dark .epub-viewer .dictionary .definition,
 body.office-dark .epub-viewer .sidebar .info .description,
@@ -964,8 +976,7 @@ body.office-dark .epub-viewer .sidebar .settings .chips .chip {
     border-color: rgba(255, 255, 255, 0.2);
 }
 
-body.office-dark .epub-viewer .sidebar .settings .chips .chip:hover,
-body.office-dark .epub-viewer .sidebar .settings .chips .chip.active {
+body.office-dark .epub-viewer .sidebar .settings .chips .chip:hover {
     border-color: rgba(255, 255, 255, 0.5);
     background: var(--epub-dark-hover);
     box-shadow: 0 0 4px 0 rgba(255, 255, 255, 0.15);

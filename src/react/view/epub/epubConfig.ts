@@ -1,6 +1,7 @@
 import ePub, { Book, Contents, NavItem, Rendition } from 'epubjs';
 import type Section from 'epubjs/types/section';
 import type { Theme } from '../../util/theme';
+import { getVscodeThemeColor } from '../../util/vscodeTheme';
 
 /** spineItems exists at runtime, the typings don't declare it */
 function spineItems(book: Book): Section[] {
@@ -189,7 +190,9 @@ function themeRulesToCss(rules: ReturnType<typeof buildThemeRules>): string {
 
 export function buildThemeRules(settings: EpubSettings, theme: Theme) {
     const { bg, fg } = THEME_COLORS[theme];
-    const linkColor = '#1e83d2';
+    // the book's links and selection take VS Code's accent like the sidebar (Epub.css --epub-accent); its
+    // documents are iframes, which don't see VS Code's variables, hence the resolved colour
+    const accent = getVscodeThemeColor('--vscode-focusBorder', getVscodeThemeColor('--vscode-textLink-foreground', '#1e83d2'));
     return {
         body: {
             background: bg,
@@ -209,15 +212,19 @@ export function buildThemeRules(settings: EpubSettings, theme: Theme) {
             '-webkit-text-fill-color': 'inherit !important',
         },
         'a:link': {
-            color: `${linkColor} !important`,
+            color: `${accent} !important`,
             'text-decoration': 'none !important',
-            '-webkit-text-fill-color': `${linkColor} !important`,
+            '-webkit-text-fill-color': `${accent} !important`,
         },
         'a:link:hover': {
             background: 'rgba(0, 0, 0, 0.1) !important',
         },
         img: {
             'max-width': '100% !important',
+        },
+        // the selected text: the accent at 30% like the document's (Word.css --doc-selection)
+        '::selection': {
+            background: `color-mix(in srgb, ${accent} 30%, transparent) !important`,
         },
     };
 }
