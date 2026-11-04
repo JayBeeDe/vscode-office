@@ -30,9 +30,24 @@ handler.on("open", async (md) => {
     document.body.classList.add('is-web')
   }
   let editor;
-  const getMarkdownValue = createMarkdownValueReader(() => editor, workspaceBaseUrl);
+  const readMarkdown = createMarkdownValueReader(() => editor, workspaceBaseUrl);
+  // the Markdown written to the file follows markdownlint's rules (vditor/src/ts/markdown/lintFormat.ts)
+  const formatForFile = (text) => editor?.formatMarkdown ? editor.formatMarkdown(text, fileName) : text;
+  const getMarkdownValue = () => formatForFile(readMarkdown());
+  /** the formatted text, shown in the editor when it differs: on save, not while typing */
+  const saveFormatted = () => {
+    const formatted = getMarkdownValue();
+    handler.emit('doSave', formatted);
+    if (formatted !== readMarkdown()) {
+      editor.setValue(Vditor.prepareMarkdown(formatted));
+    }
+    editor?.markSaved();
+  };
+  window.__officeMarkdownSave = saveFormatted;
+  // `#word` is an Obsidian tag only with vscode-office.markdown.useObsidianTags (MD018)
+  const obsidianTags = !!markdown?.useObsidianTags;
   editor = new Vditor('vditor', {
-    value: content,
+    value: Vditor.prepareMarkdown(content),
     cdn: rootPath,
     height: '100%',
     outline: {
@@ -53,8 +68,7 @@ handler.on("open", async (md) => {
     i18n,
     tab: '\t',
     toolbar: await getToolbar(rootPath, i18n, () => {
-      handler.emit('doSave', getMarkdownValue());
-      editor?.markSaved();
+      saveFormatted();
     }, isWeb),
     onLinkClick(payload, event) {
       const isCompose = event.metaKey || event.ctrlKey;
@@ -101,7 +115,7 @@ handler.on("open", async (md) => {
       handler.emit('editorFontSize', size)
     },
     input(content) {
-      handler.emit("save", restoreWorkspaceBaseUrls(content, workspaceBaseUrl))
+      handler.emit("save", formatForFile(restoreWorkspaceBaseUrls(content, workspaceBaseUrl)))
     },
     upload: {
       url: '/image',
@@ -119,6 +133,12 @@ handler.on("open", async (md) => {
     preview: {
       math: {
         macros: markdown?.math?.macros ?? {},
+      },
+      markdown: {
+        obsidian: false,
+        callout: true,
+        obsidianWikiLink: true,
+        obsidianTag: obsidianTags,
       },
     },
     after() {
@@ -152,7 +172,7 @@ handler.on("open", async (md) => {
         if (getMarkdownValue() === content) {
           return;
         }
-        editor.setValue(content);
+        editor.setValue(Vditor.prepareMarkdown(content));
         editor.markSaved();
       };
       handler.on("update", content => {

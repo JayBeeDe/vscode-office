@@ -24,6 +24,7 @@ import { clearActiveHeadingMarker } from "./updateActiveHeadingMarker";
 import { handleAutoSymbolPair } from "./autoSymbol";
 import { handleVscodeShortcut } from "./vscodeShortcut";
 import { applyEditorSettings, getEditorFontSize, stepEditorFontSize } from "./editorSettings";
+import {hasTopHeadingBeforeCaret} from "./singleTitle";
 
 const markImageLoading = (img: HTMLImageElement) => {
     if (img.complete && img.naturalWidth > 0) {
@@ -260,6 +261,11 @@ export const hotkeyEvent = (vditor: IVditor, editorElement: HTMLElement) => {
 
         // h1 - h6 hotkey
         if (isCtrl(event) && event.altKey && !event.shiftKey && /^Digit[1-6]$/.test(event.code)) {
+            // MD025: one top-level heading per file
+            if (event.code === "Digit1" && hasTopHeadingBeforeCaret(vditor)) {
+                event.preventDefault();
+                return true;
+            }
             if (vditor.currentMode === "wysiwyg") {
                 const tagName = event.code.replace("Digit", "H");
                 if (hasClosestByMatchTag(getSelection().getRangeAt(0).startContainer, tagName)) {

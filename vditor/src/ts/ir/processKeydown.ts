@@ -36,6 +36,7 @@ import {handleHtmlEditorAltEnter} from "../htmlInline/htmlInlineEditor";
 import {handleLinkPopoverAltEnter} from "../wysiwyg/highlightToolbarWYSIWYG";
 import {processAfterRender, processHeading} from "./process";
 import {skipZwspAfterInlineMath} from "../math/inlineMathCodeMirror";
+import {hasTopHeadingBeforeCaret} from "../util/singleTitle";
 
 export const processKeydown = (vditor: IVditor, event: KeyboardEvent) => {
     vditor.ir.composingLock = event.isComposing;
@@ -193,7 +194,9 @@ export const processKeydown = (vditor: IVditor, event: KeyboardEvent) => {
         // enter++: increase heading size
         if (matchHotKey("⌘=", event)) {
             const headingMarkerElement = headingElement.querySelector(".vditor-ir__marker--heading");
-            if (headingMarkerElement && headingMarkerElement.textContent.trim().length > 1) {
+            const level = headingMarkerElement?.textContent.trim().length ?? 0;
+            // MD025: one top-level heading per file
+            if (headingMarkerElement && level > 1 && !(level === 2 && hasTopHeadingBeforeCaret(vditor))) {
                 processHeading(vditor, headingMarkerElement.textContent.substr(1));
             }
             event.preventDefault();

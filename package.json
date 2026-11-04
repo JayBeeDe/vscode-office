@@ -455,6 +455,11 @@
 						"default": false,
 						"markdownDescription": "Open a Markdown file clicked in VS Code's Search view in the Markdown editor at the match, highlighted by its find bar. VS Code gives the match only to a text editor, so every Markdown file then opens as text for a moment before the Markdown editor replaces it. Turning this on adds `\"*.md\": \"default\"` and `\"*.markdown\": \"default\"` to `#workbench.editorAssociations#` in the user settings, and turning it off removes them."
 					},
+					"vscode-office.markdown.useObsidianTags": {
+						"type": "boolean",
+						"default": false,
+						"markdownDescription": "Treat `#word` as an Obsidian tag in the Markdown editor: shown as a tag, and a double-click or Ctrl+click searches the workspace for it. When off, `#word` is plain text, and at the start of a line it is written as a heading `# word` (markdownlint MD018). Applies to Markdown files opened afterwards."
+					},
 					"vscode-office.markdown.workspacePathAsImageBasePath": {
 						"type": "boolean",
 						"default": false,

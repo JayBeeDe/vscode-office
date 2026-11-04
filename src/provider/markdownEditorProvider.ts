@@ -238,6 +238,8 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
                 content, rootPath,
                 workspaceBaseUrl: workspaceUri ? webview.asWebviewUri(workspaceUri).toString().replace(/\?.+$/, '') : '',
                 documentCacheId: `${uri.scheme}:${uri.toString()}`,
+                // the first heading of a file that has none (markdownlint MD041)
+                fileName: uri.path.slice(uri.path.lastIndexOf('/') + 1),
                 pendingFragment: consumePendingBlockScroll(uri),
                 // a search result clicked in the Search view: the editor's find bar shows it
                 pendingMatch: consumePendingMatch(uri),
@@ -342,6 +344,7 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
                 math: {
                     macros: markdownConfiguration.get<Record<string, string>>("math.macros", {}),
                 },
+                useObsidianTags: configuration.get<boolean>("useObsidianTags", false),
             },
             language: vscode.env.language,
             // the editor's strings in the VS Code language, English filling in the missing ones

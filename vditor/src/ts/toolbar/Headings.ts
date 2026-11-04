@@ -5,6 +5,7 @@ import {afterRenderEvent} from "../wysiwyg/afterRenderEvent";
 import {removeHeading, setHeading} from "../wysiwyg/setHeading";
 import {MenuItem} from "./MenuItem";
 import {hidePanel} from "./setToolbar";
+import {hasTopHeadingBeforeCaret} from "../util/singleTitle";
 
 export class Headings extends MenuItem {
     public element: HTMLElement;
@@ -44,6 +45,11 @@ export class Headings extends MenuItem {
                 actionBtn.classList.remove("vditor-menu--current");
             } else {
                 hidePanel(vditor, ["subToolbar"]);
+                // MD025: one top-level heading per file
+                const heading1 = panelElement.children.item(0) as HTMLButtonElement;
+                const blocked = hasTopHeadingBeforeCaret(vditor);
+                heading1.disabled = blocked;
+                heading1.classList.toggle(Constants.CLASS_MENU_DISABLED, blocked);
                 panelElement.style.display = "block";
             }
         });
@@ -51,6 +57,9 @@ export class Headings extends MenuItem {
         for (let i = 0; i < 6; i++) {
             panelElement.children.item(i).addEventListener(getEventName(), (event: Event) => {
                 event.preventDefault();
+                if ((event.currentTarget as HTMLButtonElement).disabled) {
+                    return;
+                }
                 const tag = (event.target as HTMLElement).getAttribute("data-tag") || "";
                 if (vditor.currentMode === "wysiwyg") {
                     setHeading(vditor, tag);

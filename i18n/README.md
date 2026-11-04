@@ -3,14 +3,14 @@
 Every user-visible string of the extension lives here, one file per language. The extension
 host and the webviews import these files through `src/i18n/index.ts`.
 
-| Section | Used by | Placeholders filled by |
-| --- | --- | --- |
-| `host` | the extension host: notifications, dialogs, status bar | `i18n('markdown.exportFailed', { type, error })` in `src/common/global.ts` |
-| `viewer` | the React viewers: documents, presentations, EPUB, XMind, Parquet | `$t('parquet.totalRows', { count })` in `src/react/i18n/i18nConfig.ts` |
-| `document` | the document editor's toolbar, menus and dialogs (`@eigenpal/docx-editor-react`) | the editor, `{name}` and ICU plurals: `{count, plural, one {# reply} other {# replies}}` |
-| `spreadsheet` | the spreadsheet editor | `t('findReplace.replacedCount', { count })` in `src/react/view/excel/excel_i18n.ts` |
-| `markdown` | the markdown editor (Vditor) and its context menu | sent by the host; the Vditor scripts in `vditor/src/js/i18n` are generated at build |
-| `pdf` | the PDF viewer: the extension's buttons and PDF.js's interface | injected by the host (`src/provider/pdfViewerStrings.ts`) |
+| Section       | Used by                                                                          | Placeholders filled by                                                                   |
+| ------------- | -------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `host`        | the extension host: notifications, dialogs, status bar                           | `i18n('markdown.exportFailed', { type, error })` in `src/common/global.ts`               |
+| `viewer`      | the React viewers: documents, presentations, EPUB, XMind, Parquet                | `$t('parquet.totalRows', { count })` in `src/react/i18n/i18nConfig.ts`                   |
+| `document`    | the document editor's toolbar, menus and dialogs (`@eigenpal/docx-editor-react`) | the editor, `{name}` and ICU plurals: `{count, plural, one {# reply} other {# replies}}` |
+| `spreadsheet` | the spreadsheet editor                                                           | `t('findReplace.replacedCount', { count })` in `src/react/view/excel/excel_i18n.ts`      |
+| `markdown`    | the markdown editor (Vditor) and its context menu                                | sent by the host; the Vditor scripts in `vditor/src/js/i18n` are generated at build      |
+| `pdf`         | the PDF viewer: the extension's buttons and PDF.js's interface                   | injected by the host (`src/provider/pdfViewerStrings.ts`)                                |
 
 ## Rules
 

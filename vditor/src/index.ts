@@ -15,6 +15,7 @@ import { processAfterRender } from "./ts/ir/process";
 import { getHTML } from "./ts/markdown/getHTML";
 import { getMarkdown } from "./ts/markdown/getMarkdown";
 import { setLute } from "./ts/markdown/setLute";
+import { formatMarkdown as formatMarkdownLint, prepareMarkdown } from "./ts/markdown/lintFormat";
 import { Outline } from "./ts/outline/index";
 import { Tip } from "./ts/tip/index";
 import { Toolbar } from "./ts/toolbar/index";
@@ -153,6 +154,27 @@ class Vditor {
     /** Get the Markdown content */
     public getValue() {
         return getMarkdown(this.vditor);
+    }
+
+    /**
+     * The Markdown formatted to markdownlint's rules (ts/markdown/lintFormat.ts), as it is written
+     * to the file. `fileName` names the first heading of a file that has none.
+     */
+    public formatMarkdown(markdown: string, fileName?: string) {
+        if (!this.formatLute) {
+            this.formatLute = setLute(this.luteOptions());
+            this.formatLute.SetVditorWYSIWYG(true);
+        }
+        return formatMarkdownLint(markdown, this.formatLute, new DOMParser(), {
+            fileName,
+            obsidianTags: this.vditor.options.preview.markdown.obsidian !== false
+                && this.vditor.options.preview.markdown.obsidianTag !== false,
+        });
+    }
+
+    /** The Markdown as the editor reads it: what Lute would drop (`<br>`, `<img>`, extra table cells) rewritten */
+    public static prepareMarkdown(markdown: string) {
+        return prepareMarkdown(markdown);
     }
 
     /** Mark the current content as saved and disable the toolbar save button */
@@ -416,6 +438,33 @@ class Vditor {
         this.vditor.wysiwyg.unbindListener();
     }
 
+    /** a WYSIWYG Lute of its own for formatMarkdown, which leaves the editor's untouched */
+    private formatLute: Lute | undefined;
+
+    private luteOptions(): ILuteOptions {
+        const markdown = this.vditor.options.preview.markdown;
+        return {
+            autoSpace: markdown.autoSpace,
+            codeBlockPreview: markdown.codeBlockPreview,
+            fixTermTypo: markdown.fixTermTypo,
+            footnotes: markdown.footnotes,
+            headingAnchor: false,
+            inlineMathDigit: this.vditor.options.preview.math.inlineDigit,
+            linkBase: markdown.linkBase,
+            linkPrefix: markdown.linkPrefix,
+            listStyle: markdown.listStyle,
+            mark: markdown.mark,
+            obsidian: markdown.obsidian,
+            callout: markdown.callout,
+            obsidianWikiLink: markdown.obsidianWikiLink,
+            obsidianTag: markdown.obsidianTag,
+            mathBlockPreview: markdown.mathBlockPreview,
+            paragraphBeginningSpace: markdown.paragraphBeginningSpace,
+            sanitize: markdown.sanitize,
+            toc: markdown.toc,
+        } as ILuteOptions;
+    }
+
     private init(id: HTMLElement, mergedOptions: IOptions) {
         this.vditor = {
             currentMode: mergedOptions.mode,
@@ -442,26 +491,7 @@ class Vditor {
             `${mergedOptions.cdn}/dist/js/lute/lute.min.js`,
             "vditorLuteScript",
         ).then(() => {
-            this.vditor.lute = setLute({
-                autoSpace: this.vditor.options.preview.markdown.autoSpace,
-                codeBlockPreview: this.vditor.options.preview.markdown
-                    .codeBlockPreview,
-                fixTermTypo: this.vditor.options.preview.markdown.fixTermTypo,
-                footnotes: this.vditor.options.preview.markdown.footnotes,
-                headingAnchor: false,
-                inlineMathDigit: this.vditor.options.preview.math.inlineDigit,
-                linkBase: this.vditor.options.preview.markdown.linkBase,
-                linkPrefix: this.vditor.options.preview.markdown.linkPrefix,
-                listStyle: this.vditor.options.preview.markdown.listStyle,
-                mark: this.vditor.options.preview.markdown.mark,
-                obsidian: this.vditor.options.preview.markdown.obsidian,
-                mathBlockPreview: this.vditor.options.preview.markdown
-                    .mathBlockPreview,
-                paragraphBeginningSpace: this.vditor.options.preview.markdown
-                    .paragraphBeginningSpace,
-                sanitize: this.vditor.options.preview.markdown.sanitize,
-                toc: this.vditor.options.preview.markdown.toc,
-            });
+            this.vditor.lute = setLute(this.luteOptions());
 
             initUI(this.vditor);
 

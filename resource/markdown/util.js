@@ -121,8 +121,13 @@ export const bindShortcut = (handler, editor, workspaceBaseUrl = '') => {
         if (isCompose(e)) {
             switch (e.code) {
                 case 'KeyS':
-                    vscodeEvent.emit("doSave", getMarkdownValue());
-                    editor.markSaved();
+                    // the formatted text, shown in the editor once saved (resource/markdown/index.js)
+                    if (window.__officeMarkdownSave) {
+                        window.__officeMarkdownSave();
+                    } else {
+                        vscodeEvent.emit("doSave", getMarkdownValue());
+                        editor.markSaved();
+                    }
                     e.stopPropagation();
                     e.preventDefault();
                     break;
