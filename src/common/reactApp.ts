@@ -1,6 +1,7 @@
 import axios from 'axios';
 import * as vscode from 'vscode';
 import { extensionResource, getExtensionUri, readExtensionText } from './extensionResource';
+import { getEpubSettings } from '@/provider/epubSettings';
 import { getDocumentTheme, getEpubTheme, getTheme } from './theme';
 
 interface ViewOption {
@@ -36,6 +37,7 @@ export class ReactApp {
             language: vscode.env.language,
             theme: getTheme(),
             epubTheme: getEpubTheme(),
+            epubSettings: getEpubSettings(),
             documentTheme: getDocumentTheme(),
         });
         // the configs go into a quoted attribute: escape them, and use a replacer function so `$` patterns are not expanded

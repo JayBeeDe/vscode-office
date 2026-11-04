@@ -25,13 +25,10 @@ import {
     FONT_OPTIONS,
     FONT_SIZE_OPTIONS,
     getNavItem,
-    LINE_SPACING_OPTIONS,
+    LINE_HEIGHT_OPTIONS,
     loadEpubBook,
-    loadEpubSettings,
-    resetEpubSettings,
     resolveEpubAuthor,
     sanitizeEpubDescription,
-    saveEpubSetting,
     searchEpubBook,
     SearchHit,
     SYSTEM_FONT,
@@ -118,7 +115,8 @@ export default function Epub() {
     const loadGenerationRef = useRef(0);
     const storageKeyRef = useRef('');
     const renditionRef = useRef<Rendition | null>(null);
-    const settingsRef = useRef<EpubSettings>(loadEpubSettings());
+    // vscode-office.epub.font.family, .font.size and .line-height, sent by the extension
+    const settingsRef = useRef<EpubSettings>(getConfigs()?.epubSettings);
     // the pages follow vscode-office.epub.theme, `auto` following vscode-office.theme like the menus
     const uiTheme = useTheme();
     const [themeSetting, setThemeSetting] = useState<ThemeSetting>(() => toThemeSetting(getConfigs()?.epubTheme));
@@ -135,7 +133,7 @@ export default function Epub() {
     const [error, setError] = useState<string | null>(null);
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [sidebarTab, setSidebarTab] = useState<SidebarTab>('toc');
-    const [settings, setSettings] = useState<EpubSettings>(loadEpubSettings);
+    const [settings, setSettings] = useState<EpubSettings>(() => getConfigs()?.epubSettings);
     const [meta, setMeta] = useState<BookMeta | null>(null);
     const [toc, setToc] = useState<NavItem[]>([]);
     const [tocPageByHref, setTocPageByHref] = useState<Record<string, number>>({});
@@ -228,46 +226,27 @@ export default function Epub() {
         writeStored(`${storageKeyRef.current || book.key()}:pos`, location.start.cfi);
     }, []);
 
-    const updateSetting = useCallback((key: keyof EpubSettings, value: string) => {
-        setSettings(prev => {
-            const next = { ...prev, [key]: value };
-            settingsRef.current = next;
-            saveEpubSetting(key, value);
-            const rendition = renditionRef.current;
-            if (rendition) {
-                applyEpubTheme(rendition, next, themeRef.current, appRef.current, pageRef.current);
-            }
-            return next;
-        });
+    const applySettings = useCallback((next: EpubSettings) => {
+        settingsRef.current = next;
+        setSettings(next);
+        applyEpubTheme(renditionRef.current, next, themeRef.current, appRef.current, pageRef.current);
     }, []);
+
+    // a choice in the settings tab shows at once and is saved in the user settings by the extension
+    const updateSetting = useCallback(<K extends keyof EpubSettings>(name: K, value: EpubSettings[K]) => {
+        applySettings({ ...settingsRef.current, [name]: value });
+        handler.emit('epubSetting', { name, value });
+    }, [applySettings]);
 
     useEffect(() => {
         handler.on('epubTheme', (value: unknown) => setThemeSetting(toThemeSetting(value)));
-    }, []);
+        handler.on('epubSettings', (value: EpubSettings) => applySettings(value));
+    }, [applySettings]);
 
     useEffect(() => {
         themeRef.current = theme;
         applyEpubTheme(renditionRef.current, settingsRef.current, theme, appRef.current, pageRef.current);
     }, [theme]);
-
-    const resetAllSettings = useCallback(() => {
-        const next = resetEpubSettings();
-        settingsRef.current = next;
-        setSettings({ ...next });
-        const rendition = renditionRef.current;
-        if (!rendition) {
-            return;
-        }
-        applyEpubTheme(rendition, next, themeRef.current, appRef.current, pageRef.current);
-        const location = rendition.location;
-        if (location?.start) {
-            onRelocated(location);
-        }
-        const cfi = location?.start?.cfi;
-        if (cfi) {
-            rendition.display(cfi).catch(() => undefined);
-        }
-    }, [onRelocated]);
 
     const bindRendition = useCallback((rendition: Rendition) => {
         bindWheel(rendition);
@@ -676,10 +655,10 @@ export default function Epub() {
                                     <div className="setting-content font chips" data-chips="font">
                                         {FONT_OPTIONS.map(option => (
                                             <div
-                                                key={option.value}
-                                                className={`font chip${settings.font === option.value ? ' active' : ''}`}
+                                                key={option.label}
+                                                className={`font chip${settings.fontFamily === option.label ? ' active' : ''}`}
                                                 style={{ fontFamily: option.value }}
-                                                onClick={() => updateSetting('font', option.value)}
+                                                onClick={() => updateSetting('fontFamily', option.label)}
                                             >
                                                 {option.value === SYSTEM_FONT ? $t('epub.systemFont') : option.label}
                                             </div>
@@ -693,10 +672,10 @@ export default function Epub() {
                                             <div
                                                 key={size}
                                                 className={`size chip${settings.fontSize === size ? ' active' : ''}`}
-                                                style={{ fontSize: size }}
+                                                style={{ fontSize: `${size}pt` }}
                                                 onClick={() => updateSetting('fontSize', size)}
                                             >
-                                                {size.replace('pt', '')}
+                                                {size}
                                             </div>
                                         ))}
                                     </div>
@@ -704,29 +683,15 @@ export default function Epub() {
                                 <div className="setting">
                                     <div className="setting-label">{$t('epub.lineSpacing')}</div>
                                     <div className="setting-content line-spacing chips" data-chips="line-spacing">
-                                        {LINE_SPACING_OPTIONS.map(value => (
+                                        {LINE_HEIGHT_OPTIONS.map(value => (
                                             <div
                                                 key={value}
-                                                className={`size chip${settings.lineSpacing === value ? ' active' : ''}`}
-                                                onClick={() => updateSetting('lineSpacing', value)}
+                                                className={`size chip${settings.lineHeight === value ? ' active' : ''}`}
+                                                onClick={() => updateSetting('lineHeight', value)}
                                             >
                                                 {value}
                                             </div>
                                         ))}
-                                    </div>
-                                </div>
-                                <div className="setting">
-                                    <div className="setting-label">{$t('epub.reset')}</div>
-                                    <div className="setting-content">
-                                        <a
-                                            href="#"
-                                            onClick={e => {
-                                                e.preventDefault();
-                                                resetAllSettings();
-                                            }}
-                                        >
-                                            {$t('epub.resetAll')}
-                                        </a>
                                     </div>
                                 </div>
                             </div>

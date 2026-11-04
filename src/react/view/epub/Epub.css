@@ -107,7 +107,7 @@ body,
     font-size: 14px;
     --epub-muted: rgba(0, 0, 0, 0.62);
     --epub-nav-width: 56px;
-    /* VS Code's accent, like the spreadsheet's and the document's: the active tab and chapter, the links */
+    /* VS Code's accent, like the spreadsheet's and the document's: the active tab and chapter */
     --epub-accent: var(--vscode-focusBorder, var(--vscode-textLink-foreground, #1565C0));
     background: #fff;
     color: #000;
@@ -854,17 +854,6 @@ body.office-dark .epub-viewer .sidebar .settings .chips .chip.active {
     font-size: 12px;
 }
 
-.epub-viewer .sidebar .settings .setting-content a,
-.epub-viewer .sidebar .settings .setting-content a:link,
-.epub-viewer .sidebar .settings .setting-content a:visited {
-    color: var(--epub-accent);
-    text-decoration: none;
-}
-
-.epub-viewer .sidebar .settings .setting-content a:hover {
-    text-decoration: underline;
-}
-
 @media only screen and (max-width: 950px) {
     .epub-viewer .epub-bar {
         height: 36px;
@@ -931,9 +920,7 @@ body.office-dark .epub-viewer .sidebar .tab-list {
 }
 
 body.office-dark .epub-viewer .sidebar .tab-list .item.active,
-body.office-dark .epub-viewer .sidebar .toc-list .item.active,
-body.office-dark .epub-viewer .sidebar .settings .setting-content a:link,
-body.office-dark .epub-viewer .sidebar .settings .setting-content a:visited {
+body.office-dark .epub-viewer .sidebar .toc-list .item.active {
     color: var(--epub-accent);
     border-bottom-color: var(--epub-accent);
 }

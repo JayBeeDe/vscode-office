@@ -18,6 +18,10 @@ export const THEME_COLORS: Record<Theme, { bg: string; fg: string }> = {
 
 export const SYSTEM_FONT = "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif";
 
+/**
+ * The reader's choices, the values of the vscode-office.epub.font.family, .font.size (in points)
+ * and .line-height settings: keep them the same as their `enum` in package.json.
+ */
 export const FONT_OPTIONS = [
     { label: 'System', value: SYSTEM_FONT },
     { label: 'Arial', value: "'Arial', Arimo, Liberation Sans, sans-serif" },
@@ -27,20 +31,20 @@ export const FONT_OPTIONS = [
     { label: 'Arbutus Slab', value: "'Arbutus Slab', serif" },
 ];
 
-export const FONT_SIZE_OPTIONS = ['11pt', '12pt', '13pt', '14pt', '15pt', '16pt'];
-export const LINE_SPACING_OPTIONS = ['1', '1.2', '1.4', '1.6', '1.8', '2', '2.3', '2.6', '3'];
+export const FONT_SIZE_OPTIONS = [11, 12, 13, 14, 15, 16];
+export const LINE_HEIGHT_OPTIONS = [1, 1.2, 1.4, 1.6, 1.8, 2, 2.3, 2.6, 3];
 
+/** The vscode-office.epub.* display settings, as the extension sends them (`epubSettings`). */
 export interface EpubSettings {
-    font: string;
-    fontSize: string;
-    lineSpacing: string;
+    fontFamily: string;
+    fontSize: number;
+    lineHeight: number;
 }
 
-export const DEFAULT_SETTINGS: EpubSettings = {
-    font: SYSTEM_FONT,
-    fontSize: '13pt',
-    lineSpacing: '1.6',
-};
+/** The font stack of a vscode-office.epub.font.family value, the system font for an unknown one. */
+export function fontStack(fontFamily: string): string {
+    return FONT_OPTIONS.find(option => option.label === fontFamily)?.value ?? SYSTEM_FONT;
+}
 
 const PLACEHOLDER_AUTHORS = new Set(['unknown', 'n/a', 'na', 'none', 'anonymous']);
 
@@ -97,35 +101,6 @@ export function sanitizeEpubDescription(html: string): string {
     const container = target.createElement('div');
     copy(source.body, container);
     return container.innerHTML;
-}
-
-export function loadEpubSettings(): EpubSettings {
-    const read = (storageKey: string, fallback: string) =>
-        localStorage.getItem(`${STORAGE_PREFIX}${storageKey}`) ?? fallback;
-    return {
-        font: read('font', DEFAULT_SETTINGS.font),
-        fontSize: read('font-size', DEFAULT_SETTINGS.fontSize),
-        lineSpacing: read('line-spacing', DEFAULT_SETTINGS.lineSpacing),
-    };
-}
-
-const SETTING_STORAGE_KEYS: Record<keyof EpubSettings, string> = {
-    font: 'font',
-    fontSize: 'font-size',
-    lineSpacing: 'line-spacing',
-};
-
-export function saveEpubSetting(key: keyof EpubSettings, value: string) {
-    localStorage.setItem(`${STORAGE_PREFIX}${SETTING_STORAGE_KEYS[key]}`, value);
-}
-
-/** Reset reader display settings to defaults (font, size, line spacing). */
-export function resetEpubSettings(): EpubSettings {
-    const next = { ...DEFAULT_SETTINGS };
-    for (const key of Object.keys(SETTING_STORAGE_KEYS) as (keyof EpubSettings)[]) {
-        saveEpubSetting(key, next[key]);
-    }
-    return next;
 }
 
 const EPUB_THEME_STYLE_KEY = 'office-viewer-theme';
@@ -190,6 +165,8 @@ function themeRulesToCss(rules: ReturnType<typeof buildThemeRules>): string {
 
 export function buildThemeRules(settings: EpubSettings, theme: Theme) {
     const { bg, fg } = THEME_COLORS[theme];
+    const font = `${fontStack(settings.fontFamily)} !important`;
+    const fontSize = `${settings.fontSize}pt !important`;
     // the book's links and selection take VS Code's accent like the sidebar (Epub.css --epub-accent); its
     // documents are iframes, which don't see VS Code's variables, hence the resolved colour
     const accent = getVscodeThemeColor('--vscode-focusBorder', getVscodeThemeColor('--vscode-textLink-foreground', '#1e83d2'));
@@ -197,14 +174,14 @@ export function buildThemeRules(settings: EpubSettings, theme: Theme) {
         body: {
             background: bg,
             color: fg,
-            'font-family': settings.font ? `${settings.font} !important` : '!invalid-hack',
-            'font-size': settings.fontSize ? `${settings.fontSize} !important` : '!invalid-hack',
-            'line-height': `${settings.lineSpacing} !important`,
+            'font-family': font,
+            'font-size': fontSize,
+            'line-height': `${settings.lineHeight} !important`,
             'text-align': 'justify !important',
         },
         p: {
-            'font-family': settings.font ? `${settings.font} !important` : '!invalid-hack',
-            'font-size': settings.fontSize ? `${settings.fontSize} !important` : '!invalid-hack',
+            'font-family': font,
+            'font-size': fontSize,
         },
         a: {
             color: 'inherit !important',
@@ -237,7 +214,7 @@ export function buildThemeRules(settings: EpubSettings, theme: Theme) {
 export function applyEpubTheme(rendition: Rendition | null, settings: EpubSettings, theme: Theme, root?: HTMLElement | null, page?: HTMLElement | null) {
     const { bg, fg } = THEME_COLORS[theme];
     if (root) {
-        root.style.fontFamily = settings.font;
+        root.style.fontFamily = fontStack(settings.fontFamily);
     }
     if (page) {
         page.style.background = bg;

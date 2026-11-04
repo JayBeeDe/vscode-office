@@ -7,6 +7,7 @@ import { OfficeDocument } from './handlers/officeDocument';
 import { extensionResource, getExtensionResourceRoots, readExtensionText } from '@/common/extensionResource';
 import { resolveLanguage } from '@/i18n';
 import { getPdfViewerStrings } from './pdfViewerStrings';
+import { bindEpubSettings } from './epubSettings';
 import { bindPdfSidebar, getPdfScrolling, getPdfSidebar, getPdfSpread, getPdfTool, getPdfZoom } from './pdfSettings';
 import { bindDocumentTheme, bindEpubTheme, bindPdfTheme, bindTheme, getPdfTheme, getTheme } from '@/common/theme';
 
@@ -105,6 +106,7 @@ export class OfficeViewerProvider implements vscode.CustomEditorProvider<OfficeD
 			case '.epub':
 				route = 'epub';
 				bindEpubTheme(handler);
+				bindEpubSettings(handler);
 				break;
 			case '.xmind':
 				route = 'xmind';

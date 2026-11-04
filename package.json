@@ -634,6 +634,48 @@
 						],
 						"default": "auto",
 						"markdownDescription": "Colours of the EPUB reader's pages; the menus follow `#vscode-office.theme#`. The reader's \"Themes\" choice changes this setting in the user settings; a workspace value overrides it."
+					},
+					"vscode-office.epub.font.family": {
+						"type": "string",
+						"enum": [
+							"System",
+							"Arial",
+							"Lato",
+							"Georgia",
+							"Times New Roman",
+							"Arbutus Slab"
+						],
+						"default": "System",
+						"markdownDescription": "Font of the EPUB reader's text. The reader's \"Font\" choice changes this setting in the user settings; a workspace value overrides it."
+					},
+					"vscode-office.epub.font.size": {
+						"type": "number",
+						"enum": [
+							11,
+							12,
+							13,
+							14,
+							15,
+							16
+						],
+						"default": 13,
+						"markdownDescription": "Size of the EPUB reader's text, in points. The reader's \"Font Size\" choice changes this setting in the user settings; a workspace value overrides it."
+					},
+					"vscode-office.epub.line-height": {
+						"type": "number",
+						"enum": [
+							1,
+							1.2,
+							1.4,
+							1.6,
+							1.8,
+							2,
+							2.3,
+							2.6,
+							3
+						],
+						"default": 1.6,
+						"markdownDescription": "Line spacing of the EPUB reader's text, as a multiple of the font size. The reader's \"Line Spacing\" choice changes this setting in the user settings; a workspace value overrides it."
 					}
 				}
 			},
