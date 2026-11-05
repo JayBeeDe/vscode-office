@@ -51,12 +51,99 @@
     "xmind": {
       "loading": "Chargement du XMind...",
       "sheets": "Feuilles",
-      "layoutLeft": "Branches à gauche",
-      "layoutSide": "Branches des deux côtés",
-      "layoutRight": "Branches à droite",
-      "center": "Centrer la carte",
-      "zoom": "Zoom",
-      "autoZoom": "Zoom automatique : toute la carte dans la vue"
+      "clickTarget": "Cliquez sur le sujet cible",
+      "tips": {
+        "save": {
+          "title": "Enregistrer",
+          "text": "Écrire vos modifications dans le fichier XMind"
+        },
+        "addChild": {
+          "title": "Nouveau sous-sujet",
+          "text": "Ajouter un sujet sous le sujet sélectionné"
+        },
+        "addSibling": {
+          "title": "Nouveau sujet au même niveau",
+          "text": "Ajouter un sujet juste après le sujet sélectionné"
+        },
+        "addParent": {
+          "title": "Nouveau sujet parent",
+          "text": "Insérer un sujet au-dessus du sujet sélectionné, qui devient son sous-sujet"
+        },
+        "remove": {
+          "title": "Supprimer",
+          "text": "Supprimer les sujets sélectionnés et tout ce qu'ils contiennent"
+        },
+        "moveUp": {
+          "title": "Monter",
+          "text": "Échanger le sujet sélectionné avec celui du dessus"
+        },
+        "moveDown": {
+          "title": "Descendre",
+          "text": "Échanger le sujet sélectionné avec celui du dessous"
+        },
+        "focus": {
+          "title": "Se concentrer sur ce sujet",
+          "text": "N'afficher que le sujet sélectionné et ses sous-sujets"
+        },
+        "cancelFocus": {
+          "title": "Afficher toute la carte",
+          "text": "Quitter le focus et afficher de nouveau tous les sujets"
+        },
+        "link": {
+          "title": "Relier à un autre sujet",
+          "text": "Tracer une flèche du sujet sélectionné vers le prochain sujet cliqué"
+        },
+        "linkBidirectional": {
+          "title": "Relier dans les deux sens",
+          "text": "Tracer une flèche à deux pointes entre le sujet sélectionné et le prochain sujet cliqué"
+        },
+        "summary": {
+          "title": "Résumer",
+          "text": "Regrouper les sujets sélectionnés avec une accolade et un sujet de résumé"
+        },
+        "layoutLeft": {
+          "title": "Branches à gauche",
+          "text": "Disposer toutes les branches à gauche du sujet central"
+        },
+        "layoutSide": {
+          "title": "Branches des deux côtés",
+          "text": "Répartir les branches des deux côtés du sujet central"
+        },
+        "layoutRight": {
+          "title": "Branches à droite",
+          "text": "Disposer toutes les branches à droite du sujet central"
+        },
+        "center": {
+          "title": "Centrer la carte",
+          "text": "Ramener le sujet central au milieu de la vue"
+        },
+        "zoomOut": {
+          "title": "Zoom arrière",
+          "text": "Réduire la carte, par paliers de 10 %"
+        },
+        "zoom": {
+          "title": "Niveau de zoom",
+          "text": "Saisir un pourcentage de 20 à 400 puis appuyer sur Entrée"
+        },
+        "zoomIn": {
+          "title": "Zoom avant",
+          "text": "Agrandir la carte, par paliers de 10 %"
+        },
+        "autoZoom": {
+          "title": "Ajuster à la vue",
+          "text": "Garder toute la carte visible, même quand le panneau change de taille"
+        }
+      },
+      "unavailable": {
+        "selectOne": "Sélectionnez d'abord un sujet",
+        "selectOneChild": "Sélectionnez un sujet autre que le sujet central",
+        "selectChildren": "Sélectionnez des sujets autres que le sujet central",
+        "notFocused": "Seulement pendant le focus sur un sujet",
+        "readOnly": "Ce fichier est en lecture seule",
+        "noChanges": "Aucune modification à enregistrer",
+        "zoomMin": "Déjà au zoom minimum",
+        "zoomMax": "Déjà au zoom maximum"
+      }
     },
     "parquet": {
       "readOnly": "Lecture seule — les modifications ne sont pas enregistrées sur le disque"

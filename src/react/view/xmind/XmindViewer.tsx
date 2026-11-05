@@ -1,13 +1,15 @@
 import { AimOutlined, AlignCenterOutlined, AlignLeftOutlined, AlignRightOutlined, ExpandOutlined, MinusOutlined, PlusOutlined, SaveOutlined } from '@ant-design/icons';
-import { Alert, Button, Layout, Spin, message } from 'antd';
+import { Alert, Layout, Spin, message } from 'antd';
 import MindElixir, { type MindElixirData, type MindElixirInstance } from 'mind-elixir';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { type ComponentType, useCallback, useEffect, useRef, useState } from 'react';
 import { handler, onSaveRequest } from '../../util/vscode';
 import { loadOfficeBuffer } from '../../util/loadOfficeContent';
 import { $t } from '../../i18n/i18nConfig.ts';
 import { observeVscodeThemeChange } from '../../util/vscodeTheme';
 import { useTheme } from '../../util/theme';
 import { buildMindElixirTheme } from './mindElixirTheme';
+import XmindNodeActions from './XmindNodeActions';
+import XmindToolButton, { type TipKey, WithTip } from './XmindToolButton';
 import { parseXmind, XmindDocument, XmindSheet } from './xmindParser';
 import './XmindViewer.css';
 
@@ -18,6 +20,12 @@ const ZOOM_MAX = 400;
 const ZOOM_STEP = 10;
 
 type Direction = typeof MindElixir.LEFT | typeof MindElixir.RIGHT | typeof MindElixir.SIDE;
+
+const LAYOUTS: [Direction, ComponentType, TipKey][] = [
+    [MindElixir.LEFT, AlignLeftOutlined, 'layoutLeft'],
+    [MindElixir.SIDE, AlignCenterOutlined, 'layoutSide'],
+    [MindElixir.RIGHT, AlignRightOutlined, 'layoutRight'],
+];
 
 function attachScaleListener(mind: MindElixirInstance, onScale: (value: number) => void) {
     mind.bus.addListener('scale', onScale);
@@ -47,6 +55,8 @@ export default function XmindViewer() {
     const [editingZoom, setZoomInput] = useState<string | null>(null);
     const zoomInput = editingZoom ?? String(scalePercent);
     const [direction, setDirection] = useState<Direction>(MindElixir.SIDE);
+    // the map, for the toolbar's topic actions (mindRef doesn't render them again)
+    const [mindInstance, setMindInstance] = useState<MindElixirInstance | null>(null);
     // auto zoom, like the PDF viewer's Page Fit: the whole map in the view, again when the view or
     // the layout changes, until another zoom is chosen
     const [autoZoom, setAutoZoom] = useState(true);
@@ -81,6 +91,7 @@ export default function XmindViewer() {
         operationHandlerRef.current = null;
         mindRef.current?.destroy();
         mindRef.current = null;
+        setMindInstance(null);
     }, []);
 
     const syncCurrentSheet = useCallback(() => {
@@ -105,6 +116,7 @@ export default function XmindViewer() {
     }, []);
 
     const readOnlyRef = useRef(false);
+    const [readOnly, setReadOnly] = useState(false);
 
     const setAutoZoomState = useCallback((value: boolean) => {
         autoZoomRef.current = value;
@@ -177,6 +189,7 @@ export default function XmindViewer() {
         mind.bus.addListener('operation', markDirty);
         setDirection(mind.direction as Direction);
         mindRef.current = mind;
+        setMindInstance(mind);
     }, [markDirty, fitMap, setAutoZoomState]);
 
     const zoomTo = useCallback((percent: number) => {
@@ -250,6 +263,7 @@ export default function XmindViewer() {
         const generation = ++loadGenerationRef.current;
         const isCurrent = () => generation === loadGenerationRef.current;
         readOnlyRef.current = payload.readOnly === true;
+        setReadOnly(payload.readOnly === true);
         setLoading(true);
         setSaving(false);
         setDirty(false);
@@ -382,104 +396,82 @@ export default function XmindViewer() {
                         <div className="xmind-map-wrap">
                             <div className="xmind-map-toolbar">
                                 <div className="xmind-toolbar-group">
-                                    <Button
-                                        type="text"
-                                        size="small"
-                                        className="xmind-tool-btn"
-                                        icon={<SaveOutlined />}
-                                        aria-label={$t('common.save')}
-                                        title={$t('common.save')}
+                                    <XmindToolButton
+                                        tipKey="save"
+                                        icon={SaveOutlined}
+                                        keys={['Mod', 'S']}
                                         loading={saving}
-                                        disabled={!dirty || saving}
+                                        unavailable={readOnly ? 'xmind.unavailable.readOnly' : !dirty && !saving ? 'xmind.unavailable.noChanges' : null}
                                         onClick={() => void handleSave()}
                                     />
+                                    <span className="xmind-toolbar-separator" />
+                                    <XmindNodeActions mind={mindInstance} editable={!readOnly} />
                                     {!showTabs && (
                                         <span className="xmind-map-title" title={selected.title}>{selected.title}</span>
                                     )}
                                 </div>
                                 <div className="xmind-toolbar-group">
-                                    {([
-                                        [MindElixir.LEFT, AlignLeftOutlined, $t('xmind.layoutLeft')],
-                                        [MindElixir.SIDE, AlignCenterOutlined, $t('xmind.layoutSide')],
-                                        [MindElixir.RIGHT, AlignRightOutlined, $t('xmind.layoutRight')],
-                                    ] as const).map(([value, Icon, label]) => (
-                                        <Button
+                                    {LAYOUTS.map(([value, Icon, tipKey]) => (
+                                        <XmindToolButton
                                             key={value}
-                                            type="text"
-                                            size="small"
-                                            className={`xmind-tool-btn${direction === value ? ' is-active' : ''}`}
-                                            icon={<Icon />}
-                                            aria-label={label}
-                                            aria-pressed={direction === value}
-                                            title={label}
+                                            tipKey={tipKey}
+                                            icon={Icon}
+                                            active={direction === value}
+                                            pressed={direction === value}
                                             onClick={() => changeDirection(value)}
                                         />
                                     ))}
                                     <span className="xmind-toolbar-separator" />
-                                    <Button
-                                        type="text"
-                                        size="small"
-                                        className="xmind-tool-btn"
-                                        icon={<AimOutlined />}
-                                        aria-label={$t('xmind.center')}
-                                        title={$t('xmind.center')}
+                                    <XmindToolButton
+                                        tipKey="center"
+                                        icon={AimOutlined}
                                         onClick={() => mindRef.current?.toCenter()}
                                     />
                                     <span className="xmind-toolbar-separator" />
                                     <div className="xmind-zoom-field">
-                                        <Button
-                                            type="text"
-                                            size="small"
-                                            className="xmind-tool-btn"
-                                            icon={<MinusOutlined />}
-                                            aria-label={$t('common.zoomOut')}
-                                            title={$t('common.zoomOut')}
-                                            disabled={scalePercent <= ZOOM_MIN}
+                                        <XmindToolButton
+                                            tipKey="zoomOut"
+                                            icon={MinusOutlined}
+                                            unavailable={scalePercent <= ZOOM_MIN ? 'xmind.unavailable.zoomMin' : null}
                                             onClick={zoomOut}
                                         />
-                                        <input
-                                            type="number"
-                                            className="xmind-zoom-input"
-                                            min={ZOOM_MIN}
-                                            max={ZOOM_MAX}
-                                            step={1}
-                                            value={zoomInput}
-                                            aria-label={$t('xmind.zoom')}
-                                            title={$t('xmind.zoom')}
-                                            autoComplete="off"
-                                            onChange={event => setZoomInput(event.target.value)}
-                                            onFocus={event => event.target.select()}
-                                            onBlur={applyZoomInput}
-                                            onKeyDown={event => {
-                                                if (event.key === 'Enter') {
-                                                    applyZoomInput();
-                                                    event.currentTarget.select();
-                                                } else if (event.key === 'Escape') {
-                                                    setZoomInput(null);
-                                                    event.currentTarget.blur();
-                                                }
-                                            }}
-                                        />
-                                        <span className="xmind-zoom-unit" aria-hidden="true">%</span>
-                                        <Button
-                                            type="text"
-                                            size="small"
-                                            className="xmind-tool-btn"
-                                            icon={<PlusOutlined />}
-                                            aria-label={$t('common.zoomIn')}
-                                            title={$t('common.zoomIn')}
-                                            disabled={scalePercent >= ZOOM_MAX}
+                                        <WithTip tipKey="zoom">
+                                            <input
+                                                type="number"
+                                                className="xmind-zoom-input"
+                                                min={ZOOM_MIN}
+                                                max={ZOOM_MAX}
+                                                step={1}
+                                                value={zoomInput}
+                                                aria-label={$t('xmind.tips.zoom.title')}
+                                                autoComplete="off"
+                                                onChange={event => setZoomInput(event.target.value)}
+                                                onFocus={event => event.target.select()}
+                                                onBlur={applyZoomInput}
+                                                onKeyDown={event => {
+                                                    if (event.key === 'Enter') {
+                                                        applyZoomInput();
+                                                        event.currentTarget.select();
+                                                    } else if (event.key === 'Escape') {
+                                                        setZoomInput(null);
+                                                        event.currentTarget.blur();
+                                                    }
+                                                }}
+                                            />
+                                            <span className="xmind-zoom-unit" aria-hidden="true">%</span>
+                                        </WithTip>
+                                        <XmindToolButton
+                                            tipKey="zoomIn"
+                                            icon={PlusOutlined}
+                                            unavailable={scalePercent >= ZOOM_MAX ? 'xmind.unavailable.zoomMax' : null}
                                             onClick={zoomIn}
                                         />
                                     </div>
-                                    <Button
-                                        type="text"
-                                        size="small"
-                                        className={`xmind-tool-btn${autoZoom ? ' is-active' : ''}`}
-                                        icon={<ExpandOutlined />}
-                                        aria-label={$t('xmind.autoZoom')}
-                                        aria-pressed={autoZoom}
-                                        title={$t('xmind.autoZoom')}
+                                    <XmindToolButton
+                                        tipKey="autoZoom"
+                                        icon={ExpandOutlined}
+                                        active={autoZoom}
+                                        pressed={autoZoom}
                                         onClick={toggleAutoZoom}
                                     />
                                 </div>

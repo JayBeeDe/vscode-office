@@ -77,12 +77,99 @@
       "failedSave": "Failed to save XMind file",
       "noSheets": "No sheets found in XMind file",
       "noContent": "No content available",
-      "layoutLeft": "Branches on the left",
-      "layoutSide": "Branches on both sides",
-      "layoutRight": "Branches on the right",
-      "center": "Center the map",
-      "zoom": "Zoom",
-      "autoZoom": "Auto zoom: the whole map in the view"
+      "clickTarget": "Click the target topic",
+      "tips": {
+        "save": {
+          "title": "Save",
+          "text": "Write your changes to the XMind file"
+        },
+        "addChild": {
+          "title": "New subtopic",
+          "text": "Add a topic under the selected one"
+        },
+        "addSibling": {
+          "title": "New topic at the same level",
+          "text": "Add a topic right after the selected one"
+        },
+        "addParent": {
+          "title": "New parent topic",
+          "text": "Insert a topic above the selected one, which becomes its subtopic"
+        },
+        "remove": {
+          "title": "Delete",
+          "text": "Delete the selected topics and everything under them"
+        },
+        "moveUp": {
+          "title": "Move up",
+          "text": "Swap the selected topic with the one above it"
+        },
+        "moveDown": {
+          "title": "Move down",
+          "text": "Swap the selected topic with the one below it"
+        },
+        "focus": {
+          "title": "Focus on this topic",
+          "text": "Show only the selected topic and its subtopics"
+        },
+        "cancelFocus": {
+          "title": "Show the whole map",
+          "text": "Leave the focus and show every topic again"
+        },
+        "link": {
+          "title": "Connect to another topic",
+          "text": "Draw an arrow from the selected topic to the next topic you click"
+        },
+        "linkBidirectional": {
+          "title": "Connect both ways",
+          "text": "Draw a double-headed arrow between the selected topic and the next topic you click"
+        },
+        "summary": {
+          "title": "Summarize",
+          "text": "Group the selected topics with a bracket and a summary topic"
+        },
+        "layoutLeft": {
+          "title": "Branches on the left",
+          "text": "Lay out every branch to the left of the central topic"
+        },
+        "layoutSide": {
+          "title": "Branches on both sides",
+          "text": "Spread the branches on both sides of the central topic"
+        },
+        "layoutRight": {
+          "title": "Branches on the right",
+          "text": "Lay out every branch to the right of the central topic"
+        },
+        "center": {
+          "title": "Center the map",
+          "text": "Bring the central topic back to the middle of the view"
+        },
+        "zoomOut": {
+          "title": "Zoom out",
+          "text": "Make the map smaller, in steps of 10%"
+        },
+        "zoom": {
+          "title": "Zoom level",
+          "text": "Type a percentage from 20 to 400 and press Enter"
+        },
+        "zoomIn": {
+          "title": "Zoom in",
+          "text": "Make the map bigger, in steps of 10%"
+        },
+        "autoZoom": {
+          "title": "Fit to view",
+          "text": "Keep the whole map visible, even when the panel is resized"
+        }
+      },
+      "unavailable": {
+        "selectOne": "Select a topic first",
+        "selectOneChild": "Select one topic other than the central topic",
+        "selectChildren": "Select topics other than the central topic",
+        "notFocused": "Only while focused on a topic",
+        "readOnly": "This file is read-only",
+        "noChanges": "No unsaved changes",
+        "zoomMin": "Already at the smallest zoom",
+        "zoomMax": "Already at the largest zoom"
+      }
     },
     "parquet": {
       "readOnly": "Read-only — changes are not saved to disk",

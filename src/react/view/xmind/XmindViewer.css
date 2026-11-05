@@ -214,6 +214,11 @@ body:has(.xmind-viewer.xmind-dark) {
     opacity: 0.5;
 }
 
+/* a disabled button's tooltip: the span gets the mouse */
+.xmind-tool-btn-wrap {
+    display: inline-flex;
+}
+
 /* the chosen layout: the accent on its icon only */
 .xmind-viewer .xmind-tool-btn.ant-btn.is-active {
     color: var(--viewer-accent);
@@ -307,4 +312,47 @@ body:has(.xmind-viewer) .selection-area {
 /* the text keeps its colours: --selected is the accent only for the outline */
 .xmind-map .map-container :is(h1, h2, h3, h4, h5, h6, em, strong.asterisk-emphasis, a, a:hover) {
     color: inherit;
+}
+
+/* the toolbar's tooltips (in the body): a title with its keys, what it does, why it's greyed out */
+.xmind-tooltip {
+    max-width: 280px;
+}
+
+.xmind-tip-title {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    font-weight: 600;
+}
+
+.xmind-tip-keys {
+    display: inline-flex;
+    gap: 3px;
+    flex-shrink: 0;
+}
+
+.xmind-tip-keys kbd {
+    padding: 0 5px;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.xmind-tip-text {
+    margin-top: 2px;
+    font-size: 12px;
+    opacity: 0.85;
+}
+
+.xmind-tip-unavailable {
+    margin-top: 4px;
+    font-size: 12px;
+    font-style: italic;
+    opacity: 0.7;
 }
