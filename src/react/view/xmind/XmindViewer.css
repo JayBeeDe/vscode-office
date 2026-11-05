@@ -58,6 +58,11 @@ body {
     --viewer-scrollbar-thumb: var(--vscode-scrollbarSlider-background, #797979);
 }
 
+/* selected text (a topic being edited, the zoom field, a sheet's name): the accent, like the epub's */
+.xmind-viewer ::selection {
+    background: color-mix(in srgb, var(--viewer-accent) 30%, transparent);
+}
+
 .xmind-viewer ::-webkit-scrollbar {
     width: 10px;
     height: 10px;
@@ -317,6 +322,11 @@ body:has(.xmind-viewer) .selection-area {
 /* the toolbar's tooltips (in the body): a title with its keys, what it does, why it's greyed out */
 .xmind-tooltip {
     max-width: 280px;
+}
+
+/* selected text in a tooltip: the accent, like in the viewer (the tooltip is in the body, outside .xmind-viewer) */
+.xmind-tooltip ::selection {
+    background: color-mix(in srgb, var(--vscode-focusBorder, var(--vscode-textLink-foreground, #1677ff)) 45%, transparent);
 }
 
 .xmind-tip-title {
