@@ -20,9 +20,8 @@ body {
     --viewer-sider-bg: #f5f5f5;
     --viewer-header-bg: #fafafa;
     --viewer-hover: rgba(0, 0, 0, 0.04);
-    --viewer-active-bg: #d6e4ff;
-    --viewer-active-fg: #1677ff;
-    --viewer-accent: #1677ff;
+    /* VS Code's accent, like the other viewers': the map's lines and the active sheet's name */
+    --viewer-accent: var(--vscode-focusBorder, var(--vscode-textLink-foreground, #1677ff));
     --viewer-toolbar-bg: #fafafa;
     --viewer-scrollbar-track: #ececec;
     --viewer-scrollbar-thumb: #c9d1d9;
@@ -45,9 +44,6 @@ body {
     --viewer-sider-bg: var(--vscode-sideBar-background, var(--vscode-editorGroupHeader-tabsBackground, #252526));
     --viewer-header-bg: var(--vscode-editorGroupHeader-tabsBackground, #2d2d2d);
     --viewer-hover: var(--vscode-list-hoverBackground, rgba(255, 255, 255, 0.06));
-    --viewer-active-bg: var(--vscode-list-activeSelectionBackground, rgba(55, 148, 255, 0.18));
-    --viewer-active-fg: var(--vscode-list-activeSelectionForeground, #3794ff);
-    --viewer-accent: var(--vscode-textLink-foreground, #3794ff);
     --viewer-toolbar-bg: var(--vscode-editorGroupHeader-tabsBackground, #2d2d2d);
     --viewer-scrollbar-track: var(--vscode-editor-background, #1e1e1e);
     --viewer-scrollbar-thumb: var(--vscode-scrollbarSlider-background, #797979);
@@ -130,8 +126,7 @@ body:has(.xmind-viewer.xmind-dark) {
 }
 
 .xmind-sheet-item.is-active {
-    background: var(--viewer-active-bg);
-    color: var(--viewer-active-fg);
+    color: var(--viewer-accent);
 }
 
 .xmind-main {
@@ -246,4 +241,33 @@ body:has(.xmind-viewer.xmind-dark) {
 
 .xmind-map .map-container {
     height: 100% !important;
+}
+
+/*
+ * The accent draws what mind-elixir colours itself, outside the theme: the relationships, the
+ * summaries' brackets, the arrow handles, the drop preview and the selection rectangle.
+ */
+.xmind-map .map-container .topiclinks path,
+.xmind-map .map-container .summary path,
+.xmind-map .map-container .linkcontroller line {
+    stroke: var(--viewer-accent);
+}
+
+.xmind-map .map-container .circle {
+    background: var(--viewer-accent);
+}
+
+.xmind-map .map-container me-parent me-tpc .show {
+    background: var(--viewer-accent);
+}
+
+/* appended to the body, outside .xmind-viewer */
+body:has(.xmind-viewer) .selection-area {
+    background: color-mix(in srgb, var(--vscode-focusBorder, var(--vscode-textLink-foreground, #1677ff)) 18%, transparent) !important;
+    border-color: var(--vscode-focusBorder, var(--vscode-textLink-foreground, #1677ff)) !important;
+}
+
+/* the text keeps its colours: --selected is the accent only for the outline */
+.xmind-map .map-container :is(h1, h2, h3, h4, h5, h6, em, strong.asterisk-emphasis, a, a:hover) {
+    color: inherit;
 }

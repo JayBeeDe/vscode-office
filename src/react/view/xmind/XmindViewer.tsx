@@ -257,12 +257,9 @@ export default function XmindViewer() {
     }, [dark]);
 
     useEffect(() => {
-        if (!dark) {
-            return;
-        }
-        // another dark VS Code theme: new colours for the map
+        // another VS Code theme: a new accent, and new colours for a dark map
         return observeVscodeThemeChange(() => {
-            mindRef.current?.changeTheme(buildMindElixirTheme(true));
+            mindRef.current?.changeTheme(buildMindElixirTheme(dark));
         });
     }, [dark]);
 

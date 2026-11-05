@@ -13,9 +13,31 @@ const LAYOUT_VARS = {
     '--map-padding': '50px 80px',
 } as const;
 
+/** VS Code's accent, like the other viewers': its link color can be another hue. */
+function vscodeAccent() {
+    return getVscodeThemeColor('--vscode-focusBorder', getVscodeThemeColor('--vscode-textLink-foreground', '#1677ff'));
+}
+
+/**
+ * The map's theme: the accent draws the lines (every branch, a single palette colour), the
+ * borders and the selection, never the text.
+ */
 export function buildMindElixirTheme(adaptive: boolean) {
+    const accent = vscodeAccent();
+
     if (!adaptive) {
-        return MindElixir.THEME;
+        const baseTheme = MindElixir.THEME;
+        return {
+            ...baseTheme,
+            name: 'VSCode Light',
+            palette: [accent],
+            cssVar: {
+                ...baseTheme.cssVar,
+                '--root-border-color': accent,
+                '--selected': accent,
+                '--accent-color': accent,
+            },
+        };
     }
 
     const baseTheme = MindElixir.DARK_THEME;
@@ -23,27 +45,26 @@ export function buildMindElixirTheme(adaptive: boolean) {
     const fg = getVscodeThemeColor('--vscode-editor-foreground', '#cccccc');
     const widgetBg = getVscodeThemeColor('--vscode-editorWidget-background', '#252526');
     const muted = getVscodeThemeColor('--vscode-descriptionForeground', '#999999');
-    const accent = getVscodeThemeColor('--vscode-textLink-foreground', '#3794ff');
     const border = getVscodeThemeColor('--vscode-editorWidget-border', '#454545');
     const rootBg = getVscodeThemeColor('--vscode-button-background', '#2d3748');
     const rootFg = getVscodeThemeColor('--vscode-button-foreground', '#ffffff');
-    const selection = getVscodeThemeColor('--vscode-focusBorder', accent);
 
     return {
         name: 'VSCode',
         type: 'dark' as const,
-        palette: baseTheme.palette,
+        palette: [accent],
         cssVar: {
+            ...baseTheme.cssVar,
             ...LAYOUT_VARS,
             '--root-color': rootFg,
             '--root-bgcolor': rootBg,
-            '--root-border-color': border,
+            '--root-border-color': accent,
             '--main-color': fg,
             '--main-bgcolor': widgetBg,
             '--main-bgcolor-transparent': 'rgba(37, 37, 38, 0.8)',
             '--color': muted,
             '--bgcolor': bg,
-            '--selected': selection,
+            '--selected': accent,
             '--accent-color': accent,
             '--panel-color': fg,
             '--panel-bgcolor': widgetBg,
