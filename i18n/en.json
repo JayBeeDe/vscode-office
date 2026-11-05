@@ -81,7 +81,8 @@
       "layoutSide": "Branches on both sides",
       "layoutRight": "Branches on the right",
       "center": "Center the map",
-      "zoom": "Zoom"
+      "zoom": "Zoom",
+      "autoZoom": "Auto zoom: the whole map in the view"
     },
     "parquet": {
       "readOnly": "Read-only — changes are not saved to disk",

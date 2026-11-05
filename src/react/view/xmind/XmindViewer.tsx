@@ -1,4 +1,4 @@
-import { AimOutlined, AlignCenterOutlined, AlignLeftOutlined, AlignRightOutlined, MinusOutlined, PlusOutlined, SaveOutlined } from '@ant-design/icons';
+import { AimOutlined, AlignCenterOutlined, AlignLeftOutlined, AlignRightOutlined, ExpandOutlined, MinusOutlined, PlusOutlined, SaveOutlined } from '@ant-design/icons';
 import { Alert, Button, Layout, Spin, message } from 'antd';
 import MindElixir, { type MindElixirData, type MindElixirInstance } from 'mind-elixir';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -48,6 +48,11 @@ export default function XmindViewer() {
     const [editingZoom, setZoomInput] = useState<string | null>(null);
     const zoomInput = editingZoom ?? String(scalePercent);
     const [direction, setDirection] = useState<Direction>(MindElixir.SIDE);
+    // auto zoom, like the PDF viewer's Page Fit: the whole map in the view, again when the view or
+    // the layout changes, until another zoom is chosen
+    const [autoZoom, setAutoZoom] = useState(true);
+    const autoZoomRef = useRef(true);
+    const fittingRef = useRef(false);
     const [loading, setLoading] = useState(false);
     const [saving, setSaving] = useState(false);
     const [dirty, setDirty] = useState(false);
@@ -102,6 +107,33 @@ export default function XmindViewer() {
 
     const readOnlyRef = useRef(false);
 
+    const setAutoZoomState = useCallback((value: boolean) => {
+        autoZoomRef.current = value;
+        setAutoZoom(value);
+    }, []);
+
+    const fitMap = useCallback((mind: MindElixirInstance) => {
+        fittingRef.current = true;
+        try {
+            mind.scaleFit();
+        } finally {
+            fittingRef.current = false;
+        }
+        setAutoZoomState(true);
+    }, [setAutoZoomState]);
+
+    const toggleAutoZoom = useCallback(() => {
+        const mind = mindRef.current;
+        if (!mind) {
+            return;
+        }
+        if (autoZoomRef.current) {
+            setAutoZoomState(false);
+        } else {
+            fitMap(mind);
+        }
+    }, [fitMap, setAutoZoomState]);
+
     const renderSheet = useCallback((data: MindElixirData, resolveImageUrl: (url: string) => string, adaptive: boolean) => {
         const el = mapRef.current;
         if (!el) {
@@ -109,6 +141,10 @@ export default function XmindViewer() {
         }
         const onScale = (value: number) => {
             setScalePercent(Math.round(value * 100));
+            // any other zoom (the field, -/+, the wheel, a pinch) leaves auto zoom
+            if (!fittingRef.current) {
+                setAutoZoomState(false);
+            }
         };
         if (mindRef.current) {
             mindRef.current.changeTheme(buildMindElixirTheme(adaptive), false);
@@ -117,7 +153,7 @@ export default function XmindViewer() {
             mindRef.current.refresh(data);
             setDirection(mindRef.current.direction as Direction);
             mindRef.current.clearHistory?.();
-            mindRef.current.scaleFit();
+            fitMap(mindRef.current);
             return;
         }
         const mind = new MindElixir({
@@ -135,14 +171,14 @@ export default function XmindViewer() {
             theme: buildMindElixirTheme(adaptive),
         });
         mind.init(data);
-        mind.scaleFit();
+        fitMap(mind);
         scaleHandlerRef.current = onScale;
         operationHandlerRef.current = markDirty;
         attachScaleListener(mind, onScale);
         mind.bus.addListener('operation', markDirty);
         setDirection(mind.direction as Direction);
         mindRef.current = mind;
-    }, [markDirty]);
+    }, [markDirty, fitMap, setAutoZoomState]);
 
     const zoomTo = useCallback((percent: number) => {
         const mind = mindRef.current;
@@ -179,7 +215,33 @@ export default function XmindViewer() {
         else mind.initSide();
         // a way to look at the map: XMind keeps its layout elsewhere (structureClass), the file is unchanged
         setDirection(next);
-    }, []);
+        if (autoZoomRef.current) {
+            fitMap(mind);
+        }
+    }, [fitMap]);
+
+    // a resized view (the panel, the window, the sheets' sidebar) fits the map again in auto zoom
+    useEffect(() => {
+        const el = mapRef.current;
+        if (!el) {
+            return;
+        }
+        let frame = 0;
+        const observer = new ResizeObserver(() => {
+            cancelAnimationFrame(frame);
+            frame = requestAnimationFrame(() => {
+                const mind = mindRef.current;
+                if (mind && autoZoomRef.current) {
+                    fitMap(mind);
+                }
+            });
+        });
+        observer.observe(el);
+        return () => {
+            cancelAnimationFrame(frame);
+            observer.disconnect();
+        };
+    }, [fitMap, selectedId, loading]);
 
     const loadGenerationRef = useRef(0);
 
@@ -427,6 +489,16 @@ export default function XmindViewer() {
                                             onClick={zoomIn}
                                         />
                                     </div>
+                                    <Button
+                                        type="text"
+                                        size="small"
+                                        className={`xmind-tool-btn${autoZoom ? ' is-active' : ''}`}
+                                        icon={<ExpandOutlined />}
+                                        aria-label={$t('xmind.autoZoom')}
+                                        aria-pressed={autoZoom}
+                                        title={$t('xmind.autoZoom')}
+                                        onClick={toggleAutoZoom}
+                                    />
                                 </div>
                             </div>
                             <div ref={mapRef} className="xmind-map" />

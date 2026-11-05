@@ -55,7 +55,8 @@
       "layoutSide": "Branches des deux côtés",
       "layoutRight": "Branches à droite",
       "center": "Centrer la carte",
-      "zoom": "Zoom"
+      "zoom": "Zoom",
+      "autoZoom": "Zoom automatique : toute la carte dans la vue"
     },
     "parquet": {
       "readOnly": "Lecture seule — les modifications ne sont pas enregistrées sur le disque"
