@@ -23,6 +23,12 @@ body {
     /* VS Code's accent, like the other viewers': the map's lines and the active sheet's name */
     --viewer-accent: var(--vscode-focusBorder, var(--vscode-textLink-foreground, #1677ff));
     --viewer-toolbar-bg: #fafafa;
+    --viewer-toolbar-border: var(--viewer-border);
+    --viewer-toolbar-fg: var(--viewer-fg);
+    --viewer-toolbar-hover: var(--viewer-hover);
+    --viewer-input-bg: #ffffff;
+    --viewer-input-fg: var(--viewer-fg);
+    --viewer-input-border: #d9d9d9;
     --viewer-scrollbar-track: #ececec;
     --viewer-scrollbar-thumb: #c9d1d9;
 
@@ -44,7 +50,14 @@ body {
     --viewer-sider-bg: var(--vscode-sideBar-background, var(--vscode-editorGroupHeader-tabsBackground, #252526));
     --viewer-header-bg: var(--vscode-editorGroupHeader-tabsBackground, #2d2d2d);
     --viewer-hover: var(--vscode-list-hoverBackground, rgba(255, 255, 255, 0.06));
-    --viewer-toolbar-bg: var(--vscode-editorGroupHeader-tabsBackground, #2d2d2d);
+    /* the PDF viewer's dark toolbar: VS Code's title bar, its border, hover and fields */
+    --viewer-toolbar-bg: var(--vscode-titleBar-activeBackground, var(--vscode-editorWidget-background, #2d2d2d));
+    --viewer-toolbar-border: var(--vscode-panel-border, var(--vscode-widget-border, #3c3c3c));
+    --viewer-toolbar-fg: var(--vscode-foreground, #cccccc);
+    --viewer-toolbar-hover: var(--vscode-toolbar-hoverBackground, rgba(90, 93, 94, 0.31));
+    --viewer-input-bg: var(--vscode-input-background, #3c3c3c);
+    --viewer-input-fg: var(--vscode-input-foreground, #cccccc);
+    --viewer-input-border: var(--vscode-input-border, var(--vscode-widget-border, #3c3c3c));
     --viewer-scrollbar-track: var(--vscode-editor-background, #1e1e1e);
     --viewer-scrollbar-thumb: var(--vscode-scrollbarSlider-background, #797979);
 }
@@ -157,76 +170,99 @@ body:has(.xmind-viewer.xmind-dark) {
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    padding: 8px 12px;
-    border-bottom: 1px solid var(--viewer-border);
-    background: var(--viewer-toolbar-bg);
-    flex-shrink: 0;
-}
-
-.xmind-map-footer {
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: relative;
     min-height: 36px;
-    padding: 4px 12px;
-    border-top: 1px solid var(--viewer-border);
+    padding: 4px 8px;
+    color: var(--viewer-toolbar-fg);
+    border-bottom: 1px solid var(--viewer-toolbar-border);
     background: var(--viewer-toolbar-bg);
+    flex-shrink: 0;
 }
 
-.xmind-zoom-controls {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+.xmind-toolbar-group {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 2px;
+    min-width: 0;
 }
 
-.xmind-zoom-btn {
-    width: 24px;
-    height: 24px;
-    min-width: 24px;
-    padding: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--viewer-muted);
+.xmind-toolbar-separator {
+    width: 1px;
+    height: 16px;
+    margin: 0 6px;
+    background: var(--viewer-toolbar-border);
 }
 
-.xmind-zoom-btn:hover {
-    color: var(--viewer-accent);
-    background: var(--viewer-hover);
-}
-
-.xmind-save-btn {
+.xmind-viewer .xmind-tool-btn.ant-btn {
     flex-shrink: 0;
     width: 28px;
     height: 28px;
     min-width: 28px;
     padding: 0;
-    color: var(--viewer-fg);
+    /* the PDF viewer's buttons */
+    border-radius: 6px;
+    color: var(--viewer-toolbar-fg);
 }
 
-.xmind-save-btn:hover {
+.xmind-viewer .xmind-tool-btn.ant-btn:not(:disabled):hover {
     color: var(--viewer-accent);
-    background: var(--viewer-hover);
+    background: var(--viewer-toolbar-hover);
 }
 
-.xmind-zoom-label {
-    min-width: 44px;
+.xmind-viewer .xmind-tool-btn.ant-btn:disabled {
+    color: var(--viewer-muted);
+    opacity: 0.5;
+}
+
+/* the chosen layout: the accent on its icon only */
+.xmind-viewer .xmind-tool-btn.ant-btn.is-active {
+    color: var(--viewer-accent);
+}
+
+/* -, the percentage and +, like the PDF viewer's zoom field */
+.xmind-zoom-field {
+    display: flex;
+    align-items: center;
+}
+
+.xmind-zoom-input {
+    -moz-appearance: textfield;
+    appearance: textfield;
+    /* 3 digits: 400 at most */
+    box-sizing: content-box;
+    width: 3ch;
+    padding: 3px 5px;
+    margin: 0 2px;
+    font: inherit;
     font-size: 12px;
-    font-weight: 500;
-    color: var(--viewer-fg);
-    text-align: center;
+    text-align: right;
+    color: var(--viewer-input-fg);
+    background: var(--viewer-input-bg);
+    border: 1px solid var(--viewer-input-border);
+    border-radius: 6px;
+    outline: none;
+}
+
+.xmind-zoom-input:focus {
+    border-color: var(--viewer-accent);
+}
+
+.xmind-zoom-input::-webkit-inner-spin-button,
+.xmind-zoom-input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.xmind-zoom-unit {
+    margin-right: 2px;
+    font-size: 12px;
+    color: var(--viewer-toolbar-fg);
     user-select: none;
 }
 
 .xmind-map-title {
     font-size: 13px;
     font-weight: 600;
-    color: var(--viewer-fg);
+    color: var(--viewer-toolbar-fg);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

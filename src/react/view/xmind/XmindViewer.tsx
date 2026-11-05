@@ -1,4 +1,4 @@
-import { MinusOutlined, PlusOutlined, SaveOutlined } from '@ant-design/icons';
+import { AimOutlined, AlignCenterOutlined, AlignLeftOutlined, AlignRightOutlined, MinusOutlined, PlusOutlined, SaveOutlined } from '@ant-design/icons';
 import { Alert, Button, Layout, Spin, message } from 'antd';
 import MindElixir, { type MindElixirData, type MindElixirInstance } from 'mind-elixir';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -13,16 +13,12 @@ import './XmindViewer.css';
 
 const { Sider, Content } = Layout;
 const SIDER_WIDTH = 220;
-const ZOOM_STEP = 0.1;
+// percents, like the PDF viewer's zoom field
+const ZOOM_MIN = 20;
+const ZOOM_MAX = 400;
+const ZOOM_STEP = 10;
 
-/**
- * mind-elixir's bottom-right toolbar: the footer zooms, and fullscreen has no other way in, so
- * only the center button stays.
- */
-function removeToolbarButtons(mind: MindElixirInstance) {
-    mind.container.querySelectorAll('.mind-elixir-toolbar.rb > #fullscreen, .mind-elixir-toolbar.rb > #zoomin, .mind-elixir-toolbar.rb > #zoomout')
-        .forEach(button => button.remove());
-}
+type Direction = typeof MindElixir.LEFT | typeof MindElixir.RIGHT | typeof MindElixir.SIDE;
 
 function attachScaleListener(mind: MindElixirInstance, onScale: (value: number) => void) {
     mind.bus.addListener('scale', onScale);
@@ -48,6 +44,10 @@ export default function XmindViewer() {
     const [sheets, setSheets] = useState<XmindSheet[]>([]);
     const [selectedId, setSelectedId] = useState<string | null>(null);
     const [scalePercent, setScalePercent] = useState(100);
+    // the zoom field's text while it is edited, null otherwise
+    const [editingZoom, setZoomInput] = useState<string | null>(null);
+    const zoomInput = editingZoom ?? String(scalePercent);
+    const [direction, setDirection] = useState<Direction>(MindElixir.SIDE);
     const [loading, setLoading] = useState(false);
     const [saving, setSaving] = useState(false);
     const [dirty, setDirty] = useState(false);
@@ -112,7 +112,10 @@ export default function XmindViewer() {
         };
         if (mindRef.current) {
             mindRef.current.changeTheme(buildMindElixirTheme(adaptive), false);
+            // refresh keeps the previous sheet's layout: each sheet opens in its own, like the first one
+            mindRef.current.direction = data.direction ?? MindElixir.SIDE;
             mindRef.current.refresh(data);
+            setDirection(mindRef.current.direction as Direction);
             mindRef.current.clearHistory?.();
             mindRef.current.scaleFit();
             return;
@@ -123,35 +126,59 @@ export default function XmindViewer() {
             // a read-only file (a git revision...) can be viewed, not edited
             editable: !readOnlyRef.current,
             contextMenu: true,
-            toolBar: true,
+            // the viewer's toolbar replaces mind-elixir's floating ones
+            toolBar: false,
             keypress: true,
+            scaleMin: ZOOM_MIN / 100,
+            scaleMax: ZOOM_MAX / 100,
             imageProxy: resolveImageUrl,
             theme: buildMindElixirTheme(adaptive),
         });
         mind.init(data);
-        removeToolbarButtons(mind);
         mind.scaleFit();
         scaleHandlerRef.current = onScale;
         operationHandlerRef.current = markDirty;
         attachScaleListener(mind, onScale);
         mind.bus.addListener('operation', markDirty);
+        setDirection(mind.direction as Direction);
         mindRef.current = mind;
     }, [markDirty]);
 
-    const zoomOut = useCallback(() => {
+    const zoomTo = useCallback((percent: number) => {
         const mind = mindRef.current;
         if (!mind) {
             return;
         }
-        mind.scale(Math.max(mind.scaleMin, mind.scaleVal - ZOOM_STEP));
+        mind.scale(Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, percent)) / 100);
     }, []);
 
+    // to the next multiple of 10% first (107% goes to 110% or 100%), then by 10%, like the PDF viewer
+    const zoomOut = useCallback(() => {
+        zoomTo(Math.ceil(scalePercent / ZOOM_STEP) * ZOOM_STEP - ZOOM_STEP);
+    }, [scalePercent, zoomTo]);
+
     const zoomIn = useCallback(() => {
+        zoomTo(Math.floor(scalePercent / ZOOM_STEP) * ZOOM_STEP + ZOOM_STEP);
+    }, [scalePercent, zoomTo]);
+
+    const applyZoomInput = useCallback(() => {
+        const percent = Math.round(Number(zoomInput));
+        if (zoomInput.trim() !== '' && Number.isFinite(percent)) {
+            zoomTo(percent);
+        }
+        setZoomInput(null);
+    }, [zoomInput, zoomTo]);
+
+    const changeDirection = useCallback((next: Direction) => {
         const mind = mindRef.current;
-        if (!mind) {
+        if (!mind || mind.direction === next) {
             return;
         }
-        mind.scale(Math.min(mind.scaleMax, mind.scaleVal + ZOOM_STEP));
+        if (next === MindElixir.LEFT) mind.initLeft();
+        else if (next === MindElixir.RIGHT) mind.initRight();
+        else mind.initSide();
+        // a way to look at the map: XMind keeps its layout elsewhere (structureClass), the file is unchanged
+        setDirection(next);
     }, []);
 
     const loadGenerationRef = useRef(0);
@@ -308,44 +335,101 @@ export default function XmindViewer() {
                     )}
                     {!loading && !error && selected && (
                         <div className="xmind-map-wrap">
-                            {!showSidebar && (
-                                <div className="xmind-map-toolbar">
-                                    <span className="xmind-map-title">{selected.title}</span>
+                            <div className="xmind-map-toolbar">
+                                <div className="xmind-toolbar-group">
+                                    <Button
+                                        type="text"
+                                        size="small"
+                                        className="xmind-tool-btn"
+                                        icon={<SaveOutlined />}
+                                        aria-label={$t('common.save')}
+                                        title={$t('common.save')}
+                                        loading={saving}
+                                        disabled={!dirty || saving}
+                                        onClick={() => void handleSave()}
+                                    />
+                                    {!showSidebar && (
+                                        <span className="xmind-map-title" title={selected.title}>{selected.title}</span>
+                                    )}
                                 </div>
-                            )}
-                            <div ref={mapRef} className="xmind-map" />
-                            <div className="xmind-map-footer">
-                                <Button
-                                    type="text"
-                                    size="small"
-                                    className="xmind-save-btn"
-                                    icon={<SaveOutlined />}
-                                    aria-label={$t('common.save')}
-                                    title={$t('common.save')}
-                                    loading={saving}
-                                    disabled={!dirty || saving}
-                                    onClick={() => void handleSave()}
-                                />
-                                <div className="xmind-zoom-controls">
+                                <div className="xmind-toolbar-group">
+                                    {([
+                                        [MindElixir.LEFT, AlignLeftOutlined, $t('xmind.layoutLeft')],
+                                        [MindElixir.SIDE, AlignCenterOutlined, $t('xmind.layoutSide')],
+                                        [MindElixir.RIGHT, AlignRightOutlined, $t('xmind.layoutRight')],
+                                    ] as const).map(([value, Icon, label]) => (
+                                        <Button
+                                            key={value}
+                                            type="text"
+                                            size="small"
+                                            className={`xmind-tool-btn${direction === value ? ' is-active' : ''}`}
+                                            icon={<Icon />}
+                                            aria-label={label}
+                                            aria-pressed={direction === value}
+                                            title={label}
+                                            onClick={() => changeDirection(value)}
+                                        />
+                                    ))}
+                                    <span className="xmind-toolbar-separator" />
                                     <Button
                                         type="text"
                                         size="small"
-                                        className="xmind-zoom-btn"
-                                        icon={<MinusOutlined />}
-                                        aria-label={$t('common.zoomOut')}
-                                        onClick={zoomOut}
+                                        className="xmind-tool-btn"
+                                        icon={<AimOutlined />}
+                                        aria-label={$t('xmind.center')}
+                                        title={$t('xmind.center')}
+                                        onClick={() => mindRef.current?.toCenter()}
                                     />
-                                    <span className="xmind-zoom-label">{scalePercent}%</span>
-                                    <Button
-                                        type="text"
-                                        size="small"
-                                        className="xmind-zoom-btn"
-                                        icon={<PlusOutlined />}
-                                        aria-label={$t('common.zoomIn')}
-                                        onClick={zoomIn}
-                                    />
+                                    <span className="xmind-toolbar-separator" />
+                                    <div className="xmind-zoom-field">
+                                        <Button
+                                            type="text"
+                                            size="small"
+                                            className="xmind-tool-btn"
+                                            icon={<MinusOutlined />}
+                                            aria-label={$t('common.zoomOut')}
+                                            title={$t('common.zoomOut')}
+                                            disabled={scalePercent <= ZOOM_MIN}
+                                            onClick={zoomOut}
+                                        />
+                                        <input
+                                            type="number"
+                                            className="xmind-zoom-input"
+                                            min={ZOOM_MIN}
+                                            max={ZOOM_MAX}
+                                            step={1}
+                                            value={zoomInput}
+                                            aria-label={$t('xmind.zoom')}
+                                            title={$t('xmind.zoom')}
+                                            autoComplete="off"
+                                            onChange={event => setZoomInput(event.target.value)}
+                                            onFocus={event => event.target.select()}
+                                            onBlur={applyZoomInput}
+                                            onKeyDown={event => {
+                                                if (event.key === 'Enter') {
+                                                    applyZoomInput();
+                                                    event.currentTarget.select();
+                                                } else if (event.key === 'Escape') {
+                                                    setZoomInput(null);
+                                                    event.currentTarget.blur();
+                                                }
+                                            }}
+                                        />
+                                        <span className="xmind-zoom-unit" aria-hidden="true">%</span>
+                                        <Button
+                                            type="text"
+                                            size="small"
+                                            className="xmind-tool-btn"
+                                            icon={<PlusOutlined />}
+                                            aria-label={$t('common.zoomIn')}
+                                            title={$t('common.zoomIn')}
+                                            disabled={scalePercent >= ZOOM_MAX}
+                                            onClick={zoomIn}
+                                        />
+                                    </div>
                                 </div>
                             </div>
+                            <div ref={mapRef} className="xmind-map" />
                         </div>
                     )}
                     {!loading && !error && !selected && (

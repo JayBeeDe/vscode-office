@@ -76,7 +76,12 @@
       "failedLoad": "Failed to load XMind file",
       "failedSave": "Failed to save XMind file",
       "noSheets": "No sheets found in XMind file",
-      "noContent": "No content available"
+      "noContent": "No content available",
+      "layoutLeft": "Branches on the left",
+      "layoutSide": "Branches on both sides",
+      "layoutRight": "Branches on the right",
+      "center": "Center the map",
+      "zoom": "Zoom"
     },
     "parquet": {
       "readOnly": "Read-only — changes are not saved to disk",
