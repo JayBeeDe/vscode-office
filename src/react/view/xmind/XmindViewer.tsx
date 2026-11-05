@@ -11,8 +11,7 @@ import { buildMindElixirTheme } from './mindElixirTheme';
 import { parseXmind, XmindDocument, XmindSheet } from './xmindParser';
 import './XmindViewer.css';
 
-const { Sider, Content } = Layout;
-const SIDER_WIDTH = 220;
+const { Content } = Layout;
 // percents, like the PDF viewer's zoom field
 const ZOOM_MIN = 20;
 const ZOOM_MAX = 400;
@@ -362,33 +361,17 @@ export default function XmindViewer() {
         });
     }, [dark]);
 
-    const showSidebar = sheets.length > 1;
+    const showTabs = sheets.length > 1;
+
+    // the chosen sheet's tab in view when the bar scrolls
+    const tabBarRef = useRef<HTMLDivElement>(null);
+    useEffect(() => {
+        tabBarRef.current?.querySelector('.xmind-sheet-tab.is-active')?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    }, [selectedId, showTabs]);
 
     return (
         <Layout className={`xmind-viewer${dark ? ' xmind-dark' : ''}`}>
             <Layout className="xmind-body">
-                {showSidebar && (
-                    <Sider width={SIDER_WIDTH} className="xmind-sider">
-                        <div className="xmind-sider-inner">
-                            <div className="xmind-sider-header">{$t('xmind.sheets')}</div>
-                            <div className="xmind-sheet-list">
-                                {sheets.map(sheet => (
-                                    <div
-                                        key={sheet.id}
-                                        className={`xmind-sheet-item${selectedId === sheet.id ? ' is-active' : ''}`}
-                                        title={sheet.title}
-                                        onClick={() => {
-                                            syncCurrentSheet();
-                                            setSelectedId(sheet.id);
-                                        }}
-                                    >
-                                        {sheet.title}
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </Sider>
-                )}
                 <Content className="xmind-main">
                     {!loading && error && (
                         <div className="xmind-empty">
@@ -410,7 +393,7 @@ export default function XmindViewer() {
                                         disabled={!dirty || saving}
                                         onClick={() => void handleSave()}
                                     />
-                                    {!showSidebar && (
+                                    {!showTabs && (
                                         <span className="xmind-map-title" title={selected.title}>{selected.title}</span>
                                     )}
                                 </div>
@@ -502,6 +485,29 @@ export default function XmindViewer() {
                                 </div>
                             </div>
                             <div ref={mapRef} className="xmind-map" />
+                            {showTabs && (
+                                <div ref={tabBarRef} className="xmind-sheet-tabs" role="tablist" aria-label={$t('xmind.sheets')}>
+                                    {sheets.map(sheet => (
+                                        <button
+                                            key={sheet.id}
+                                            type="button"
+                                            role="tab"
+                                            aria-selected={selectedId === sheet.id}
+                                            className={`xmind-sheet-tab${selectedId === sheet.id ? ' is-active' : ''}`}
+                                            title={sheet.title}
+                                            onClick={() => {
+                                                if (sheet.id === selectedId) {
+                                                    return;
+                                                }
+                                                syncCurrentSheet();
+                                                setSelectedId(sheet.id);
+                                            }}
+                                        >
+                                            {sheet.title}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     )}
                     {!loading && !error && !selected && (
