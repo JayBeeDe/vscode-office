@@ -15,6 +15,15 @@ const { Sider, Content } = Layout;
 const SIDER_WIDTH = 220;
 const ZOOM_STEP = 0.1;
 
+/**
+ * mind-elixir's bottom-right toolbar: the footer zooms, and fullscreen has no other way in, so
+ * only the center button stays.
+ */
+function removeToolbarButtons(mind: MindElixirInstance) {
+    mind.container.querySelectorAll('.mind-elixir-toolbar.rb > #fullscreen, .mind-elixir-toolbar.rb > #zoomin, .mind-elixir-toolbar.rb > #zoomout')
+        .forEach(button => button.remove());
+}
+
 function attachScaleListener(mind: MindElixirInstance, onScale: (value: number) => void) {
     mind.bus.addListener('scale', onScale);
     onScale(mind.scaleVal);
@@ -120,6 +129,7 @@ export default function XmindViewer() {
             theme: buildMindElixirTheme(adaptive),
         });
         mind.init(data);
+        removeToolbarButtons(mind);
         mind.scaleFit();
         scaleHandlerRef.current = onScale;
         operationHandlerRef.current = markDirty;
