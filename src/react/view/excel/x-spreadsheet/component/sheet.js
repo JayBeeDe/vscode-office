@@ -1429,6 +1429,20 @@ function sheetInitEvents() {
           cut.call(this);
           evt.preventDefault();
           break;
+        case 66:
+        case 73:
+        case 85: {
+          // ctrl/cmd + b / i / u: bold, italic, underline, like the toolbar buttons
+          if (shiftKey || altKey || this.editor.cell !== null) break;
+          // handled even in read mode, so VS Code does not run its own Ctrl+B (side bar) etc.
+          evt.preventDefault();
+          if (this.data.settings.mode === 'read') break;
+          const style = this.data.getSelectedCellStyle();
+          if (keyCode === 66) toolbarChange.call(this, 'font-bold', !style.font.bold);
+          else if (keyCode === 73) toolbarChange.call(this, 'font-italic', !style.font.italic);
+          else toolbarChange.call(this, 'underline', !style.underline);
+          break;
+        }
         case 86:
           if (altKey && !shiftKey) {
             // ctrl/cmd + alt + v: paste formatting only
