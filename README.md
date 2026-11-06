@@ -18,6 +18,9 @@ This extension lets you preview and edit common office files directly in VS Code
 Notes:
 
 - A read-only file (permissions, read-only file system) opens read-only in every viewer.
+- While a file opens, every viewer shows the same loading spinner with the file's kind and name ("Loading spreadsheet data.csv..."), and the VS Code status bar shows the same message until the file is displayed.
+- The interface follows the VS Code display language: English, Chinese, French, German, Japanese, Portuguese, Russian and Spanish. Other languages show English. The translations live in [`i18n/`](i18n/README.md).
+- [shortcut.md](shortcut.md) lists the keyboard shortcuts of every viewer.
 - The versions are those installed when this table was written; `package.json` has the exact ranges.
 - The webviews are built with [React](https://react.dev/) 19 and [Ant Design](https://ant.design/) 5, except the PDF viewer and the Markdown editor.
 - In the web extension (vscode.dev), Markdown export is not available.
@@ -41,14 +44,9 @@ Right-click in the editor to export Markdown to PDF, DOCX, or HTML. PDF export r
 
 ![Export Markdown](image/README-CN/1685418034035.png)
 
-Shortcuts: Based on [shortcut.md](shortcut.md), plus:
+The links, the toolbar, the menus and the tables of the editor take the accent color of your VS Code theme.
 
-- New line: `Ctrl+Enter` / `⌘ Enter`
-- Hard line break: `Shift+Enter` / `⇧ Enter`
-- Edit hyperlink: `Alt+Enter` / `^ Enter`
-- Set CodeMirror language: `Alt+Enter` / `^ Enter`
-- Edit in VS Code: `Ctrl Alt E` / `⌘ ^ E`
-- Paste as plain text: `Ctrl+Shift+V` / `⌘ ⇧ V`
+The editor's keyboard shortcuts are listed in [shortcut.md](shortcut.md#markdown).
 
 ## Development Guide
 

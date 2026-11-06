@@ -16,6 +16,14 @@ host and the webviews import these files through `src/i18n/index.ts`.
 
 - `en.json` is complete and is the fallback: another language holds only what is translated,
   and a missing key shows the English text.
+- The code holds no English text of its own: no `|| "Copy"` after a key, since `en.json` always
+  fills in a missing translation. A key the code uses must exist in `en.json`.
+- A language leaves out a key whose text is the same everywhere: keyboard shortcuts
+  (`Ctrl+S`), example URLs, number formats (`1, 2, 3, ...`), product names. English is shown,
+  which is right for them.
+- Text written into the user's files stays in English: a new sheet is named after
+  `spreadsheet.bottombar.defaultSheetName`, but sheets written without a name are `Sheet1`,
+  `Sheet2`..., as Excel does, since formulas refer to them.
 - Placeholders are named, `{count}`, never positional, and a translation uses the same ones
   as English.
 - Lists (the spreadsheet's month and weekday names) keep the same length as in English.
@@ -29,7 +37,7 @@ host and the webviews import these files through `src/i18n/index.ts`.
     needs the forms it uses.
 - `document` mirrors the strings of `@eigenpal/docx-editor-i18n`: when upgrading the editor,
   compare its `en` locale with `document` in `en.json`, and take its new translations for the
-  languages it ships. The check cannot tell which of these keys the editor uses.
+  languages it ships (de, fr, pt-BR, zh-CN among ours; es, ja and ru are translated here). The check cannot tell which of these keys the editor uses.
 - When upgrading PDF.js, compare its new `en-US/viewer.properties` with `pdf` in
   `en.json`: its `find_match_count[one]` is `find.match.count.[one]` here, and its `{{name}}`
   placeholders are written `{name}`.
@@ -52,3 +60,11 @@ them. ESLint (`npm run lint`) reports hard-coded strings in the React views.
 
 A line with `i18n-ignore` is skipped by the hard-coded string scan; in the React views, use
 `eslint-disable-next-line` with a reason.
+
+The scans look for common patterns only (`title =`, `showErrorMessage('...')`, JSX text). They
+miss text passed through a variable (`new Error('...')` shown later, `setError(message)`), the
+`.ts` and `.js` files under `src/react` (the spreadsheet engine, the XMind parser), and
+`vditor/src/ts`: review new text there by hand.
+
+`package.json` (command titles, settings descriptions) is not translated: VS Code reads it
+before the extension starts, so it would need `package.nls.<language>.json` files.
