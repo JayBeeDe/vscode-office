@@ -20,7 +20,8 @@
       "noPasteDirectory": "Вставка каталогов не поддерживается.",
       "installXclip": "Сначала необходимо установить команду xclip.",
       "wikilinkNotFound": "Цель викиссылки не найдена: {target}",
-      "statusBar": "Строка {lines} Символов {chars}"
+      "statusBar": "Строка {lines} Символов {chars}",
+      "tempHtmlNotFound": "Временный HTML-файл не найден: {path}"
     },
     "loading": {
       "document": "Загрузка: {kind} {name}...",
@@ -35,13 +36,45 @@
         "markdown": "Markdown",
         "file": "файл"
       }
+    },
+    "saveAs": {
+      "filter": {
+        "xlsx": "Книга Excel",
+        "xlsm": "Книга Excel с поддержкой макросов",
+        "xltx": "Шаблон таблицы",
+        "xltm": "Шаблон таблицы с поддержкой макросов",
+        "xls": "Книга Excel 97–2003",
+        "xlt": "Шаблон таблицы 97–2003",
+        "ods": "Таблица OpenDocument",
+        "ots": "Шаблон таблицы OpenDocument",
+        "csv": "CSV (разделители — запятые)",
+        "docx": "Документ Word",
+        "docm": "Документ с поддержкой макросов",
+        "dotm": "Шаблон документа с поддержкой макросов",
+        "dotx": "Шаблон Word",
+        "other": "Файл {ext}"
+      }
+    },
+    "office": {
+      "readFailed": "Не удалось прочитать файл",
+      "gitExited": "git завершился с кодом {code}"
     }
   },
   "viewer": {
     "common": {
       "failedOpenFile": "Не удалось открыть файл",
       "officeViewer": "Просмотр Office",
-      "editInVscode": "Редактировать в VS Code"
+      "editInVscode": "Редактировать в VS Code",
+      "previousPage": "Предыдущая страница",
+      "nextPage": "Следующая страница",
+      "save": "Сохранить",
+      "saved": "Сохранено",
+      "zoomIn": "Увеличить",
+      "zoomOut": "Уменьшить",
+      "readOnlyBadge": "Только чтение",
+      "emptyFile": "Файл пуст",
+      "noFilePath": "Нет пути к файлу",
+      "fetchFailed": "Не удалось получить файл ({status})"
     },
     "document": {
       "heading": "Заголовок {level}",
@@ -52,7 +85,11 @@
     },
     "presentation": {
       "failedLoad": "Не удалось загрузить презентацию",
-      "slides": "Слайды"
+      "slides": "Слайды",
+      "slide": "Слайд {number}",
+      "status": "Слайд {number} / {count}",
+      "slideCount": "Слайдов: {count}",
+      "loadingThumbnails": "загрузка…"
     },
     "epub": {
       "searchBook": "Поиск книги...",
@@ -60,13 +97,135 @@
       "failedRender": "Не удалось отобразить страницу EPUB",
       "searchFailed": "Ошибка поиска",
       "untitled": "Без названия",
-      "error": "Ошибка"
+      "error": "Ошибка",
+      "cover": "Обложка",
+      "themes": "Темы",
+      "themeAuto": "Авто",
+      "themeLight": "Светлая",
+      "themeDark": "Тёмная",
+      "themeScope": "Страницы всех книг EPUB. «Авто» следует теме расширения (vscode-office.theme).",
+      "font": "Шрифт",
+      "systemFont": "Системный",
+      "fontSize": "Размер шрифта",
+      "lineSpacing": "Межстрочный интервал",
+      "currentLocation": "Текущее место"
     },
     "xmind": {
-      "sheets": "Листы"
+      "sheets": "Листы",
+      "failedLoad": "Не удалось загрузить файл XMind",
+      "failedSave": "Не удалось сохранить файл XMind",
+      "noSheets": "В файле XMind нет листов",
+      "noContent": "Нет содержимого",
+      "clickTarget": "Щёлкните целевую тему",
+      "tips": {
+        "save": {
+          "title": "Сохранить",
+          "text": "Записать изменения в файл XMind"
+        },
+        "addChild": {
+          "title": "Новая подтема",
+          "text": "Добавить тему под выбранной"
+        },
+        "addSibling": {
+          "title": "Новая тема того же уровня",
+          "text": "Добавить тему сразу после выбранной"
+        },
+        "addParent": {
+          "title": "Новая родительская тема",
+          "text": "Вставить тему над выбранной, которая станет её подтемой"
+        },
+        "remove": {
+          "title": "Удалить",
+          "text": "Удалить выбранные темы и всё, что под ними"
+        },
+        "moveUp": {
+          "title": "Вверх",
+          "text": "Поменять выбранную тему местами с темой выше"
+        },
+        "moveDown": {
+          "title": "Вниз",
+          "text": "Поменять выбранную тему местами с темой ниже"
+        },
+        "focus": {
+          "title": "Фокус на этой теме",
+          "text": "Показать только выбранную тему и её подтемы"
+        },
+        "cancelFocus": {
+          "title": "Показать всю карту",
+          "text": "Выйти из фокуса и снова показать все темы"
+        },
+        "link": {
+          "title": "Связать с другой темой",
+          "text": "Провести стрелку от выбранной темы к следующей теме, по которой вы щёлкнете"
+        },
+        "linkBidirectional": {
+          "title": "Связать в обе стороны",
+          "text": "Провести двустороннюю стрелку между выбранной темой и следующей темой, по которой вы щёлкнете"
+        },
+        "summary": {
+          "title": "Итог",
+          "text": "Сгруппировать выбранные темы скобкой с итоговой темой"
+        },
+        "layoutLeft": {
+          "title": "Ветви слева",
+          "text": "Расположить все ветви слева от центральной темы"
+        },
+        "layoutSide": {
+          "title": "Ветви с обеих сторон",
+          "text": "Распределить ветви по обе стороны от центральной темы"
+        },
+        "layoutRight": {
+          "title": "Ветви справа",
+          "text": "Расположить все ветви справа от центральной темы"
+        },
+        "center": {
+          "title": "Центрировать карту",
+          "text": "Вернуть центральную тему в середину области просмотра"
+        },
+        "zoomOut": {
+          "title": "Уменьшить",
+          "text": "Уменьшить карту с шагом 10%"
+        },
+        "zoom": {
+          "title": "Масштаб",
+          "text": "Введите процент от 20 до 400 и нажмите Enter"
+        },
+        "zoomIn": {
+          "title": "Увеличить",
+          "text": "Увеличить карту с шагом 10%"
+        },
+        "autoZoom": {
+          "title": "По размеру окна",
+          "text": "Всегда показывать всю карту, даже при изменении размера панели"
+        }
+      },
+      "unavailable": {
+        "selectOne": "Сначала выберите тему",
+        "selectOneChild": "Выберите одну тему, кроме центральной",
+        "selectChildren": "Выберите темы, кроме центральной",
+        "notFocused": "Только в режиме фокуса на теме",
+        "readOnly": "Этот файл доступен только для чтения",
+        "noChanges": "Нет несохранённых изменений",
+        "zoomMin": "Уже минимальный масштаб",
+        "zoomMax": "Уже максимальный масштаб"
+      },
+      "newTopic": "Новая тема",
+      "untitled": "Без названия",
+      "defaultSheet": "Лист {number}"
     },
     "parquet": {
-      "readOnly": "Только чтение — изменения не сохраняются на диск"
+      "readOnly": "Только чтение — изменения не сохраняются на диск",
+      "schema": "Схема",
+      "rows": "Строки",
+      "columnsLabel": "Столбцы",
+      "createdBy": "Создано в",
+      "totalRows": "Строк: {count}",
+      "save": "Сохранить",
+      "saveSuccess": "Файл Parquet сохранён",
+      "unsaved": "Несохранённые изменения",
+      "invalidValue": "«{value}» — недопустимое значение типа {type}",
+      "failedLoad": "Не удалось загрузить файл Parquet",
+      "failedSave": "Не удалось сохранить файл Parquet"
     }
   },
   "markdown": {
@@ -149,6 +308,1390 @@
     "wysiwyg": "Редактор WYSIWYG",
     "aiSave": "Сохранить",
     "aiCancel": "Отмена",
-    "aiDelete": "Удалить"
+    "aiDelete": "Удалить",
+    "find-match-case": "Учитывать регистр",
+    "find-whole-word": "Слово целиком",
+    "find-regex": "Регулярное выражение",
+    "find-toggle-replace": "Показать или скрыть замену",
+    "find-previous": "Назад (Shift+Enter)",
+    "find-next": "Далее (Enter)",
+    "find-replace": "Заменить",
+    "find-replace-all": "Заменить все",
+    "find-invalid-regex": "Недопустимое регулярное выражение",
+    "replace-placeholder": "Заменить…",
+    "editInVscode": "Изменить в VS Code ({shortcut})",
+    "save": "Сохранить",
+    "paste": "Вставить",
+    "exportPdf": "Экспорт в PDF",
+    "exportDocx": "Экспорт в Docx",
+    "exportHtml": "Экспорт в HTML",
+    "plaintext": "Обычный текст",
+    "empty": "Нет",
+    "current": "текущий",
+    "languageSearch": "Поиск языка",
+    "copyAsImage": "Копировать как изображение",
+    "openInPlantuml": "Открыть в PlantUML",
+    "toggleLineWrap": "Перенос строк",
+    "mermaidRenderError": "Ошибка отрисовки Mermaid",
+    "plantumlRenderError": "Ошибка отрисовки PlantUML"
+  },
+  "document": {
+    "common": {
+      "cancel": "Отмена",
+      "insert": "Вставить",
+      "apply": "Применить",
+      "close": "Закрыть",
+      "delete": "Удалить",
+      "update": "Обновить",
+      "save": "Сохранить",
+      "retry": "Повторить",
+      "send": "Отправить",
+      "edit": "Изменить",
+      "comment": "Комментарий",
+      "reply": "Ответить",
+      "accept": "Принять",
+      "reject": "Отклонить",
+      "dismiss": "Скрыть",
+      "change": "Изменить",
+      "clear": "Очистить",
+      "px": "пкс",
+      "closeDialog": "Закрыть диалоговое окно"
+    },
+    "toolbar": {
+      "ariaLabel": "Панель форматирования",
+      "file": "Файл",
+      "format": "Формат",
+      "insert": "Вставка",
+      "open": "Открыть",
+      "save": "Сохранить",
+      "print": "Печать",
+      "pageSetup": "Параметры страницы",
+      "leftToRight": "Текст слева направо",
+      "rightToLeft": "Текст справа налево",
+      "image": "Изображение",
+      "table": "Таблица",
+      "break": "Разрыв",
+      "pageBreak": "Разрыв страницы",
+      "sectionBreakNextPage": "Разрыв раздела (со следующей страницы)",
+      "sectionBreakContinuous": "Разрыв раздела (на текущей странице)",
+      "tableOfContents": "Оглавление",
+      "symbol": "Символ",
+      "watermark": "Подложка",
+      "help": "Справка",
+      "reportIssue": "Сообщить о проблеме"
+    },
+    "formattingBar": {
+      "groups": {
+        "history": "История",
+        "zoom": "Масштаб",
+        "styles": "Стили",
+        "font": "Шрифт",
+        "textFormatting": "Форматирование текста",
+        "script": "Надстрочный и подстрочный",
+        "alignment": "Выравнивание",
+        "listFormatting": "Форматирование списка",
+        "image": "Изображение",
+        "table": "Таблица"
+      },
+      "undo": "Отменить",
+      "undoShortcut": "Отменить (Ctrl+Z)",
+      "redo": "Повторить",
+      "redoShortcut": "Повторить (Ctrl+Y)",
+      "bold": "Полужирный",
+      "boldShortcut": "Полужирный (Ctrl+B)",
+      "italic": "Курсив",
+      "italicShortcut": "Курсив (Ctrl+I)",
+      "underline": "Подчёркнутый",
+      "underlineShortcut": "Подчёркнутый (Ctrl+U)",
+      "strikethrough": "Зачёркнутый",
+      "fontColor": "Цвет шрифта",
+      "highlightColor": "Цвет выделения текста",
+      "insertLink": "Ссылка",
+      "insertLinkShortcut": "Ссылка (Ctrl+K)",
+      "superscript": "Надстрочный знак",
+      "superscriptShortcut": "Надстрочный знак (Ctrl+Shift+=)",
+      "subscript": "Подстрочный знак",
+      "subscriptShortcut": "Подстрочный знак (Ctrl+=)",
+      "imageProperties": "Свойства изображения",
+      "imagePropertiesShortcut": "Свойства изображения (замещающий текст, граница)...",
+      "clearFormatting": "Очистить форматирование",
+      "commentsAndChanges": "Примечания и исправления",
+      "moreItems": "{count, plural, one {Ещё # элемент} few {Ещё # элемента} many {Ещё # элементов} other {Ещё # элемента}}"
+    },
+    "alignment": {
+      "alignLeft": "Выровнять по левому краю",
+      "center": "По центру",
+      "alignRight": "Выровнять по правому краю",
+      "justify": "По ширине"
+    },
+    "lists": {
+      "ariaLabel": "Форматирование списка",
+      "typeAriaLabel": "Тип списка",
+      "indentationAriaLabel": "Отступ списка",
+      "bulletList": "Маркированный список",
+      "numberedList": "Нумерованный список",
+      "decreaseIndent": "Уменьшить отступ",
+      "increaseIndent": "Увеличить отступ"
+    },
+    "lineSpacing": {
+      "label": "Междустрочный интервал",
+      "single": "Одинарный",
+      "double": "Двойной",
+      "lineSpacingTitle": "Междустрочный интервал: {label}",
+      "paragraphSpacing": "Интервал между абзацами"
+    },
+    "styles": {
+      "selectAriaLabel": "Выбрать стиль абзаца",
+      "normalText": "Обычный текст",
+      "title": "Название",
+      "subtitle": "Подзаголовок",
+      "heading1": "Заголовок 1",
+      "heading2": "Заголовок 2",
+      "heading3": "Заголовок 3"
+    },
+    "font": {
+      "selectAriaLabel": "Выбрать шрифт",
+      "sansSerif": "Без засечек",
+      "serif": "С засечками",
+      "monospace": "Моноширинный",
+      "other": "Другие",
+      "documentFonts": "Шрифты документа"
+    },
+    "fontSize": {
+      "decrease": "Уменьшить размер шрифта",
+      "increase": "Увеличить размер шрифта",
+      "label": "Размер шрифта",
+      "listLabel": "Размеры шрифта"
+    },
+    "zoom": {
+      "ariaLabel": "Масштаб: {label}",
+      "zoomOut": "Уменьшить",
+      "zoomIn": "Увеличить",
+      "zoomLevel": "Масштаб"
+    },
+    "colorPicker": {
+      "ariaLabel": "Выбор цвета: {type}",
+      "highlightColors": "Цвета выделения",
+      "customColor": "Другой цвет",
+      "noColor": "Нет цвета",
+      "automatic": "Авто",
+      "themeColors": "Цвета темы",
+      "standardColors": "Стандартные цвета",
+      "colors": {
+        "black": "Чёрный",
+        "darkRed": "Тёмно-красный",
+        "red": "Красный",
+        "orange": "Оранжевый",
+        "yellow": "Жёлтый",
+        "darkYellow": "Тёмно-жёлтый",
+        "green": "Зелёный",
+        "darkGreen": "Тёмно-зелёный",
+        "teal": "Сине-зелёный",
+        "darkTeal": "Тёмный сине-зелёный",
+        "blue": "Синий",
+        "darkBlue": "Тёмно-синий",
+        "purple": "Фиолетовый",
+        "darkPurple": "Тёмно-фиолетовый",
+        "brown": "Коричневый",
+        "grey50": "Серый 50%",
+        "grey25": "Серый 25%",
+        "grey10": "Серый 10%",
+        "white": "Белый",
+        "lightRed": "Светло-красный",
+        "lightOrange": "Светло-оранжевый",
+        "lightYellow": "Светло-жёлтый",
+        "lightGreen": "Светло-зелёный",
+        "lightBlue": "Голубой",
+        "lightPurple": "Светло-фиолетовый",
+        "pink": "Розовый",
+        "rose": "Розовато-лиловый",
+        "gold": "Золотистый",
+        "aqua": "Бирюзовый",
+        "lavender": "Лавандовый",
+        "silver": "Серебристый",
+        "darkOrange": "Тёмно-оранжевый",
+        "darkGray": "Тёмно-серый",
+        "gray": "Серый",
+        "cyan": "Голубой (циан)",
+        "magenta": "Пурпурный",
+        "paleGreen": "Бледно-зелёный",
+        "lightCyan": "Светло-голубой",
+        "skyBlue": "Небесно-голубой",
+        "lightBlue2": "Голубой 2",
+        "lightMagenta": "Светло-пурпурный",
+        "brightGreen": "Ярко-зелёный",
+        "violet": "Фиалковый"
+      }
+    },
+    "dialogs": {
+      "findReplace": {
+        "titleFind": "Найти",
+        "titleFindReplace": "Найти и заменить",
+        "findLabel": "Найти:",
+        "findPlaceholder": "Введите текст для поиска...",
+        "findAriaLabel": "Текст для поиска",
+        "findPrevious": "Найти предыдущее",
+        "findPreviousTitle": "Найти предыдущее (Shift+Enter)",
+        "findNext": "Найти далее",
+        "findNextTitle": "Найти далее (Enter)",
+        "matchCount": "{current} из {total}",
+        "noResults": "Ничего не найдено",
+        "replaceLabel": "Заменить:",
+        "replacePlaceholder": "Введите текст для замены...",
+        "replaceAriaLabel": "Текст для замены",
+        "replaceButton": "Заменить",
+        "replaceCurrentTitle": "Заменить текущее совпадение",
+        "replaceAllButton": "Заменить все",
+        "replaceAllTitle": "Заменить все совпадения",
+        "matchCase": "Учитывать регистр",
+        "wholeWords": "Слово целиком",
+        "matchesFound": "Совпадений: {total}",
+        "toggleReplace": "+ Заменить"
+      },
+      "hyperlink": {
+        "titleEdit": "Изменить гиперссылку",
+        "titleInsert": "Вставить гиперссылку",
+        "tabWebAddress": "Веб-адрес",
+        "tabBookmark": "Закладка",
+        "urlLabel": "URL-адрес",
+        "urlHint": "Введите веб-адрес, адрес эл. почты (mailto:) или телефон (tel:)",
+        "bookmarkLabel": "Закладка",
+        "bookmarkPlaceholder": "Выберите закладку...",
+        "displayTextLabel": "Отображаемый текст",
+        "displayTextPlaceholder": "Отображаемый текст (необязательно)",
+        "displayTextHint": "Оставьте пустым, чтобы использовать выделенный текст",
+        "tooltipLabel": "Подсказка (необязательно)",
+        "tooltipPlaceholder": "Текст при наведении",
+        "removeLink": "Удалить ссылку",
+        "invalidUrl": "Введите правильный URL-адрес",
+        "urlRequired": "Нужно указать URL-адрес"
+      },
+      "insertTable": {
+        "title": "Вставить таблицу",
+        "hoverToSelect": "Наведите указатель, чтобы выбрать размер",
+        "tableSize": "Таблица {cols} x {rows}",
+        "orSpecifySize": "или укажите размер",
+        "rowsLabel": "Строки:",
+        "columnsLabel": "Столбцы:",
+        "insertButton": "Вставить таблицу",
+        "sizeSelector": "Выбор размера таблицы",
+        "columnWidthLabel": "Ширина столбцов",
+        "fixedWidth": "Постоянная",
+        "autofit": "Автоподбор по содержимому",
+        "tableStyleLabel": "Стиль таблицы",
+        "validationHint": "Строки: {minRows}-{maxRows}, столбцы: {minCols}-{maxCols}"
+      },
+      "watermark": {
+        "title": "Подложка",
+        "noWatermark": "Нет подложки",
+        "picture": "Рисунок",
+        "text": "Текст",
+        "selectPicture": "Выбрать рисунок...",
+        "scale": "Масштаб",
+        "washout": "Обесцветить",
+        "textLabel": "Текст",
+        "fontLabel": "Шрифт",
+        "sizeLabel": "Размер",
+        "sizeAuto": "Авто",
+        "colorLabel": "Цвет",
+        "layoutLabel": "Макет",
+        "diagonal": "По диагонали",
+        "horizontal": "Горизонтально",
+        "semitransparent": "Полупрозрачный",
+        "presetLabel": "Шаблон",
+        "applyButton": "Применить",
+        "cancelButton": "Отмена"
+      },
+      "splitCell": {
+        "title": "Разделить ячейку",
+        "description": "Укажите, на сколько строк и столбцов разделить выбранную ячейку.",
+        "rowsLabel": "Строки:",
+        "columnsLabel": "Столбцы:",
+        "currentMinimum": "Минимум для текущего объединения: строк — {rows}, столбцов — {cols}",
+        "minValue": "Укажите не менее {rows} строк и {cols} столбцов.",
+        "notOneByOne": "Должно получиться не менее двух ячеек."
+      },
+      "insertImage": {
+        "title": "Вставить изображение",
+        "uploadAriaLabel": "Щёлкните или перетащите, чтобы загрузить изображение",
+        "uploadText": "Щёлкните, чтобы выбрать изображение, или перетащите его сюда",
+        "uploadSubtext": "PNG, JPG, GIF до 10 МБ",
+        "dimensions": "Размеры",
+        "widthLabel": "Ширина:",
+        "heightLabel": "Высота:",
+        "aspectRatioLocked": "Пропорции зафиксированы",
+        "aspectRatioUnlocked": "Пропорции не зафиксированы",
+        "altTextLabel": "Замещающий текст (необязательно)",
+        "altTextPlaceholder": "Опишите изображение для специальных возможностей",
+        "insertButton": "Вставить изображение",
+        "invalidFile": "Выберите правильный файл изображения",
+        "fileTooLarge": "Файл изображения слишком большой (не более 10 МБ)",
+        "readFailed": "Не удалось прочитать файл изображения",
+        "loadFailed": "Не удалось загрузить изображение",
+        "preview": "Предварительный просмотр"
+      },
+      "insertSymbol": {
+        "title": "Вставить символ",
+        "searchPlaceholder": "Поиск символов (знак или код Юникода)...",
+        "noResultsEmpty": "Символы не найдены",
+        "noResults": "Не найдено символов по запросу «{query}»",
+        "decimal": "Десятичный код: {value}",
+        "recent": "Недавние:",
+        "categories": {
+          "common": "Основные",
+          "arrows": "Стрелки",
+          "math": "Математические",
+          "greek": "Греческие",
+          "shapes": "Фигуры",
+          "punctuation": "Пунктуация",
+          "currency": "Денежные единицы",
+          "music": "Музыкальные",
+          "emoji": "Эмодзи"
+        }
+      },
+      "imageProperties": {
+        "title": "Свойства изображения",
+        "altText": "Замещающий текст",
+        "altTextPlaceholder": "Опишите изображение для специальных возможностей...",
+        "border": "Граница",
+        "width": "Толщина",
+        "style": "Стиль",
+        "color": "Цвет",
+        "preview": "Предварительный просмотр",
+        "textWrapping": "Обтекание текстом",
+        "dimensions": "Размеры",
+        "widthLabel": "Ширина:",
+        "heightLabel": "Высота:",
+        "lockAspectRatio": "Сохранять пропорции",
+        "wrapOptions": {
+          "inline": "В тексте",
+          "wrapRight": "Обтекание, изображение слева",
+          "wrapLeft": "Обтекание, изображение справа",
+          "topAndBottom": "Сверху и снизу",
+          "behind": "За текстом",
+          "inFront": "Перед текстом"
+        },
+        "borderStyles": {
+          "solid": "Сплошная",
+          "dashed": "Штриховая",
+          "dotted": "Точечная",
+          "double": "Двойная",
+          "groove": "Вдавленная",
+          "ridge": "Выпуклая",
+          "inset": "Утопленная",
+          "outset": "Приподнятая"
+        }
+      },
+      "imagePosition": {
+        "title": "Положение изображения",
+        "horizontal": "По горизонтали",
+        "vertical": "По вертикали",
+        "position": "Положение",
+        "alignment": "Выравнивание",
+        "offset": "Смещение",
+        "offsetPx": "Смещение (пкс)",
+        "align": "Выровнять",
+        "relativeTo": "Относительно",
+        "alignOptions": {
+          "left": "Слева",
+          "center": "По центру",
+          "right": "Справа",
+          "top": "Сверху",
+          "bottom": "Снизу"
+        },
+        "relativeOptions": {
+          "page": "Страница",
+          "column": "Колонка",
+          "margin": "Поле",
+          "character": "Знак",
+          "paragraph": "Абзац",
+          "line": "Строка"
+        }
+      },
+      "pageSetup": {
+        "title": "Параметры страницы",
+        "pageSize": "РАЗМЕР СТРАНИЦЫ",
+        "sizeLabel": "Размер",
+        "custom": "Другой",
+        "orientation": "Ориентация",
+        "portrait": "Книжная",
+        "landscape": "Альбомная",
+        "margins": "ПОЛЯ",
+        "top": "Верхнее",
+        "bottom": "Нижнее",
+        "left": "Левое",
+        "right": "Правое",
+        "pageSizes": {
+          "letter": "Letter (8,5\" × 11\")",
+          "a4": "A4 (8,27\" × 11,69\")",
+          "legal": "Legal (8,5\" × 14\")",
+          "a3": "A3 (11,69\" × 16,54\")",
+          "a5": "A5 (5,83\" × 8,27\")",
+          "b5": "B5 (6,93\" × 9,84\")",
+          "executive": "Executive (7,25\" × 10,5\")"
+        }
+      },
+      "tableProperties": {
+        "title": "Свойства таблицы",
+        "widthType": "Тип ширины",
+        "widthLabel": "Ширина",
+        "alignmentLabel": "Выравнивание",
+        "widthTypes": {
+          "auto": "Авто",
+          "fixed": "Постоянная (твипы)",
+          "percentage": "В процентах"
+        },
+        "units": {
+          "fiftiethsPercent": "(пятидесятые доли %)",
+          "twips": "тв"
+        },
+        "alignOptions": {
+          "left": "Слева",
+          "center": "По центру",
+          "right": "Справа"
+        }
+      },
+      "pasteSpecial": {
+        "title": "Специальная вставка",
+        "keepFormatting": "Сохранить исходное форматирование",
+        "keepFormattingDescription": "Вставить с исходным форматированием",
+        "plainText": "Вставить как обычный текст",
+        "plainTextDescription": "Вставить без форматирования",
+        "readingClipboard": "Чтение буфера обмена...",
+        "preview": "Предварительный просмотр:",
+        "noContent": "Нет содержимого для вставки",
+        "clipboardError": "Не удалось прочитать буфер обмена. Для вставки используйте Ctrl+V."
+      },
+      "footnoteProperties": {
+        "title": "Свойства сносок",
+        "footnotes": "Обычные сноски",
+        "endnotes": "Концевые сноски",
+        "position": "Положение",
+        "numberFormat": "Формат номера",
+        "startAt": "Начать с",
+        "numbering": "Нумерация",
+        "footnotePositions": {
+          "bottomOfPage": "Внизу страницы",
+          "belowText": "Под текстом"
+        },
+        "endnotePositions": {
+          "endOfDocument": "В конце документа",
+          "endOfSection": "В конце раздела"
+        },
+        "numberingOptions": {
+          "continuous": "Продолжить",
+          "restartSection": "В каждом разделе",
+          "restartPage": "На каждой странице"
+        }
+      },
+      "keyboardShortcuts": {
+        "ariaLabel": "Сочетания клавиш",
+        "searchPlaceholder": "Поиск сочетаний клавиш...",
+        "categories": {
+          "editing": "Правка",
+          "formatting": "Форматирование",
+          "navigation": "Навигация",
+          "clipboard": "Буфер обмена",
+          "selection": "Выделение",
+          "view": "Вид",
+          "file": "Файл",
+          "other": "Другое"
+        },
+        "shortcuts": {
+          "save": "Сохранить",
+          "saveDescription": "Сохранить документ",
+          "print": "Печать",
+          "printDescription": "Напечатать документ",
+          "undo": "Отменить",
+          "undoDescription": "Отменить последнее действие",
+          "redo": "Повторить",
+          "redoDescription": "Повторить последнее действие",
+          "delete": "Удалить",
+          "deleteDescription": "Удалить выделенный текст",
+          "find": "Найти",
+          "findDescription": "Найти текст в документе",
+          "findReplace": "Найти и заменить",
+          "findReplaceDescription": "Найти и заменить текст",
+          "cut": "Вырезать",
+          "cutDescription": "Вырезать выделенный текст",
+          "copy": "Копировать",
+          "copyDescription": "Копировать выделенный текст",
+          "paste": "Вставить",
+          "pasteDescription": "Вставить из буфера обмена",
+          "pastePlainText": "Вставить как обычный текст",
+          "pastePlainTextDescription": "Вставить без форматирования",
+          "bold": "Полужирный",
+          "boldDescription": "Включить или выключить полужирный",
+          "italic": "Курсив",
+          "italicDescription": "Включить или выключить курсив",
+          "underline": "Подчёркнутый",
+          "underlineDescription": "Включить или выключить подчёркивание",
+          "strikethrough": "Зачёркнутый",
+          "strikethroughDescription": "Включить или выключить зачёркивание",
+          "subscript": "Подстрочный знак",
+          "subscriptDescription": "Включить или выключить подстрочный знак",
+          "superscript": "Надстрочный знак",
+          "superscriptDescription": "Включить или выключить надстрочный знак",
+          "alignLeft": "Выровнять по левому краю",
+          "alignLeftDescription": "Выровнять абзац по левому краю",
+          "alignCenter": "Выровнять по центру",
+          "alignCenterDescription": "Выровнять абзац по центру",
+          "alignRight": "Выровнять по правому краю",
+          "alignRightDescription": "Выровнять абзац по правому краю",
+          "justify": "По ширине",
+          "justifyDescription": "Выровнять абзац по ширине",
+          "increaseIndent": "Увеличить отступ",
+          "increaseIndentDescription": "Увеличить отступ абзаца",
+          "decreaseIndent": "Уменьшить отступ",
+          "decreaseIndentDescription": "Уменьшить отступ абзаца",
+          "selectAll": "Выделить всё",
+          "selectAllDescription": "Выделить всё содержимое",
+          "selectWord": "Выделить слово",
+          "selectWordDescription": "Выделить текущее слово",
+          "selectParagraph": "Выделить абзац",
+          "selectParagraphDescription": "Выделить текущий абзац",
+          "extendSelectionByWord": "Расширить выделение на слово",
+          "extendSelectionByWordDescription": "Расширить выделение до следующего или предыдущего слова",
+          "extendSelectionToLineEdge": "Расширить выделение до края строки",
+          "extendSelectionToLineEdgeDescription": "Расширить выделение до начала или конца строки",
+          "moveByWord": "Перейти на слово",
+          "moveByWordDescription": "Переместить курсор к следующему или предыдущему слову",
+          "moveToLineStart": "В начало строки",
+          "moveToLineStartDescription": "Переместить курсор в начало строки",
+          "moveToLineEnd": "В конец строки",
+          "moveToLineEndDescription": "Переместить курсор в конец строки",
+          "moveToDocumentStart": "В начало документа",
+          "moveToDocumentStartDescription": "Переместить курсор в начало документа",
+          "moveToDocumentEnd": "В конец документа",
+          "moveToDocumentEndDescription": "Переместить курсор в конец документа",
+          "pageUp": "Страница вверх",
+          "pageUpDescription": "Прокрутить на страницу вверх",
+          "pageDown": "Страница вниз",
+          "pageDownDescription": "Прокрутить на страницу вниз",
+          "zoomIn": "Увеличить",
+          "zoomInDescription": "Увеличить масштаб",
+          "zoomOut": "Уменьшить",
+          "zoomOutDescription": "Уменьшить масштаб",
+          "resetZoom": "Сбросить масштаб",
+          "resetZoomDescription": "Вернуть масштаб 100%",
+          "keyboardShortcuts": "Сочетания клавиш",
+          "keyboardShortcutsDescription": "Показать эту справку",
+          "insertLink": "Вставить ссылку",
+          "insertLinkDescription": "Вставить или изменить гиперссылку"
+        },
+        "noResults": "Не найдено сочетаний клавиш по запросу «{query}»",
+        "pressEscToClose": "Нажмите {key}, чтобы закрыть",
+        "or": "или"
+      }
+    },
+    "comments": {
+      "resolved": "Решено",
+      "resolve": "Решить",
+      "reopen": "Открыть снова",
+      "moreOptions": "Другие действия",
+      "unknown": "Неизвестный",
+      "addComment": "Добавьте примечание...",
+      "replyPlaceholder": "Ответьте или упомяните других через @",
+      "replyCount": "{count, plural, one {# ответ} few {# ответа} many {# ответов} other {# ответа}}"
+    },
+    "trackedChanges": {
+      "unknown": "Неизвестный",
+      "replaced": "Заменено",
+      "with": "на",
+      "added": "Добавлено",
+      "deleted": "Удалено"
+    },
+    "revisions": {
+      "paragraphMarkInserted": "Вставлен разрыв абзаца",
+      "paragraphMarkDeleted": "Удалён разрыв абзаца",
+      "paragraphPropertiesChanged": "Изменены свойства абзаца",
+      "rowInserted": "Вставлена строка",
+      "rowDeleted": "Удалена строка",
+      "rowPropertiesChanged": "Изменены свойства строки",
+      "cellInserted": "Вставлена ячейка",
+      "cellDeleted": "Удалена ячейка",
+      "cellMerged": "Объединены ячейки",
+      "cellPropertiesChanged": "Изменены свойства ячейки",
+      "tablePropertiesChanged": "Изменены свойства таблицы",
+      "tableInserted": "Вставлена таблица",
+      "tableDeleted": "Удалена таблица"
+    },
+    "contextMenu": {
+      "ariaLabel": "Меню действий ИИ",
+      "textMenuAriaLabel": "Меню редактирования текста",
+      "customPromptPlaceholder": "Введите свой запрос...",
+      "cut": "Вырезать",
+      "copy": "Копировать",
+      "paste": "Вставить",
+      "pastePlainText": "Вставить как обычный текст",
+      "delete": "Удалить",
+      "selectAll": "Выделить всё",
+      "selected": "Выделено:",
+      "aiActions": {
+        "askAi": "Спросить ИИ",
+        "rewrite": "Переписать",
+        "expand": "Расширить",
+        "summarize": "Кратко изложить",
+        "translate": "Перевести",
+        "explain": "Объяснить",
+        "fixGrammar": "Исправить грамматику",
+        "makeFormal": "Сделать официальнее",
+        "makeCasual": "Сделать проще",
+        "custom": "Свой запрос"
+      }
+    },
+    "documentOutline": {
+      "ariaLabel": "Структура документа",
+      "closeAriaLabel": "Закрыть структуру",
+      "closeTitle": "Закрыть структуру",
+      "title": "Структура",
+      "noHeadings": "Заголовки не найдены. Добавьте заголовки в документ, чтобы они появились здесь."
+    },
+    "sidebar": {
+      "ariaLabel": "Боковая панель примечаний"
+    },
+    "viewer": {
+      "pageIndicator": "{current} из {total}"
+    },
+    "titleBar": {
+      "untitled": "Без названия",
+      "documentNameAriaLabel": "Имя документа",
+      "menuBarAriaLabel": "Строка меню"
+    },
+    "errors": {
+      "loadingDocument": "Загрузка документа...",
+      "noDocumentLoaded": "Документ не загружен",
+      "failedToLoad": "Не удалось загрузить документ",
+      "unableToParse": "Не удалось разобрать документ",
+      "somethingWentWrong": "Что-то пошло не так",
+      "errorDescription": "При отображении этого компонента произошла ошибка. Повторите попытку или обратитесь в поддержку, если проблема не исчезнет.",
+      "errorLabel": "Ошибка:",
+      "componentStack": "Стек компонентов:",
+      "tryAgain": "Повторить",
+      "showDetails": "Показать подробности",
+      "hideDetails": "Скрыть подробности",
+      "unsavedChanges": "Есть несохранённые изменения. Уйти со страницы?"
+    },
+    "table": {
+      "insertRowAbove": "Вставить строку выше",
+      "insertRowBelow": "Вставить строку ниже",
+      "insertColumnLeft": "Вставить столбец слева",
+      "insertColumnRight": "Вставить столбец справа",
+      "deleteRow": "Удалить строку",
+      "deleteColumn": "Удалить столбец",
+      "deleteTable": "Удалить таблицу",
+      "selectTable": "Выделить всю таблицу",
+      "mergeCells": "Объединить ячейки",
+      "splitCell": "Разделить ячейку",
+      "editingTools": "Инструменты таблицы",
+      "label": "Таблица:",
+      "cellFillColor": "Цвет заливки ячейки",
+      "borderColor": "Цвет границы",
+      "borderWidth": "Толщина границы",
+      "unknownAction": "Неизвестное действие",
+      "borders": {
+        "all": "Все границы",
+        "outside": "Внешние границы",
+        "inside": "Внутренние границы",
+        "none": "Без границ",
+        "remove": "Удалить границы",
+        "top": "Верхняя граница",
+        "bottom": "Нижняя граница",
+        "left": "Левая граница",
+        "right": "Правая граница",
+        "styleAriaLabel": "Тип границы",
+        "tooltip": "Границы"
+      },
+      "moreOptions": "Другие параметры таблицы",
+      "styles": {
+        "title": "Стили таблиц",
+        "label": "Стили",
+        "normalTable": "Обычная таблица",
+        "tableGrid": "Сетка таблицы",
+        "gridTableLight": "Светлая сетка таблицы",
+        "plainTable1": "Простая таблица 1",
+        "plainTable2": "Простая таблица 2",
+        "plainTable3": "Простая таблица 3",
+        "plainTable4": "Простая таблица 4",
+        "gridTable1Light": "Таблица-сетка 1, светлая",
+        "gridTable4Accent1": "Таблица-сетка 4, акцент 1",
+        "gridTable5Dark": "Таблица-сетка 5, тёмная",
+        "listTable3Accent2": "Таблица-список 3, акцент 2",
+        "listTable4Accent3": "Таблица-список 4, акцент 3",
+        "gridTable4Accent5": "Таблица-сетка 4, акцент 5",
+        "gridTable4Accent6": "Таблица-сетка 4, акцент 6"
+      }
+    },
+    "tableAdvanced": {
+      "verticalAlignment": "Вертикальное выравнивание",
+      "top": "Сверху",
+      "middle": "По центру",
+      "bottom": "Снизу",
+      "cellMargins": "Поля ячейки",
+      "textDirection": "Направление текста",
+      "textDirections": {
+        "horizontal": "Горизонтально (слева направо)",
+        "verticalRL": "Вертикально (сверху вниз, справа налево)",
+        "verticalLR": "Вертикально (снизу вверх, слева направо)"
+      },
+      "toggleNoWrap": "Включить или выключить перенос",
+      "rowHeight": "Высота строки",
+      "heightRules": {
+        "auto": "Авто",
+        "atLeast": "Минимум",
+        "exact": "Точно"
+      },
+      "rule": "Режим",
+      "height": "Высота",
+      "toggleHeaderRow": "Включить или выключить строку заголовка",
+      "distributeColumns": "Выровнять ширину столбцов",
+      "autoFit": "Автоподбор по содержимому",
+      "tableProperties": "Свойства таблицы...",
+      "tableAlignment": "Выравнивание таблицы",
+      "alignTableLeft": "Таблица по левому краю",
+      "alignTableCenter": "Таблица по центру",
+      "alignTableRight": "Таблица по правому краю",
+      "tableOptionsMenu": "Меню параметров таблицы",
+      "tableOptions": "Параметры таблицы"
+    },
+    "imageTransform": {
+      "tooltip": "Преобразование",
+      "rotateClockwise": "Повернуть по часовой стрелке",
+      "rotateCounterClockwise": "Повернуть против часовой стрелки",
+      "flipHorizontal": "Отразить по горизонтали",
+      "flipVertical": "Отразить по вертикали"
+    },
+    "imageWrap": {
+      "inline": "В тексте",
+      "floatLeft": "Вокруг рамки, слева",
+      "floatRight": "Вокруг рамки, справа",
+      "topAndBottom": "Сверху и снизу",
+      "behindText": "За текстом",
+      "inFrontOfText": "Перед текстом",
+      "tooltipPrefix": "Обтекание: {label}",
+      "menu": {
+        "inLineWithText": "В тексте",
+        "squareLeft": "Вокруг рамки, слева",
+        "squareRight": "Вокруг рамки, справа",
+        "behindText": "За текстом",
+        "inFrontOfText": "Перед текстом",
+        "ariaLabel": "Параметры разметки изображения",
+        "imageProperties": "Свойства изображения…"
+      },
+      "menuDesc": {
+        "inLineWithText": "Изображение стоит в строке, как символ",
+        "squareLeft": "Изображение слева, текст обтекает справа",
+        "squareRight": "Изображение справа, текст обтекает слева",
+        "behindText": "Изображение под основным текстом",
+        "inFrontOfText": "Изображение поверх основного текста"
+      }
+    },
+    "responsePreview": {
+      "loading": "{action}…",
+      "result": "Результат: {action}",
+      "closeEsc": "Закрыть (Esc)",
+      "editPrompt": "Отредактируйте результат перед принятием:",
+      "changes": "Изменения:",
+      "original": "Исходный текст:",
+      "new": "Новый текст:",
+      "cancelEdit": "Отменить правку"
+    },
+    "commentMarkers": {
+      "resolvedComment": "Решённое примечание",
+      "comment": "Примечание"
+    },
+    "editor": {
+      "toggleCommentsSidebar": "Показать или скрыть панель примечаний",
+      "showDocumentOutline": "Показать структуру документа",
+      "editing": "Редактирование",
+      "editingDescription": "Изменять документ напрямую",
+      "suggesting": "Предложения",
+      "suggestingDescription": "Правки становятся предложениями",
+      "viewing": "Просмотр",
+      "viewingDescription": "Только чтение, без правок",
+      "failedToParse": "Не удалось разобрать документ",
+      "linkRemoved": "Ссылка удалена",
+      "linkCopied": "Ссылка скопирована в буфер обмена",
+      "failedToSave": "Не удалось сохранить документ"
+    },
+    "hyperlinkPopup": {
+      "displayTextPlaceholder": "Отображаемый текст",
+      "copyLink": "Копировать ссылку",
+      "editLink": "Изменить ссылку",
+      "removeLink": "Удалить ссылку"
+    },
+    "headerFooter": {
+      "header": "Верхний колонтитул",
+      "footer": "Нижний колонтитул",
+      "options": "Параметры",
+      "insertPageNumber": "Вставить номер текущей страницы",
+      "insertTotalPages": "Вставить число страниц",
+      "remove": "Удалить: {label}",
+      "closeEditing": "Закрыть редактирование: {label}"
+    },
+    "image": {
+      "placeholder": "Заполнитель изображения",
+      "placeholderText": "[Изображение]",
+      "editableAriaLabel": "Изменяемое изображение"
+    },
+    "imageOverlay": {
+      "rotate": "Повернуть",
+      "imageProperties": "Свойства изображения",
+      "deleteImage": "Удалить изображение",
+      "replaceImage": "Заменить изображение…"
+    },
+    "ruler": {
+      "horizontal": "Горизонтальная линейка",
+      "vertical": "Вертикальная линейка",
+      "firstLineIndent": "Отступ первой строки",
+      "leftIndent": "Отступ слева",
+      "rightIndent": "Отступ справа",
+      "topMargin": "Верхнее поле",
+      "bottomMargin": "Нижнее поле"
+    },
+    "print": {
+      "label": "Печать",
+      "allPages": "Все (страниц: {totalPages})",
+      "singlePage": "Страница {start}",
+      "pageRange": "Страницы {start}–{end}"
+    },
+    "unsaved": {
+      "unsaved": "Не сохранено",
+      "saved": "Сохранено",
+      "unsavedTitle": "В документе есть несохранённые изменения",
+      "savedTitle": "Все изменения сохранены",
+      "unsavedAriaLabel": "Несохранённые изменения",
+      "savedAriaLabel": "Все изменения сохранены"
+    },
+    "loading": {
+      "label": "Загрузка"
+    },
+    "agentPanel": {
+      "defaultTitle": "Помощник",
+      "toggle": "Открыть помощника",
+      "close": "Закрыть панель",
+      "resizeHandle": "Изменить размер панели помощника",
+      "thinking": "Помощник думает",
+      "composerPlaceholder": "Спросите помощника…",
+      "send": "Отправить",
+      "timeline": {
+        "working": "Выполняется… {count, plural, one {# шаг} few {# шага} many {# шагов} other {# шага}}",
+        "summary": "{count, plural, one {# шаг} few {# шага} many {# шагов} other {# шага}}",
+        "earlier": "+ {count, plural, one {# предыдущий шаг} few {# предыдущих шага} many {# предыдущих шагов} other {# предыдущего шага}}"
+      }
+    }
+  },
+  "spreadsheet": {
+    "toolbar": {
+      "undo": "Отменить",
+      "redo": "Повторить",
+      "print": "Печать",
+      "paintformat": "Формат по образцу",
+      "clearformat": "Очистить формат",
+      "format": "Формат",
+      "fontName": "Шрифт",
+      "fontSize": "Размер шрифта",
+      "fontBold": "Полужирный",
+      "fontItalic": "Курсив",
+      "underline": "Подчёркнутый",
+      "strike": "Зачёркнутый",
+      "color": "Цвет текста",
+      "bgcolor": "Цвет заливки",
+      "border": "Границы",
+      "merge": "Объединить ячейки",
+      "align": "Выравнивание по горизонтали",
+      "valign": "Выравнивание по вертикали",
+      "textwrap": "Перенос текста",
+      "freeze": "Закрепить области",
+      "autofilter": "Фильтр",
+      "formula": "Функции",
+      "find": "Найти",
+      "editInVscode": "Изменить в VS Code",
+      "save": "Сохранить",
+      "saveAs": "Сохранить как",
+      "more": "Ещё"
+    },
+    "bottombar": {
+      "firstSheet": "К первому листу",
+      "prevSheet": "Прокрутить влево",
+      "nextSheet": "Прокрутить вправо",
+      "lastSheet": "К последнему листу",
+      "moreSheets": "Все листы",
+      "addSheet": "Добавить лист",
+      "defaultSheetName": "Лист{number}",
+      "defaultSheetBase": "Лист"
+    },
+    "align": {
+      "left": "По левому краю",
+      "center": "По центру",
+      "right": "По правому краю"
+    },
+    "valign": {
+      "top": "По верхнему краю",
+      "middle": "По середине",
+      "bottom": "По нижнему краю"
+    },
+    "contextmenu": {
+      "copy": "Копировать",
+      "cut": "Вырезать",
+      "paste": "Вставить",
+      "pasteValue": "Вставить только значения",
+      "pasteFormat": "Вставить только формат",
+      "hide": "Скрыть",
+      "insertRow": "Вставить строку",
+      "insertColumn": "Вставить столбец",
+      "deleteSheet": "Удалить",
+      "renameSheet": "Переименовать",
+      "duplicateSheet": "Создать копию",
+      "deleteRow": "Удалить строку",
+      "deleteColumn": "Удалить столбец",
+      "deleteCell": "Удалить ячейку",
+      "deleteCellText": "Очистить содержимое",
+      "hyperlink": "Гиперссылка",
+      "validation": "Проверка данных",
+      "celleditable": "Разрешить изменение",
+      "cellnoneditable": "Запретить изменение"
+    },
+    "print": {
+      "settings": "Параметры печати",
+      "size": "Размер бумаги",
+      "orientation": "Ориентация страницы",
+      "orientations": [
+        "Альбомная",
+        "Книжная"
+      ]
+    },
+    "format": {
+      "normal": "Общий",
+      "text": "Текст",
+      "number": "Числовой",
+      "numberPlain": "Числовой (без разделителей)",
+      "percent": "Процентный",
+      "rmb": "юани",
+      "usd": "доллары США",
+      "eur": "евро",
+      "date": "Дата",
+      "time": "Время",
+      "datetime": "Дата и время",
+      "duration": "Длительность"
+    },
+    "formula": {
+      "sum": "Сумма",
+      "average": "Среднее",
+      "max": "Макс",
+      "min": "Мин",
+      "_if": "Если",
+      "and": "И",
+      "or": "Или",
+      "concat": "Сцепить",
+      "divide": "Деление",
+      "product": "Произведение",
+      "subtract": "Вычитание"
+    },
+    "validation": {
+      "required": "значение обязательно",
+      "notMatch": "значение не соответствует правилу проверки",
+      "between": "значение находится между {min} и {max}",
+      "notBetween": "значение не находится между {min} и {max}",
+      "notIn": "значения нет в списке",
+      "equal": "значение равно {value}",
+      "notEqual": "значение не равно {value}",
+      "lessThan": "значение меньше {value}",
+      "lessThanEqual": "значение меньше или равно {value}",
+      "greaterThan": "значение больше {value}",
+      "greaterThanEqual": "значение больше или равно {value}"
+    },
+    "error": {
+      "pasteForMergedCell": "Это невозможно для объединённых ячеек"
+    },
+    "calendar": {
+      "weeks": [
+        "Вс",
+        "Пн",
+        "Вт",
+        "Ср",
+        "Чт",
+        "Пт",
+        "Сб"
+      ],
+      "months": [
+        "Январь",
+        "Февраль",
+        "Март",
+        "Апрель",
+        "Май",
+        "Июнь",
+        "Июль",
+        "Август",
+        "Сентябрь",
+        "Октябрь",
+        "Ноябрь",
+        "Декабрь"
+      ]
+    },
+    "button": {
+      "next": "Далее",
+      "cancel": "Отмена",
+      "remove": "Удалить",
+      "save": "Сохранить",
+      "saveAs": "Сохранить как",
+      "ok": "ОК"
+    },
+    "sort": {
+      "desc": "Сортировка от Я до А",
+      "asc": "Сортировка от А до Я"
+    },
+    "filter": {
+      "empty": "пусто"
+    },
+    "hyperlink": {
+      "address": "Адрес",
+      "tooltip": "Подсказка"
+    },
+    "dataValidation": {
+      "mode": "Режим",
+      "range": "Диапазон ячеек",
+      "criteria": "Условие",
+      "modeType": {
+        "cell": "Ячейка",
+        "column": "Столбец",
+        "row": "Строка"
+      },
+      "type": {
+        "list": "Список",
+        "number": "Число",
+        "date": "Дата",
+        "phone": "Телефон",
+        "email": "Эл. почта"
+      },
+      "operator": {
+        "be": "Между",
+        "nbe": "Вне",
+        "lt": "Меньше",
+        "lte": "Меньше или равно",
+        "gt": "Больше",
+        "gte": "Больше или равно",
+        "eq": "Равно",
+        "neq": "Не равно"
+      }
+    },
+    "viewer": {
+      "protectedCell": "Защищённые ячейки не поддерживают эту функцию",
+      "readonlyBanner": "Только чтение — можно просматривать и искать; чтобы сохранить изменения, используйте «Сохранить как»",
+      "formatCannotPreserveTitle": "Форматирование не сохранится",
+      "formatCannotPreserveContent": "{format} не сохраняет стили, объединения, формулы и т. д. Сохранить в xlsx?",
+      "onlyFirstSheetContent": "{format} сохраняет только первый лист: остальные будут потеряны. Сохранить в xlsx?",
+      "saveAsXlsx": "Сохранить в xlsx",
+      "saveAsOriginal": "Сохранить в исходном формате",
+      "chooseExportFormat": "Выберите формат экспорта",
+      "exportXlsxLabel": "Книга Excel (.xlsx)",
+      "exportXlsxDesc": "Сохраняет стили, формулы, объединённые ячейки",
+      "exportCsvDesc": "Обычный текст, только первый лист",
+      "exportXlsDesc": "Старый формат Excel",
+      "exportOdsDesc": "Совместим с LibreOffice / WPS",
+      "autoFitColumns": "Автоподбор ширины столбцов",
+      "autoFitDone": "Ширина столбцов подобрана"
+    },
+    "findReplace": {
+      "title": "Найти",
+      "titleReplace": "Найти и заменить",
+      "placeholder": "Найти…",
+      "replacePlaceholder": "Заменить на…",
+      "replace": "Заменить",
+      "replaceAll": "Все",
+      "notFound": "Не найдено",
+      "replacedCount": "Заменено: {count}",
+      "matchLocation": "Лист {sheet} · {column}{row}",
+      "previous": "Назад (Shift+Enter)",
+      "next": "Далее (Enter)",
+      "wholeCell": "Ячейка целиком",
+      "allSheets": "Все листы",
+      "close": "Закрыть"
+    },
+    "formulaBar": {
+      "goToCell": "Перейти к ячейке",
+      "cellAddress": "Адрес ячейки",
+      "cellContent": "Содержимое ячейки"
+    },
+    "message": {
+      "tip": "Подсказка"
+    }
+  },
+  "pdf": {
+    "switchToLight": "Переключить PDF в светлый режим",
+    "switchToDark": "Переключить PDF в тёмный режим",
+    "previous": {
+      "@title": "Предыдущая страница",
+      "label": "Предыдущая"
+    },
+    "next": {
+      "@title": "Следующая страница",
+      "label": "Следующая"
+    },
+    "page": {
+      "@title": "Страница",
+      "of_pages": "({pageNumber} из {pagesCount})",
+      "rotate": {
+        "cw": {
+          "@title": "Повернуть по часовой стрелке",
+          "@label": "Повернуть по часовой стрелке",
+          "label": "Повернуть по часовой стрелке"
+        },
+        "ccw": {
+          "@title": "Повернуть против часовой стрелки",
+          "@label": "Повернуть против часовой стрелки",
+          "label": "Повернуть против часовой стрелки"
+        }
+      },
+      "canvas": "Страница {page}",
+      "scale": {
+        "width": "По ширине страницы",
+        "fit": "По размеру страницы",
+        "percent": "{scale} %"
+      }
+    },
+    "of_pages": "из {pagesCount}",
+    "zoom": {
+      "@title": "Масштаб",
+      "out": {
+        "@title": "Уменьшить",
+        "label": "Уменьшить"
+      },
+      "in": {
+        "@title": "Увеличить",
+        "label": "Увеличить"
+      },
+      "page_fit": {
+        "@title": "По размеру страницы",
+        "label": "По размеру страницы"
+      },
+      "page_width": {
+        "@title": "По ширине страницы",
+        "label": "По ширине страницы"
+      }
+    },
+    "presentation_mode": {
+      "@title": "Перейти в режим презентации",
+      "label": "Режим презентации"
+    },
+    "open_file": {
+      "@title": "Открыть файл",
+      "label": "Открыть"
+    },
+    "print": {
+      "@title": "Печать",
+      "label": "Печать",
+      "progress": {
+        "message": "Подготовка документа к печати…",
+        "percent": "{progress} %",
+        "close": "Отмена"
+      }
+    },
+    "download": {
+      "@title": "Загрузить",
+      "label": "Загрузить"
+    },
+    "bookmark": {
+      "@title": "Текущий вид (копировать или открыть в новом окне)",
+      "label": "Текущий вид"
+    },
+    "tools": {
+      "@title": "Инструменты",
+      "label": "Инструменты"
+    },
+    "first_page": {
+      "@title": "Перейти на первую страницу",
+      "@label": "Перейти на первую страницу",
+      "label": "Перейти на первую страницу"
+    },
+    "last_page": {
+      "@title": "Перейти на последнюю страницу",
+      "@label": "Перейти на последнюю страницу",
+      "label": "Перейти на последнюю страницу"
+    },
+    "cursor": {
+      "text_select_tool": {
+        "@title": "Включить инструмент «Выделение текста»",
+        "label": "Инструмент «Выделение текста»"
+      },
+      "hand_tool": {
+        "@title": "Включить инструмент «Рука»",
+        "label": "Инструмент «Рука»"
+      }
+    },
+    "scroll": {
+      "vertical": {
+        "@title": "Использовать вертикальную прокрутку",
+        "label": "Вертикальная прокрутка"
+      },
+      "horizontal": {
+        "@title": "Использовать горизонтальную прокрутку",
+        "label": "Горизонтальная прокрутка"
+      },
+      "wrapped": {
+        "@title": "Использовать масштабируемую прокрутку",
+        "label": "Масштабируемая прокрутка"
+      }
+    },
+    "spread": {
+      "none": {
+        "@title": "Не использовать режим разворотов страниц",
+        "label": "Без разворотов страниц"
+      },
+      "odd": {
+        "@title": "Развороты начинаются с нечётных страниц",
+        "label": "Нечётные страницы слева"
+      },
+      "even": {
+        "@title": "Развороты начинаются с чётных страниц",
+        "label": "Чётные страницы слева"
+      }
+    },
+    "document": {
+      "properties": {
+        "@title": "Свойства документа…",
+        "label": "Свойства документа…",
+        "file": {
+          "name": "Имя файла:",
+          "size": "Размер файла:"
+        },
+        "kb": "{size_kb} КБ ({size_b} байт)",
+        "mb": "{size_mb} МБ ({size_b} байт)",
+        "title": "Заголовок:",
+        "author": "Автор:",
+        "subject": "Тема:",
+        "keywords": "Ключевые слова:",
+        "creation_date": "Дата создания:",
+        "modification_date": "Дата изменения:",
+        "date_string": "{date}, {time}",
+        "creator": "Приложение:",
+        "producer": "Производитель PDF:",
+        "version": "Версия PDF:",
+        "page": {
+          "count": "Число страниц:",
+          "size": {
+            "@text": "Размер страницы:",
+            "unit": {
+              "inches": "дюймов",
+              "millimeters": "мм"
+            },
+            "orientation": {
+              "portrait": "книжная",
+              "landscape": "альбомная"
+            },
+            "name": {
+              "letter": "Letter",
+              "legal": "Legal"
+            }
+          }
+        },
+        "linearized": {
+          "@text": "Быстрый просмотр в Web:",
+          "yes": "Да",
+          "no": "Нет"
+        },
+        "close": "Закрыть"
+      },
+      "outline": {
+        "@title": "Показать содержание документа (двойной щелчок, чтобы развернуть/свернуть все элементы)",
+        "label": "Содержание документа"
+      }
+    },
+    "toggle_sidebar": {
+      "@title": "Показать/скрыть боковую панель",
+      "label": "Показать/скрыть боковую панель",
+      "notification": {
+        "@title": "Показать/скрыть боковую панель (документ имеет содержание/вложения/слои)"
+      }
+    },
+    "attachments": {
+      "@title": "Показать вложения",
+      "label": "Вложения"
+    },
+    "layers": {
+      "@title": "Показать слои (дважды щёлкните, чтобы сбросить все слои к состоянию по умолчанию)",
+      "label": "Слои"
+    },
+    "thumbs": {
+      "@title": "Показать миниатюры",
+      "label": "Миниатюры"
+    },
+    "findbar": {
+      "@title": "Найти в документе",
+      "label": "Найти"
+    },
+    "thumb_page": {
+      "title": "Страница {page}",
+      "canvas": "Миниатюра страницы {page}"
+    },
+    "find": {
+      "input": {
+        "@title": "Найти",
+        "@placeholder": "Найти в документе…"
+      },
+      "previous": {
+        "@title": "Найти предыдущее вхождение фразы в текст",
+        "label": "Назад"
+      },
+      "next": {
+        "@title": "Найти следующее вхождение фразы в текст",
+        "label": "Далее"
+      },
+      "highlight": "Подсветить все",
+      "match": {
+        "case_label": "С учётом регистра",
+        "count": {
+          "[one]": "{current} из {total} совпадения",
+          "[two]": "{current} из {total} совпадений",
+          "[few]": "{current} из {total} совпадений",
+          "[many]": "{current} из {total} совпадений",
+          "[other]": "{current} из {total} совпадений",
+          "limit": {
+            "[zero]": "Более {limit} совпадений",
+            "[one]": "Более {limit} совпадения",
+            "[two]": "Более {limit} совпадений",
+            "[few]": "Более {limit} совпадений",
+            "[many]": "Более {limit} совпадений",
+            "[other]": "Более {limit} совпадений"
+          }
+        }
+      },
+      "entire_word_label": "Слова целиком",
+      "reached": {
+        "top": "Достигнуто начало документа, продолжено с конца",
+        "bottom": "Достигнут конец документа, продолжено с начала"
+      },
+      "not_found": "Фраза не найдена"
+    },
+    "error": {
+      "more_info": "Детали",
+      "less_info": "Скрыть детали",
+      "close": "Закрыть",
+      "version_info": "PDF.js v{version} (сборка: {build})",
+      "message": "Сообщение: {message}",
+      "stack": "Стек: {stack}",
+      "file": "Файл: {file}",
+      "line": "Строка: {line}"
+    },
+    "rendering_error": "При создании страницы произошла ошибка.",
+    "loading_error": "При загрузке PDF произошла ошибка.",
+    "invalid_file_error": "Некорректный или повреждённый PDF-файл.",
+    "missing_file_error": "PDF-файл отсутствует.",
+    "unexpected_response_error": "Неожиданный ответ сервера.",
+    "annotation_date_string": "{date}, {time}",
+    "text_annotation_type": {
+      "@alt": "[Аннотация {type}]"
+    },
+    "password": {
+      "label": "Введите пароль, чтобы открыть этот PDF-файл.",
+      "invalid": "Неверный пароль. Пожалуйста, попробуйте снова.",
+      "ok": "OK",
+      "cancel": "Отмена"
+    },
+    "printing_not": {
+      "supported": "Предупреждение: в этом браузере не полностью поддерживается печать.",
+      "ready": "Предупреждение: PDF не полностью загружен для печати."
+    },
+    "web_fonts_disabled": "Веб-шрифты отключены: не удаётся использовать встроенные PDF-шрифты."
   }
 }

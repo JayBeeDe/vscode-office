@@ -20,7 +20,8 @@
       "noPasteDirectory": "不支持粘贴目录。",
       "installXclip": "请先安装 xclip 命令。",
       "wikilinkNotFound": "找不到双链目标：{target}",
-      "statusBar": "行 {lines} 字数 {chars}"
+      "statusBar": "行 {lines} 字数 {chars}",
+      "tempHtmlNotFound": "未找到临时 HTML 文件：{path}"
     },
     "loading": {
       "document": "正在加载{kind} {name}...",
@@ -35,13 +36,45 @@
         "markdown": "Markdown",
         "file": "文件"
       }
+    },
+    "saveAs": {
+      "filter": {
+        "xlsx": "Excel 工作簿",
+        "xlsm": "Excel 启用宏的工作簿",
+        "xltx": "电子表格模板",
+        "xltm": "启用宏的电子表格模板",
+        "xls": "Excel 97-2003 工作簿",
+        "xlt": "电子表格 97-2003 模板",
+        "ods": "OpenDocument 电子表格",
+        "ots": "OpenDocument 电子表格模板",
+        "csv": "CSV（逗号分隔）",
+        "docx": "Word 文档",
+        "docm": "启用宏的文档",
+        "dotm": "启用宏的文档模板",
+        "dotx": "Word 模板",
+        "other": "{ext} 文件"
+      }
+    },
+    "office": {
+      "readFailed": "读取文件失败",
+      "gitExited": "git 已退出，退出码 {code}"
     }
   },
   "viewer": {
     "common": {
       "failedOpenFile": "打开文件失败",
       "officeViewer": "Office 查看器",
-      "editInVscode": "在 VS Code 中编辑"
+      "editInVscode": "在 VS Code 中编辑",
+      "previousPage": "上一页",
+      "nextPage": "下一页",
+      "save": "保存",
+      "saved": "保存成功",
+      "zoomIn": "放大",
+      "zoomOut": "缩小",
+      "readOnlyBadge": "只读",
+      "emptyFile": "文件内容为空",
+      "noFilePath": "没有文件路径",
+      "fetchFailed": "获取失败（{status}）"
     },
     "document": {
       "heading": "标题 {level}",
@@ -52,7 +85,11 @@
     },
     "presentation": {
       "failedLoad": "加载演示文稿失败",
-      "slides": "幻灯片"
+      "slides": "幻灯片",
+      "slide": "幻灯片 {number}",
+      "status": "幻灯片 {number} / {count}",
+      "slideCount": "{count} 张幻灯片",
+      "loadingThumbnails": "加载中…"
     },
     "epub": {
       "searchBook": "搜索书籍...",
@@ -60,10 +97,121 @@
       "failedRender": "渲染 EPUB 页面失败",
       "searchFailed": "搜索失败",
       "untitled": "无标题",
-      "error": "错误"
+      "error": "错误",
+      "cover": "封面",
+      "themes": "主题",
+      "themeAuto": "自动",
+      "themeLight": "浅色",
+      "themeDark": "深色",
+      "themeScope": "所有 EPUB 书籍的页面。“自动”跟随扩展的主题（vscode-office.theme）。",
+      "font": "字体",
+      "systemFont": "系统",
+      "fontSize": "字号",
+      "lineSpacing": "行距",
+      "currentLocation": "当前位置"
     },
     "xmind": {
-      "sheets": "工作表"
+      "sheets": "工作表",
+      "failedLoad": "加载 XMind 文件失败",
+      "failedSave": "保存 XMind 文件失败",
+      "noSheets": "XMind 文件中没有工作表",
+      "noContent": "没有可显示的内容",
+      "clickTarget": "点击目标主题",
+      "tips": {
+        "save": {
+          "title": "保存",
+          "text": "将更改写入 XMind 文件"
+        },
+        "addChild": {
+          "title": "新建子主题",
+          "text": "在所选主题下添加一个主题"
+        },
+        "addSibling": {
+          "title": "新建同级主题",
+          "text": "在所选主题之后添加一个主题"
+        },
+        "addParent": {
+          "title": "新建父主题",
+          "text": "在所选主题之上插入一个主题，所选主题成为其子主题"
+        },
+        "remove": {
+          "title": "删除",
+          "text": "删除所选主题及其下的所有内容"
+        },
+        "moveUp": {
+          "title": "上移",
+          "text": "将所选主题与上方的主题交换"
+        },
+        "moveDown": {
+          "title": "下移",
+          "text": "将所选主题与下方的主题交换"
+        },
+        "focus": {
+          "title": "聚焦此主题",
+          "text": "仅显示所选主题及其子主题"
+        },
+        "cancelFocus": {
+          "title": "显示整个导图",
+          "text": "退出聚焦，重新显示所有主题"
+        },
+        "link": {
+          "title": "连接到其他主题",
+          "text": "从所选主题向下一个点击的主题画一条箭头"
+        },
+        "linkBidirectional": {
+          "title": "双向连接",
+          "text": "在所选主题与下一个点击的主题之间画一条双向箭头"
+        },
+        "summary": {
+          "title": "概要",
+          "text": "用括号和概要主题将所选主题归为一组"
+        },
+        "layoutLeft": {
+          "title": "分支在左侧",
+          "text": "将所有分支排列在中心主题的左侧"
+        },
+        "layoutSide": {
+          "title": "分支在两侧",
+          "text": "将分支分布在中心主题的两侧"
+        },
+        "layoutRight": {
+          "title": "分支在右侧",
+          "text": "将所有分支排列在中心主题的右侧"
+        },
+        "center": {
+          "title": "居中导图",
+          "text": "将中心主题移回视图中间"
+        },
+        "zoomOut": {
+          "title": "缩小",
+          "text": "缩小导图，每次 10%"
+        },
+        "zoom": {
+          "title": "缩放级别",
+          "text": "输入 20 到 400 之间的百分比并按 Enter"
+        },
+        "zoomIn": {
+          "title": "放大",
+          "text": "放大导图，每次 10%"
+        },
+        "autoZoom": {
+          "title": "适应视图",
+          "text": "始终显示整个导图，即使调整面板大小"
+        }
+      },
+      "unavailable": {
+        "selectOne": "请先选择一个主题",
+        "selectOneChild": "请选择中心主题以外的一个主题",
+        "selectChildren": "请选择中心主题以外的主题",
+        "notFocused": "仅在聚焦某个主题时可用",
+        "readOnly": "此文件为只读",
+        "noChanges": "没有未保存的更改",
+        "zoomMin": "已是最小缩放",
+        "zoomMax": "已是最大缩放"
+      },
+      "newTopic": "新主题",
+      "untitled": "无标题",
+      "defaultSheet": "工作表 {number}"
     },
     "parquet": {
       "readOnly": "只读 — 更改不会保存到磁盘",
@@ -75,7 +223,9 @@
       "save": "保存",
       "saveSuccess": "Parquet 文件已保存",
       "unsaved": "有未保存的更改",
-      "invalidValue": "“{value}”不是有效的 {type} 值"
+      "invalidValue": "“{value}”不是有效的 {type} 值",
+      "failedLoad": "加载 Parquet 文件失败",
+      "failedSave": "保存 Parquet 文件失败"
     }
   },
   "document": {
@@ -121,7 +271,10 @@
       "symbol": "符号",
       "help": "帮助",
       "reportIssue": "反馈问题",
-      "watermark": "水印"
+      "watermark": "水印",
+      "break": "分隔符",
+      "sectionBreakNextPage": "分节符（下一页）",
+      "sectionBreakContinuous": "分节符（连续）"
     },
     "formattingBar": {
       "groups": {
@@ -157,7 +310,9 @@
       "subscriptShortcut": "下标(Ctrl+=)",
       "imageProperties": "图片属性",
       "imagePropertiesShortcut": "图片属性(替代文本、边框)...",
-      "clearFormatting": "清除格式"
+      "clearFormatting": "清除格式",
+      "commentsAndChanges": "批注和修订",
+      "moreItems": "{count, plural, other {另外 # 项}}"
     },
     "alignment": {
       "alignLeft": "左对齐",
@@ -182,7 +337,8 @@
       "single": "单倍行距",
       "double": "双倍行距",
       "lineSpacingTitle": "行距: {label}",
-      "paragraphSpacing": "段间距"
+      "paragraphSpacing": "段间距",
+      "label": "行距"
     },
     "styles": {
       "selectAriaLabel": "选择段落样式",
@@ -195,8 +351,11 @@
     },
     "font": {
       "selectAriaLabel": "选择字体",
-      "serif": "Serif",
-      "monospace": "Monospace"
+      "serif": "衬线",
+      "monospace": "等宽",
+      "sansSerif": "无衬线",
+      "other": "其他",
+      "documentFonts": "文档字体"
     },
     "fontSize": {
       "decrease": "减小字号",
@@ -205,7 +364,10 @@
       "listLabel": "字号列表"
     },
     "zoom": {
-      "ariaLabel": "缩放: {label}"
+      "ariaLabel": "缩放: {label}",
+      "zoomOut": "缩小",
+      "zoomIn": "放大",
+      "zoomLevel": "缩放级别"
     },
     "colorPicker": {
       "ariaLabel": "{type} 颜色选择器",
@@ -291,7 +453,7 @@
         "titleInsert": "插入超链接",
         "tabWebAddress": "网址",
         "tabBookmark": "书签",
-        "urlLabel": "URL",
+        "urlLabel": "网址",
         "urlHint": "输入网址、电子邮箱(mailto:)或电话(tel:)",
         "bookmarkLabel": "书签",
         "bookmarkPlaceholder": "选择一个书签...",
@@ -440,12 +602,12 @@
         "right": "右",
         "pageSizes": {
           "letter": "信纸 (8.5\" × 11\")",
-          "a4": "A4 (8.27\" × 11.69\")",
+          "a4": "A4（8.27\" × 11.69\"）",
           "legal": "法律专用纸 (8.5\" × 14\")",
-          "a3": "A3 (11.69\" × 16.54\")",
-          "a5": "A5 (5.83\" × 8.27\")",
-          "b5": "B5 (6.93\" × 9.84\")",
-          "executive": "Executive (7.25\" × 10.5\")"
+          "a3": "A3（11.69\" × 16.54\"）",
+          "a5": "A5（5.83\" × 8.27\"）",
+          "b5": "B5（6.93\" × 9.84\"）",
+          "executive": "Executive（7.25\" × 10.5\"）"
         }
       },
       "tableProperties": {
@@ -753,7 +915,8 @@
         "listTable4Accent3": "列表表格 4 强调色 3",
         "gridTable4Accent5": "网格表 4 强调色 5",
         "gridTable4Accent6": "网格表 4 强调色 6"
-      }
+      },
+      "selectTable": "选择整个表格"
     },
     "tableAdvanced": {
       "verticalAlignment": "垂直对齐",
@@ -913,7 +1076,23 @@
     "imageOverlay": {
       "deleteImage": "删除图片",
       "imageProperties": "图片属性",
-      "rotate": "旋转"
+      "rotate": "旋转",
+      "replaceImage": "替换图片…"
+    },
+    "revisions": {
+      "paragraphMarkInserted": "插入了段落标记",
+      "paragraphMarkDeleted": "删除了段落标记",
+      "paragraphPropertiesChanged": "更改了段落属性",
+      "rowInserted": "插入了行",
+      "rowDeleted": "删除了行",
+      "rowPropertiesChanged": "更改了行属性",
+      "cellInserted": "插入了单元格",
+      "cellDeleted": "删除了单元格",
+      "cellMerged": "合并了单元格",
+      "cellPropertiesChanged": "更改了单元格属性",
+      "tablePropertiesChanged": "更改了表格属性",
+      "tableInserted": "插入了表格",
+      "tableDeleted": "删除了表格"
     }
   },
   "spreadsheet": {
@@ -952,7 +1131,9 @@
       "nextSheet": "向右滚动",
       "lastSheet": "滚动到最后一个工作表",
       "moreSheets": "全部工作表",
-      "addSheet": "新建工作表"
+      "addSheet": "新建工作表",
+      "defaultSheetName": "Sheet{number}",
+      "defaultSheetBase": "Sheet"
     },
     "align": {
       "left": "左对齐",
@@ -1016,7 +1197,10 @@
       "concat": "字符拼接",
       "_if": "条件判断",
       "and": "和",
-      "or": "或"
+      "or": "或",
+      "divide": "除",
+      "product": "乘积",
+      "subtract": "减"
     },
     "validation": {
       "required": "此值必填",
@@ -1094,7 +1278,9 @@
       "exportXlsLabel": "Excel 97-2003 (.xls)",
       "exportXlsDesc": "旧版 Excel 格式",
       "exportOdsLabel": "OpenDocument (.ods)",
-      "exportOdsDesc": "兼容 LibreOffice / WPS"
+      "exportOdsDesc": "兼容 LibreOffice / WPS",
+      "autoFitColumns": "自动调整列宽",
+      "autoFitDone": "已自动调整列宽"
     },
     "findReplace": {
       "title": "查找",
@@ -1138,6 +1324,14 @@
         "eq": "等于",
         "neq": "不等于"
       }
+    },
+    "formulaBar": {
+      "goToCell": "转到单元格",
+      "cellAddress": "单元格地址",
+      "cellContent": "单元格内容"
+    },
+    "message": {
+      "tip": "提示"
     }
   },
   "markdown": {
@@ -1230,7 +1424,22 @@
     "wysiwyg": "所见即所得",
     "aiSave": "保存",
     "aiCancel": "取消",
-    "aiDelete": "删除"
+    "aiDelete": "删除",
+    "editInVscode": "在 VS Code 中编辑（{shortcut}）",
+    "save": "保存",
+    "paste": "粘贴",
+    "exportPdf": "导出 PDF",
+    "exportDocx": "导出 Docx",
+    "exportHtml": "导出 HTML",
+    "plaintext": "纯文本",
+    "empty": "无",
+    "current": "当前",
+    "languageSearch": "搜索语言",
+    "copyAsImage": "复制为图片",
+    "openInPlantuml": "在 PlantUML 中打开",
+    "toggleLineWrap": "切换自动换行",
+    "mermaidRenderError": "Mermaid 渲染错误",
+    "plantumlRenderError": "PlantUML 渲染错误"
   },
   "pdf": {
     "previous": {
@@ -1376,7 +1585,7 @@
         "keywords": "关键词:",
         "creation_date": "创建日期:",
         "modification_date": "修改日期:",
-        "date_string": "{date}, {time}",
+        "date_string": "{date} {time}",
         "creator": "创建者:",
         "producer": "PDF 生成器：",
         "version": "PDF 版本:",
@@ -1509,6 +1718,12 @@
       "supported": "警告：此浏览器尚未完整支持打印功能。",
       "ready": "警告：此 PDF 未完成载入，无法打印。"
     },
-    "web_fonts_disabled": "Web 字体已被禁用：无法使用嵌入的 PDF 字体。"
+    "web_fonts_disabled": "Web 字体已被禁用：无法使用嵌入的 PDF 字体。",
+    "switchToLight": "将 PDF 切换为浅色模式",
+    "switchToDark": "将 PDF 切换为深色模式",
+    "layers": {
+      "@title": "显示图层（双击可将所有图层重置为默认状态）",
+      "label": "图层"
+    }
   }
 }

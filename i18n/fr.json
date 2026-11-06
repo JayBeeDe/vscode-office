@@ -20,7 +20,8 @@
       "noPasteDirectory": "Le collage de répertoires n'est pas pris en charge.",
       "installXclip": "Vous devez d'abord installer la commande xclip.",
       "wikilinkNotFound": "Cible du wikilink introuvable : {target}",
-      "statusBar": "Ligne {lines} Caractères {chars}"
+      "statusBar": "Ligne {lines} Caractères {chars}",
+      "tempHtmlNotFound": "Fichier HTML temporaire introuvable : {path}"
     },
     "loading": {
       "document": "Chargement {kind} {name}...",
@@ -35,13 +36,45 @@
         "markdown": "du Markdown",
         "file": "du fichier"
       }
+    },
+    "saveAs": {
+      "filter": {
+        "xlsx": "Classeur Excel",
+        "xlsm": "Classeur Excel prenant en charge les macros",
+        "xltx": "Modèle de classeur",
+        "xltm": "Modèle de classeur prenant en charge les macros",
+        "xls": "Classeur Excel 97-2003",
+        "xlt": "Modèle de classeur 97-2003",
+        "ods": "Classeur OpenDocument",
+        "ots": "Modèle de classeur OpenDocument",
+        "csv": "CSV (séparateur : virgule)",
+        "docx": "Document Word",
+        "docm": "Document prenant en charge les macros",
+        "dotm": "Modèle de document prenant en charge les macros",
+        "dotx": "Modèle Word",
+        "other": "Fichier {ext}"
+      }
+    },
+    "office": {
+      "readFailed": "Impossible de lire le fichier",
+      "gitExited": "git s'est arrêté avec le code {code}"
     }
   },
   "viewer": {
     "common": {
       "failedOpenFile": "Échec de l'ouverture du fichier",
       "officeViewer": "Office Viewer",
-      "editInVscode": "Modifier dans VS Code"
+      "editInVscode": "Modifier dans VS Code",
+      "previousPage": "Page précédente",
+      "nextPage": "Page suivante",
+      "save": "Enregistrer",
+      "saved": "Enregistré",
+      "zoomIn": "Zoom avant",
+      "zoomOut": "Zoom arrière",
+      "readOnlyBadge": "Lecture seule",
+      "emptyFile": "Le fichier est vide",
+      "noFilePath": "Aucun chemin de fichier",
+      "fetchFailed": "Échec du chargement ({status})"
     },
     "document": {
       "heading": "Titre {level}",
@@ -52,7 +85,11 @@
     },
     "presentation": {
       "failedLoad": "Échec du chargement de la présentation",
-      "slides": "Diapositives"
+      "slides": "Diapositives",
+      "slide": "Diapositive {number}",
+      "status": "Diapositive {number} / {count}",
+      "slideCount": "{count} diapositives",
+      "loadingThumbnails": "chargement…"
     },
     "epub": {
       "searchBook": "Rechercher un livre...",
@@ -60,7 +97,18 @@
       "failedRender": "Échec du rendu de la page EPUB",
       "searchFailed": "Échec de la recherche",
       "untitled": "Sans titre",
-      "error": "Erreur"
+      "error": "Erreur",
+      "cover": "Couverture",
+      "themes": "Thèmes",
+      "themeAuto": "Automatique",
+      "themeLight": "Clair",
+      "themeDark": "Sombre",
+      "themeScope": "Les pages de tous les livres EPUB. Automatique suit le thème de l'extension (vscode-office.theme).",
+      "font": "Police",
+      "systemFont": "Système",
+      "fontSize": "Taille de police",
+      "lineSpacing": "Interligne",
+      "currentLocation": "Position actuelle"
     },
     "xmind": {
       "sheets": "Feuilles",
@@ -156,10 +204,28 @@
         "noChanges": "Aucune modification à enregistrer",
         "zoomMin": "Déjà au zoom minimum",
         "zoomMax": "Déjà au zoom maximum"
-      }
+      },
+      "failedLoad": "Impossible de charger le fichier XMind",
+      "failedSave": "Impossible d'enregistrer le fichier XMind",
+      "noSheets": "Aucune feuille dans le fichier XMind",
+      "noContent": "Aucun contenu à afficher",
+      "newTopic": "Nouveau sujet",
+      "untitled": "Sans titre",
+      "defaultSheet": "Feuille {number}"
     },
     "parquet": {
-      "readOnly": "Lecture seule — les modifications ne sont pas enregistrées sur le disque"
+      "readOnly": "Lecture seule — les modifications ne sont pas enregistrées sur le disque",
+      "schema": "Schéma",
+      "rows": "Lignes",
+      "columnsLabel": "Colonnes",
+      "createdBy": "Créé par",
+      "totalRows": "{count} lignes",
+      "save": "Enregistrer",
+      "saveSuccess": "Fichier Parquet enregistré",
+      "unsaved": "Modifications non enregistrées",
+      "invalidValue": "« {value} » n'est pas une valeur {type} valide",
+      "failedLoad": "Impossible de charger le fichier Parquet",
+      "failedSave": "Impossible d'enregistrer le fichier Parquet"
     }
   },
   "document": {
@@ -205,7 +271,10 @@
       "symbol": "Symbole",
       "help": "Aide",
       "reportIssue": "Signaler un bug",
-      "watermark": "Filigrane"
+      "watermark": "Filigrane",
+      "break": "Saut",
+      "sectionBreakNextPage": "Saut de section (page suivante)",
+      "sectionBreakContinuous": "Saut de section (continu)"
     },
     "formattingBar": {
       "groups": {
@@ -241,7 +310,9 @@
       "subscriptShortcut": "Indice (Ctrl+=)",
       "imageProperties": "Propriétés de l'image",
       "imagePropertiesShortcut": "Propriétés de l'image... (description, bordure)",
-      "clearFormatting": "Effacer la mise en forme"
+      "clearFormatting": "Effacer la mise en forme",
+      "commentsAndChanges": "Commentaires et modifications",
+      "moreItems": "{count, plural, one {# autre élément} other {# autres éléments}}"
     },
     "alignment": {
       "alignLeft": "Aligner à gauche",
@@ -266,7 +337,8 @@
       "single": "Simple",
       "double": "Double",
       "lineSpacingTitle": "Interligne : {label}",
-      "paragraphSpacing": "Espacement des paragraphes"
+      "paragraphSpacing": "Espacement des paragraphes",
+      "label": "Interligne"
     },
     "styles": {
       "selectAriaLabel": "Sélectionner le type de paragraphe",
@@ -279,8 +351,11 @@
     },
     "font": {
       "selectAriaLabel": "Sélectionner une police",
-      "serif": "Serif",
-      "monospace": "Monospace"
+      "serif": "Avec empattement",
+      "monospace": "Chasse fixe",
+      "sansSerif": "Sans empattement",
+      "other": "Autre",
+      "documentFonts": "Polices du document"
     },
     "fontSize": {
       "decrease": "Diminuer la taille de la police",
@@ -289,7 +364,10 @@
       "listLabel": "Tailles de police"
     },
     "zoom": {
-      "ariaLabel": "Zoom : {label}"
+      "ariaLabel": "Zoom : {label}",
+      "zoomOut": "Zoom arrière",
+      "zoomIn": "Zoom avant",
+      "zoomLevel": "Niveau de zoom"
     },
     "colorPicker": {
       "ariaLabel": "Choisir la couleur {type}",
@@ -525,12 +603,12 @@
         "right": "Droite",
         "pageSizes": {
           "letter": "Lettre US (21,6 × 27,9 cm)",
-          "a4": "A4 (21 × 29,7 cm)",
+          "a4": "A4 (8,27\" × 11,69\")",
           "legal": "Standard juridique US (21,6 × 35,6 cm)",
-          "a3": "A3 (29,7 × 42 cm)",
-          "a5": "A5 (14,8 × 21 cm)",
-          "b5": "B5 (17,6 × 25 cm)",
-          "executive": "Executive (18,4 × 26,7 cm)"
+          "a3": "A3 (11,69\" × 16,54\")",
+          "a5": "A5 (5,83\" × 8,27\")",
+          "b5": "B5 (6,93\" × 9,84\")",
+          "executive": "Executive (7,25\" × 10,5\")"
         }
       },
       "tableProperties": {
@@ -843,7 +921,8 @@
         "listTable4Accent3": "Grille de tableau 4 Accent 3",
         "gridTable4Accent5": "Grille de tableau 4 Accent 5",
         "gridTable4Accent6": "Grille de tableau 4 Accent 6"
-      }
+      },
+      "selectTable": "Sélectionner tout le tableau"
     },
     "tableAdvanced": {
       "verticalAlignment": "Alignement vertical",
@@ -910,7 +989,7 @@
       }
     },
     "responsePreview": {
-      "loading": "{action}...",
+      "loading": "{action}…",
       "result": "{action} résultat",
       "closeEsc": "Fermer (Échap)",
       "editPrompt": "Modifier le résultat avant d'accepter :",
@@ -961,7 +1040,8 @@
     "imageOverlay": {
       "rotate": "Faire pivoter",
       "imageProperties": "Propriétés de l'image",
-      "deleteImage": "Supprimer l'image"
+      "deleteImage": "Supprimer l'image",
+      "replaceImage": "Remplacer l'image…"
     },
     "ruler": {
       "horizontal": "Règle horizontale",
@@ -976,7 +1056,7 @@
       "label": "Imprimer",
       "allPages": "Tout ({totalPages} pages)",
       "singlePage": "Page {start}",
-      "pageRange": "Pages {start}-{end}"
+      "pageRange": "Pages {start} à {end}"
     },
     "unsaved": {
       "unsaved": "Non enregistré",
@@ -1002,6 +1082,636 @@
         "summary": "{count, plural, one {# étape} other {# étapes}}",
         "earlier": "+ {count, plural, one {# étape précédente} other {# étapes précédentes}}"
       }
+    },
+    "revisions": {
+      "paragraphMarkInserted": "Saut de paragraphe inséré",
+      "paragraphMarkDeleted": "Saut de paragraphe supprimé",
+      "paragraphPropertiesChanged": "Propriétés du paragraphe modifiées",
+      "rowInserted": "Ligne insérée",
+      "rowDeleted": "Ligne supprimée",
+      "rowPropertiesChanged": "Propriétés de la ligne modifiées",
+      "cellInserted": "Cellule insérée",
+      "cellDeleted": "Cellule supprimée",
+      "cellMerged": "Cellules fusionnées",
+      "cellPropertiesChanged": "Propriétés de la cellule modifiées",
+      "tablePropertiesChanged": "Propriétés du tableau modifiées",
+      "tableInserted": "Tableau inséré",
+      "tableDeleted": "Tableau supprimé"
     }
+  },
+  "spreadsheet": {
+    "toolbar": {
+      "undo": "Annuler",
+      "redo": "Rétablir",
+      "print": "Imprimer",
+      "paintformat": "Reproduire la mise en forme",
+      "clearformat": "Effacer la mise en forme",
+      "format": "Format",
+      "fontName": "Police",
+      "fontSize": "Taille de police",
+      "fontBold": "Gras",
+      "fontItalic": "Italique",
+      "underline": "Souligné",
+      "strike": "Barré",
+      "color": "Couleur du texte",
+      "bgcolor": "Couleur de remplissage",
+      "border": "Bordures",
+      "merge": "Fusionner les cellules",
+      "align": "Alignement horizontal",
+      "valign": "Alignement vertical",
+      "textwrap": "Renvoyer à la ligne",
+      "freeze": "Figer les volets",
+      "autofilter": "Filtre",
+      "formula": "Fonctions",
+      "find": "Rechercher",
+      "editInVscode": "Modifier dans VS Code",
+      "save": "Enregistrer",
+      "saveAs": "Enregistrer sous",
+      "more": "Plus"
+    },
+    "bottombar": {
+      "firstSheet": "Aller à la première feuille",
+      "prevSheet": "Faire défiler vers la gauche",
+      "nextSheet": "Faire défiler vers la droite",
+      "lastSheet": "Aller à la dernière feuille",
+      "moreSheets": "Toutes les feuilles",
+      "addSheet": "Ajouter une feuille",
+      "defaultSheetName": "Feuil{number}",
+      "defaultSheetBase": "Feuil"
+    },
+    "align": {
+      "left": "Aligner à gauche",
+      "center": "Centrer",
+      "right": "Aligner à droite"
+    },
+    "valign": {
+      "top": "Aligner en haut",
+      "middle": "Aligner au centre",
+      "bottom": "Aligner en bas"
+    },
+    "contextmenu": {
+      "copy": "Copier",
+      "cut": "Couper",
+      "paste": "Coller",
+      "pasteValue": "Coller les valeurs uniquement",
+      "pasteFormat": "Coller la mise en forme uniquement",
+      "hide": "Masquer",
+      "insertRow": "Insérer une ligne",
+      "insertColumn": "Insérer une colonne",
+      "deleteSheet": "Supprimer",
+      "renameSheet": "Renommer",
+      "duplicateSheet": "Dupliquer",
+      "deleteRow": "Supprimer la ligne",
+      "deleteColumn": "Supprimer la colonne",
+      "deleteCell": "Supprimer la cellule",
+      "deleteCellText": "Effacer le contenu",
+      "hyperlink": "Lien hypertexte",
+      "validation": "Validation des données",
+      "celleditable": "Autoriser la modification",
+      "cellnoneditable": "Interdire la modification"
+    },
+    "print": {
+      "settings": "Paramètres d'impression",
+      "size": "Format du papier",
+      "orientation": "Orientation de la page",
+      "orientations": [
+        "Paysage",
+        "Portrait"
+      ]
+    },
+    "format": {
+      "normal": "Standard",
+      "text": "Texte brut",
+      "number": "Nombre",
+      "numberPlain": "Nombre (brut)",
+      "percent": "Pourcentage",
+      "date": "Date",
+      "time": "Heure",
+      "datetime": "Date et heure",
+      "duration": "Durée"
+    },
+    "formula": {
+      "sum": "Somme",
+      "average": "Moyenne",
+      "max": "Max",
+      "min": "Min",
+      "_if": "Si",
+      "and": "Et",
+      "or": "Ou",
+      "concat": "Concaténer",
+      "divide": "Diviser",
+      "product": "Produit",
+      "subtract": "Soustraire"
+    },
+    "validation": {
+      "required": "la valeur est obligatoire",
+      "notMatch": "la valeur ne respecte pas la règle de validation",
+      "between": "la valeur est comprise entre {min} et {max}",
+      "notBetween": "la valeur n'est pas comprise entre {min} et {max}",
+      "notIn": "la valeur n'est pas dans la liste",
+      "equal": "la valeur est égale à {value}",
+      "notEqual": "la valeur est différente de {value}",
+      "lessThan": "la valeur est inférieure à {value}",
+      "lessThanEqual": "la valeur est inférieure ou égale à {value}",
+      "greaterThan": "la valeur est supérieure à {value}",
+      "greaterThanEqual": "la valeur est supérieure ou égale à {value}"
+    },
+    "error": {
+      "pasteForMergedCell": "Impossible de le faire sur des cellules fusionnées"
+    },
+    "calendar": {
+      "weeks": [
+        "dim.",
+        "lun.",
+        "mar.",
+        "mer.",
+        "jeu.",
+        "ven.",
+        "sam."
+      ],
+      "months": [
+        "janvier",
+        "février",
+        "mars",
+        "avril",
+        "mai",
+        "juin",
+        "juillet",
+        "août",
+        "septembre",
+        "octobre",
+        "novembre",
+        "décembre"
+      ]
+    },
+    "button": {
+      "next": "Suivant",
+      "cancel": "Annuler",
+      "remove": "Supprimer",
+      "save": "Enregistrer",
+      "saveAs": "Enregistrer sous"
+    },
+    "sort": {
+      "desc": "Trier de Z à A",
+      "asc": "Trier de A à Z"
+    },
+    "filter": {
+      "empty": "vide"
+    },
+    "hyperlink": {
+      "address": "Adresse",
+      "tooltip": "Info-bulle"
+    },
+    "dataValidation": {
+      "mode": "Mode",
+      "range": "Plage de cellules",
+      "criteria": "Critères",
+      "modeType": {
+        "cell": "Cellule",
+        "column": "Colonne",
+        "row": "Ligne"
+      },
+      "type": {
+        "list": "Liste",
+        "number": "Nombre",
+        "date": "Date",
+        "phone": "Téléphone",
+        "email": "E-mail"
+      },
+      "operator": {
+        "be": "Comprise entre",
+        "nbe": "Non comprise entre",
+        "lt": "Inférieure à",
+        "lte": "Inférieure ou égale à",
+        "gt": "Supérieure à",
+        "gte": "Supérieure ou égale à",
+        "eq": "Égale à",
+        "neq": "Différente de"
+      }
+    },
+    "viewer": {
+      "protectedCell": "Les cellules protégées ne prennent pas en charge cette fonction",
+      "readonlyBanner": "Lecture seule — parcourez et recherchez ; utilisez Enregistrer sous pour conserver vos modifications",
+      "formatCannotPreserveTitle": "La mise en forme ne peut pas être conservée",
+      "formatCannotPreserveContent": "{format} ne conserve pas les styles, les fusions, les formules, etc. Enregistrer en xlsx à la place ?",
+      "onlyFirstSheetContent": "{format} ne conserve que la première feuille : les autres seront perdues. Enregistrer en xlsx à la place ?",
+      "saveAsXlsx": "Enregistrer en xlsx",
+      "saveAsOriginal": "Garder le format d'origine",
+      "chooseExportFormat": "Choisir le format d'export",
+      "exportXlsxLabel": "Classeur Excel (.xlsx)",
+      "exportXlsxDesc": "Conserve les styles, les formules, les cellules fusionnées",
+      "exportCsvDesc": "Texte brut, première feuille uniquement",
+      "exportXlsDesc": "Ancien format Excel",
+      "exportOdsDesc": "Compatible avec LibreOffice / WPS",
+      "autoFitColumns": "Ajuster la largeur des colonnes",
+      "autoFitDone": "Largeur des colonnes ajustée"
+    },
+    "findReplace": {
+      "title": "Rechercher",
+      "titleReplace": "Rechercher et remplacer",
+      "placeholder": "Rechercher…",
+      "replacePlaceholder": "Remplacer par…",
+      "replace": "Remplacer",
+      "replaceAll": "Tout",
+      "notFound": "Introuvable",
+      "replacedCount": "{count} remplacé(s)",
+      "matchLocation": "Feuille {sheet} · {column}{row}",
+      "previous": "Précédent (Maj+Entrée)",
+      "next": "Suivant (Entrée)",
+      "wholeCell": "Cellule entière",
+      "allSheets": "Toutes les feuilles",
+      "close": "Fermer"
+    },
+    "formulaBar": {
+      "goToCell": "Atteindre la cellule",
+      "cellAddress": "Adresse de la cellule",
+      "cellContent": "Contenu de la cellule"
+    },
+    "message": {
+      "tip": "Astuce"
+    }
+  },
+  "markdown": {
+    "expandCode": "Déplier",
+    "collapseCode": "Replier",
+    "alignCenter": "Centré",
+    "alignLeft": "À gauche",
+    "alignRight": "À droite",
+    "alternateText": "Texte de remplacement",
+    "bold": "Gras",
+    "check": "Liste de tâches",
+    "close": "Fermer",
+    "imageOpen": "Ouvrir",
+    "imagePreview": "Aperçu de l'image",
+    "code": "Bloc de code",
+    "code-theme": "Thème CodeMirror",
+    "comment": "Commentaire",
+    "copyFailed": "Ce diagramme ne peut pas être copié",
+    "copied": "Copié",
+    "copy": "Copier",
+    "delete-column": "Supprimer la colonne",
+    "delete-row": "Supprimer la ligne",
+    "down": "Descendre",
+    "edit": "Modifier",
+    "edit-mode-label": "Mode d'édition",
+    "find": "Rechercher",
+    "find-placeholder": "Rechercher dans le document…",
+    "find-no-result": "Aucun résultat",
+    "find-match-case": "Respecter la casse",
+    "find-whole-word": "Mot entier",
+    "find-regex": "Utiliser une expression régulière",
+    "find-toggle-replace": "Afficher/masquer le remplacement",
+    "find-previous": "Précédent (Maj+Entrée)",
+    "find-next": "Suivant (Entrée)",
+    "find-replace": "Remplacer",
+    "find-replace-all": "Tout remplacer",
+    "find-invalid-regex": "Expression régulière non valide",
+    "replace-placeholder": "Remplacer…",
+    "edit-mode": "Changer de mode d'édition",
+    "edit-mode-wysiwyg-desc": "Modifier directement le contenu mis en forme",
+    "edit-mode-ir-desc": "Markdown avec aperçu en direct",
+    "fileTypeError": "type de fichier non pris en charge",
+    "footnoteRef": "Renvoi de note",
+    "headings": "Titres",
+    "heading1": "Titre 1",
+    "heading2": "Titre 2",
+    "heading3": "Titre 3",
+    "heading4": "Titre 4",
+    "heading5": "Titre 5",
+    "heading6": "Titre 6",
+    "imageURL": "URL de l'image",
+    "indent": "Augmenter le retrait",
+    "inline-code": "Code en ligne",
+    "insert-after": "Insérer une ligne après",
+    "insert-before": "Insérer une ligne avant",
+    "insertColumnLeft": "Insérer 1 à gauche",
+    "insertColumnRight": "Insérer 1 à droite",
+    "insertRowAbove": "Insérer 1 au-dessus",
+    "insertRowBelow": "Insérer 1 en dessous",
+    "instantRendering": "Rendu instantané",
+    "italic": "Italique",
+    "language": "Langage",
+    "line": "Ligne horizontale",
+    "link": "Lien",
+    "linkCopied": "Lien copié",
+    "linkRefCopied": "Texte copié",
+    "linkRef": "Référence de lien",
+    "list": "Liste",
+    "more": "Plus",
+    "nameEmpty": "Le nom est vide",
+    "ordered-list": "Liste numérotée",
+    "outdent": "Diminuer le retrait",
+    "outline": "Plan",
+    "over": "sur",
+    "quote": "Citation",
+    "redo": "Rétablir",
+    "remove": "Supprimer",
+    "row": "Ligne",
+    "spin": "Rotation",
+    "strike": "Barré",
+    "table": "Tableau",
+    "textIsNotEmpty": "texte (non vide)",
+    "title": "Titre",
+    "undo": "Annuler",
+    "up": "Monter",
+    "update": "Mettre à jour",
+    "upload": "Téléverser une image ou un fichier",
+    "uploadError": "erreur de téléversement",
+    "uploading": "téléversement...",
+    "wysiwyg": "WYSIWYG",
+    "aiSave": "Enregistrer",
+    "aiCancel": "Annuler",
+    "aiDelete": "Supprimer",
+    "editInVscode": "Modifier dans VS Code ({shortcut})",
+    "save": "Enregistrer",
+    "paste": "Coller",
+    "exportPdf": "Exporter en PDF",
+    "exportDocx": "Exporter en Docx",
+    "exportHtml": "Exporter en HTML",
+    "plaintext": "Texte brut",
+    "empty": "Aucun",
+    "current": "actuel",
+    "languageSearch": "Rechercher un langage",
+    "copyAsImage": "Copier comme image",
+    "openInPlantuml": "Ouvrir dans PlantUML",
+    "toggleLineWrap": "Activer/désactiver le retour à la ligne",
+    "mermaidRenderError": "Erreur de rendu Mermaid",
+    "plantumlRenderError": "Erreur de rendu PlantUML"
+  },
+  "pdf": {
+    "switchToLight": "Passer le PDF en mode clair",
+    "switchToDark": "Passer le PDF en mode sombre",
+    "previous": {
+      "@title": "Page précédente",
+      "label": "Précédent"
+    },
+    "next": {
+      "@title": "Page suivante",
+      "label": "Suivant"
+    },
+    "page": {
+      "@title": "Page",
+      "of_pages": "({pageNumber} sur {pagesCount})",
+      "rotate": {
+        "cw": {
+          "@title": "Rotation horaire",
+          "@label": "Rotation horaire",
+          "label": "Rotation horaire"
+        },
+        "ccw": {
+          "@title": "Rotation antihoraire",
+          "@label": "Rotation antihoraire",
+          "label": "Rotation antihoraire"
+        }
+      },
+      "canvas": "Page {page}",
+      "scale": {
+        "width": "Pleine largeur",
+        "fit": "Page entière",
+        "percent": "{scale} %"
+      }
+    },
+    "of_pages": "sur {pagesCount}",
+    "zoom": {
+      "@title": "Zoom",
+      "out": {
+        "@title": "Zoom arrière",
+        "label": "Zoom arrière"
+      },
+      "in": {
+        "@title": "Zoom avant",
+        "label": "Zoom avant"
+      },
+      "page_fit": {
+        "@title": "Page entière",
+        "label": "Page entière"
+      },
+      "page_width": {
+        "@title": "Pleine largeur",
+        "label": "Pleine largeur"
+      }
+    },
+    "presentation_mode": {
+      "@title": "Basculer en mode présentation",
+      "label": "Mode présentation"
+    },
+    "open_file": {
+      "@title": "Ouvrir le fichier",
+      "label": "Ouvrir le fichier"
+    },
+    "print": {
+      "@title": "Imprimer",
+      "label": "Imprimer",
+      "progress": {
+        "message": "Préparation du document pour l'impression…",
+        "percent": "{progress} %",
+        "close": "Annuler"
+      }
+    },
+    "download": {
+      "@title": "Télécharger",
+      "label": "Télécharger"
+    },
+    "bookmark": {
+      "@title": "Affichage courant (copier ou ouvrir dans une nouvelle fenêtre)",
+      "label": "Affichage actuel"
+    },
+    "tools": {
+      "@title": "Outils",
+      "label": "Outils"
+    },
+    "first_page": {
+      "@title": "Aller à la première page",
+      "@label": "Aller à la première page",
+      "label": "Aller à la première page"
+    },
+    "last_page": {
+      "@title": "Aller à la dernière page",
+      "@label": "Aller à la dernière page",
+      "label": "Aller à la dernière page"
+    },
+    "cursor": {
+      "text_select_tool": {
+        "@title": "Activer l'outil de sélection de texte",
+        "label": "Outil de sélection de texte"
+      },
+      "hand_tool": {
+        "@title": "Activer l'outil main",
+        "label": "Outil main"
+      }
+    },
+    "scroll": {
+      "vertical": {
+        "@title": "Utiliser le défilement vertical",
+        "label": "Défilement vertical"
+      },
+      "horizontal": {
+        "@title": "Utiliser le défilement horizontal",
+        "label": "Défilement horizontal"
+      },
+      "wrapped": {
+        "@title": "Utiliser le défilement par bloc",
+        "label": "Défilement par bloc"
+      }
+    },
+    "spread": {
+      "none": {
+        "@title": "Ne pas afficher les pages deux à deux",
+        "label": "Pas de double affichage"
+      },
+      "odd": {
+        "@title": "Afficher les pages par deux, impaires à gauche",
+        "label": "Doubles pages, impaires à gauche"
+      },
+      "even": {
+        "@title": "Afficher les pages par deux, paires à gauche",
+        "label": "Doubles pages, paires à gauche"
+      }
+    },
+    "document": {
+      "properties": {
+        "@title": "Propriétés du document…",
+        "label": "Propriétés du document…",
+        "file": {
+          "name": "Nom du fichier :",
+          "size": "Taille du fichier :"
+        },
+        "kb": "{size_kb} Ko ({size_b} octets)",
+        "mb": "{size_mb} Mo ({size_b} octets)",
+        "title": "Titre :",
+        "author": "Auteur :",
+        "subject": "Sujet :",
+        "keywords": "Mots-clés :",
+        "creation_date": "Date de création :",
+        "modification_date": "Modifié le :",
+        "date_string": "{date} à {time}",
+        "creator": "Créé par :",
+        "producer": "Outil de conversion PDF :",
+        "version": "Version PDF :",
+        "page": {
+          "count": "Nombre de pages :",
+          "size": {
+            "@text": "Taille de la page :",
+            "unit": {
+              "inches": "in"
+            },
+            "orientation": {
+              "portrait": "portrait",
+              "landscape": "paysage"
+            },
+            "name": {
+              "letter": "lettre",
+              "legal": "document juridique"
+            }
+          }
+        },
+        "linearized": {
+          "@text": "Affichage rapide des pages web :",
+          "yes": "Oui",
+          "no": "Non"
+        },
+        "close": "Fermer"
+      },
+      "outline": {
+        "@title": "Afficher les signets du document (double-clic pour développer/réduire tous les éléments)",
+        "label": "Signets du document"
+      }
+    },
+    "toggle_sidebar": {
+      "@title": "Afficher/Masquer le panneau latéral",
+      "label": "Afficher/Masquer le panneau latéral",
+      "notification": {
+        "@title": "Afficher/Masquer le panneau latéral (le document contient des signets/pièces jointes/calques)"
+      }
+    },
+    "attachments": {
+      "@title": "Afficher les pièces jointes",
+      "label": "Pièces jointes"
+    },
+    "layers": {
+      "@title": "Afficher les calques (double-clic pour réinitialiser tous les calques à l'état par défaut)",
+      "label": "Calques"
+    },
+    "thumbs": {
+      "@title": "Afficher les vignettes",
+      "label": "Vignettes"
+    },
+    "findbar": {
+      "@title": "Rechercher dans le document",
+      "label": "Rechercher"
+    },
+    "thumb_page": {
+      "title": "Page {page}",
+      "canvas": "Vignette de la page {page}"
+    },
+    "find": {
+      "input": {
+        "@title": "Rechercher",
+        "@placeholder": "Rechercher dans le document…"
+      },
+      "previous": {
+        "@title": "Trouver l'occurrence précédente de l'expression",
+        "label": "Précédent"
+      },
+      "next": {
+        "@title": "Trouver la prochaine occurrence de l'expression",
+        "label": "Suivant"
+      },
+      "highlight": "Tout surligner",
+      "match": {
+        "case_label": "Respecter la casse",
+        "count": {
+          "[one]": "Occurrence {current} sur {total}",
+          "[two]": "Occurrence {current} sur {total}",
+          "[few]": "Occurrence {current} sur {total}",
+          "[many]": "Occurrence {current} sur {total}",
+          "[other]": "Occurrence {current} sur {total}",
+          "limit": {
+            "[zero]": "Plus de {limit} occurrences",
+            "[one]": "Plus de {limit} occurrence",
+            "[two]": "Plus de {limit} occurrences",
+            "[few]": "Plus de {limit} occurrences",
+            "[many]": "Plus de {limit} occurrences",
+            "[other]": "Plus de {limit} occurrences"
+          }
+        }
+      },
+      "entire_word_label": "Mots entiers",
+      "reached": {
+        "top": "Haut de la page atteint, poursuite depuis la fin",
+        "bottom": "Bas de la page atteint, poursuite au début"
+      },
+      "not_found": "Expression non trouvée"
+    },
+    "error": {
+      "more_info": "Plus d'informations",
+      "less_info": "Moins d'informations",
+      "close": "Fermer",
+      "version_info": "PDF.js v{version} (version : {build})",
+      "message": "Message : {message}",
+      "stack": "Pile : {stack}",
+      "file": "Fichier : {file}",
+      "line": "Ligne : {line}"
+    },
+    "rendering_error": "Une erreur s'est produite lors de l'affichage de la page.",
+    "loading_error": "Une erreur s'est produite lors du chargement du fichier PDF.",
+    "invalid_file_error": "Fichier PDF invalide ou corrompu.",
+    "missing_file_error": "Fichier PDF manquant.",
+    "unexpected_response_error": "Réponse inattendue du serveur.",
+    "annotation_date_string": "{date} à {time}",
+    "text_annotation_type": {
+      "@alt": "[Annotation {type}]"
+    },
+    "password": {
+      "label": "Veuillez saisir le mot de passe pour ouvrir ce fichier PDF.",
+      "invalid": "Mot de passe incorrect. Veuillez réessayer.",
+      "ok": "OK",
+      "cancel": "Annuler"
+    },
+    "printing_not": {
+      "supported": "Attention : l'impression n'est pas totalement prise en charge par ce navigateur.",
+      "ready": "Attention : le PDF n'est pas entièrement chargé pour pouvoir l'imprimer."
+    },
+    "web_fonts_disabled": "Les polices web sont désactivées : impossible d'utiliser les polices intégrées au PDF."
   }
 }

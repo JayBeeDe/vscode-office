@@ -20,7 +20,8 @@
       "noPasteDirectory": "ディレクトリの貼り付けはサポートされていません。",
       "installXclip": "先に xclip コマンドをインストールしてください。",
       "wikilinkNotFound": "ウィキリンクのターゲットが見つかりません: {target}",
-      "statusBar": "行 {lines} 文字数 {chars}"
+      "statusBar": "行 {lines} 文字数 {chars}",
+      "tempHtmlNotFound": "一時 HTML ファイルが見つかりません: {path}"
     },
     "loading": {
       "document": "{kind} {name} を読み込んでいます...",
@@ -35,13 +36,45 @@
         "markdown": "Markdown",
         "file": "ファイル"
       }
+    },
+    "saveAs": {
+      "filter": {
+        "xlsx": "Excel ブック",
+        "xlsm": "Excel マクロ有効ブック",
+        "xltx": "スプレッドシート テンプレート",
+        "xltm": "マクロ有効スプレッドシート テンプレート",
+        "xls": "Excel 97-2003 ブック",
+        "xlt": "スプレッドシート 97-2003 テンプレート",
+        "ods": "OpenDocument スプレッドシート",
+        "ots": "OpenDocument スプレッドシート テンプレート",
+        "csv": "CSV (コンマ区切り)",
+        "docx": "Word 文書",
+        "docm": "マクロ有効文書",
+        "dotm": "マクロ有効文書テンプレート",
+        "dotx": "Word テンプレート",
+        "other": "{ext} ファイル"
+      }
+    },
+    "office": {
+      "readFailed": "ファイルを読み込めませんでした",
+      "gitExited": "git がコード {code} で終了しました"
     }
   },
   "viewer": {
     "common": {
       "failedOpenFile": "ファイルを開けませんでした",
       "officeViewer": "Office Viewer",
-      "editInVscode": "VS Code で編集"
+      "editInVscode": "VS Code で編集",
+      "previousPage": "前のページ",
+      "nextPage": "次のページ",
+      "save": "保存",
+      "saved": "保存しました",
+      "zoomIn": "拡大",
+      "zoomOut": "縮小",
+      "readOnlyBadge": "読み取り専用",
+      "emptyFile": "ファイルの内容が空です",
+      "noFilePath": "ファイル パスがありません",
+      "fetchFailed": "取得に失敗しました ({status})"
     },
     "document": {
       "heading": "見出し {level}",
@@ -52,7 +85,11 @@
     },
     "presentation": {
       "failedLoad": "プレゼンテーションの読み込みに失敗しました",
-      "slides": "スライド"
+      "slides": "スライド",
+      "slide": "スライド {number}",
+      "status": "スライド {number} / {count}",
+      "slideCount": "{count} 枚のスライド",
+      "loadingThumbnails": "読み込み中…"
     },
     "epub": {
       "searchBook": "書籍を検索...",
@@ -60,13 +97,135 @@
       "failedRender": "EPUB ページのレンダリングに失敗しました",
       "searchFailed": "検索に失敗しました",
       "untitled": "無題",
-      "error": "エラー"
+      "error": "エラー",
+      "cover": "表紙",
+      "themes": "テーマ",
+      "themeAuto": "自動",
+      "themeLight": "ライト",
+      "themeDark": "ダーク",
+      "themeScope": "すべての EPUB 書籍のページ。「自動」は拡張機能のテーマ (vscode-office.theme) に従います。",
+      "font": "フォント",
+      "systemFont": "システム",
+      "fontSize": "フォント サイズ",
+      "lineSpacing": "行間",
+      "currentLocation": "現在の位置"
     },
     "xmind": {
-      "sheets": "シート"
+      "sheets": "シート",
+      "failedLoad": "XMind ファイルを読み込めませんでした",
+      "failedSave": "XMind ファイルを保存できませんでした",
+      "noSheets": "XMind ファイルにシートがありません",
+      "noContent": "表示する内容がありません",
+      "clickTarget": "接続先のトピックをクリックしてください",
+      "tips": {
+        "save": {
+          "title": "保存",
+          "text": "変更を XMind ファイルに書き込みます"
+        },
+        "addChild": {
+          "title": "新しいサブトピック",
+          "text": "選択したトピックの下にトピックを追加します"
+        },
+        "addSibling": {
+          "title": "同じレベルの新しいトピック",
+          "text": "選択したトピックのすぐ後にトピックを追加します"
+        },
+        "addParent": {
+          "title": "新しい親トピック",
+          "text": "選択したトピックの上にトピックを挿入し、選択したトピックをそのサブトピックにします"
+        },
+        "remove": {
+          "title": "削除",
+          "text": "選択したトピックとその下のすべてを削除します"
+        },
+        "moveUp": {
+          "title": "上へ移動",
+          "text": "選択したトピックを上のトピックと入れ替えます"
+        },
+        "moveDown": {
+          "title": "下へ移動",
+          "text": "選択したトピックを下のトピックと入れ替えます"
+        },
+        "focus": {
+          "title": "このトピックに集中",
+          "text": "選択したトピックとそのサブトピックだけを表示します"
+        },
+        "cancelFocus": {
+          "title": "マップ全体を表示",
+          "text": "集中表示を終了し、すべてのトピックを再び表示します"
+        },
+        "link": {
+          "title": "別のトピックに接続",
+          "text": "選択したトピックから次にクリックしたトピックへ矢印を引きます"
+        },
+        "linkBidirectional": {
+          "title": "双方向に接続",
+          "text": "選択したトピックと次にクリックしたトピックの間に両方向の矢印を引きます"
+        },
+        "summary": {
+          "title": "要約",
+          "text": "選択したトピックを括弧と要約トピックでまとめます"
+        },
+        "layoutLeft": {
+          "title": "左に分岐",
+          "text": "すべての分岐を中心トピックの左に配置します"
+        },
+        "layoutSide": {
+          "title": "両側に分岐",
+          "text": "分岐を中心トピックの両側に振り分けます"
+        },
+        "layoutRight": {
+          "title": "右に分岐",
+          "text": "すべての分岐を中心トピックの右に配置します"
+        },
+        "center": {
+          "title": "マップを中央に表示",
+          "text": "中心トピックを表示の中央に戻します"
+        },
+        "zoomOut": {
+          "title": "縮小",
+          "text": "マップを 10% ずつ小さくします"
+        },
+        "zoom": {
+          "title": "ズーム",
+          "text": "20 から 400 までの割合を入力して Enter キーを押します"
+        },
+        "zoomIn": {
+          "title": "拡大",
+          "text": "マップを 10% ずつ大きくします"
+        },
+        "autoZoom": {
+          "title": "全体を表示",
+          "text": "パネルのサイズを変えても、常にマップ全体を表示します"
+        }
+      },
+      "unavailable": {
+        "selectOne": "先にトピックを選択してください",
+        "selectOneChild": "中心トピック以外のトピックを 1 つ選択してください",
+        "selectChildren": "中心トピック以外のトピックを選択してください",
+        "notFocused": "トピックに集中しているときのみ",
+        "readOnly": "このファイルは読み取り専用です",
+        "noChanges": "未保存の変更はありません",
+        "zoomMin": "すでに最小のズームです",
+        "zoomMax": "すでに最大のズームです"
+      },
+      "newTopic": "新しいトピック",
+      "untitled": "無題",
+      "defaultSheet": "シート {number}"
     },
     "parquet": {
-      "readOnly": "読み取り専用 — 変更はディスクに保存されません"
+      "readOnly": "読み取り専用 — 変更はディスクに保存されません",
+      "schema": "スキーマ",
+      "rows": "行数",
+      "columnsLabel": "列数",
+      "createdBy": "作成元",
+      "totalRows": "{count} 行",
+      "save": "保存",
+      "saveSuccess": "Parquet ファイルを保存しました",
+      "unsaved": "未保存の変更",
+      "invalidValue": "「{value}」は {type} の値として正しくありません",
+      "failedLoad": "Parquet ファイルを読み込めませんでした",
+      "failedSave": "Parquet ファイルを保存できませんでした"
     }
   },
   "markdown": {
@@ -104,7 +263,7 @@
     "heading1": "第1レベルの見出し",
     "heading2": "第2レベルの見出し",
     "heading3": "3レベルの見出し",
-    "heading4": "Heading 4",
+    "heading4": "見出し 4",
     "heading5": "5レベルの見出し",
     "heading6": "6レベルの見出し",
     "imageURL": "イメージ URL",
@@ -149,6 +308,1370 @@
     "wysiwyg": "ウィジウィグ",
     "aiSave": "保存",
     "aiCancel": "キャンセル",
-    "aiDelete": "削除"
+    "aiDelete": "削除",
+    "find-match-case": "大文字と小文字を区別",
+    "find-whole-word": "単語単位",
+    "find-regex": "正規表現を使用",
+    "find-toggle-replace": "置換の表示/非表示",
+    "find-previous": "前へ (Shift+Enter)",
+    "find-next": "次へ (Enter)",
+    "find-replace": "置換",
+    "find-replace-all": "すべて置換",
+    "find-invalid-regex": "正規表現が正しくありません",
+    "replace-placeholder": "置換…",
+    "editInVscode": "VS Code で編集 ({shortcut})",
+    "save": "保存",
+    "paste": "貼り付け",
+    "exportPdf": "PDF にエクスポート",
+    "exportDocx": "Docx にエクスポート",
+    "exportHtml": "HTML にエクスポート",
+    "plaintext": "プレーン テキスト",
+    "empty": "なし",
+    "current": "現在",
+    "languageSearch": "言語を検索",
+    "copyAsImage": "画像としてコピー",
+    "openInPlantuml": "PlantUML で開く",
+    "toggleLineWrap": "行の折り返しの切り替え",
+    "mermaidRenderError": "Mermaid の描画エラー",
+    "plantumlRenderError": "PlantUML の描画エラー"
+  },
+  "document": {
+    "common": {
+      "cancel": "キャンセル",
+      "insert": "挿入",
+      "apply": "適用",
+      "close": "閉じる",
+      "delete": "削除",
+      "update": "更新",
+      "save": "保存",
+      "retry": "再試行",
+      "send": "送信",
+      "edit": "編集",
+      "comment": "コメント",
+      "reply": "返信",
+      "accept": "承諾",
+      "reject": "元に戻す",
+      "dismiss": "閉じる",
+      "change": "変更",
+      "clear": "クリア",
+      "closeDialog": "ダイアログを閉じる"
+    },
+    "toolbar": {
+      "ariaLabel": "書式設定ツールバー",
+      "file": "ファイル",
+      "format": "書式",
+      "insert": "挿入",
+      "open": "開く",
+      "save": "保存",
+      "print": "印刷",
+      "pageSetup": "ページ設定",
+      "leftToRight": "左から右へのテキスト",
+      "rightToLeft": "右から左へのテキスト",
+      "image": "画像",
+      "table": "表",
+      "break": "区切り",
+      "pageBreak": "改ページ",
+      "sectionBreakNextPage": "セクション区切り (次のページから開始)",
+      "sectionBreakContinuous": "セクション区切り (現在の位置から開始)",
+      "tableOfContents": "目次",
+      "symbol": "記号と特殊文字",
+      "watermark": "透かし",
+      "help": "ヘルプ",
+      "reportIssue": "問題を報告"
+    },
+    "formattingBar": {
+      "groups": {
+        "history": "履歴",
+        "zoom": "ズーム",
+        "styles": "スタイル",
+        "font": "フォント",
+        "textFormatting": "文字書式",
+        "script": "上付き・下付き",
+        "alignment": "配置",
+        "listFormatting": "リストの書式",
+        "image": "画像",
+        "table": "表"
+      },
+      "undo": "元に戻す",
+      "undoShortcut": "元に戻す (Ctrl+Z)",
+      "redo": "やり直し",
+      "redoShortcut": "やり直し (Ctrl+Y)",
+      "bold": "太字",
+      "boldShortcut": "太字 (Ctrl+B)",
+      "italic": "斜体",
+      "italicShortcut": "斜体 (Ctrl+I)",
+      "underline": "下線",
+      "underlineShortcut": "下線 (Ctrl+U)",
+      "strikethrough": "取り消し線",
+      "fontColor": "フォントの色",
+      "highlightColor": "蛍光ペンの色",
+      "insertLink": "リンク",
+      "insertLinkShortcut": "リンク (Ctrl+K)",
+      "superscript": "上付き",
+      "superscriptShortcut": "上付き (Ctrl+Shift+=)",
+      "subscript": "下付き",
+      "subscriptShortcut": "下付き (Ctrl+=)",
+      "imageProperties": "画像のプロパティ",
+      "imagePropertiesShortcut": "画像のプロパティ (代替テキスト、枠線)...",
+      "clearFormatting": "書式のクリア",
+      "commentsAndChanges": "コメントと変更履歴",
+      "moreItems": "{count, plural, other {ほか # 項目}}"
+    },
+    "alignment": {
+      "alignLeft": "左揃え",
+      "center": "中央揃え",
+      "alignRight": "右揃え",
+      "justify": "両端揃え"
+    },
+    "lists": {
+      "ariaLabel": "リストの書式",
+      "typeAriaLabel": "リストの種類",
+      "indentationAriaLabel": "リストのインデント",
+      "bulletList": "箇条書き",
+      "numberedList": "段落番号",
+      "decreaseIndent": "インデントを減らす",
+      "increaseIndent": "インデントを増やす"
+    },
+    "lineSpacing": {
+      "label": "行間",
+      "single": "1 行",
+      "double": "2 行",
+      "lineSpacingTitle": "行間: {label}",
+      "paragraphSpacing": "段落の間隔"
+    },
+    "styles": {
+      "selectAriaLabel": "段落スタイルを選択",
+      "normalText": "標準",
+      "title": "表題",
+      "subtitle": "副題",
+      "heading1": "見出し 1",
+      "heading2": "見出し 2",
+      "heading3": "見出し 3"
+    },
+    "font": {
+      "selectAriaLabel": "フォントを選択",
+      "sansSerif": "ゴシック体 (サンセリフ)",
+      "serif": "明朝体 (セリフ)",
+      "monospace": "等幅",
+      "other": "その他",
+      "documentFonts": "文書のフォント"
+    },
+    "fontSize": {
+      "decrease": "フォント サイズの縮小",
+      "increase": "フォント サイズの拡大",
+      "label": "フォント サイズ",
+      "listLabel": "フォント サイズ一覧"
+    },
+    "zoom": {
+      "ariaLabel": "ズーム: {label}",
+      "zoomOut": "縮小",
+      "zoomIn": "拡大",
+      "zoomLevel": "ズーム"
+    },
+    "colorPicker": {
+      "ariaLabel": "{type} の色の選択",
+      "highlightColors": "蛍光ペンの色",
+      "customColor": "ユーザー設定の色",
+      "noColor": "色なし",
+      "automatic": "自動",
+      "themeColors": "テーマの色",
+      "standardColors": "標準の色",
+      "colors": {
+        "black": "黒",
+        "darkRed": "濃い赤",
+        "red": "赤",
+        "orange": "オレンジ",
+        "yellow": "黄",
+        "darkYellow": "濃い黄",
+        "green": "緑",
+        "darkGreen": "濃い緑",
+        "teal": "青緑",
+        "darkTeal": "濃い青緑",
+        "blue": "青",
+        "darkBlue": "濃い青",
+        "purple": "紫",
+        "darkPurple": "濃い紫",
+        "brown": "茶",
+        "grey50": "灰色 50%",
+        "grey25": "灰色 25%",
+        "grey10": "灰色 10%",
+        "white": "白",
+        "lightRed": "薄い赤",
+        "lightOrange": "薄いオレンジ",
+        "lightYellow": "薄い黄",
+        "lightGreen": "薄い緑",
+        "lightBlue": "薄い青",
+        "lightPurple": "薄い紫",
+        "pink": "ピンク",
+        "rose": "ローズ",
+        "gold": "ゴールド",
+        "aqua": "アクア",
+        "lavender": "ラベンダー",
+        "silver": "シルバー",
+        "darkOrange": "濃いオレンジ",
+        "darkGray": "濃い灰色",
+        "gray": "灰色",
+        "cyan": "シアン",
+        "magenta": "マゼンタ",
+        "paleGreen": "淡い緑",
+        "lightCyan": "薄いシアン",
+        "skyBlue": "スカイ ブルー",
+        "lightBlue2": "薄い青 2",
+        "lightMagenta": "薄いマゼンタ",
+        "brightGreen": "明るい緑",
+        "violet": "バイオレット"
+      }
+    },
+    "dialogs": {
+      "findReplace": {
+        "titleFind": "検索",
+        "titleFindReplace": "検索と置換",
+        "findLabel": "検索:",
+        "findPlaceholder": "検索する文字列を入力...",
+        "findAriaLabel": "検索する文字列",
+        "findPrevious": "前を検索",
+        "findPreviousTitle": "前を検索 (Shift+Enter)",
+        "findNext": "次を検索",
+        "findNextTitle": "次を検索 (Enter)",
+        "matchCount": "{current} / {total} 件",
+        "noResults": "見つかりませんでした",
+        "replaceLabel": "置換:",
+        "replacePlaceholder": "置換後の文字列を入力...",
+        "replaceAriaLabel": "置換後の文字列",
+        "replaceButton": "置換",
+        "replaceCurrentTitle": "現在の一致を置換",
+        "replaceAllButton": "すべて置換",
+        "replaceAllTitle": "すべての一致を置換",
+        "matchCase": "大文字と小文字を区別する",
+        "wholeWords": "単語単位で探す",
+        "matchesFound": "{total} 件",
+        "toggleReplace": "+ 置換"
+      },
+      "hyperlink": {
+        "titleEdit": "ハイパーリンクの編集",
+        "titleInsert": "ハイパーリンクの挿入",
+        "tabWebAddress": "Web アドレス",
+        "tabBookmark": "ブックマーク",
+        "urlHint": "Web アドレス、メール (mailto:)、または電話番号 (tel:) を入力してください",
+        "bookmarkLabel": "ブックマーク",
+        "bookmarkPlaceholder": "ブックマークを選択...",
+        "displayTextLabel": "表示文字列",
+        "displayTextPlaceholder": "表示する文字列 (省略可)",
+        "displayTextHint": "空欄の場合は選択中の文字列を使います",
+        "tooltipLabel": "ヒント (省略可)",
+        "tooltipPlaceholder": "ポイントしたときに表示される文字列",
+        "removeLink": "リンクの削除",
+        "invalidUrl": "有効な URL を入力してください",
+        "urlRequired": "URL は必須です"
+      },
+      "insertTable": {
+        "title": "表の挿入",
+        "hoverToSelect": "ポイントしてサイズを選択",
+        "tableSize": "{cols} x {rows} の表",
+        "orSpecifySize": "またはサイズを指定",
+        "rowsLabel": "行数:",
+        "columnsLabel": "列数:",
+        "insertButton": "表の挿入",
+        "sizeSelector": "表のサイズの選択",
+        "columnWidthLabel": "列の幅",
+        "fixedWidth": "固定",
+        "autofit": "文字列の幅に合わせる",
+        "tableStyleLabel": "表のスタイル",
+        "validationHint": "行数: {minRows}-{maxRows}、列数: {minCols}-{maxCols}"
+      },
+      "watermark": {
+        "title": "透かし",
+        "noWatermark": "透かしなし",
+        "picture": "図",
+        "text": "テキスト",
+        "selectPicture": "図の選択...",
+        "scale": "倍率",
+        "washout": "ウォッシュアウト",
+        "textLabel": "テキスト",
+        "fontLabel": "フォント",
+        "sizeLabel": "サイズ",
+        "sizeAuto": "自動",
+        "colorLabel": "色",
+        "layoutLabel": "レイアウト",
+        "diagonal": "対角線上",
+        "horizontal": "水平",
+        "semitransparent": "半透明にする",
+        "presetLabel": "プリセット",
+        "applyButton": "適用",
+        "cancelButton": "キャンセル"
+      },
+      "splitCell": {
+        "title": "セルの分割",
+        "description": "選択したセルを分割する行数と列数を指定します。",
+        "rowsLabel": "行数:",
+        "columnsLabel": "列数:",
+        "currentMinimum": "現在の結合範囲からの最小値: {rows} 行 x {cols} 列",
+        "minValue": "{rows} 行以上、{cols} 列以上を指定してください。",
+        "notOneByOne": "分割後のセルが 2 つ以上になるようにしてください。"
+      },
+      "insertImage": {
+        "title": "画像の挿入",
+        "uploadAriaLabel": "クリックまたはドラッグして画像をアップロード",
+        "uploadText": "クリックして選択するか、画像をドラッグ アンド ドロップします",
+        "uploadSubtext": "PNG、JPG、GIF (10 MB まで)",
+        "dimensions": "サイズ",
+        "widthLabel": "幅:",
+        "heightLabel": "高さ:",
+        "aspectRatioLocked": "縦横比を固定中",
+        "aspectRatioUnlocked": "縦横比を固定していません",
+        "altTextLabel": "代替テキスト (省略可)",
+        "altTextPlaceholder": "アクセシビリティのために画像を説明してください",
+        "insertButton": "画像の挿入",
+        "invalidFile": "有効な画像ファイルを選択してください",
+        "fileTooLarge": "画像ファイルが大きすぎます (最大 10 MB)",
+        "readFailed": "画像ファイルを読み込めませんでした",
+        "loadFailed": "画像を読み込めませんでした",
+        "preview": "プレビュー"
+      },
+      "insertSymbol": {
+        "title": "記号と特殊文字",
+        "searchPlaceholder": "記号を検索 (文字または Unicode)...",
+        "noResultsEmpty": "記号が見つかりません",
+        "noResults": "「{query}」に一致する記号が見つかりません",
+        "decimal": "10 進: {value}",
+        "recent": "最近使用した記号:",
+        "categories": {
+          "common": "よく使う記号",
+          "arrows": "矢印",
+          "math": "数学記号",
+          "greek": "ギリシャ文字",
+          "shapes": "図形",
+          "punctuation": "句読点",
+          "currency": "通貨記号",
+          "music": "音楽記号",
+          "emoji": "絵文字"
+        }
+      },
+      "imageProperties": {
+        "title": "画像のプロパティ",
+        "altText": "代替テキスト",
+        "altTextPlaceholder": "アクセシビリティのためにこの画像を説明してください...",
+        "border": "枠線",
+        "width": "太さ",
+        "style": "スタイル",
+        "color": "色",
+        "preview": "プレビュー",
+        "textWrapping": "文字列の折り返し",
+        "dimensions": "サイズ",
+        "widthLabel": "幅:",
+        "heightLabel": "高さ:",
+        "lockAspectRatio": "縦横比を固定する",
+        "wrapOptions": {
+          "inline": "行内",
+          "wrapRight": "折り返し、画像を左に配置",
+          "wrapLeft": "折り返し、画像を右に配置",
+          "topAndBottom": "上下",
+          "behind": "背面",
+          "inFront": "前面"
+        },
+        "borderStyles": {
+          "solid": "実線",
+          "dashed": "破線",
+          "dotted": "点線",
+          "double": "二重線",
+          "groove": "谷線",
+          "ridge": "山線",
+          "inset": "くぼみ",
+          "outset": "浮き出し"
+        }
+      },
+      "imagePosition": {
+        "title": "画像の位置",
+        "horizontal": "水平方向",
+        "vertical": "垂直方向",
+        "position": "位置",
+        "alignment": "配置",
+        "offset": "オフセット",
+        "offsetPx": "オフセット (px)",
+        "align": "配置",
+        "relativeTo": "基準",
+        "alignOptions": {
+          "left": "左",
+          "center": "中央",
+          "right": "右",
+          "top": "上",
+          "bottom": "下"
+        },
+        "relativeOptions": {
+          "page": "ページ",
+          "column": "段",
+          "margin": "余白",
+          "character": "文字",
+          "paragraph": "段落",
+          "line": "行"
+        }
+      },
+      "pageSetup": {
+        "title": "ページ設定",
+        "pageSize": "用紙サイズ",
+        "sizeLabel": "サイズ",
+        "custom": "ユーザー設定",
+        "orientation": "印刷の向き",
+        "portrait": "縦",
+        "landscape": "横",
+        "margins": "余白",
+        "top": "上",
+        "bottom": "下",
+        "left": "左",
+        "right": "右",
+        "pageSizes": {
+          "letter": "レター (8.5\" × 11\")",
+          "legal": "リーガル (8.5\" × 14\")",
+          "executive": "エグゼクティブ (7.25\" × 10.5\")"
+        }
+      },
+      "tableProperties": {
+        "title": "表のプロパティ",
+        "widthType": "幅の単位",
+        "widthLabel": "幅",
+        "alignmentLabel": "配置",
+        "widthTypes": {
+          "auto": "自動",
+          "fixed": "固定 (twip)",
+          "percentage": "パーセント"
+        },
+        "units": {
+          "fiftiethsPercent": "(1/50 %)"
+        },
+        "alignOptions": {
+          "left": "左",
+          "center": "中央",
+          "right": "右"
+        }
+      },
+      "pasteSpecial": {
+        "title": "形式を選択して貼り付け",
+        "keepFormatting": "元の書式を保持",
+        "keepFormattingDescription": "元の書式のまま貼り付けます",
+        "plainText": "テキストのみ保持",
+        "plainTextDescription": "書式なしで貼り付けます",
+        "readingClipboard": "クリップボードを読み込んでいます...",
+        "preview": "プレビュー:",
+        "noContent": "貼り付ける内容がありません",
+        "clipboardError": "クリップボードを読み込めません。Ctrl+V で貼り付けてください。"
+      },
+      "footnoteProperties": {
+        "title": "脚注と文末脚注",
+        "footnotes": "脚注",
+        "endnotes": "文末脚注",
+        "position": "場所",
+        "numberFormat": "番号書式",
+        "startAt": "開始番号",
+        "numbering": "番号の付け方",
+        "footnotePositions": {
+          "bottomOfPage": "ページの最後",
+          "belowText": "本文の直後"
+        },
+        "endnotePositions": {
+          "endOfDocument": "文書の最後",
+          "endOfSection": "セクションの最後"
+        },
+        "numberingOptions": {
+          "continuous": "連続",
+          "restartSection": "セクションごとに振り直し",
+          "restartPage": "ページごとに振り直し"
+        }
+      },
+      "keyboardShortcuts": {
+        "ariaLabel": "キーボード ショートカット",
+        "searchPlaceholder": "ショートカットを検索...",
+        "categories": {
+          "editing": "編集",
+          "formatting": "書式",
+          "navigation": "移動",
+          "clipboard": "クリップボード",
+          "selection": "選択",
+          "view": "表示",
+          "file": "ファイル",
+          "other": "その他"
+        },
+        "shortcuts": {
+          "save": "保存",
+          "saveDescription": "文書を保存します",
+          "print": "印刷",
+          "printDescription": "文書を印刷します",
+          "undo": "元に戻す",
+          "undoDescription": "直前の操作を元に戻します",
+          "redo": "やり直し",
+          "redoDescription": "直前の操作をやり直します",
+          "delete": "削除",
+          "deleteDescription": "選択した文字列を削除します",
+          "find": "検索",
+          "findDescription": "文書内の文字列を検索します",
+          "findReplace": "検索と置換",
+          "findReplaceDescription": "文字列を検索して置換します",
+          "cut": "切り取り",
+          "cutDescription": "選択した文字列を切り取ります",
+          "copy": "コピー",
+          "copyDescription": "選択した文字列をコピーします",
+          "paste": "貼り付け",
+          "pasteDescription": "クリップボードから貼り付けます",
+          "pastePlainText": "テキストのみ保持して貼り付け",
+          "pastePlainTextDescription": "書式なしで貼り付けます",
+          "bold": "太字",
+          "boldDescription": "太字のオン/オフを切り替えます",
+          "italic": "斜体",
+          "italicDescription": "斜体のオン/オフを切り替えます",
+          "underline": "下線",
+          "underlineDescription": "下線のオン/オフを切り替えます",
+          "strikethrough": "取り消し線",
+          "strikethroughDescription": "取り消し線のオン/オフを切り替えます",
+          "subscript": "下付き",
+          "subscriptDescription": "下付きのオン/オフを切り替えます",
+          "superscript": "上付き",
+          "superscriptDescription": "上付きのオン/オフを切り替えます",
+          "alignLeft": "左揃え",
+          "alignLeftDescription": "段落を左揃えにします",
+          "alignCenter": "中央揃え",
+          "alignCenterDescription": "段落を中央揃えにします",
+          "alignRight": "右揃え",
+          "alignRightDescription": "段落を右揃えにします",
+          "justify": "両端揃え",
+          "justifyDescription": "段落を両端揃えにします",
+          "increaseIndent": "インデントを増やす",
+          "increaseIndentDescription": "段落のインデントを増やします",
+          "decreaseIndent": "インデントを減らす",
+          "decreaseIndentDescription": "段落のインデントを減らします",
+          "selectAll": "すべて選択",
+          "selectAllDescription": "すべての内容を選択します",
+          "selectWord": "単語を選択",
+          "selectWordDescription": "現在の単語を選択します",
+          "selectParagraph": "段落を選択",
+          "selectParagraphDescription": "現在の段落を選択します",
+          "extendSelectionByWord": "単語単位で選択範囲を拡張",
+          "extendSelectionByWordDescription": "選択範囲を次または前の単語まで広げます",
+          "extendSelectionToLineEdge": "行の端まで選択範囲を拡張",
+          "extendSelectionToLineEdgeDescription": "選択範囲を行の先頭または末尾まで広げます",
+          "moveByWord": "単語単位で移動",
+          "moveByWordDescription": "カーソルを次または前の単語へ移動します",
+          "moveToLineStart": "行頭へ移動",
+          "moveToLineStartDescription": "カーソルを行の先頭へ移動します",
+          "moveToLineEnd": "行末へ移動",
+          "moveToLineEndDescription": "カーソルを行の末尾へ移動します",
+          "moveToDocumentStart": "文書の先頭へ移動",
+          "moveToDocumentStartDescription": "カーソルを文書の先頭へ移動します",
+          "moveToDocumentEnd": "文書の末尾へ移動",
+          "moveToDocumentEndDescription": "カーソルを文書の末尾へ移動します",
+          "pageUp": "前のページ",
+          "pageUpDescription": "1 ページ上へスクロールします",
+          "pageDown": "次のページ",
+          "pageDownDescription": "1 ページ下へスクロールします",
+          "zoomIn": "拡大",
+          "zoomInDescription": "表示倍率を上げます",
+          "zoomOut": "縮小",
+          "zoomOutDescription": "表示倍率を下げます",
+          "resetZoom": "ズームをリセット",
+          "resetZoomDescription": "表示倍率を 100% に戻します",
+          "keyboardShortcuts": "キーボード ショートカット",
+          "keyboardShortcutsDescription": "このヘルプを表示します",
+          "insertLink": "リンクの挿入",
+          "insertLinkDescription": "ハイパーリンクを挿入または編集します"
+        },
+        "noResults": "「{query}」に一致するショートカットはありません",
+        "pressEscToClose": "{key} キーを押して閉じます",
+        "or": "または"
+      }
+    },
+    "comments": {
+      "resolved": "解決済み",
+      "resolve": "解決",
+      "reopen": "もう一度開く",
+      "moreOptions": "その他のオプション",
+      "unknown": "不明",
+      "addComment": "コメントを追加...",
+      "replyPlaceholder": "返信するか、@ でほかのユーザーを追加",
+      "replyCount": "{count, plural, other {# 件の返信}}"
+    },
+    "trackedChanges": {
+      "unknown": "不明",
+      "replaced": "置換",
+      "with": "→",
+      "added": "追加",
+      "deleted": "削除"
+    },
+    "revisions": {
+      "paragraphMarkInserted": "段落記号を挿入",
+      "paragraphMarkDeleted": "段落記号を削除",
+      "paragraphPropertiesChanged": "段落のプロパティを変更",
+      "rowInserted": "行を挿入",
+      "rowDeleted": "行を削除",
+      "rowPropertiesChanged": "行のプロパティを変更",
+      "cellInserted": "セルを挿入",
+      "cellDeleted": "セルを削除",
+      "cellMerged": "セルを結合",
+      "cellPropertiesChanged": "セルのプロパティを変更",
+      "tablePropertiesChanged": "表のプロパティを変更",
+      "tableInserted": "表を挿入",
+      "tableDeleted": "表を削除"
+    },
+    "contextMenu": {
+      "ariaLabel": "AI 操作メニュー",
+      "textMenuAriaLabel": "テキスト編集メニュー",
+      "customPromptPlaceholder": "プロンプトを入力...",
+      "cut": "切り取り",
+      "copy": "コピー",
+      "paste": "貼り付け",
+      "pastePlainText": "テキストのみ保持して貼り付け",
+      "delete": "削除",
+      "selectAll": "すべて選択",
+      "selected": "選択中:",
+      "aiActions": {
+        "askAi": "AI に質問",
+        "rewrite": "書き直す",
+        "expand": "詳しくする",
+        "summarize": "要約する",
+        "translate": "翻訳する",
+        "explain": "説明する",
+        "fixGrammar": "文法を修正",
+        "makeFormal": "丁寧な文体にする",
+        "makeCasual": "くだけた文体にする",
+        "custom": "カスタム"
+      }
+    },
+    "documentOutline": {
+      "ariaLabel": "文書のアウトライン",
+      "closeAriaLabel": "アウトラインを閉じる",
+      "closeTitle": "アウトラインを閉じる",
+      "title": "アウトライン",
+      "noHeadings": "見出しがありません。文書に見出しを追加すると、ここに表示されます。"
+    },
+    "sidebar": {
+      "ariaLabel": "注釈サイドバー"
+    },
+    "viewer": {
+      "pageIndicator": "{current} / {total}"
+    },
+    "titleBar": {
+      "untitled": "無題",
+      "documentNameAriaLabel": "文書名",
+      "menuBarAriaLabel": "メニュー バー"
+    },
+    "errors": {
+      "loadingDocument": "文書を読み込んでいます...",
+      "noDocumentLoaded": "文書が読み込まれていません",
+      "failedToLoad": "文書を読み込めませんでした",
+      "unableToParse": "文書を解析できません",
+      "somethingWentWrong": "問題が発生しました",
+      "errorDescription": "このコンポーネントの表示中にエラーが発生しました。もう一度お試しください。問題が解決しない場合はサポートにお問い合わせください。",
+      "errorLabel": "エラー:",
+      "componentStack": "コンポーネント スタック:",
+      "tryAgain": "再試行",
+      "showDetails": "詳細を表示",
+      "hideDetails": "詳細を隠す",
+      "unsavedChanges": "保存されていない変更があります。このページを離れますか?"
+    },
+    "table": {
+      "insertRowAbove": "上に行を挿入",
+      "insertRowBelow": "下に行を挿入",
+      "insertColumnLeft": "左に列を挿入",
+      "insertColumnRight": "右に列を挿入",
+      "deleteRow": "行の削除",
+      "deleteColumn": "列の削除",
+      "deleteTable": "表の削除",
+      "selectTable": "表全体を選択",
+      "mergeCells": "セルの結合",
+      "splitCell": "セルの分割",
+      "editingTools": "表の編集ツール",
+      "label": "表:",
+      "cellFillColor": "セルの塗りつぶしの色",
+      "borderColor": "罫線の色",
+      "borderWidth": "罫線の太さ",
+      "unknownAction": "不明な操作",
+      "borders": {
+        "all": "格子",
+        "outside": "外枠",
+        "inside": "内側",
+        "none": "枠なし",
+        "remove": "罫線の削除",
+        "top": "上罫線",
+        "bottom": "下罫線",
+        "left": "左罫線",
+        "right": "右罫線",
+        "styleAriaLabel": "罫線のスタイル",
+        "tooltip": "罫線"
+      },
+      "moreOptions": "表のその他のオプション",
+      "styles": {
+        "title": "表のスタイル",
+        "label": "スタイル",
+        "normalTable": "標準の表",
+        "tableGrid": "表 (格子)",
+        "gridTableLight": "表 (格子) 淡色",
+        "plainTable1": "標準の表 1",
+        "plainTable2": "標準の表 2",
+        "plainTable3": "標準の表 3",
+        "plainTable4": "標準の表 4",
+        "gridTable1Light": "グリッド (表) 1 淡色",
+        "gridTable4Accent1": "グリッド (表) 4 - アクセント 1",
+        "gridTable5Dark": "グリッド (表) 5 濃色",
+        "listTable3Accent2": "リスト (表) 3 - アクセント 2",
+        "listTable4Accent3": "リスト (表) 4 - アクセント 3",
+        "gridTable4Accent5": "グリッド (表) 4 - アクセント 5",
+        "gridTable4Accent6": "グリッド (表) 4 - アクセント 6"
+      }
+    },
+    "tableAdvanced": {
+      "verticalAlignment": "垂直方向の配置",
+      "top": "上",
+      "middle": "中央",
+      "bottom": "下",
+      "cellMargins": "セルの余白",
+      "textDirection": "文字列の方向",
+      "textDirections": {
+        "horizontal": "横書き (左から右)",
+        "verticalRL": "縦書き (上から下、右から左)",
+        "verticalLR": "縦書き (下から上、左から右)"
+      },
+      "toggleNoWrap": "折り返しのオン/オフ",
+      "rowHeight": "行の高さ",
+      "heightRules": {
+        "auto": "自動",
+        "atLeast": "最小値",
+        "exact": "固定値"
+      },
+      "rule": "高さの指定",
+      "height": "高さ",
+      "toggleHeaderRow": "タイトル行のオン/オフ",
+      "distributeColumns": "幅を揃える",
+      "autoFit": "文字列の幅に合わせる",
+      "tableProperties": "表のプロパティ...",
+      "tableAlignment": "表の配置",
+      "alignTableLeft": "表を左揃え",
+      "alignTableCenter": "表を中央揃え",
+      "alignTableRight": "表を右揃え",
+      "tableOptionsMenu": "表のオプション メニュー",
+      "tableOptions": "表のオプション"
+    },
+    "imageTransform": {
+      "tooltip": "回転と反転",
+      "rotateClockwise": "右へ 90 度回転",
+      "rotateCounterClockwise": "左へ 90 度回転",
+      "flipHorizontal": "左右反転",
+      "flipVertical": "上下反転"
+    },
+    "imageWrap": {
+      "inline": "行内",
+      "floatLeft": "四角形 (左)",
+      "floatRight": "四角形 (右)",
+      "topAndBottom": "上下",
+      "behindText": "背面",
+      "inFrontOfText": "前面",
+      "tooltipPrefix": "折り返し: {label}",
+      "menu": {
+        "inLineWithText": "行内",
+        "squareLeft": "四角形 (左)",
+        "squareRight": "四角形 (右)",
+        "behindText": "背面",
+        "inFrontOfText": "前面",
+        "ariaLabel": "画像のレイアウト オプション",
+        "imageProperties": "画像のプロパティ…"
+      },
+      "menuDesc": {
+        "inLineWithText": "画像を文字と同じように行内に配置します",
+        "squareLeft": "画像を左に置き、文字列を右側に回り込ませます",
+        "squareRight": "画像を右に置き、文字列を左側に回り込ませます",
+        "behindText": "画像を本文の背面に配置します",
+        "inFrontOfText": "画像を本文の前面に配置します"
+      }
+    },
+    "responsePreview": {
+      "loading": "{action}…",
+      "result": "{action} の結果",
+      "closeEsc": "閉じる (Esc)",
+      "editPrompt": "承諾する前に結果を編集してください:",
+      "changes": "変更内容:",
+      "original": "元の文:",
+      "new": "新しい文:",
+      "cancelEdit": "編集をキャンセル"
+    },
+    "commentMarkers": {
+      "resolvedComment": "解決済みのコメント",
+      "comment": "コメント"
+    },
+    "editor": {
+      "toggleCommentsSidebar": "コメント サイドバーの表示/非表示",
+      "showDocumentOutline": "文書のアウトラインを表示",
+      "editing": "編集",
+      "editingDescription": "文書を直接編集します",
+      "suggesting": "提案",
+      "suggestingDescription": "編集内容は提案になります",
+      "viewing": "閲覧",
+      "viewingDescription": "読み取り専用、編集はできません",
+      "failedToParse": "文書を解析できませんでした",
+      "linkRemoved": "リンクを削除しました",
+      "linkCopied": "リンクをクリップボードにコピーしました",
+      "failedToSave": "文書を保存できませんでした"
+    },
+    "hyperlinkPopup": {
+      "displayTextPlaceholder": "表示文字列",
+      "copyLink": "リンクをコピー",
+      "editLink": "リンクの編集",
+      "removeLink": "リンクの削除"
+    },
+    "headerFooter": {
+      "header": "ヘッダー",
+      "footer": "フッター",
+      "options": "オプション",
+      "insertPageNumber": "現在のページ番号を挿入",
+      "insertTotalPages": "総ページ数を挿入",
+      "remove": "{label}の削除",
+      "closeEditing": "{label}の編集を閉じる"
+    },
+    "image": {
+      "placeholder": "画像のプレースホルダー",
+      "placeholderText": "[画像]",
+      "editableAriaLabel": "編集可能な画像"
+    },
+    "imageOverlay": {
+      "rotate": "回転",
+      "imageProperties": "画像のプロパティ",
+      "deleteImage": "画像の削除",
+      "replaceImage": "画像の置換…"
+    },
+    "ruler": {
+      "horizontal": "水平ルーラー",
+      "vertical": "垂直ルーラー",
+      "firstLineIndent": "1 行目のインデント",
+      "leftIndent": "左インデント",
+      "rightIndent": "右インデント",
+      "topMargin": "上余白",
+      "bottomMargin": "下余白"
+    },
+    "print": {
+      "label": "印刷",
+      "allPages": "すべて ({totalPages} ページ)",
+      "singlePage": "{start} ページ",
+      "pageRange": "{start}-{end} ページ"
+    },
+    "unsaved": {
+      "unsaved": "未保存",
+      "saved": "保存済み",
+      "unsavedTitle": "文書に未保存の変更があります",
+      "savedTitle": "すべての変更を保存しました",
+      "unsavedAriaLabel": "未保存の変更",
+      "savedAriaLabel": "すべての変更を保存しました"
+    },
+    "loading": {
+      "label": "読み込み中"
+    },
+    "agentPanel": {
+      "defaultTitle": "アシスタント",
+      "toggle": "アシスタントを開く",
+      "close": "パネルを閉じる",
+      "resizeHandle": "アシスタント パネルのサイズ変更",
+      "thinking": "アシスタントが考えています",
+      "composerPlaceholder": "アシスタントに質問…",
+      "send": "送信",
+      "timeline": {
+        "working": "処理中… {count, plural, other {# ステップ}}",
+        "summary": "{count, plural, other {# ステップ}}",
+        "earlier": "+ {count, plural, other {以前の # ステップ}}"
+      }
+    }
+  },
+  "spreadsheet": {
+    "toolbar": {
+      "undo": "元に戻す",
+      "redo": "やり直し",
+      "print": "印刷",
+      "paintformat": "書式のコピー/貼り付け",
+      "clearformat": "書式のクリア",
+      "format": "表示形式",
+      "fontName": "フォント",
+      "fontSize": "フォント サイズ",
+      "fontBold": "太字",
+      "fontItalic": "斜体",
+      "underline": "下線",
+      "strike": "取り消し線",
+      "color": "フォントの色",
+      "bgcolor": "塗りつぶしの色",
+      "border": "罫線",
+      "merge": "セルを結合",
+      "align": "横位置",
+      "valign": "縦位置",
+      "textwrap": "折り返して全体を表示",
+      "freeze": "ウィンドウ枠の固定",
+      "autofilter": "フィルター",
+      "formula": "関数",
+      "find": "検索",
+      "editInVscode": "VS Code で編集",
+      "save": "保存",
+      "saveAs": "名前を付けて保存",
+      "more": "その他"
+    },
+    "bottombar": {
+      "firstSheet": "最初のシートへ",
+      "prevSheet": "左へスクロール",
+      "nextSheet": "右へスクロール",
+      "lastSheet": "最後のシートへ",
+      "moreSheets": "すべてのシート",
+      "addSheet": "シートの追加",
+      "defaultSheetName": "Sheet{number}",
+      "defaultSheetBase": "Sheet"
+    },
+    "align": {
+      "left": "左揃え",
+      "center": "中央揃え",
+      "right": "右揃え"
+    },
+    "valign": {
+      "top": "上揃え",
+      "middle": "上下中央揃え",
+      "bottom": "下揃え"
+    },
+    "contextmenu": {
+      "copy": "コピー",
+      "cut": "切り取り",
+      "paste": "貼り付け",
+      "pasteValue": "値のみ貼り付け",
+      "pasteFormat": "書式のみ貼り付け",
+      "hide": "非表示",
+      "insertRow": "行の挿入",
+      "insertColumn": "列の挿入",
+      "deleteSheet": "削除",
+      "renameSheet": "名前の変更",
+      "duplicateSheet": "複製",
+      "deleteRow": "行の削除",
+      "deleteColumn": "列の削除",
+      "deleteCell": "セルの削除",
+      "deleteCellText": "数式と値のクリア",
+      "hyperlink": "ハイパーリンク",
+      "validation": "データの入力規則",
+      "celleditable": "編集を許可",
+      "cellnoneditable": "編集を禁止"
+    },
+    "print": {
+      "settings": "印刷の設定",
+      "size": "用紙サイズ",
+      "orientation": "印刷の向き",
+      "orientations": [
+        "横",
+        "縦"
+      ]
+    },
+    "format": {
+      "normal": "標準",
+      "text": "文字列",
+      "number": "数値",
+      "numberPlain": "数値 (桁区切りなし)",
+      "percent": "パーセンテージ",
+      "rmb": "人民元",
+      "usd": "米ドル",
+      "eur": "ユーロ",
+      "date": "日付",
+      "time": "時刻",
+      "datetime": "日付と時刻",
+      "duration": "経過時間"
+    },
+    "formula": {
+      "sum": "合計",
+      "average": "平均",
+      "max": "最大値",
+      "min": "最小値",
+      "_if": "条件",
+      "and": "かつ",
+      "or": "または",
+      "concat": "連結",
+      "divide": "除算",
+      "product": "積",
+      "subtract": "減算"
+    },
+    "validation": {
+      "required": "値は必須です",
+      "notMatch": "値が入力規則に一致しません",
+      "between": "値は {min} から {max} の範囲内です",
+      "notBetween": "値は {min} から {max} の範囲外です",
+      "notIn": "値がリストにありません",
+      "equal": "値は {value} と等しい",
+      "notEqual": "値は {value} と等しくない",
+      "lessThan": "値は {value} より小さい",
+      "lessThanEqual": "値は {value} 以下",
+      "greaterThan": "値は {value} より大きい",
+      "greaterThanEqual": "値は {value} 以上"
+    },
+    "error": {
+      "pasteForMergedCell": "結合されたセルではこの操作はできません"
+    },
+    "calendar": {
+      "weeks": [
+        "日",
+        "月",
+        "火",
+        "水",
+        "木",
+        "金",
+        "土"
+      ],
+      "months": [
+        "1月",
+        "2月",
+        "3月",
+        "4月",
+        "5月",
+        "6月",
+        "7月",
+        "8月",
+        "9月",
+        "10月",
+        "11月",
+        "12月"
+      ]
+    },
+    "button": {
+      "next": "次へ",
+      "cancel": "キャンセル",
+      "remove": "削除",
+      "save": "保存",
+      "saveAs": "名前を付けて保存"
+    },
+    "sort": {
+      "desc": "降順 (Z → A)",
+      "asc": "昇順 (A → Z)"
+    },
+    "filter": {
+      "empty": "(空白)"
+    },
+    "hyperlink": {
+      "address": "アドレス",
+      "tooltip": "ヒント"
+    },
+    "dataValidation": {
+      "mode": "モード",
+      "range": "セル範囲",
+      "criteria": "条件",
+      "modeType": {
+        "cell": "セル",
+        "column": "列",
+        "row": "行"
+      },
+      "type": {
+        "list": "リスト",
+        "number": "数値",
+        "date": "日付",
+        "phone": "電話番号",
+        "email": "メール アドレス"
+      },
+      "operator": {
+        "be": "次の値の間",
+        "nbe": "次の値の間以外",
+        "lt": "次の値より小さい",
+        "lte": "次の値以下",
+        "gt": "次の値より大きい",
+        "gte": "次の値以上",
+        "eq": "次の値に等しい",
+        "neq": "次の値に等しくない"
+      }
+    },
+    "viewer": {
+      "protectedCell": "保護されたセルではこの機能は使えません",
+      "readonlyBanner": "読み取り専用 — 閲覧と検索ができます。変更を保存するには「名前を付けて保存」を使ってください",
+      "formatCannotPreserveTitle": "書式を保持できません",
+      "formatCannotPreserveContent": "{format} ではスタイル、セルの結合、数式などを保持できません。xlsx で保存しますか?",
+      "onlyFirstSheetContent": "{format} では最初のシートのみ保存され、ほかのシートは失われます。xlsx で保存しますか?",
+      "saveAsXlsx": "xlsx で保存",
+      "saveAsOriginal": "元の形式で保存",
+      "chooseExportFormat": "エクスポート形式の選択",
+      "exportXlsxLabel": "Excel ブック (.xlsx)",
+      "exportXlsxDesc": "スタイル、数式、結合セルを保持します",
+      "exportCsvDesc": "テキストのみ、最初のシートのみ",
+      "exportXlsDesc": "旧形式の Excel",
+      "exportOdsDesc": "LibreOffice / WPS と互換",
+      "autoFitColumns": "列の幅の自動調整",
+      "autoFitDone": "列の幅を調整しました"
+    },
+    "findReplace": {
+      "title": "検索",
+      "titleReplace": "検索と置換",
+      "placeholder": "検索…",
+      "replacePlaceholder": "置換後の文字列…",
+      "replace": "置換",
+      "replaceAll": "すべて",
+      "notFound": "見つかりません",
+      "replacedCount": "{count} 件を置換しました",
+      "matchLocation": "シート {sheet} · {column}{row}",
+      "previous": "前へ (Shift+Enter)",
+      "next": "次へ (Enter)",
+      "wholeCell": "セル内容が完全に同一",
+      "allSheets": "すべてのシート",
+      "close": "閉じる"
+    },
+    "formulaBar": {
+      "goToCell": "セルへ移動",
+      "cellAddress": "セル番地",
+      "cellContent": "セルの内容"
+    },
+    "message": {
+      "tip": "ヒント"
+    }
+  },
+  "pdf": {
+    "switchToLight": "PDF をライト モードに切り替え",
+    "switchToDark": "PDF をダーク モードに切り替え",
+    "previous": {
+      "@title": "前のページへ戻ります",
+      "label": "前へ"
+    },
+    "next": {
+      "@title": "次のページへ進みます",
+      "label": "次へ"
+    },
+    "page": {
+      "@title": "ページ",
+      "of_pages": "({pageNumber} / {pagesCount})",
+      "rotate": {
+        "cw": {
+          "@title": "右回転",
+          "@label": "右回転",
+          "label": "右回転"
+        },
+        "ccw": {
+          "@title": "左回転",
+          "@label": "左回転",
+          "label": "左回転"
+        }
+      },
+      "canvas": "{page} ページ",
+      "scale": {
+        "width": "幅に合わせる",
+        "fit": "ページのサイズに合わせる"
+      }
+    },
+    "of_pages": "/ {pagesCount}",
+    "zoom": {
+      "@title": "拡大/縮小",
+      "out": {
+        "@title": "表示を縮小します",
+        "label": "縮小"
+      },
+      "in": {
+        "@title": "表示を拡大します",
+        "label": "拡大"
+      },
+      "page_fit": {
+        "@title": "ページのサイズに合わせる",
+        "label": "ページのサイズに合わせる"
+      },
+      "page_width": {
+        "@title": "幅に合わせる",
+        "label": "幅に合わせる"
+      }
+    },
+    "presentation_mode": {
+      "@title": "プレゼンテーションモードに切り替えます",
+      "label": "プレゼンテーションモード"
+    },
+    "open_file": {
+      "@title": "ファイルを開きます",
+      "label": "開く"
+    },
+    "print": {
+      "@title": "印刷します",
+      "label": "印刷",
+      "progress": {
+        "message": "文書の印刷を準備しています...",
+        "close": "キャンセル"
+      }
+    },
+    "download": {
+      "@title": "ダウンロードします",
+      "label": "ダウンロード"
+    },
+    "bookmark": {
+      "@title": "現在のビューの URL です (コピーまたは新しいウィンドウに開く)",
+      "label": "現在のビュー"
+    },
+    "tools": {
+      "@title": "ツール",
+      "label": "ツール"
+    },
+    "first_page": {
+      "@title": "最初のページへ移動します",
+      "@label": "最初のページへ移動",
+      "label": "最初のページへ移動"
+    },
+    "last_page": {
+      "@title": "最後のページへ移動します",
+      "@label": "最後のページへ移動",
+      "label": "最後のページへ移動"
+    },
+    "cursor": {
+      "text_select_tool": {
+        "@title": "テキスト選択ツールを有効にします",
+        "label": "テキスト選択ツール"
+      },
+      "hand_tool": {
+        "@title": "手のひらツールを有効にします",
+        "label": "手のひらツール"
+      }
+    },
+    "scroll": {
+      "vertical": {
+        "@title": "縦スクロールにします",
+        "label": "縦スクロール"
+      },
+      "horizontal": {
+        "@title": "横スクロールにします",
+        "label": "横スクロール"
+      },
+      "wrapped": {
+        "@title": "折り返しスクロールにします",
+        "label": "折り返しスクロール"
+      }
+    },
+    "spread": {
+      "none": {
+        "@title": "見開きにしません",
+        "label": "見開きにしない"
+      },
+      "odd": {
+        "@title": "奇数ページ開始で見開きにします",
+        "label": "奇数ページ見開き"
+      },
+      "even": {
+        "@title": "偶数ページ開始で見開きにします",
+        "label": "偶数ページ見開き"
+      }
+    },
+    "document": {
+      "properties": {
+        "@title": "文書のプロパティ...",
+        "label": "文書のプロパティ...",
+        "file": {
+          "name": "ファイル名:",
+          "size": "ファイルサイズ:"
+        },
+        "kb": "{size_kb} KB ({size_b} バイト)",
+        "mb": "{size_mb} MB ({size_b} バイト)",
+        "title": "タイトル:",
+        "author": "作成者:",
+        "subject": "件名:",
+        "keywords": "キーワード:",
+        "creation_date": "作成日:",
+        "modification_date": "更新日:",
+        "date_string": "{date}, {time}",
+        "creator": "アプリケーション:",
+        "producer": "PDF 作成:",
+        "version": "PDF のバージョン:",
+        "page": {
+          "count": "ページ数:",
+          "size": {
+            "@text": "ページサイズ:",
+            "unit": {
+              "inches": "in"
+            },
+            "orientation": {
+              "portrait": "縦",
+              "landscape": "横"
+            },
+            "name": {
+              "letter": "レター",
+              "legal": "リーガル"
+            }
+          }
+        },
+        "linearized": {
+          "@text": "ウェブ表示用に最適化:",
+          "yes": "はい",
+          "no": "いいえ"
+        },
+        "close": "閉じる"
+      },
+      "outline": {
+        "@title": "文書の目次を表示します (ダブルクリックで項目を開閉します)",
+        "label": "文書の目次"
+      }
+    },
+    "toggle_sidebar": {
+      "@title": "サイドバー表示を切り替えます",
+      "label": "サイドバーの切り替え",
+      "notification": {
+        "@title": "サイドバー表示を切り替えます (文書に含まれるアウトライン / 添付 / レイヤー)"
+      }
+    },
+    "attachments": {
+      "@title": "添付ファイルを表示します",
+      "label": "添付ファイル"
+    },
+    "layers": {
+      "@title": "レイヤーを表示します (ダブルクリックですべてのレイヤーが初期状態に戻ります)",
+      "label": "レイヤー"
+    },
+    "thumbs": {
+      "@title": "縮小版を表示します",
+      "label": "縮小版"
+    },
+    "findbar": {
+      "@title": "文書内を検索します",
+      "label": "検索"
+    },
+    "thumb_page": {
+      "title": "{page} ページ",
+      "canvas": "{page} ページの縮小版"
+    },
+    "find": {
+      "input": {
+        "@title": "検索",
+        "@placeholder": "文書内を検索..."
+      },
+      "previous": {
+        "@title": "現在より前の位置で指定文字列が現れる部分を検索します",
+        "label": "前へ"
+      },
+      "next": {
+        "@title": "現在より後の位置で指定文字列が現れる部分を検索します",
+        "label": "次へ"
+      },
+      "highlight": "すべて強調表示",
+      "match": {
+        "case_label": "大文字/小文字を区別",
+        "count": {
+          "[other]": "{total} 件中 {current} 件目",
+          "limit": {
+            "[other]": "{limit} 件以上一致"
+          }
+        }
+      },
+      "entire_word_label": "単語一致",
+      "reached": {
+        "top": "文書先頭に到達したので末尾から続けて検索します",
+        "bottom": "文書末尾に到達したので先頭から続けて検索します"
+      },
+      "not_found": "見つかりませんでした"
+    },
+    "error": {
+      "more_info": "詳細情報",
+      "less_info": "詳細情報を隠す",
+      "close": "閉じる",
+      "version_info": "PDF.js v{version} (ビルド: {build})",
+      "message": "メッセージ: {message}",
+      "stack": "スタック: {stack}",
+      "file": "ファイル: {file}",
+      "line": "行: {line}"
+    },
+    "rendering_error": "ページのレンダリング中にエラーが発生しました。",
+    "loading_error": "PDF の読み込み中にエラーが発生しました。",
+    "invalid_file_error": "無効または破損した PDF ファイル。",
+    "missing_file_error": "PDF ファイルが見つかりません。",
+    "unexpected_response_error": "サーバーから予期せぬ応答がありました。",
+    "annotation_date_string": "{date}, {time}",
+    "text_annotation_type": {
+      "@alt": "[{type} 注釈]"
+    },
+    "password": {
+      "label": "この PDF ファイルを開くためのパスワードを入力してください。",
+      "invalid": "無効なパスワードです。もう一度やり直してください。",
+      "ok": "OK",
+      "cancel": "キャンセル"
+    },
+    "printing_not": {
+      "supported": "警告: このブラウザーでは印刷が完全にサポートされていません。",
+      "ready": "警告: PDF を印刷するための読み込みが終了していません。"
+    },
+    "web_fonts_disabled": "ウェブフォントが無効になっています: 埋め込まれた PDF のフォントを使用できません。"
   }
 }
