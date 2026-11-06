@@ -110,7 +110,7 @@ function ParquetViewer() {
         } catch (e) {
             savingRef.current = false;
             setSaving(false);
-            const errMessage = e instanceof Error ? e.message : 'Failed to serialize parquet file';
+            const errMessage = e instanceof Error ? e.message : $t('parquet.failedSave');
             setError(errMessage);
             message.error(errMessage);
         }

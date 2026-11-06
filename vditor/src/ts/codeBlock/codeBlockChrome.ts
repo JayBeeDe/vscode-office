@@ -100,7 +100,7 @@ registerPopoverOutsideDismiss({
 
 const formatLanguageLabel = (languageName: string) => {
     if (!languageName) {
-        return window.VditorI18n.plaintext || "Plain Text";
+        return window.VditorI18n.plaintext;
     }
     return languageName.replace(/-/g, " ");
 };
@@ -129,8 +129,8 @@ const bindCopyButton = (copyBtn: HTMLButtonElement, performCopy: () => Promise<b
     }
     copyBtn.dataset.copyBound = "true";
 
-    const defaultLabel = window.VditorI18n.copy || "Copy";
-    const copiedLabel = window.VditorI18n.copied || "Copied";
+    const defaultLabel = window.VditorI18n.copy;
+    const copiedLabel = window.VditorI18n.copied;
 
     const getCopyIcon = () => copyBtn.querySelector(".vditor-cm-chrome__copy-icon .codicon") as HTMLElement | null;
 
@@ -278,7 +278,7 @@ const applyLanguageReadonlyState = (chrome: ICodeBlockChrome, readonly: boolean)
     chrome.langTrigger.disabled = readonly;
     chrome.langSearch.disabled = readonly;
     if (readonly) {
-        chrome.langTrigger.setAttribute("aria-label", window.VditorI18n.language || "Language");
+        chrome.langTrigger.setAttribute("aria-label", window.VditorI18n.language);
         if (chrome.langWrap.classList.contains("vditor-cm-chrome__lang--open")) {
             setLangPanelOpen(chrome, false);
         }
@@ -292,7 +292,7 @@ const renderLangList = (chrome: ICodeBlockChrome, query: string) => {
     if (languages.length === 0) {
         const empty = document.createElement("div");
         empty.className = "vditor-cm-chrome__lang-empty";
-        empty.textContent = window.VditorI18n.empty || "Empty";
+        empty.textContent = window.VditorI18n.empty;
         chrome.langList.appendChild(empty);
         return;
     }
@@ -312,7 +312,7 @@ const renderLangList = (chrome: ICodeBlockChrome, query: string) => {
         if (item.classList.contains("vditor-cm-chrome__lang-item--current")) {
             const desc = document.createElement("span");
             desc.className = "vditor-cm-chrome__lang-item-desc";
-            desc.textContent = "current";
+            desc.textContent = window.VditorI18n.current;
             item.appendChild(desc);
         }
         item.setAttribute("data-lang", toCodeBlockLanguageName(name));
@@ -424,7 +424,7 @@ const createChromeRoot = (editable: boolean) => {
     langTrigger.className = "vditor-cm-chrome__lang-trigger";
     langTrigger.setAttribute(
         "aria-label",
-        (window.VditorI18n.language || "Language") + "<" + updateHotkeyTip("⌥Enter") + ">",
+        window.VditorI18n.language + "<" + updateHotkeyTip("⌥Enter") + ">",
     );
     langTrigger.innerHTML = `<span class="vditor-cm-chrome__lang-label"></span>`;
     langWrap.appendChild(langTrigger);
@@ -435,7 +435,7 @@ const createChromeRoot = (editable: boolean) => {
     const langSearch = document.createElement("input");
     langSearch.type = "text";
     langSearch.className = LANG_SEARCH_CLASS;
-    langSearch.setAttribute("placeholder", "Search language");
+    langSearch.setAttribute("placeholder", window.VditorI18n.languageSearch);
     langPanel.appendChild(langSearch);
 
     const langList = document.createElement("div");
@@ -452,7 +452,7 @@ const createChromeRoot = (editable: boolean) => {
         deleteBtn = document.createElement("button");
         deleteBtn.type = "button";
         deleteBtn.className = "vditor-cm-chrome__delete";
-        deleteBtn.setAttribute("aria-label", window.VditorI18n.remove || "Remove");
+        deleteBtn.setAttribute("aria-label", window.VditorI18n.remove);
         deleteBtn.innerHTML = `<span class="vditor-cm-chrome__delete-icon">${codicon("trash")}</span>`;
         actions.appendChild(deleteBtn);
     }
@@ -460,14 +460,14 @@ const createChromeRoot = (editable: boolean) => {
     const expandBtn = document.createElement("button");
     expandBtn.type = "button";
     expandBtn.className = "vditor-cm-chrome__expand";
-    expandBtn.setAttribute("aria-label", window.VditorI18n.expandCode || "Expand");
+    expandBtn.setAttribute("aria-label", window.VditorI18n.expandCode);
     expandBtn.setAttribute("aria-expanded", "false");
     expandBtn.innerHTML = `<span class="vditor-cm-chrome__expand-icon">${codicon("chevron-down")}</span>`;
 
     const copyBtn = document.createElement("button");
     copyBtn.type = "button";
     copyBtn.className = "vditor-cm-chrome__copy";
-    copyBtn.setAttribute("aria-label", window.VditorI18n.copy || "Copy");
+    copyBtn.setAttribute("aria-label", window.VditorI18n.copy);
     copyBtn.innerHTML = `<span class="vditor-cm-chrome__copy-icon">${codicon("copy")}</span>`;
     actions.appendChild(copyBtn);
     actions.appendChild(expandBtn);
@@ -500,7 +500,7 @@ const updateExpandButton = (chrome: ICodeBlockChrome, host: HTMLElement) => {
     const expanded = host.classList.contains(EXPANDED_CLASS);
     chrome.expandBtn.setAttribute(
         "aria-label",
-        expanded ? (window.VditorI18n.collapseCode || "Collapse") : (window.VditorI18n.expandCode || "Expand"),
+        expanded ? window.VditorI18n.collapseCode : window.VditorI18n.expandCode,
     );
     chrome.expandBtn.setAttribute("aria-expanded", String(expanded));
     const icon = chrome.expandBtn.querySelector(".vditor-cm-chrome__expand-icon .codicon") as HTMLElement | null;

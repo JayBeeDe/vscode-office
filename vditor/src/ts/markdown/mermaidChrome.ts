@@ -25,7 +25,7 @@ const createMermaidChrome = () => {
     const copyBtn = document.createElement("button");
     copyBtn.type = "button";
     copyBtn.className = "vditor-mermaid-chrome__copy-btn";
-    copyBtn.setAttribute("aria-label", "Copy as image");
+    copyBtn.setAttribute("aria-label", window.VditorI18n.copyAsImage);
     copyBtn.innerHTML = `<span class="vditor-mermaid-chrome__copy-icon">${codicon("copy")}</span>`;
     actions.appendChild(copyBtn);
 

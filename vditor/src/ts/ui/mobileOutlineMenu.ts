@@ -130,7 +130,7 @@ export const initMobileOutlineMenu = (vditor: IVditor) => {
     menuBtn.type = "button";
     menuBtn.setAttribute("data-type", "mobile-outline");
     menuBtn.className = "vditor-mobile-outline-trigger";
-    menuBtn.setAttribute("aria-label", window.VditorI18n?.outline || "Outline");
+    menuBtn.setAttribute("aria-label", window.VditorI18n?.outline);
     menuBtn.setAttribute("aria-expanded", "false");
     menuBtn.innerHTML = codicon("menu");
     vditor.element.appendChild(menuBtn);

@@ -21,6 +21,7 @@ import ModalHyperlink from './modal_hyperlink';
 import SortFilter from './sort_filter';
 import SheetImages from './sheet_images';
 import { xtoast } from './message';
+import { t } from '../locale/locale';
 import { cssPrefix } from '../config';
 import { formulaMenuItems } from '../core/formula';
 import { CellRange } from '../core/cell_range';
@@ -651,7 +652,7 @@ function paste(what, evt) {
   let refused = false;
   const pasted = data.paste(what, (msg) => {
     refused = true;
-    xtoast('Tip', msg);
+    xtoast(t('message.tip'), msg);
   });
   if (pasted) {
     sheetReset.call(this);
@@ -903,7 +904,7 @@ function overlayerMousedown(evt) {
         hyperlinkPress = null;
       }
       if (isAutofillEl && selector.arange && data.settings.mode !== 'read') {
-        if (data.autofill(selector.arange, 'all', msg => xtoast('Tip', msg))) {
+        if (data.autofill(selector.arange, 'all', msg => xtoast(t('message.tip'), msg))) {
           table.render();
         }
       }

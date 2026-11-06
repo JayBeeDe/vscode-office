@@ -1,7 +1,7 @@
 import Dropdown from './dropdown';
 import Icon from './icon';
 import { h } from './element';
-import { formulaMenuItems, formulaDisplayName } from '../core/formula';
+import { formulaMenuItems } from '../core/formula';
 import { cssPrefix } from '../config';
 
 export default class DropdownFormula extends Dropdown {
@@ -14,7 +14,7 @@ export default class DropdownFormula extends Dropdown {
         };
       }
       return {
-        el: h('div', `${cssPrefix}-item`).child(formulaDisplayName(it.key)),
+        el: h('div', `${cssPrefix}-item`).child(it.title()),
         formula: it,
       };
     });

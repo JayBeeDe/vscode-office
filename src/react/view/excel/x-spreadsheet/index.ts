@@ -4,7 +4,7 @@ import DataProxy from './core/data_proxy';
 import Sheet from './component/sheet';
 import Bottombar from './component/bottombar';
 import { cssPrefix } from './config';
-import { locale } from './locale/locale';
+import { locale, t } from './locale/locale';
 import './index.less';
 import '@vscode/codicons/dist/codicon.css';
 import {
@@ -158,7 +158,7 @@ export interface SheetBackgroundImage {
 export function sanitizeSheetName(name: string): string {
     let clean = name.replace(/[[\]:*?/\\]/g, '_').replace(/^'+|'+$/g, '').trim().slice(0, 31);
     if (clean.toLowerCase() === 'history') clean = `${clean}_`;
-    return clean || 'Sheet';
+    return clean || t('bottombar.defaultSheetBase');
 }
 
 export interface SheetData {
@@ -294,7 +294,7 @@ export class Spreadsheet {
     }
 
     addSheet(name?: string, active = true): DataProxy {
-        const n = name || this.uniqueSheetName(`Sheet${this.dataProxies.length + 1}`);
+        const n = name || this.uniqueSheetName(t('bottombar.defaultSheetName', { number: this.dataProxies.length + 1 }));
         const d = new DataProxy(n, this.options);
         d.change = (...args: any[]) => {
             this.sheet.trigger('change', ...args);
@@ -329,7 +329,7 @@ export class Spreadsheet {
     /** A name no other sheet uses, compared without case like Excel; exceptIndex is the renamed sheet. */
     private uniqueSheetName(base: string, exceptIndex = -1): string {
         const names = new Set(this.dataProxies.filter((_, i) => i !== exceptIndex).map(d => d.name.toLowerCase()));
-        const trimmed = base.trim() || 'Sheet';
+        const trimmed = base.trim() || t('bottombar.defaultSheetBase');
         if (!names.has(trimmed.toLowerCase())) return trimmed;
         let i = 2;
         const suffixed = (n: number) => `${trimmed.slice(0, 31 - ` (${n})`.length)} (${n})`;

@@ -103,7 +103,7 @@ const buildLanguageEntries = (): CodeMirrorLanguageEntry[] => {
 const CODE_MIRROR_LANGUAGE_ENTRIES: CodeMirrorLanguageEntry[] = buildLanguageEntries();
 
 export const getPlainTextLanguageLabel = (): string =>
-    window.VditorI18n?.plaintext || "Plain Text";
+    window.VditorI18n?.plaintext;
 
 const PLAIN_TEXT_LANGUAGE_TERMS = ["plain text", "plaintext", "plain", "text"];
 

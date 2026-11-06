@@ -444,7 +444,7 @@ export default class DataProxy {
   constructor(name, settings) {
     this.settings = helper.merge(defaultSettings, settings || {});
     // save data begin
-    this.name = name || 'sheet';
+    this.name = name || t('bottombar.defaultSheetBase');
     this.freeze = [0, 0];
     this.styles = []; // Array<Style>
     this.merges = new Merges(); // [CellRange, ...]

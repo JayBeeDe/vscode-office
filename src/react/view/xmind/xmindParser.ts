@@ -2,6 +2,7 @@ import { convertXmindToMindElixir, importXMindFile } from '@mind-elixir/import-x
 import JSZip from 'jszip';
 import type { MindElixirData, NodeObj } from 'mind-elixir';
 import type { Sheet, Topic } from '@mind-elixir/import-xmind';
+import { $t } from '../../i18n/i18nConfig.ts';
 
 export interface XmindSheet {
     id: string;
@@ -27,7 +28,7 @@ type MindSummary = NonNullable<MindElixirData['summaries']>[number];
 function createEmptyXmindSheet(): Sheet {
     return {
         id: DEFAULT_SHEET_ID,
-        title: 'Sheet 1',
+        title: $t('xmind.defaultSheet', { number: 1 }),
         rootTopic: {
             id: DEFAULT_ROOT_TOPIC_ID,
             title: '',
@@ -209,7 +210,7 @@ function mindNodeToXmindTopic(node: NodeObj, restoreImageUrl: (url: string) => s
     const topic: Topic = {
         ...originalRest,
         id: node.id,
-        title: node.topic ?? 'Untitled',
+        title: node.topic ?? $t('xmind.untitled'),
     };
     if (node.expanded === false) {
         topic.branch = 'folded';
@@ -303,7 +304,7 @@ function collectSummaryTopics(topic: Topic, summaries: MindSummary[] | undefined
             const summaryTopic: Topic = {
                 ...(originalTopic ?? {}),
                 id: topicId,
-                title: summary.label || originalTopic?.title || 'summary',
+                title: summary.label || originalTopic?.title || $t('xmind.tips.summary.title'),
             };
             topic.children = topic.children ?? {};
             topic.children.summary = [...(topic.children.summary ?? []), summaryTopic];
@@ -336,7 +337,7 @@ function mindDataToXmindSheet(original: Sheet, sheet: XmindSheet, restoreImageUr
         ...original,
         theme,
         id: sheet.id,
-        title: sheet.title || data.nodeData.topic || original.title || 'Sheet',
+        title: sheet.title || data.nodeData.topic || original.title || $t('xmind.defaultSheet', { number: 1 }),
         rootTopic,
         relationships: mindArrowsToXmindRelationships(data.arrows, original.relationships),
         topicPositioning: data.direction === 2 ? (original.topicPositioning || 'balanced') : original.topicPositioning,
@@ -397,7 +398,7 @@ function createXmindDocument(
         patchNodeImages(data.nodeData, resolveImageUrl);
         result.push({
             id: sheet.id,
-            title: sheet.title || 'Untitled',
+            title: sheet.title || $t('xmind.untitled'),
             data,
         });
     }

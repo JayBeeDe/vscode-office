@@ -61,21 +61,22 @@ export function shouldSkipFileChange(uri: Uri): boolean {
     return !!(lastSaveTime && Date.now() - lastSaveTime < INTERNAL_SAVE_CHANGE_WINDOW_MS);
 }
 
-const SAVE_AS_FILTERS: Record<string, { label: string; exts: string[] }> = {
-    xlsx: { label: 'Excel Workbook', exts: ['xlsx'] },
-    xlsm: { label: 'Excel Macro-Enabled Workbook', exts: ['xlsm'] },
-    xltx: { label: 'Spreadsheet Template', exts: ['xltx'] },
-    xltm: { label: 'Macro-Enabled Spreadsheet Template', exts: ['xltm'] },
-    xls: { label: 'Excel 97-2003 Workbook', exts: ['xls'] },
-    xlt: { label: 'Spreadsheet 97-2003 Template', exts: ['xlt'] },
-    ods: { label: 'OpenDocument Spreadsheet', exts: ['ods'] },
-    ots: { label: 'OpenDocument Spreadsheet Template', exts: ['ots'] },
-    csv: { label: 'CSV (Comma delimited)', exts: ['csv'] },
-    parquet: { label: 'Apache Parquet', exts: ['parquet'] },
-    docx: { label: 'Word Document', exts: ['docx'] },
-    docm: { label: 'Macro-Enabled Document', exts: ['docm'] },
-    dotm: { label: 'Macro-Enabled Document Template', exts: ['dotm'] },
-    dotx: { label: 'Word Template', exts: ['dotx'] },
+/** The Save As dialog's file type: its label is translated (host.saveAs.filter.<ext>). */
+const SAVE_AS_FILTERS: Record<string, () => string> = {
+    xlsx: () => i18n('saveAs.filter.xlsx'),
+    xlsm: () => i18n('saveAs.filter.xlsm'),
+    xltx: () => i18n('saveAs.filter.xltx'),
+    xltm: () => i18n('saveAs.filter.xltm'),
+    xls: () => i18n('saveAs.filter.xls'),
+    xlt: () => i18n('saveAs.filter.xlt'),
+    ods: () => i18n('saveAs.filter.ods'),
+    ots: () => i18n('saveAs.filter.ots'),
+    csv: () => i18n('saveAs.filter.csv'),
+    parquet: () => i18n('saveAs.filter.parquet'),
+    docx: () => i18n('saveAs.filter.docx'),
+    docm: () => i18n('saveAs.filter.docm'),
+    dotm: () => i18n('saveAs.filter.dotm'),
+    dotx: () => i18n('saveAs.filter.dotx'),
 };
 
 /** Ask for a target file and write `content` there; returns false when the user cancels. */
@@ -88,10 +89,10 @@ async function saveContentAs(document: OfficeDocument, content: Uint8Array, targ
     const defaultUri = uri.scheme === 'file' || uri.scheme === 'git'
         ? Uri.file(join(dir, defaultFileName))
         : Uri.joinPath(uri, '..', defaultFileName);
-    const info = SAVE_AS_FILTERS[ext] ?? { label: ext.toUpperCase(), exts: [ext] };
+    const label = SAVE_AS_FILTERS[ext]?.() ?? i18n('saveAs.filter.other', { ext: ext.toUpperCase() });
     const target = await vscode.window.showSaveDialog({
         defaultUri,
-        filters: { [info.label]: info.exts },
+        filters: { [label]: [ext] },
     });
     if (!target) {
         handler?.emit('saveFailed');

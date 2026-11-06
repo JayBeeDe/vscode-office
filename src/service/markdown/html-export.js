@@ -2,6 +2,7 @@ const fs = require("fs")
 const os = require("os")
 const path = require("path")
 const { pathToFileURL } = require("url")
+const { i18n } = require("@/common/global")
 const isDev = process.argv.indexOf('--type=extensionHost') >= 0;
 
 export async function exportHtml(exportFilePath, data) {
@@ -46,7 +47,7 @@ export async function exportByType(filePath, data, type, config) {
     } while (fs.existsSync(tmpfilename))
     exportHtml(tmpfilename, data)
     if (!isExistsPath(tmpfilename)) {
-        throw new Error(`Temporary HTML file not found: ${tmpfilename}`)
+        throw new Error(i18n('markdown.tempHtmlNotFound', { path: tmpfilename }))
     }
 
     const fileUrl = pathToFileURL(tmpfilename).href

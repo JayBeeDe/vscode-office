@@ -76,7 +76,7 @@ const renderSingleMermaid = async (item: HTMLElement, code: string, index: numbe
     } catch (error: unknown) {
         const message = error instanceof Error ? error.message : String(error);
         item.className = "language-mermaid vditor-reset--error";
-        item.textContent = `mermaid render error: ${message}`;
+        item.textContent = `${window.VditorI18n.mermaidRenderError}: ${message}`;
         item.setAttribute(MERMAID_PROCESSED_ATTR, "true");
     }
 };

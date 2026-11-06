@@ -20,7 +20,8 @@
       "noPasteDirectory": "Not support paste directory.",
       "installXclip": "You need to install xclip command first.",
       "wikilinkNotFound": "Wikilink target not found: {target}",
-      "statusBar": "Line {lines} Count {chars}"
+      "statusBar": "Line {lines} Count {chars}",
+      "tempHtmlNotFound": "Temporary HTML file not found: {path}"
     },
     "loading": {
       "document": "Loading {kind} {name}...",
@@ -35,6 +36,29 @@
         "markdown": "Markdown",
         "file": "file"
       }
+    },
+    "saveAs": {
+      "filter": {
+        "xlsx": "Excel Workbook",
+        "xlsm": "Excel Macro-Enabled Workbook",
+        "xltx": "Spreadsheet Template",
+        "xltm": "Macro-Enabled Spreadsheet Template",
+        "xls": "Excel 97-2003 Workbook",
+        "xlt": "Spreadsheet 97-2003 Template",
+        "ods": "OpenDocument Spreadsheet",
+        "ots": "OpenDocument Spreadsheet Template",
+        "csv": "CSV (Comma delimited)",
+        "parquet": "Apache Parquet",
+        "docx": "Word Document",
+        "docm": "Macro-Enabled Document",
+        "dotm": "Macro-Enabled Document Template",
+        "dotx": "Word Template",
+        "other": "{ext} file"
+      }
+    },
+    "office": {
+      "readFailed": "Failed to read file",
+      "gitExited": "git exited with code {code}"
     }
   },
   "viewer": {
@@ -48,7 +72,10 @@
       "saved": "Saved successfully",
       "zoomIn": "Zoom in",
       "zoomOut": "Zoom out",
-      "readOnlyBadge": "Read-only"
+      "readOnlyBadge": "Read-only",
+      "emptyFile": "Empty file content",
+      "noFilePath": "No file path",
+      "fetchFailed": "Failed to fetch ({status})"
     },
     "document": {
       "heading": "Heading {level}",
@@ -182,7 +209,10 @@
         "noChanges": "No unsaved changes",
         "zoomMin": "Already at the smallest zoom",
         "zoomMax": "Already at the largest zoom"
-      }
+      },
+      "newTopic": "New topic",
+      "untitled": "Untitled",
+      "defaultSheet": "Sheet {number}"
     },
     "parquet": {
       "readOnly": "Read-only — changes are not saved to disk",
@@ -195,7 +225,8 @@
       "saveSuccess": "Parquet file saved",
       "unsaved": "Unsaved changes",
       "invalidValue": "\"{value}\" is not a valid {type} value",
-      "failedLoad": "Failed to load parquet file"
+      "failedLoad": "Failed to load parquet file",
+      "failedSave": "Failed to save the Parquet file"
     }
   },
   "document": {
@@ -1105,7 +1136,9 @@
       "nextSheet": "Scroll right",
       "lastSheet": "Scroll to last sheet",
       "moreSheets": "All sheets",
-      "addSheet": "Add sheet"
+      "addSheet": "Add sheet",
+      "defaultSheetName": "Sheet{number}",
+      "defaultSheetBase": "Sheet"
     },
     "align": {
       "left": "Align left",
@@ -1169,7 +1202,10 @@
       "_if": "If",
       "and": "And",
       "or": "Or",
-      "concat": "Concat"
+      "concat": "Concat",
+      "divide": "Divide",
+      "product": "Product",
+      "subtract": "Subtract"
     },
     "validation": {
       "required": "it must be required",
@@ -1293,6 +1329,14 @@
         "eq": "Equal to",
         "neq": "Not equal to"
       }
+    },
+    "formulaBar": {
+      "goToCell": "Go to cell",
+      "cellAddress": "Cell address",
+      "cellContent": "Cell content"
+    },
+    "message": {
+      "tip": "Tip"
     }
   },
   "markdown": {
@@ -1391,7 +1435,16 @@
     "paste": "Paste",
     "exportPdf": "Export PDF",
     "exportDocx": "Export Docx",
-    "exportHtml": "Export HTML"
+    "exportHtml": "Export HTML",
+    "plaintext": "Plain Text",
+    "empty": "Empty",
+    "current": "current",
+    "languageSearch": "Search language",
+    "copyAsImage": "Copy as image",
+    "openInPlantuml": "Open in PlantUML",
+    "toggleLineWrap": "Toggle line wrap",
+    "mermaidRenderError": "Mermaid render error",
+    "plantumlRenderError": "PlantUML render error"
   },
   "pdf": {
     "switchToLight": "Switch PDF to light mode",

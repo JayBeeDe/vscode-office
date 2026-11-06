@@ -493,19 +493,19 @@ export const showHtmlEditorPopover = (vditor: IVditor, target: HtmlEditTarget) =
     const wrapButton = document.createElement("button");
     wrapButton.type = "button";
     wrapButton.className = "vditor-html-inline-popover__button vditor-html-inline-popover__button--wrap";
-    wrapButton.setAttribute("aria-label", "Toggle line wrap");
+    wrapButton.setAttribute("aria-label", window.VditorI18n.toggleLineWrap);
     wrapButton.setAttribute("aria-pressed", "false");
     wrapButton.innerHTML = `<span class="vditor-html-inline-popover__button-icon">${codicon("word-wrap")}</span>`;
 
     const saveButton = document.createElement("button");
     saveButton.type = "button";
     saveButton.className = "vditor-html-inline-popover__button vditor-html-inline-popover__button--primary";
-    saveButton.textContent = window.VditorI18n?.aiSave ?? "Save";
+    saveButton.textContent = window.VditorI18n?.aiSave;
 
     const cancelButton = document.createElement("button");
     cancelButton.type = "button";
     cancelButton.className = "vditor-html-inline-popover__button vditor-html-inline-popover__button--cancel";
-    cancelButton.textContent = window.VditorI18n?.aiCancel ?? "Cancel";
+    cancelButton.textContent = window.VditorI18n?.aiCancel;
 
     const initialSource = target.getSource();
     const targetRef = target;

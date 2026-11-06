@@ -173,7 +173,24 @@ export default function XmindViewer() {
             direction: MindElixir.SIDE,
             // a read-only file (a git revision...) can be viewed, not edited
             editable: !readOnlyRef.current,
-            contextMenu: true,
+            // the right-click menu uses the toolbar's words, in the VS Code language
+            contextMenu: {
+                locale: {
+                    addChild: $t('xmind.tips.addChild.title'),
+                    addParent: $t('xmind.tips.addParent.title'),
+                    addSibling: $t('xmind.tips.addSibling.title'),
+                    removeNode: $t('xmind.tips.remove.title'),
+                    focus: $t('xmind.tips.focus.title'),
+                    cancelFocus: $t('xmind.tips.cancelFocus.title'),
+                    moveUp: $t('xmind.tips.moveUp.title'),
+                    moveDown: $t('xmind.tips.moveDown.title'),
+                    link: $t('xmind.tips.link.title'),
+                    linkBidirectional: $t('xmind.tips.linkBidirectional.title'),
+                    clickTips: $t('xmind.clickTarget'),
+                    summary: $t('xmind.tips.summary.title'),
+                },
+            },
+            newTopicName: $t('xmind.newTopic'),
             // the viewer's toolbar replaces mind-elixir's floating ones
             toolBar: false,
             keypress: true,

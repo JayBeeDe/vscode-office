@@ -37,7 +37,7 @@ const createPlantumlChrome = (url: string, vditor?: IVditor) => {
     link.href = url;
     link.target = "_blank";
     link.rel = "noopener noreferrer";
-    link.setAttribute("aria-label", "Open in PlantUML");
+    link.setAttribute("aria-label", window.VditorI18n.openInPlantuml);
     link.innerHTML = `<span class="vditor-plantuml-chrome__link-icon">${codicon("link-external")}</span>`;
     actions.appendChild(link);
 

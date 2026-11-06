@@ -1,5 +1,6 @@
 import { h } from './element';
 import { cssPrefix } from '../config';
+import { t } from '../locale/locale';
 import { expr2xy, xy2expr } from '../core/alphabet';
 
 export default class FormulaBar {
@@ -16,14 +17,14 @@ export default class FormulaBar {
       type: 'text',
       spellcheck: 'false',
       autocomplete: 'off',
-      title: 'Go to cell',
-      'aria-label': 'Cell address',
+      title: t('formulaBar.goToCell'),
+      'aria-label': t('formulaBar.cellAddress'),
     });
     this.inputEl = h('input', `${cssPrefix}-formula-bar-input`).attr({
       type: 'text',
       spellcheck: 'false',
       autocomplete: 'off',
-      'aria-label': 'Cell content',
+      'aria-label': t('formulaBar.cellContent'),
     });
     this.el = h('div', `${cssPrefix}-formula-bar`)
       .children(this.nameEl, this.inputEl);

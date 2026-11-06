@@ -2,6 +2,7 @@ import Dropdown from './dropdown';
 import { h } from './element';
 import { baseFormats } from '../core/format';
 import { cssPrefix } from '../config';
+import { t } from '../locale/locale';
 
 export default class DropdownFormat extends Dropdown {
   constructor() {
@@ -22,7 +23,7 @@ export default class DropdownFormat extends Dropdown {
       }
       return item;
     });
-    super('Normal', '220px', true, 'bottom-left', ...nformats);
+    super(t('format.normal'), '220px', true, 'bottom-left', ...nformats);
   }
 
   setTitle(key) {

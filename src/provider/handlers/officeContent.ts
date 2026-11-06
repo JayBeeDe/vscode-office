@@ -4,6 +4,7 @@ import { extensions, Uri, workspace, type Webview } from 'vscode';
 import { Handler } from '@/common/handler';
 import { isUriReadOnly } from '@/common/fileReadOnly';
 import { isWebExtensionHost } from '@/common/extensionHost';
+import { i18n } from '@/common/global';
 
 export function isVirtualUri(uri: Uri): boolean {
     return uri.scheme !== 'file';
@@ -94,7 +95,7 @@ function spawnGitBinary(gitPath: string, cwd: string, args: string[]): Promise<U
         child.on('close', (code) => {
             if (code !== 0) {
                 const message = Buffer.concat(stderr).toString('utf8').trim();
-                reject(new Error(message || `git exited with code ${code}`));
+                reject(new Error(message || i18n('office.gitExited', { code: String(code) })));
                 return;
             }
             resolve(new Uint8Array(Buffer.concat(stdout)));
@@ -177,7 +178,7 @@ export async function emitVirtualOfficeOpen(handler: Handler, uri: Uri, source: 
             scheme: uri.scheme,
             documentCacheId: buildDocumentCacheId(uri),
             readOnly,
-            error: error instanceof Error ? error.message : 'Failed to read file',
+            error: error instanceof Error ? error.message : i18n('office.readFailed'),
             nonce: now,
         });
     }

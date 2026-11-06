@@ -40,7 +40,7 @@ export const plantumlRender = (
                 ensurePlantumlChrome(e, url, vditor);
             } catch (error) {
                 e.className = "vditor-reset--error";
-                e.innerHTML = `plantuml render error: <br>${error}`;
+                e.innerHTML = `${window.VditorI18n.plantumlRenderError}: <br>${error}`;
             }
         });
     });

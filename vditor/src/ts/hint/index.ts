@@ -83,7 +83,7 @@ export class Hint {
                 ? " data-current='true'"
                 : "";
             const currentDesc = (hintData as IHintData & { current?: boolean }).current
-                ? `<span class="vditor-hint__current-desc">current</span>`
+                ? `<span class="vditor-hint__current-desc">${window.VditorI18n.current}</span>`
                 : "";
             hintsHTML += `<button data-value="${encodeURIComponent(hintData.value)} "${className}${currentAttr}><span class="vditor-hint__label">${html}</span>${currentDesc}</button>`;
         });
