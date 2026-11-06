@@ -174,7 +174,7 @@
 
 .vditor-toolbar__item .vditor-tooltipped[data-type="outline"].vditor-menu--current {
   color: var(--list-hover-color, var(--toolbar-icon-hover-color)) !important;
-  background-color: color-mix(in srgb, var(--list-hover-color, var(--link-color, #4285f4)) 12%, transparent);
+  background-color: color-mix(in srgb, var(--list-hover-color, var(--link-color, @blurColor)) 12%, transparent);
 }
 
 .vditor-toolbar__item:has([data-type="outline"]) {
@@ -306,7 +306,7 @@
 
   &--current {
     background: var(--vscode-editor-findMatchBackground, var(--vscode-editor-findMatchHighlightBackground, #ffd700));
-    outline: 2px solid var(--vscode-editor-findMatchBorder, var(--link-color, #4285f4));
+    outline: 2px solid var(--vscode-editor-findMatchBorder, var(--link-color, @blurColor));
     outline-offset: 1px;
   }
 }

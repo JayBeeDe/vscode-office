@@ -4,8 +4,12 @@
 #vditor[data-editor-theme],
 #vditor .vditor-page[data-editor-theme],
 #vditor .vditor-ui[data-editor-theme] {
-  --table-border: var(--border-color);
-  --table-row-border: var(--border-color);
+  // tables follow VS Code's accent: lines, header row and the row/column handles
+  --table-accent: var(--list-hover-color, var(--link-color));
+  --table-border: color-mix(in srgb, var(--table-accent) 40%, var(--border-color));
+  --table-row-border: var(--table-border);
+  --table-header-bg: color-mix(in srgb, var(--table-accent) 14%, var(--bg-color));
+  --table-axis-color: color-mix(in srgb, var(--table-accent) 55%, transparent);
   --panel-background-color: var(--textarea-background-color, var(--bg-color));
   --toolbar-icon-color: var(--front-color);
   --toolbar-icon-hover-color: var(--list-hover-color);

@@ -17,7 +17,8 @@ html[data-editor-theme="Light"],
     --link-color: var(--vscode-focusBorder, var(--list-hover-color));
     --selection-bg: color-mix(in srgb, var(--vscode-focusBorder, #0451a5) 30%, transparent);
     --wikilink-color: #7b68ee;
-    --list-hover-color: #0451a5;
+    /* the hover and active accent (toolbar, menus, outline, checkboxes) follows VS Code's too */
+    --list-hover-color: var(--vscode-focusBorder, #0451a5);
     --dropdown-hover-background: #e8eef3;
     --error-color: #e51400;
 

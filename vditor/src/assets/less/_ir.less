@@ -40,7 +40,7 @@
 
     &[data-type="link-ref"],
     &[data-type="footnotes-ref"] {
-      color: @blurColor;
+      color: var(--link-color, @blurColor);
     }
 
     &[data-type="html-block"] {
@@ -268,7 +268,7 @@
     }
 
     span[data-type="toc-h"] {
-      color: @blurColor;
+      color: var(--link-color, @blurColor);
       text-decoration: underline;
     }
   }

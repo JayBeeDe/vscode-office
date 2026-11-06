@@ -182,7 +182,7 @@
     --scrollbar-thumb: var(--vscode-scrollbarSlider-background, color-mix(in srgb, var(--front-color, #b9b9b9) 30%, transparent));
     --scrollbar-thumb-hover: var(--vscode-scrollbarSlider-hoverBackground, color-mix(in srgb, var(--front-color, #b9b9b9) 44%, transparent));
 
-    --count-background-color: rgba(@blurColor, 0.36);
+    --count-background-color: color-mix(in srgb, var(--list-hover-color, @blurColor) 36%, transparent);
     --blockquote-color: var(--front-color, var(--toolbar-icon-color));
     --blockquote-border: var(--vscode-textBlockQuote-border, var(--border-color));
     --table-row-border: var(--border-color);

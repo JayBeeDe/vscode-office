@@ -21,7 +21,13 @@
     &:hover,
     &--drag,
     &--menu {
-      background: color-mix(in srgb, var(--toolbar-icon-color) 8%, transparent);
+      background: color-mix(in srgb, var(--table-accent, var(--toolbar-icon-color)) 10%, transparent);
+    }
+
+    &:hover &-mark,
+    &--drag &-mark,
+    &--menu &-mark {
+      background: var(--table-accent, var(--table-axis-color));
     }
 
     &:hover,

@@ -62,7 +62,7 @@
     left: 0;
     top: -2px;
     transition: @transition;
-    background-color: @blurColor;
+    background-color: var(--link-color, @blurColor);
   }
 
   &-tip {
@@ -98,7 +98,7 @@
       }
 
       a {
-        color: @blurColor;
+        color: var(--link-color, @blurColor);
       }
     }
 

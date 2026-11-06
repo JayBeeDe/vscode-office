@@ -17,7 +17,8 @@ html[data-editor-theme="One Dark"],
     --link-color: var(--vscode-focusBorder, var(--list-hover-color));
     --selection-bg: color-mix(in srgb, var(--vscode-focusBorder, #0078d4) 40%, transparent);
     --wikilink-color: #c678dd;
-    --list-hover-color: #61afef;
+    /* the hover and active accent (toolbar, menus, outline, checkboxes) follows VS Code's too */
+    --list-hover-color: var(--vscode-focusBorder, #61afef);
     --dropdown-hover-background: #3a3f4b;
     --error-color: #e06c75;
 
