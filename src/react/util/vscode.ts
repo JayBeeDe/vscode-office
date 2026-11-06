@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 const vscode = window['acquireVsCodeApi']?.();
 export { vscode as vscodeApi };
 const postMessage = (message) => { if (vscode) { vscode.postMessage(message) } }
@@ -45,6 +47,20 @@ export function onSaveRequest(save: (backup: boolean) => unknown) {
             handler.emit('saveRequestDone');
         }
     });
+}
+
+/**
+ * Shows or hides the loading screen the extension puts in every viewer's page
+ * (src/common/loadingStatus.ts), and tells the extension, which shows the load in the status bar.
+ */
+export function setDocumentLoading(loading: boolean) {
+    document.getElementById('office-loading')?.classList.toggle('office-loading--done', !loading);
+    handler.emit('loadingState', loading);
+}
+
+/** Keeps the loading screen in step with a viewer's `loading` state. */
+export function useDocumentLoading(loading: boolean) {
+    useEffect(() => setDocumentLoading(loading), [loading]);
 }
 
 export function isCompose(e) {

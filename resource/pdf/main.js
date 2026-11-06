@@ -402,22 +402,51 @@
     return null;
   }
 
+  /** The loading screen stays until the first page is drawn, or the PDF fails to open. */
+  function trackPdfLoad(opening) {
+    window.setDocumentLoading(true);
+    const eventBus = PDFViewerApplication.eventBus;
+    let done = false;
+    const finish = () => {
+      if (done) return;
+      done = true;
+      eventBus?.off('pagerendered', finish);
+      window.setDocumentLoading(false);
+    };
+    eventBus?.on('pagerendered', finish);
+    // a password-protected PDF waits for the password: its prompt must be visible
+    const passwordPrompt = PDFViewerApplication.passwordPrompt;
+    if (passwordPrompt && !passwordPrompt.__officeLoadingHooked) {
+      passwordPrompt.__officeLoadingHooked = true;
+      const open = passwordPrompt.open.bind(passwordPrompt);
+      passwordPrompt.open = () => {
+        window.setDocumentLoading(false);
+        open();
+      };
+    }
+    Promise.resolve(opening).then(undefined, finish);
+  }
+
   function openPdfDocument(payload) {
     if (!payload) {
+      window.setDocumentLoading(false);
       return;
     }
     if (payload.error) {
       console.error(payload.error);
+      window.setDocumentLoading(false);
       return;
     }
     const data = toUint8Array(payload.buffer);
     if (data?.length) {
-      PDFViewerApplication.open(data);
+      trackPdfLoad(PDFViewerApplication.open(data));
       return;
     }
     if (payload.path) {
-      PDFViewerApplication.open(payload.path);
+      trackPdfLoad(PDFViewerApplication.open(payload.path));
+      return;
     }
+    window.setDocumentLoading(false);
   }
 
   window.addEventListener('load', function () {

@@ -510,26 +510,6 @@ body:has(.parquet-app) {
     }
 }
 
-.parquet-viewer__overlay {
-    position: absolute;
-    inset: 0;
-    z-index: 20;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    background: color-mix(in srgb, var(--pv-bg) 78%, transparent);
-    backdrop-filter: blur(2px);
-    color: var(--pv-muted);
-    font-size: 13px;
-
-    .codicon {
-        font-size: 28px;
-        color: var(--pv-fg);
-    }
-}
-
 @media (max-width: 720px) {
     .parquet-viewer__sider {
         width: 220px;

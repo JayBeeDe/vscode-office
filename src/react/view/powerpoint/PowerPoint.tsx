@@ -1,7 +1,7 @@
-import { Alert, Layout, Spin } from "antd";
+import { Alert, Layout } from "antd";
 import { PPTXViewer } from "pptxviewjs";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { handler } from "../../util/vscode";
+import { handler, useDocumentLoading } from "../../util/vscode";
 import { loadOfficeBuffer } from "../../util/loadOfficeContent";
 import { $t } from "../../i18n/i18nConfig.ts";
 import { loadMasterImages } from "./masterImages";
@@ -177,6 +177,9 @@ export default function PowerPoint() {
     const touchPanRef = useRef<{ startX: number; startY: number; panX: number; panY: number } | null>(null);
     const [loading, setLoading] = useState(true);
     const [thumbsLoading, setThumbsLoading] = useState(false);
+    // until the first slide is drawn: `loading` ends earlier, so the canvas can be sized
+    const [firstSlidePending, setFirstSlidePending] = useState(true);
+    useDocumentLoading(loading || firstSlidePending);
     const [error, setError] = useState<string | null>(null);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [slideCount, setSlideCount] = useState(0);
@@ -284,6 +287,7 @@ export default function PowerPoint() {
         const generation = ++loadGenerationRef.current;
         const isCurrent = () => generation === loadGenerationRef.current;
         setLoading(true);
+        setFirstSlidePending(true);
         setThumbsLoading(false);
         setError(null);
         setThumbnails([]);
@@ -301,6 +305,7 @@ export default function PowerPoint() {
             const canvas = canvasRef.current;
             const wrap = canvasWrapRef.current;
             if (!canvas || !wrap || !isCurrent()) {
+                if (isCurrent()) setFirstSlidePending(false);
                 return;
             }
 
@@ -331,6 +336,7 @@ export default function PowerPoint() {
             viewerRef.current = viewer;
             setSlideCount(count);
             setCurrentIndex(currentIndexRef.current);
+            setFirstSlidePending(false);
 
             setThumbsLoading(true);
             const urls = await generateThumbnails(viewer, count, queueRender, isCurrent);
@@ -343,6 +349,7 @@ export default function PowerPoint() {
             if (!isCurrent()) return;
             setError(e instanceof Error ? e.message : $t('presentation.failedLoad'));
             setLoading(false);
+            setFirstSlidePending(false);
         } finally {
             if (isCurrent()) setThumbsLoading(false);
         }
@@ -621,7 +628,6 @@ export default function PowerPoint() {
 
     return (
         <>
-            <Spin spinning={loading} fullscreen />
             {error && <Alert type="error" message={error} showIcon style={{ margin: 16 }} />}
             <Layout className="ppt-viewer office-viewer-themed">
                 <Layout className="ppt-body">

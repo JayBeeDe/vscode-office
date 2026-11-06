@@ -1,8 +1,8 @@
 import { AimOutlined, AlignCenterOutlined, AlignLeftOutlined, AlignRightOutlined, ExpandOutlined, MinusOutlined, PlusOutlined, SaveOutlined } from '@ant-design/icons';
-import { Alert, Layout, Spin, message } from 'antd';
+import { Alert, Layout, message } from 'antd';
 import MindElixir, { type MindElixirData, type MindElixirInstance } from 'mind-elixir';
 import { type ComponentType, useCallback, useEffect, useRef, useState } from 'react';
-import { handler, onSaveRequest } from '../../util/vscode';
+import { handler, onSaveRequest, useDocumentLoading } from '../../util/vscode';
 import { loadOfficeBuffer } from '../../util/loadOfficeContent';
 import { $t } from '../../i18n/i18nConfig.ts';
 import { observeVscodeThemeChange } from '../../util/vscodeTheme';
@@ -62,7 +62,8 @@ export default function XmindViewer() {
     const [autoZoom, setAutoZoom] = useState(true);
     const autoZoomRef = useRef(true);
     const fittingRef = useRef(false);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
+    useDocumentLoading(loading);
     const [saving, setSaving] = useState(false);
     const [dirty, setDirty] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -507,7 +508,6 @@ export default function XmindViewer() {
                     )}
                 </Content>
             </Layout>
-            <Spin spinning={loading} fullscreen tip={$t('xmind.loading')} />
         </Layout>
     );
 }

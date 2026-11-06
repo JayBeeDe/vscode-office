@@ -3,6 +3,7 @@ import * as vscode from 'vscode';
 import { extensionResource, getExtensionUri, readExtensionText } from './extensionResource';
 import { getEpubSettings } from '@/provider/epubSettings';
 import { getDocumentTheme, getEpubTheme, getTheme } from './theme';
+import { withLoadingOverlay } from './loadingStatus';
 
 interface ViewOption {
     route: string;
@@ -30,8 +31,8 @@ export class ReactApp {
         this.IS_DEV = context.extensionMode == vscode.ExtensionMode.Development;
     }
 
-    public static async view(webview: vscode.Webview, option: ViewOption) {
-        const html = await this.readContent();
+    public static async view(webview: vscode.Webview, uri: vscode.Uri, option: ViewOption) {
+        const html = withLoadingOverlay(await this.readContent(), uri);
         const configs = JSON.stringify({
             ...option,
             language: vscode.env.language,

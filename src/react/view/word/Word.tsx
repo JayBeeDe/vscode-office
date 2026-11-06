@@ -1,8 +1,8 @@
-import { Alert, Spin } from "antd";
+import { Alert } from "antd";
 import { DocxEditor, type DocxEditorRef } from "@eigenpal/docx-editor-react";
 import "@eigenpal/docx-editor-react/styles.css";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { handler, onSaveRequest } from "../../util/vscode";
+import { handler, onSaveRequest, useDocumentLoading } from "../../util/vscode";
 import { type ThemeSetting, toThemeSetting, useTheme } from "../../util/theme";
 import { getConfigs } from "../../util/vscodeConfig";
 import { loadOfficeBuffer } from "../../util/loadOfficeContent";
@@ -38,6 +38,15 @@ export default function Word() {
     const theme = useTheme();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    // the file is read, but the editor has not painted its pages yet
+    const [rendering, setRendering] = useState(false);
+    useDocumentLoading(loading || rendering);
+    useEffect(() => {
+        if (!rendering) return;
+        // never keep the document hidden if the editor does not report its paint
+        const timer = setTimeout(() => setRendering(false), 10000);
+        return () => clearTimeout(timer);
+    }, [rendering]);
     const [readOnly, setReadOnly] = useState(false);
     const [documentBuffer, setDocumentBuffer] = useState<ArrayBuffer | undefined>(undefined);
     const [documentKey, setDocumentKey] = useState("");
@@ -72,6 +81,7 @@ export default function Word() {
         // `open` can arrive again while a load is running: only the latest one is applied
         const generation = ++loadGenerationRef.current;
         setLoading(true);
+        setRendering(false);
         setError(null);
         setDocumentBuffer(undefined);
 
@@ -85,6 +95,7 @@ export default function Word() {
             setCommentsSidebarOpen(false);
             const buffer = await loadOfficeBuffer(payload);
             if (generation !== loadGenerationRef.current) return;
+            setRendering(true);
             setDocumentBuffer(buffer);
         } catch (e) {
             if (generation !== loadGenerationRef.current) return;
@@ -115,7 +126,6 @@ export default function Word() {
 
     return (
         <div className={`word-viewer${adaptiveColorMode ? " word-viewer--vscode-theme" : ""}${darkPages ? " word-viewer--dark-pages" : ""}`}>
-            <Spin spinning={loading} fullscreen />
             {error && <Alert type="error" message={error} showIcon style={{ margin: 16 }} />}
             {readOnly && !loading && !error && documentBuffer && (
                 <div className="word-readonly-banner">{$t("common.readOnlyBadge")}</div>
@@ -158,6 +168,8 @@ export default function Word() {
                             }
                         }}
                         onSave={emitSave}
+                        onRenderedDomContextReady={() => setRendering(false)}
+                        onError={() => setRendering(false)}
                     />
                 </>
             )}

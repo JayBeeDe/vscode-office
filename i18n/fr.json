@@ -21,6 +21,20 @@
       "installXclip": "Vous devez d'abord installer la commande xclip.",
       "wikilinkNotFound": "Cible du wikilink introuvable : {target}",
       "statusBar": "Ligne {lines} Caractères {chars}"
+    },
+    "loading": {
+      "document": "Chargement {kind} {name}...",
+      "kind": {
+        "spreadsheet": "du classeur",
+        "document": "du document",
+        "presentation": "de la présentation",
+        "pdf": "du PDF",
+        "epub": "du livre",
+        "xmind": "de la carte mentale",
+        "parquet": "du fichier Parquet",
+        "markdown": "du Markdown",
+        "file": "du fichier"
+      }
     }
   },
   "viewer": {
@@ -49,7 +63,6 @@
       "error": "Erreur"
     },
     "xmind": {
-      "loading": "Chargement du XMind...",
       "sheets": "Feuilles",
       "clickTarget": "Cliquez sur le sujet cible",
       "tips": {

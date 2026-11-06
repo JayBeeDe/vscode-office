@@ -10,6 +10,7 @@ import { getPdfViewerStrings } from './pdfViewerStrings';
 import { bindEpubSettings } from './epubSettings';
 import { bindPdfSidebar, getPdfScrolling, getPdfSidebar, getPdfSpread, getPdfTool, getPdfZoom } from './pdfSettings';
 import { bindDocumentTheme, bindEpubTheme, bindPdfTheme, bindTheme, getPdfTheme, getTheme } from '@/common/theme';
+import { trackDocumentLoading, withLoadingOverlay } from '@/common/loadingStatus';
 
 /**
  * support view office files
@@ -101,7 +102,8 @@ export class OfficeViewerProvider implements vscode.CustomEditorProvider<OfficeD
 			case '.pdf':
 				bindPdfTheme(handler);
 				bindPdfSidebar(handler);
-				void this.loadPdfViewer(webview);
+				trackDocumentLoading(handler, uri);
+				void this.loadPdfViewer(webview, uri);
 				break;
 			case '.epub':
 				route = 'epub';
@@ -118,11 +120,13 @@ export class OfficeViewerProvider implements vscode.CustomEditorProvider<OfficeD
 				if (route) break;
 				vscode.commands.executeCommand('vscode.openWith', uri, 'default');
 		}
-		if (route) return ReactApp.view(webview, { route });
+		if (!route) return;
+		trackDocumentLoading(handler, uri);
+		return ReactApp.view(webview, uri, { route });
 	}
 
-	private async loadPdfViewer(webview: vscode.Webview) {
-		const html = await readExtensionText(this.context, 'resource', 'pdf', 'viewer.html');
+	private async loadPdfViewer(webview: vscode.Webview, uri: vscode.Uri) {
+		const html = withLoadingOverlay(await readExtensionText(this.context, 'resource', 'pdf', 'viewer.html'), uri);
 		const strings = getPdfViewerStrings(resolveLanguage(vscode.env.language));
 		webview.html = html.replace('{{baseUrl}}', this.getBaseUrl(webview, 'pdf'))
 			.replace('{{i18n}}', () => strings.buttons)

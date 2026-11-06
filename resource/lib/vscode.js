@@ -32,6 +32,15 @@ const getVscodeEvent = () => {
 window.vscodeEvent = getVscodeEvent();
 window.handler = getVscodeEvent();
 
+/**
+ * Shows or hides the loading screen the extension puts in every viewer's page
+ * (src/common/loadingStatus.ts), and tells the extension, which shows the load in the status bar.
+ */
+window.setDocumentLoading = function (loading) {
+    document.getElementById('office-loading')?.classList.toggle('office-loading--done', !loading);
+    window.vscodeEvent.emit('loadingState', loading);
+}
+
 function addCss(css) {
     const style = document.createElement('style');
     style.innerText = css;

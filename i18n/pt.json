@@ -21,6 +21,20 @@
       "installXclip": "Você precisa instalar o comando xclip primeiro.",
       "wikilinkNotFound": "Destino do wikilink não encontrado: {target}",
       "statusBar": "Linha {lines} Caracteres {chars}"
+    },
+    "loading": {
+      "document": "Carregando {kind} {name}...",
+      "kind": {
+        "spreadsheet": "planilha",
+        "document": "documento",
+        "presentation": "apresentação",
+        "pdf": "PDF",
+        "epub": "livro",
+        "xmind": "mapa mental",
+        "parquet": "arquivo Parquet",
+        "markdown": "Markdown",
+        "file": "arquivo"
+      }
     }
   },
   "viewer": {
@@ -49,7 +63,6 @@
       "error": "Erro"
     },
     "xmind": {
-      "loading": "Carregando XMind...",
       "sheets": "Planilhas"
     },
     "parquet": {

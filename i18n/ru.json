@@ -21,6 +21,20 @@
       "installXclip": "Сначала необходимо установить команду xclip.",
       "wikilinkNotFound": "Цель викиссылки не найдена: {target}",
       "statusBar": "Строка {lines} Символов {chars}"
+    },
+    "loading": {
+      "document": "Загрузка: {kind} {name}...",
+      "kind": {
+        "spreadsheet": "таблица",
+        "document": "документ",
+        "presentation": "презентация",
+        "pdf": "PDF",
+        "epub": "книга",
+        "xmind": "интеллект-карта",
+        "parquet": "файл Parquet",
+        "markdown": "Markdown",
+        "file": "файл"
+      }
     }
   },
   "viewer": {
@@ -49,7 +63,6 @@
       "error": "Ошибка"
     },
     "xmind": {
-      "loading": "Загрузка XMind...",
       "sheets": "Листы"
     },
     "parquet": {

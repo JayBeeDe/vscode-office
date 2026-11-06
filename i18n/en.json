@@ -21,6 +21,20 @@
       "installXclip": "You need to install xclip command first.",
       "wikilinkNotFound": "Wikilink target not found: {target}",
       "statusBar": "Line {lines} Count {chars}"
+    },
+    "loading": {
+      "document": "Loading {kind} {name}...",
+      "kind": {
+        "spreadsheet": "spreadsheet",
+        "document": "document",
+        "presentation": "presentation",
+        "pdf": "PDF",
+        "epub": "book",
+        "xmind": "mind map",
+        "parquet": "Parquet file",
+        "markdown": "Markdown",
+        "file": "file"
+      }
     }
   },
   "viewer": {
@@ -71,7 +85,6 @@
       "currentLocation": "Current location"
     },
     "xmind": {
-      "loading": "Loading XMind...",
       "sheets": "Sheets",
       "failedLoad": "Failed to load XMind file",
       "failedSave": "Failed to save XMind file",
@@ -177,7 +190,6 @@
       "rows": "Rows",
       "columnsLabel": "Columns",
       "createdBy": "Created by",
-      "loading": "Loading Parquet…",
       "totalRows": "{count} rows",
       "save": "Save",
       "saveSuccess": "Parquet file saved",

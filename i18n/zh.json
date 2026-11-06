@@ -21,6 +21,20 @@
       "installXclip": "请先安装 xclip 命令。",
       "wikilinkNotFound": "找不到双链目标：{target}",
       "statusBar": "行 {lines} 字数 {chars}"
+    },
+    "loading": {
+      "document": "正在加载{kind} {name}...",
+      "kind": {
+        "spreadsheet": "电子表格",
+        "document": "文档",
+        "presentation": "演示文稿",
+        "pdf": "PDF",
+        "epub": "电子书",
+        "xmind": "思维导图",
+        "parquet": "Parquet 文件",
+        "markdown": "Markdown",
+        "file": "文件"
+      }
     }
   },
   "viewer": {
@@ -49,7 +63,6 @@
       "error": "错误"
     },
     "xmind": {
-      "loading": "正在加载 XMind...",
       "sheets": "工作表"
     },
     "parquet": {
@@ -58,7 +71,6 @@
       "rows": "行数",
       "columnsLabel": "列数",
       "createdBy": "创建者",
-      "loading": "正在加载 Parquet…",
       "totalRows": "共 {count} 行",
       "save": "保存",
       "saveSuccess": "Parquet 文件已保存",

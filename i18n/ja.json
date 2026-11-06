@@ -21,6 +21,20 @@
       "installXclip": "先に xclip コマンドをインストールしてください。",
       "wikilinkNotFound": "ウィキリンクのターゲットが見つかりません: {target}",
       "statusBar": "行 {lines} 文字数 {chars}"
+    },
+    "loading": {
+      "document": "{kind} {name} を読み込んでいます...",
+      "kind": {
+        "spreadsheet": "スプレッドシート",
+        "document": "文書",
+        "presentation": "プレゼンテーション",
+        "pdf": "PDF",
+        "epub": "書籍",
+        "xmind": "マインドマップ",
+        "parquet": "Parquet ファイル",
+        "markdown": "Markdown",
+        "file": "ファイル"
+      }
     }
   },
   "viewer": {
@@ -49,7 +63,6 @@
       "error": "エラー"
     },
     "xmind": {
-      "loading": "XMind を読み込み中...",
       "sheets": "シート"
     },
     "parquet": {

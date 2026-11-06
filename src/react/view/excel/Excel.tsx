@@ -1,6 +1,6 @@
-import { App, Button, Modal, Radio, Spin } from "antd";
+import { App, Button, Modal, Radio } from "antd";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { handler, onSaveRequest } from "../../util/vscode.ts";
+import { handler, onSaveRequest, useDocumentLoading } from "../../util/vscode.ts";
 import { useTheme } from "../../util/theme.ts";
 import { loadOfficeBuffer } from "../../util/loadOfficeContent.ts";
 import './Excel.less';
@@ -66,6 +66,7 @@ function isCsvLikeExt(ext: string): boolean {
 function ExcelViewer() {
     const { message, modal } = App.useApp();
     const [loading, setLoading] = useState(true)
+    useDocumentLoading(loading)
     const theme = useTheme()
     const [readOnly, setReadOnly] = useState(false)
     const [findPanel, setFindPanel] = useState<'find' | 'replace' | null>(null)
@@ -421,7 +422,6 @@ function ExcelViewer() {
 
     return (
         <div className='excel-viewer'>
-            <Spin spinning={loading} fullscreen={true} />
             {loadError && !loading && (
                 <div className="excel-load-error">
                     <div className="excel-load-error-panel">

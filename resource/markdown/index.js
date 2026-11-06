@@ -9,7 +9,15 @@ function findReferenceDefinition(markdown, label) {
   return match ? (match[1] ?? match[2]) : '';
 }
 
-handler.on("open", async (md) => {
+handler.on("open", (md) => {
+  // the loading screen stays until the editor is ready, or its setup fails
+  openMarkdown(md).catch((error) => {
+    console.error(error);
+    window.setDocumentLoading(false);
+  });
+}).emit("init")
+
+async function openMarkdown(md) {
   /**
    * Shows a search result: the find bar on the match. The match's number among the source's
    * occurrences is its number among the rendered ones, unless markup (a link's URL, a code block's
@@ -142,6 +150,7 @@ handler.on("open", async (md) => {
       },
     },
     after() {
+      window.setDocumentLoading(false);
       observeWorkspaceAbsoluteImages(document.getElementById('vditor'), workspaceBaseUrl);
       disableSlowExports(!!exporting);
       handler.on('exporting', disableSlowExports);
@@ -211,4 +220,4 @@ handler.on("open", async (md) => {
     }
   })
   bindShortcut(handler, editor, workspaceBaseUrl);
-}).emit("init")
+}

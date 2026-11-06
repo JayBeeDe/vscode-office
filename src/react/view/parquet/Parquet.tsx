@@ -3,7 +3,7 @@ import type { ColumnsType } from 'antd/es/table';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import '@vscode/codicons/dist/codicon.css';
 import { $t } from '../../i18n/i18nConfig.ts';
-import { handler, onSaveRequest } from '../../util/vscode.ts';
+import { handler, onSaveRequest, useDocumentLoading } from '../../util/vscode.ts';
 import { useTheme } from '../../util/theme.ts';
 import { loadOfficeBuffer } from '../../util/loadOfficeContent.ts';
 import {
@@ -48,7 +48,8 @@ function ParquetViewer() {
     const [fileInfo, setFileInfo] = useState<ParquetFileInfo | null>(null);
     const [allRows, setAllRows] = useState<Record<string, unknown>[]>([]);
     const [page, setPage] = useState(0);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
+    useDocumentLoading(loading);
     const [error, setError] = useState<string | null>(null);
     const [editingRow, setEditingRow] = useState<number | null>(null);
     const [editingColumn, setEditingColumn] = useState<string | null>(null);
@@ -288,12 +289,6 @@ function ParquetViewer() {
 
     return (
         <div className={`parquet-viewer${vscodeTheme ? '' : ' parquet-viewer--light'}`}>
-            {loading && (
-                <div className="parquet-viewer__overlay">
-                    <span className="codicon codicon-loading codicon-modifier-spin" />
-                    <span>{$t('parquet.loading')}</span>
-                </div>
-            )}
             <div className="parquet-viewer__body">
                 <aside className="parquet-viewer__sider">
                     <div className="parquet-viewer__sider-inner">

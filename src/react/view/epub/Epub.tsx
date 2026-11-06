@@ -5,10 +5,9 @@ import {
     SettingOutlined,
     UnorderedListOutlined,
 } from '@ant-design/icons';
-import { Spin } from 'antd';
 import { Book, NavItem, Rendition } from 'epubjs';
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
-import { handler } from '../../util/vscode';
+import { handler, useDocumentLoading } from '../../util/vscode';
 import { type Theme, type ThemeSetting, toThemeSetting, useTheme } from '../../util/theme';
 import { getConfigs } from '../../util/vscodeConfig';
 import { loadOfficeBuffer } from '../../util/loadOfficeContent';
@@ -129,7 +128,8 @@ export default function Epub() {
     };
     const wheelNavLockRef = useRef(0);
 
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
+    useDocumentLoading(loading);
     const [error, setError] = useState<string | null>(null);
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [sidebarTab, setSidebarTab] = useState<SidebarTab>('toc');
@@ -727,11 +727,6 @@ export default function Epub() {
             </div>
 
             <div className="epub-reader" ref={pageRef}>
-                {loading && (
-                    <div className="epub-loading">
-                        <Spin />
-                    </div>
-                )}
                 <button
                     type="button"
                     className={`epub-nav prev${bookReady ? '' : ' hidden'}`}

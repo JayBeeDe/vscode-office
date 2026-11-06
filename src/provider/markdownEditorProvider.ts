@@ -9,6 +9,7 @@ import { Holder } from '../service/markdown/holder';
 import { MarkdownService } from '../service/markdownService';
 import { Global, i18n } from '@/common/global';
 import { bindTheme, getTheme } from '@/common/theme';
+import { trackDocumentLoading, withLoadingOverlay } from '@/common/loadingStatus';
 import { getMessages, resolveLanguage } from '@/i18n';
 import { openWikiLink } from '@/service/markdown/wikilink';
 import {
@@ -155,6 +156,7 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
             ],
         }
         const handler = Handler.bind(webviewPanel, uri);
+        trackDocumentLoading(handler, uri);
         void this.handleMarkdown(document, handler, folderPath);
         handler.on('developerTool', () => vscode.commands.executeCommand('workbench.action.toggleDevTools'))
     }
@@ -326,9 +328,9 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
         const basePath = workspacePath ? vscode.Uri.file(workspacePath) : folderPath;
         const baseUrl = webview.asWebviewUri(basePath).toString().replace(/\?.+$/, '').replace('https://git', 'https://file');
         const indexHtml = await readExtensionText(this.context, 'resource', 'markdown', 'index.html');
-        webview.html = Util.buildPath(
+        webview.html = withLoadingOverlay(Util.buildPath(
             indexHtml.replace("{{baseUrl}}", baseUrl), webview, contextUri
-        );
+        ), uri);
     }
 
     private getMarkdownWebviewConfig(configuration: vscode.WorkspaceConfiguration) {
