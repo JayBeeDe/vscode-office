@@ -37,6 +37,9 @@
         "file": "ファイル"
       }
     },
+    "saving": {
+      "document": "{kind} {name} を保存しています..."
+    },
     "saveAs": {
       "filter": {
         "xlsx": "Excel ブック",

@@ -3,7 +3,7 @@ import type { ColumnsType } from 'antd/es/table';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import '@vscode/codicons/dist/codicon.css';
 import { $t } from '../../i18n/i18nConfig.ts';
-import { handler, onSaveRequest, useDocumentLoading } from '../../util/vscode.ts';
+import { beginDocumentSaving, cancelDocumentSaving, handler, onSaveRequest, useDocumentLoading } from '../../util/vscode.ts';
 import { useTheme } from '../../util/theme.ts';
 import { loadOfficeBuffer } from '../../util/loadOfficeContent.ts';
 import {
@@ -105,9 +105,11 @@ function ParquetViewer() {
         savingRef.current = true;
         setSaving(true);
         try {
+            beginDocumentSaving();
             const buffer = writeParquetBuffer(info, allRowsRef.current);
             handler.emit('save', [...new Uint8Array(buffer)]);
         } catch (e) {
+            cancelDocumentSaving();
             savingRef.current = false;
             setSaving(false);
             const errMessage = e instanceof Error ? e.message : $t('parquet.failedSave');

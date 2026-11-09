@@ -1,6 +1,6 @@
 import { App, Button, Modal, Radio } from "antd";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { handler, onSaveRequest, useDocumentLoading } from "../../util/vscode.ts";
+import { beginDocumentSaving, cancelDocumentSaving, handler, onSaveRequest, useDocumentLoading } from "../../util/vscode.ts";
 import { useTheme } from "../../util/theme.ts";
 import { loadOfficeBuffer } from "../../util/loadOfficeContent.ts";
 import './Excel.less';
@@ -174,8 +174,10 @@ function ExcelViewer() {
                                     void (async () => {
                                         dialog.destroy();
                                         try {
+                                            beginDocumentSaving();
                                             await export_xlsx(spreadSheet, extRef.current, csvEncoding, { vbaSource: sourceBufferRef.current ?? undefined, csvFormat: csvFormatRef.current }, csvDelimiter);
                                         } catch (error) {
+                                            cancelDocumentSaving();
                                             reportSaveError(error);
                                         }
                                     })();
@@ -208,9 +210,11 @@ function ExcelViewer() {
         }
 
         try {
+            beginDocumentSaving();
             // the save button is disabled once the host confirms the write (saveDone)
             await export_xlsx(spreadSheet, extRef.current, csvEncoding, { vbaSource: sourceBufferRef.current ?? undefined, csvFormat: csvFormatRef.current }, csvDelimiter);
         } catch (error) {
+            cancelDocumentSaving();
             reportSaveError(error);
         }
     }, [modal, handleSaveAs, reportSaveError]);

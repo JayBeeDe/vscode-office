@@ -7,6 +7,7 @@ import { i18n } from '@/common/global';
 import { openInEditor } from '@/service/markdown/searchReveal';
 import { emitFileOfficeOpen, emitVirtualOfficeOpen, isVirtualUri } from '@/provider/handlers/officeContent';
 import { OfficeDocument } from '@/provider/handlers/officeDocument';
+import { beginDocumentSaving, endViewerSaving, trackViewerSaving } from '@/common/loadingStatus';
 
 const fileSaveTimes: Record<string, number> = {};
 const INTERNAL_SAVE_CHANGE_WINDOW_MS = 1500;
@@ -90,6 +91,8 @@ async function saveContentAs(document: OfficeDocument, content: Uint8Array, targ
         ? Uri.file(join(dir, defaultFileName))
         : Uri.joinPath(uri, '..', defaultFileName);
     const label = SAVE_AS_FILTERS[ext]?.() ?? i18n('saveAs.filter.other', { ext: ext.toUpperCase() });
+    // no "Saving..." while the user picks the file: it shows again when the copy is written
+    endViewerSaving(handler);
     const target = await vscode.window.showSaveDialog({
         defaultUri,
         filters: { [label]: [ext] },
@@ -107,13 +110,20 @@ async function saveContentAs(document: OfficeDocument, content: Uint8Array, targ
     return true;
 }
 
-/** Write the file; on failure tell the webview, so it doesn't stay in a saving state. */
+/**
+ * Write the file, showing "Saving spreadsheet test.csv..." meanwhile; on failure tell the webview,
+ * so it doesn't stay in a saving state.
+ */
 async function writeOrReport(document: OfficeDocument, target: Uri, content: Uint8Array) {
+    const endSaving = beginDocumentSaving(document.handler, target);
     try {
         await workspace.fs.writeFile(target, content);
     } catch (error) {
         document.handler?.emit('saveFailed', { message: error instanceof Error ? error.message : String(error) });
         throw error;
+    } finally {
+        endSaving();
+        endViewerSaving(document.handler);
     }
 }
 
@@ -192,6 +202,7 @@ export function handleCommonEvent(document: OfficeDocument, handler: Handler) {
         await emitFileOfficeOpen(handler, uri, handler.panel.webview);
     }
     document.reload = send;
+    trackViewerSaving(handler, uri);
     handler
         .on("editInVSCode", (full: boolean) => {
             const side = full ? vscode.ViewColumn.Active : vscode.ViewColumn.Beside;
@@ -220,6 +231,7 @@ export function handleCommonEvent(document: OfficeDocument, handler: Handler) {
         .on("saveRequestDone", () => {
             // the webview finished without sending content: the user cancelled, or chose Save As
             document.cancelRequest();
+            endViewerSaving(handler);
         })
         .on("saveAs", async (payload: { content: number[], ext?: string }) => {
             document.cancelRequest();

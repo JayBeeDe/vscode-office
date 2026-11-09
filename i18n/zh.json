@@ -37,6 +37,9 @@
         "file": "文件"
       }
     },
+    "saving": {
+      "document": "正在保存{kind} {name}..."
+    },
     "saveAs": {
       "filter": {
         "xlsx": "Excel 工作簿",

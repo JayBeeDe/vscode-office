@@ -2,7 +2,7 @@ import { AimOutlined, AlignCenterOutlined, AlignLeftOutlined, AlignRightOutlined
 import { Alert, Layout, message } from 'antd';
 import MindElixir, { type MindElixirData, type MindElixirInstance } from 'mind-elixir';
 import { type ComponentType, useCallback, useEffect, useRef, useState } from 'react';
-import { handler, onSaveRequest, useDocumentLoading } from '../../util/vscode';
+import { beginDocumentSaving, cancelDocumentSaving, handler, onSaveRequest, useDocumentLoading } from '../../util/vscode';
 import { loadOfficeBuffer } from '../../util/loadOfficeContent';
 import { $t } from '../../i18n/i18nConfig.ts';
 import { observeVscodeThemeChange } from '../../util/vscodeTheme';
@@ -330,9 +330,11 @@ export default function XmindViewer() {
         }
         try {
             setSaving(true);
+            beginDocumentSaving();
             const content = await doc.export(syncCurrentSheet());
             handler.emit('save', [...content]);
         } catch (e) {
+            cancelDocumentSaving();
             setSaving(false);
             message.error(e instanceof Error ? e.message : $t('xmind.failedSave'));
         }

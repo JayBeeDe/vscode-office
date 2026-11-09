@@ -2,7 +2,7 @@ import { Alert } from "antd";
 import { DocxEditor, type DocxEditorRef } from "@eigenpal/docx-editor-react";
 import "@eigenpal/docx-editor-react/styles.css";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { handler, onSaveRequest, useDocumentLoading } from "../../util/vscode";
+import { beginDocumentSaving, cancelDocumentSaving, handler, onSaveRequest, useDocumentLoading } from "../../util/vscode";
 import { type ThemeSetting, toThemeSetting, useTheme } from "../../util/theme";
 import { getConfigs } from "../../util/vscodeConfig";
 import { loadOfficeBuffer } from "../../util/loadOfficeContent";
@@ -72,7 +72,14 @@ export default function Word() {
     // the editor's save() already hands the buffer to onSave (emitSave): emitting it here as well
     // wrote the file twice
     const handleSave = useCallback(async () => {
-        await editorRef.current?.save();
+        beginDocumentSaving();
+        try {
+            // nothing written without a buffer: no write ends the saving state
+            if (!await editorRef.current?.save()) cancelDocumentSaving();
+        } catch (error) {
+            cancelDocumentSaving();
+            throw error;
+        }
     }, []);
 
     const loadGenerationRef = useRef(0);

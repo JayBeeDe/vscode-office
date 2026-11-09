@@ -101,6 +101,12 @@ function loadingLabel(uri: vscode.Uri): string {
     return i18n('loading.document', { kind: documentKind(getFileSuffix(name)), name });
 }
 
+/** "Saving spreadsheet excel.csv...": the kind of document, then its file name. */
+function savingLabel(uri: vscode.Uri): string {
+    const name = documentName(uri);
+    return i18n('saving.document', { kind: documentKind(getFileSuffix(name)), name });
+}
+
 /** The webview's HTML with the loading screen as the first thing of its body. */
 export function withLoadingOverlay(html: string, uri: vscode.Uri): string {
     const label = escapeHtml(loadingLabel(uri));
@@ -131,4 +137,109 @@ export function trackDocumentLoading(handler: Handler, uri: vscode.Uri): void {
     start();
     handler.on('loadingState', (loading: boolean) => loading ? start() : end());
     handler.panel.onDidDispose(end);
+}
+
+/** the shortest time the "Saving..." text stays in the status bar, so a quick save can be read */
+const MIN_SAVING_MS = 1200;
+
+interface SavingState {
+    /** saves running for this panel */
+    count: number;
+    shownAt: number;
+    /** ends the status bar progress */
+    finish?: () => void;
+    /** ends the save the viewer reported while building the file's content */
+    endViewer?: () => void;
+}
+
+const savingStates = new WeakMap<Handler, SavingState>();
+
+function savingState(handler: Handler): SavingState {
+    let state = savingStates.get(handler);
+    if (!state) {
+        state = { count: 0, shownAt: 0 };
+        savingStates.set(handler, state);
+    }
+    return state;
+}
+
+/**
+ * Shows "Saving spreadsheet test.csv..." in the status bar until the returned function is
+ * called. Saves can nest (a toolbar save runs VS Code's save): the text goes away when the last
+ * one ends, and stays up at least MIN_SAVING_MS.
+ */
+export function beginDocumentSaving(handler: Handler | undefined, uri: vscode.Uri): () => void {
+    if (!handler || handler.disposed) return () => { };
+    const state = savingState(handler);
+    state.count++;
+    if (!state.finish) {
+        state.shownAt = Date.now();
+        const done = new Promise<void>(resolve => { state.finish = resolve; });
+        void vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: savingLabel(uri) }, () => done);
+    }
+    let ended = false;
+    return () => {
+        if (ended) return;
+        ended = true;
+        state.count--;
+        if (state.count > 0) return;
+        const finish = state.finish;
+        setTimeout(() => {
+            // a new save started meanwhile keeps the progress
+            if (state.count > 0 || state.finish !== finish) return;
+            state.finish = undefined;
+            finish?.();
+        }, Math.max(0, state.shownAt + MIN_SAVING_MS - Date.now()));
+    };
+}
+
+/**
+ * The viewer reports it builds the file's content (`saving` true), which can take long, or that
+ * it failed (false). The write that follows ends it, or `endViewerSaving` when none follows.
+ */
+export function trackViewerSaving(handler: Handler, uri: vscode.Uri): void {
+    handler.on('saving', (saving: boolean) => {
+        const state = savingState(handler);
+        if (!saving) {
+            endViewerSaving(handler);
+        } else if (!state.endViewer) {
+            state.endViewer = beginDocumentSaving(handler, uri);
+        }
+    });
+}
+
+/** Ends the save the viewer reported: its file is written, or there is nothing to write. */
+export function endViewerSaving(handler: Handler | undefined): void {
+    const state = handler && savingStates.get(handler);
+    const end = state?.endViewer;
+    if (!state || !end) return;
+    state.endViewer = undefined;
+    end();
+}
+
+/** Shows the save of a text document (markdown), from VS Code's will-save to its did-save. */
+export function trackTextDocumentSaving(handler: Handler, uri: vscode.Uri): vscode.Disposable {
+    const key = uri.toString();
+    let end: (() => void) | undefined;
+    let safety: ReturnType<typeof setTimeout> | undefined;
+    const stop = () => {
+        clearTimeout(safety);
+        end?.();
+        end = undefined;
+    };
+    const disposables = [
+        vscode.workspace.onWillSaveTextDocument(e => {
+            if (e.document.uri.toString() !== key || end) return;
+            end = beginDocumentSaving(handler, uri);
+            // a save that fails fires no did-save
+            safety = setTimeout(stop, 30_000);
+        }),
+        vscode.workspace.onDidSaveTextDocument(document => {
+            if (document.uri.toString() === key) stop();
+        }),
+    ];
+    return new vscode.Disposable(() => {
+        stop();
+        disposables.forEach(d => d.dispose());
+    });
 }

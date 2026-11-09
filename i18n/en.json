@@ -37,6 +37,9 @@
         "file": "file"
       }
     },
+    "saving": {
+      "document": "Saving {kind} {name}..."
+    },
     "saveAs": {
       "filter": {
         "xlsx": "Excel Workbook",

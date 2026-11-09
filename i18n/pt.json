@@ -37,6 +37,9 @@
         "file": "arquivo"
       }
     },
+    "saving": {
+      "document": "Salvando {kind} {name}..."
+    },
     "saveAs": {
       "filter": {
         "xlsx": "Pasta de Trabalho do Excel",

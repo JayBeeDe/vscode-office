@@ -37,6 +37,9 @@
         "file": "Datei"
       }
     },
+    "saving": {
+      "document": "{kind} {name} wird gespeichert..."
+    },
     "saveAs": {
       "filter": {
         "xlsx": "Excel-Arbeitsmappe",

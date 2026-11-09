@@ -37,6 +37,9 @@
         "file": "du fichier"
       }
     },
+    "saving": {
+      "document": "Enregistrement {kind} {name}..."
+    },
     "saveAs": {
       "filter": {
         "xlsx": "Classeur Excel",

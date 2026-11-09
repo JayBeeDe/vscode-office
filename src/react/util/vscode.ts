@@ -58,6 +58,19 @@ export function setDocumentLoading(loading: boolean) {
     handler.emit('loadingState', loading);
 }
 
+/**
+ * Tells the extension the viewer builds the file's content, so that the status bar shows
+ * "Saving spreadsheet test.csv..." from now on; the extension ends it once the file is written.
+ */
+export function beginDocumentSaving() {
+    handler.emit('saving', true);
+}
+
+/** Ends the saving status when building the content failed: nothing is written. */
+export function cancelDocumentSaving() {
+    handler.emit('saving', false);
+}
+
 /** Keeps the loading screen in step with a viewer's `loading` state. */
 export function useDocumentLoading(loading: boolean) {
     useEffect(() => setDocumentLoading(loading), [loading]);

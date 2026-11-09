@@ -37,6 +37,9 @@
         "file": "файл"
       }
     },
+    "saving": {
+      "document": "Сохранение: {kind} {name}..."
+    },
     "saveAs": {
       "filter": {
         "xlsx": "Книга Excel",
