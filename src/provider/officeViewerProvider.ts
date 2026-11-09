@@ -4,6 +4,7 @@ import * as vscode from 'vscode';
 import { Handler } from '../common/handler';
 import { handleCommonEvent, revertOfficeDocument, saveOfficeDocument, saveOfficeDocumentAs } from './handlers/commonHandler';
 import { OfficeDocument } from './handlers/officeDocument';
+import { OFFICE_VIEW_TYPES } from './officeViewTypes';
 import { extensionResource, getExtensionResourceRoots, readExtensionText } from '@/common/extensionResource';
 import { resolveLanguage } from '@/i18n';
 import { getPdfViewerStrings } from './pdfViewerStrings';
@@ -23,10 +24,8 @@ export class OfficeViewerProvider implements vscode.CustomEditorProvider<OfficeD
 	constructor(private context: vscode.ExtensionContext) { }
 
 	bindCustomEditors(viewOption: { webviewOptions: vscode.WebviewPanelOptions }) {
-		return [
-			vscode.window.registerCustomEditorProvider('cweijan.officeViewer', this, viewOption),
-			vscode.window.registerCustomEditorProvider('cweijan.parquetViewer', this, viewOption),
-		];
+		return Object.values(OFFICE_VIEW_TYPES).map(viewType =>
+			vscode.window.registerCustomEditorProvider(viewType, this, viewOption));
 	}
 
 	public openCustomDocument(uri: vscode.Uri, openContext: vscode.CustomDocumentOpenContext, token: vscode.CancellationToken): OfficeDocument {

@@ -231,8 +231,8 @@
 		],
 		"customEditors": [
 			{
-				"viewType": "cweijan.officeViewer",
-				"displayName": "Office Viewer",
+				"viewType": "cweijan.spreadsheetEditor",
+				"displayName": "Spreadsheet Editor",
 				"selector": [
 					{
 						"filenamePattern": "*.xls"
@@ -269,7 +269,13 @@
 					},
 					{
 						"filenamePattern": "*.ots"
-					},
+					}
+				]
+			},
+			{
+				"viewType": "cweijan.documentEditor",
+				"displayName": "Document Editor",
+				"selector": [
 					{
 						"filenamePattern": "file:/**/*.docx"
 					},
@@ -287,7 +293,13 @@
 					},
 					{
 						"filenamePattern": "*.dotm"
-					},
+					}
+				]
+			},
+			{
+				"viewType": "cweijan.presentationViewer",
+				"displayName": "Presentation Viewer",
+				"selector": [
 					{
 						"filenamePattern": "*.pptx"
 					},
@@ -305,13 +317,31 @@
 					},
 					{
 						"filenamePattern": "*.potm"
-					},
+					}
+				]
+			},
+			{
+				"viewType": "cweijan.pdfViewer",
+				"displayName": "PDF Viewer",
+				"selector": [
 					{
 						"filenamePattern": "*.pdf"
-					},
+					}
+				]
+			},
+			{
+				"viewType": "cweijan.epubViewer",
+				"displayName": "EPUB Viewer",
+				"selector": [
 					{
 						"filenamePattern": "*.epub"
-					},
+					}
+				]
+			},
+			{
+				"viewType": "cweijan.xmindEditor",
+				"displayName": "XMind Editor",
+				"selector": [
 					{
 						"filenamePattern": "*.xmind"
 					}
@@ -343,7 +373,7 @@
 			},
 			{
 				"viewType": "cweijan.parquetViewer",
-				"displayName": "Parquet Viewer",
+				"displayName": "Parquet Editor",
 				"selector": [
 					{
 						"filenamePattern": "*.parquet"

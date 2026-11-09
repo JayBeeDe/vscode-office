@@ -7,6 +7,7 @@ import { i18n } from '@/common/global';
 import { openInEditor } from '@/service/markdown/searchReveal';
 import { emitFileOfficeOpen, emitVirtualOfficeOpen, isVirtualUri } from '@/provider/handlers/officeContent';
 import { OfficeDocument } from '@/provider/handlers/officeDocument';
+import { officeViewType } from '@/provider/officeViewTypes';
 import { beginDocumentSaving, endViewerSaving, trackViewerSaving } from '@/common/loadingStatus';
 
 const fileSaveTimes: Record<string, number> = {};
@@ -106,7 +107,7 @@ async function saveContentAs(document: OfficeDocument, content: Uint8Array, targ
     fileSaveTimes[target.toString()] = Date.now();
     // the document itself is not saved by a Save As
     handler?.emit("saveAsDone");
-    await vscode.commands.executeCommand('vscode.openWith', target, 'cweijan.officeViewer');
+    await vscode.commands.executeCommand('vscode.openWith', target, officeViewType(target.path) ?? 'default');
     return true;
 }
 
