@@ -10,7 +10,9 @@ export abstract class Constants {
   public static readonly DROP_EDITOR: string = "application/editor";
   public static readonly MOBILE_WIDTH: number = 520;
   public static readonly CLASS_MENU_DISABLED: string = "vditor-menu--disabled";
-  public static readonly EDIT_TOOLBARS: string[] = ["headings", "bold", "italic", "strike", "link", "list",
+  /** the heading level buttons (toolbar/HeadingLevel.ts) */
+  public static readonly HEADING_TOOLBARS: string[] = ["h1", "h2", "h3", "h4", "h5", "h6"];
+  public static readonly EDIT_TOOLBARS: string[] = ["headings", "h1", "h2", "h3", "h4", "h5", "h6", "bold", "italic", "strike", "link", "list",
     "ordered-list", "outdent", "indent", "check", "line", "quote", "code", "inline-code", "insert-after",
     "insert-before", "upload", "table"];
   public static readonly CODE_LANGUAGES: string[] = ["mermaid", "plantuml", "apache",

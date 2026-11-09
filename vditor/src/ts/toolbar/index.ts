@@ -5,6 +5,7 @@ import {Counter} from "./Counter";
 import {Custom} from "./Custom";
 import {Divider} from "./Divider";
 import {EditMode} from "./EditMode";
+import {HeadingLevel} from "./HeadingLevel";
 import {Headings} from "./Headings";
 import {Indent} from "./Indent";
 import {Find} from "./Find";
@@ -81,6 +82,14 @@ export class Toolbar {
                 break;
             case "headings":
                 menuItemObj = new Headings(vditor, menuItem);
+                break;
+            case "h1":
+            case "h2":
+            case "h3":
+            case "h4":
+            case "h5":
+            case "h6":
+                menuItemObj = new HeadingLevel(vditor, menuItem);
                 break;
             case "|":
                 menuItemObj = new Divider();

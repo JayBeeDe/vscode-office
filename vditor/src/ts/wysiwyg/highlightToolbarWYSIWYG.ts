@@ -1,4 +1,5 @@
 import {Constants} from "../constants";
+import {hasTopHeadingBeforeCaret} from "../util/singleTitle";
 import {disableToolbar} from "../toolbar/setToolbar";
 import {enableToolbar} from "../toolbar/setToolbar";
 import {removeCurrentToolbar} from "../toolbar/setToolbar";
@@ -116,6 +117,10 @@ export const highlightToolbarWYSIWYG = (vditor: IVditor) => {
 
         removeCurrentToolbar(vditor.toolbar.elements, Constants.EDIT_TOOLBARS);
         enableToolbar(vditor.toolbar.elements, Constants.EDIT_TOOLBARS);
+        // MD025: one top-level heading per file
+        if (hasTopHeadingBeforeCaret(vditor)) {
+            disableToolbar(vditor.toolbar.elements, ["h1"]);
+        }
 
         range = getSelection().getRangeAt(0);
         let typeElement = range.startContainer as HTMLElement;
@@ -190,6 +195,7 @@ export const highlightToolbarWYSIWYG = (vditor: IVditor) => {
             if (hasClosestByMatchTag(typeElement, "PRE")) {
                 disableToolbar(vditor.toolbar.elements, [
                     "headings",
+                    ...Constants.HEADING_TOOLBARS,
                     "bold",
                     "italic",
                     "strike",
@@ -208,6 +214,7 @@ export const highlightToolbarWYSIWYG = (vditor: IVditor) => {
             } else {
                 disableToolbar(vditor.toolbar.elements, [
                     "headings",
+                    ...Constants.HEADING_TOOLBARS,
                     "bold",
                     "italic",
                     "strike",
@@ -225,7 +232,7 @@ export const highlightToolbarWYSIWYG = (vditor: IVditor) => {
             }
         } else if (headingElement) {
             disableToolbar(vditor.toolbar.elements, ["bold"]);
-            setCurrentToolbar(vditor.toolbar.elements, ["headings"]);
+            setCurrentToolbar(vditor.toolbar.elements, ["headings", headingElement.tagName.toLowerCase()]);
         } else if (tableElement) {
             disableToolbar(vditor.toolbar.elements, ["table"]);
             if (!aElement && !linkRefElement) {

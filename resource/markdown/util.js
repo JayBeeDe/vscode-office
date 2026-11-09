@@ -24,16 +24,10 @@ export async function getToolbar(resPath, i18n, onSave = null, isWeb = false) {
     const exports = isWeb ? [] : [
         exportItem('exportPdf', 'pdf', 'file-pdf'),
         exportItem('exportDocx', 'docx', 'file-text'),
-        exportItem('exportHtml', 'html', 'code'),
+        exportItem('exportHtml', 'html', 'file-code'),
     ];
     return [
         'outline',
-        "headings",
-        "bold",
-        "italic",
-        "strike",
-        "link",
-        "|",
         {
             name: 'edit-in-vscode',
             tip: i18n.editInVscode.replace('{shortcut}', shortcutTip),
@@ -52,23 +46,31 @@ export async function getToolbar(resPath, i18n, onSave = null, isWeb = false) {
                 onSave?.()
             }
         },
+        "undo",
+        "redo",
         ...exports,
-        'upload',
         "|",
-        // "|",
+        "h1",
+        "h2",
+        "h3",
+        "h4",
+        "h5",
         "list",
         "ordered-list",
         "check",
-        "table",
         "|",
+        "bold",
+        "italic",
+        "strike",
+        "|",
+        "link",
+        'upload',
+        "table",
         "quote",
         "code",
         "inline-code",
-        "|",
-        "undo",
-        "redo",
-        "|",
-        "find"
+        // no button: the item sets up the find bar, opened with Ctrl+F / Ctrl+R and by the Search view
+        { name: "find", className: "office-toolbar-hidden" }
     ]
 }
 

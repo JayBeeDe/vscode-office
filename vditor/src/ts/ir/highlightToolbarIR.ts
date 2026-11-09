@@ -1,4 +1,5 @@
 import {Constants} from "../constants";
+import {hasTopHeadingBeforeCaret} from "../util/singleTitle";
 import {disableToolbar, enableToolbar, removeCurrentToolbar, setCurrentToolbar} from "../toolbar/setToolbar";
 import {hasClosestByAttribute, hasClosestByMatchTag} from "../util/hasClosest";
 import {hasClosestByHeadings} from "../util/hasClosestByHeadings";
@@ -23,6 +24,10 @@ export const highlightToolbarIR = (vditor: IVditor) => {
 
         removeCurrentToolbar(vditor.toolbar.elements, Constants.EDIT_TOOLBARS);
         enableToolbar(vditor.toolbar.elements, Constants.EDIT_TOOLBARS);
+        // MD025: one top-level heading per file
+        if (hasTopHeadingBeforeCaret(vditor)) {
+            disableToolbar(vditor.toolbar.elements, ["h1"]);
+        }
 
         const range = getEditorRange(vditor);
         let typeElement = range.startContainer as HTMLElement;
@@ -35,7 +40,7 @@ export const highlightToolbarIR = (vditor: IVditor) => {
 
         const headingElement = hasClosestByHeadings(typeElement);
         if (headingElement) {
-            setCurrentToolbar(vditor.toolbar.elements, ["headings"]);
+            setCurrentToolbar(vditor.toolbar.elements, ["headings", headingElement.tagName.toLowerCase()]);
         }
 
         const quoteElement = hasClosestByMatchTag(typeElement, "BLOCKQUOTE");
@@ -79,21 +84,21 @@ export const highlightToolbarIR = (vditor: IVditor) => {
 
         const codeBlockElement = hasClosestByAttribute(typeElement, "data-type", "code-block");
         if (codeBlockElement) {
-            disableToolbar(vditor.toolbar.elements, ["headings", "bold", "italic", "strike", "line", "quote",
+            disableToolbar(vditor.toolbar.elements, ["headings", ...Constants.HEADING_TOOLBARS, "bold", "italic", "strike", "line", "quote",
                 "list", "ordered-list", "check", "code", "inline-code", "upload", "link", "table"]);
             setCurrentToolbar(vditor.toolbar.elements, ["code"]);
         }
 
         const codeElement = hasClosestByAttribute(typeElement, "data-type", "code");
         if (codeElement) {
-            disableToolbar(vditor.toolbar.elements, ["headings", "bold", "italic", "strike", "line", "quote",
+            disableToolbar(vditor.toolbar.elements, ["headings", ...Constants.HEADING_TOOLBARS, "bold", "italic", "strike", "line", "quote",
                 "list", "ordered-list", "check", "code", "upload", "link", "table"]);
             setCurrentToolbar(vditor.toolbar.elements, ["inline-code"]);
         }
 
         const tableElement = hasClosestByAttribute(typeElement, "data-type", "table");
         if (tableElement) {
-            disableToolbar(vditor.toolbar.elements, ["headings", "list", "ordered-list", "check", "line",
+            disableToolbar(vditor.toolbar.elements, ["headings", ...Constants.HEADING_TOOLBARS, "list", "ordered-list", "check", "line",
                 "quote", "code", "table"]);
         }
 

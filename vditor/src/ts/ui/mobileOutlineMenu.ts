@@ -1,14 +1,9 @@
-import { codicon } from "../util/codicon";
-import { getEventName } from "../util/compatibility";
 
 export const EDITOR_THEME_MOBILE_BREAKPOINT = 700;
-
-const MOBILE_OUTLINE_TRIGGER_ACTIVE_CLASS = "vditor-mobile-outline-trigger--active";
 
 type MobileOutlineHost = {
     outline: HTMLElement;
     backdrop: HTMLElement;
-    menuBtn: HTMLButtonElement;
     drawerOpen: boolean;
     wasMobileLayout: boolean;
 };
@@ -40,22 +35,24 @@ export const setMobileOutlineDrawerOpen = (vditor: IVditor, open: boolean) => {
     }
 };
 
-const updateMobileOutlineTrigger = (menuBtn: HTMLButtonElement, open: boolean) => {
-    menuBtn.classList.toggle(MOBILE_OUTLINE_TRIGGER_ACTIVE_CLASS, open);
-    menuBtn.setAttribute("aria-expanded", open ? "true" : "false");
-    menuBtn.innerHTML = open ? codicon("close") : codicon("menu");
+/** The toolbar's outline button opens the drawer too: it shows whether the drawer is open. */
+const updateOutlineButton = (vditor: IVditor, open: boolean) => {
+    const button = vditor.toolbar.elements.outline?.firstElementChild;
+    button?.classList.toggle("vditor-menu--current", open);
+    button?.setAttribute("aria-expanded", open ? "true" : "false");
 };
 
 const clearMobileOutlineUi = (vditor: IVditor) => {
     const host = getHost(vditor);
     const outline = vditor.outline.element;
     outline.classList.remove("vditor-outline--mobile-open");
+    outline.style.removeProperty("--mobile-outline-top");
     vditor.element.classList.remove("vditor--mobile-outline-open");
     host?.backdrop.classList.remove("vditor-outline__backdrop--visible");
     if (host) {
         host.drawerOpen = false;
-        updateMobileOutlineTrigger(host.menuBtn, false);
     }
+    vditor.toolbar.elements.outline?.firstElementChild?.removeAttribute("aria-expanded");
 };
 
 export const syncMobileOutlinePanel = (vditor: IVditor, show: boolean) => {
@@ -67,11 +64,14 @@ export const syncMobileOutlinePanel = (vditor: IVditor, show: boolean) => {
     }
 
     outline.style.display = "";
+    if (show) {
+        // below the toolbar, which takes several rows in a narrow editor
+        const toolbarBottom = vditor.toolbar.element.getBoundingClientRect().bottom;
+        outline.style.setProperty("--mobile-outline-top", `${Math.round(toolbarBottom) + 6}px`);
+    }
     outline.classList.toggle("vditor-outline--mobile-open", show);
     host?.backdrop.classList.toggle("vditor-outline__backdrop--visible", show);
-    if (host) {
-        updateMobileOutlineTrigger(host.menuBtn, show);
-    }
+    updateOutlineButton(vditor, show);
     vditor.element.classList.toggle("vditor--mobile-outline-open", show);
 };
 
@@ -126,15 +126,6 @@ export const initMobileOutlineMenu = (vditor: IVditor) => {
 
     prepareEditorThemeMobileOutline(vditor);
 
-    const menuBtn = document.createElement("button");
-    menuBtn.type = "button";
-    menuBtn.setAttribute("data-type", "mobile-outline");
-    menuBtn.className = "vditor-mobile-outline-trigger";
-    menuBtn.setAttribute("aria-label", window.VditorI18n?.outline);
-    menuBtn.setAttribute("aria-expanded", "false");
-    menuBtn.innerHTML = codicon("menu");
-    vditor.element.appendChild(menuBtn);
-
     const backdrop = document.createElement("div");
     backdrop.className = "vditor-outline__backdrop";
     backdrop.setAttribute("aria-hidden", "true");
@@ -143,18 +134,10 @@ export const initMobileOutlineMenu = (vditor: IVditor) => {
     const host: MobileOutlineHost = {
         outline: vditor.outline.element,
         backdrop,
-        menuBtn,
         drawerOpen: false,
         wasMobileLayout: isEditorThemeMobileLayout(vditor),
     };
     mobileOutlineHosts.set(vditor, host);
-
-    menuBtn.addEventListener(getEventName(), (event) => {
-        event.preventDefault();
-        const open = !host.drawerOpen;
-        setMobileOutlineDrawerOpen(vditor, open);
-        vditor.outline.toggle(vditor, open);
-    });
 
     backdrop.addEventListener("click", () => {
         closeMobileOutline(vditor);

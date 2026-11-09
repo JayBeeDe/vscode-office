@@ -91,6 +91,15 @@
         transform: scaleX(-1);
       }
 
+      // a heading level button (toolbar/HeadingLevel.ts): "H1" to "H6" as text (the button's
+      // font-size is 0)
+      .vditor-heading-label {
+        font-family: var(--vscode-font-family, sans-serif);
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 1;
+      }
+
       input[type="file"] {
         user-select: none;
         position: absolute;
@@ -99,9 +108,14 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
+        // the hand, like the toolbar's other buttons: the file picker's own button too
         cursor: pointer;
         opacity: .001;
         overflow: hidden;
+
+        &::file-selector-button {
+          cursor: pointer;
+        }
       }
     }
 
@@ -142,7 +156,7 @@
   z-index: 11;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   box-sizing: border-box;
 }
 
@@ -177,8 +191,9 @@
   background-color: color-mix(in srgb, var(--list-hover-color, var(--link-color, @blurColor)) 12%, transparent);
 }
 
+// a gap, not a divider, between the outline's toggle and the rest of the toolbar
 .vditor-toolbar__item:has([data-type="outline"]) {
-  margin-inline-end: 1px;
+  margin-inline-end: 10px;
 }
 
 .vditor-toolbar__item > .vditor-hint {

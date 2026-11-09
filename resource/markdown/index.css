@@ -17,10 +17,6 @@ html {
     scrollbar-color: unset;
 }
 
-[data-type="edit-in-vscode"] .codicon-vscode {
-    color: #2489ca;
-}
-
 .vditor-help-tip {
     display: flex;
     flex-direction: column;
@@ -44,4 +40,9 @@ html {
 
 .vditor-help-tip__divider {
     opacity: 0.4;
+}
+
+/* a toolbar item kept for what it sets up, without its button (resource/markdown/util.js) */
+.vditor-toolbar__item.office-toolbar-hidden {
+    display: none;
 }

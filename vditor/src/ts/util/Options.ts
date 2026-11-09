@@ -244,7 +244,9 @@ export class Options {
             name: "code-theme",
         }, {
             name: "br",
-        }];
+        },
+        // the heading level buttons (toolbar/HeadingLevel.ts): their icon and tip are built there
+        ...["h1", "h2", "h3", "h4", "h5", "h6"].map((name) => ({name}))];
         const toolbarResult: IMenuItem[] = [];
         toolbar.forEach((menuItem: IMenuItem) => {
             let currentMenuItem = menuItem;
