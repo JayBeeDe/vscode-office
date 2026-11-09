@@ -88,7 +88,6 @@
       "slides": "幻灯片",
       "slide": "幻灯片 {number}",
       "status": "幻灯片 {number} / {count}",
-      "slideCount": "{count} 张幻灯片",
       "loadingThumbnails": "加载中…"
     },
     "epub": {

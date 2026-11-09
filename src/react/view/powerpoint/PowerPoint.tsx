@@ -633,10 +633,6 @@ export default function PowerPoint() {
                 <Layout className="ppt-body">
                     <Sider width={SIDER_WIDTH} className="ppt-thumbnails">
                         <div className="ppt-thumbnails-inner">
-                            <div className="ppt-thumbnails-header">
-                                {slideCount > 0 ? $t('presentation.slideCount', { count: slideCount }) : $t('presentation.slides')}
-                                {thumbsLoading && ` · ${$t('presentation.loadingThumbnails')}`}
-                            </div>
                             <div className="ppt-thumbnails-list" ref={thumbListRef}>
                                 {slideCount > 0 && thumbnails.length === 0 && thumbsLoading && (
                                     Array.from({ length: Math.min(slideCount, 8) }, (_, i) => (
@@ -657,6 +653,13 @@ export default function PowerPoint() {
                                     </div>
                                 ))}
                             </div>
+                            <div className="ppt-thumbnails-footer">
+                                {slideCount > 0
+                                    ? $t('presentation.status', { number: currentIndex + 1, count: slideCount })
+                                    : $t('presentation.slides')}
+                                {slideCount > 0 && zoom !== 1 && ` · ${Math.round(zoom * 100)}%`}
+                                {thumbsLoading && ` · ${$t('presentation.loadingThumbnails')}`}
+                            </div>
                         </div>
                     </Sider>
                     <Content className="ppt-main" ref={mainPanelRef}>
@@ -671,12 +674,6 @@ export default function PowerPoint() {
                                 <canvas ref={canvasRef} id="ppt-canvas" />
                             </div>
                         </div>
-                        {slideCount > 0 && (
-                            <div className="ppt-statusbar">
-                                {$t('presentation.status', { number: currentIndex + 1, count: slideCount })}
-                                {zoom !== 1 && ` · ${Math.round(zoom * 100)}%`}
-                            </div>
-                        )}
                     </Content>
                 </Layout>
             </Layout>

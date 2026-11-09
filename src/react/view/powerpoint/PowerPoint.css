@@ -24,7 +24,6 @@ body {
     --viewer-active-fg: #1677ff;
     --viewer-accent: #1677ff;
     --viewer-placeholder: #e8e8e8;
-    --viewer-toolbar-bg: #fafafa;
     --viewer-scrollbar-track: #f5f5f5;
     --viewer-scrollbar-thumb: #c9d1d9;
 }
@@ -47,7 +46,6 @@ body.office-dark .ppt-viewer.office-viewer-themed {
     --viewer-active-fg: var(--vscode-list-activeSelectionForeground, #d7dae0);
     --viewer-accent: var(--vscode-textLink-foreground, #3794ff);
     --viewer-placeholder: var(--vscode-input-background, #3c3c3c);
-    --viewer-toolbar-bg: #000;
     --viewer-scrollbar-track: var(--vscode-editor-background, #1e1e1e);
     --viewer-scrollbar-thumb: var(--vscode-scrollbarSlider-background, #797979);
 }
@@ -94,11 +92,12 @@ body.office-dark .ppt-thumb img {
     overflow: hidden;
 }
 
-.ppt-thumbnails-header {
+.ppt-thumbnails-footer {
     padding: 10px 12px;
     font-size: 12px;
+    text-align: right;
     color: var(--viewer-muted);
-    border-bottom: 1px solid var(--viewer-border);
+    border-top: 1px solid var(--viewer-border);
     background: var(--viewer-header-bg);
     flex-shrink: 0;
 }
@@ -183,7 +182,7 @@ body.office-dark .ppt-thumb img {
 
 .ppt-main-canvas {
     position: absolute;
-    inset: 0 0 29px;
+    inset: 0;
     overflow: hidden;
     display: flex;
     justify-content: center;
@@ -215,18 +214,4 @@ body.office-dark .ppt-thumb img {
 /* the bands around a slide that doesn't fill the canvas: black in a dark vscode-office.theme */
 body.office-dark #ppt-canvas {
     background: #000;
-}
-
-.ppt-statusbar {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 1;
-    padding: 6px 16px;
-    font-size: 12px;
-    color: var(--viewer-muted);
-    text-align: center;
-    border-top: 1px solid var(--viewer-border);
-    background: var(--viewer-toolbar-bg);
 }

@@ -88,7 +88,6 @@
       "slides": "Слайды",
       "slide": "Слайд {number}",
       "status": "Слайд {number} / {count}",
-      "slideCount": "Слайдов: {count}",
       "loadingThumbnails": "загрузка…"
     },
     "epub": {

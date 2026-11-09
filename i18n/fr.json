@@ -88,7 +88,6 @@
       "slides": "Diapositives",
       "slide": "Diapositive {number}",
       "status": "Diapositive {number} / {count}",
-      "slideCount": "{count} diapositives",
       "loadingThumbnails": "chargement…"
     },
     "epub": {

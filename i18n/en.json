@@ -89,7 +89,6 @@
       "slides": "Slides",
       "slide": "Slide {number}",
       "status": "Slide {number} / {count}",
-      "slideCount": "{count} slides",
       "loadingThumbnails": "loading…"
     },
     "epub": {
