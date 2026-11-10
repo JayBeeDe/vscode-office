@@ -31,7 +31,7 @@ const TOOLBAR_CODICONS: Record<string, string> = {
     undo: "__undo__",
     redo: "redo",
     more: "ellipsis",
-    "edit-mode": "edit",
+    "edit-mode": "markdown",
     outline: "list-tree",
     "code-theme": "file-code",
     find: "search",

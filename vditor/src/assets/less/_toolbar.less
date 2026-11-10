@@ -191,6 +191,12 @@
   background-color: color-mix(in srgb, var(--list-hover-color, var(--link-color, @blurColor)) 12%, transparent);
 }
 
+// the edit mode toggle (WYSIWYG / instant rendering) stays at the right end, on the toolbar's
+// last line when it wraps
+.vditor-toolbar__item:has([data-type="edit-mode"]) {
+  margin-inline-start: auto;
+}
+
 // a gap, not a divider, between the outline's toggle and the rest of the toolbar
 .vditor-toolbar__item:has([data-type="outline"]) {
   margin-inline-end: 10px;

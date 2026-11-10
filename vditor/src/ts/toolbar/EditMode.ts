@@ -2,13 +2,8 @@ import {Constants} from "../constants";
 import {processAfterRender} from "../ir/process";
 import {getMarkdown} from "../markdown/getMarkdown";
 import {mathRender} from "../markdown/mathRender";
-import {
-    buildEditModePickerPanelHTML,
-    queryEditModePickerPanel,
-    refreshEditModePickerPanel,
-} from "../ui/editModePickerPanel";
 import {restoreCacheFocus, wasCacheContentRestored} from "../util/cacheFocus";
-import {getEventName} from "../util/compatibility";
+import {getEventName, updateHotkeyTip} from "../util/compatibility";
 import {highlightToolbar} from "../util/highlightToolbar";
 import {log} from "../util/log";
 import {processCodeRender} from "../util/processCode";
@@ -21,22 +16,33 @@ import {
     enableToolbar,
     hidePanel,
     removeCurrentToolbar,
-    showToolbar, toggleSubMenu,
+    showToolbar,
 } from "./setToolbar";
 
 type SetEditModeOptions = {
     keepToolbarPanel?: boolean;
 };
 
-const refreshEditModePanel = (vditor: IVditor) => {
-    const editModeItem = vditor.toolbar.elements["edit-mode"];
-    if (!editModeItem) {
+const EDIT_MODE_TARGETS: { [mode: string]: { labelKey: string, descKey: string, hotkey: string } } = {
+    ir: {labelKey: "instantRendering", descKey: "edit-mode-ir-desc", hotkey: "⌥⌘8"},
+    wysiwyg: {labelKey: "wysiwyg", descKey: "edit-mode-wysiwyg-desc", hotkey: "⌥⌘7"},
+};
+
+/**
+ * The toolbar's edit mode button toggles WYSIWYG / instant rendering: highlighted in instant
+ * rendering (the Markdown syntax shows), its tooltip names the mode a click switches to.
+ */
+const refreshEditModeButton = (vditor: IVditor) => {
+    const button = vditor.toolbar.elements["edit-mode"]?.querySelector("button");
+    if (!button) {
         return;
     }
-    const panelRoot = queryEditModePickerPanel(editModeItem);
-    if (panelRoot) {
-        refreshEditModePickerPanel(panelRoot, vditor.currentMode);
-    }
+    const target = EDIT_MODE_TARGETS[vditor.currentMode === "ir" ? "wysiwyg" : "ir"];
+    const label = window.VditorI18n[target.labelKey] || target.labelKey;
+    const desc = window.VditorI18n[target.descKey];
+    button.setAttribute("aria-label",
+        `${label}${desc ? `: ${desc}` : ""} <${updateHotkeyTip(target.hotkey)}>`);
+    button.classList.toggle("vditor-menu--current", vditor.currentMode === "ir");
 };
 
 export const setEditMode = (
@@ -126,14 +132,7 @@ export const setEditMode = (
     }
     renderTocNow(vditor);
 
-    if (vditor.toolbar.elements["edit-mode"]) {
-        vditor.toolbar.elements["edit-mode"].querySelectorAll("button").forEach((item) => {
-            item.classList.remove("vditor-menu--current");
-        });
-        const currentModeBtn = vditor.toolbar.elements["edit-mode"]
-            .querySelector(`button[data-mode="${vditor.currentMode}"]`);
-        currentModeBtn?.classList.add("vditor-menu--current");
-    }
+    refreshEditModeButton(vditor);
 
     vditor.outline.toggle(vditor, vditor.options.outline.enable);
 
@@ -142,8 +141,6 @@ export const setEditMode = (
             vditor.options.changeEditMode(vditor.currentMode);
         }
     }
-
-    refreshEditModePanel(vditor);
 };
 
 export class EditMode extends MenuItem {
@@ -151,36 +148,12 @@ export class EditMode extends MenuItem {
 
     constructor(vditor: IVditor, menuItem: IMenuItem) {
         super(vditor, menuItem);
-
-        const panelElement = document.createElement("div");
-        panelElement.className = `vditor-hint${menuItem.level === 2 ? "" : " vditor-panel--arrow"}`;
-        panelElement.innerHTML = buildEditModePickerPanelHTML(vditor.currentMode);
-
-        this.element.appendChild(panelElement);
-
-        this._bindEvent(vditor, panelElement, menuItem);
-    }
-
-    public _bindEvent(vditor: IVditor, panelElement: HTMLElement, menuItem: IMenuItem) {
-        const actionBtn = this.element.children[0] as HTMLElement;
-        toggleSubMenu(vditor, panelElement, actionBtn, menuItem.level);
-
-        actionBtn.addEventListener(getEventName(), () => {
-            const panelRoot = queryEditModePickerPanel(panelElement);
-            if (panelRoot) {
-                refreshEditModePickerPanel(panelRoot, vditor.currentMode);
-            }
-        }, true);
-
-        panelElement.addEventListener(getEventName(), (event: MouseEvent & { target: HTMLElement }) => {
-            const button = event.target.closest("button[data-mode]") as HTMLElement | null;
-            if (!button) {
+        this.element.children[0].addEventListener(getEventName(), (event) => {
+            event.preventDefault();
+            if (this.element.firstElementChild.classList.contains(Constants.CLASS_MENU_DISABLED)) {
                 return;
             }
-            const mode = button.getAttribute("data-mode") || "";
-            setEditMode(vditor, mode, event);
-            event.preventDefault();
-            event.stopPropagation();
+            setEditMode(vditor, vditor.currentMode === "ir" ? "wysiwyg" : "ir", event);
         });
     }
 }

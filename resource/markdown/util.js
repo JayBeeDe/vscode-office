@@ -70,7 +70,9 @@ export async function getToolbar(resPath, i18n, onSave = null, isWeb = false) {
         "code",
         "inline-code",
         // no button: the item sets up the find bar, opened with Ctrl+F / Ctrl+R and by the Search view
-        { name: "find", className: "office-toolbar-hidden" }
+        { name: "find", className: "office-toolbar-hidden" },
+        // WYSIWYG / instant rendering, at the right end (vditor/src/assets/less/_toolbar.less)
+        "edit-mode",
     ]
 }
 
