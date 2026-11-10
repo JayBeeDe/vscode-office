@@ -198,6 +198,75 @@ function withEmptyOptionalKeys(d) {
   };
 }
 
+function cellHasContent(cell) {
+  if (!cell) return false;
+  return ['text', 'value', 'formula'].some((key) => {
+    const value = cell[key];
+    return value !== undefined && value !== null && `${value}` !== '';
+  });
+}
+
+function rowHasContent(rows, ri, sci, eci) {
+  for (let ci = sci; ci <= eci; ci += 1) {
+    if (cellHasContent(rows.getCell(ri, ci))) return true;
+  }
+  return false;
+}
+
+function colHasContent(rows, ci, sri, eri) {
+  for (let ri = sri; ri <= eri; ri += 1) {
+    if (cellHasContent(rows.getCell(ri, ci))) return true;
+  }
+  return false;
+}
+
+/**
+ * Range an autofilter covers, like Excel: a single row (or cell) selection grows into the
+ * table below and beside it, with the selected row as the header; a whole row / column
+ * selection is trimmed to the cells holding content.
+ */
+function autofilterRangeFromSelection(dataProxy) {
+  const { rows, cols, selector } = dataProxy;
+  const { range } = selector;
+  let [maxRi, maxCi] = rows.maxCell();
+  maxRi = Math.min(Math.max(maxRi, 0), rows.len - 1);
+  maxCi = Math.min(Math.max(maxCi, 0), cols.len - 1);
+  rows.each((ri, row) => {
+    Object.keys(row.cells || {}).forEach((ci) => {
+      maxCi = Math.max(maxCi, Math.min(parseInt(ci, 10), cols.len - 1));
+    });
+  });
+  let sri = Math.max(0, range.sri);
+  let sci = Math.max(0, range.sci);
+  let eri = Math.min(maxRi, range.eri);
+  let eci = Math.min(maxCi, range.eci);
+  if (sri > eri || sci > eci) return range;
+
+  if (sri === eri) {
+    // trim empty columns on both sides of the header
+    while (sci < eci && !cellHasContent(rows.getCell(sri, sci))) sci += 1;
+    while (eci > sci && !cellHasContent(rows.getCell(sri, eci))) eci -= 1;
+    if (!rowHasContent(rows, sri, sci, eci)) return range;
+    let changed = true;
+    while (changed) {
+      changed = false;
+      if (eri < maxRi && rowHasContent(rows, eri + 1, sci, eci)) {
+        eri += 1;
+        changed = true;
+      }
+      if (sci > 0 && colHasContent(rows, sci - 1, sri, eri)) {
+        sci -= 1;
+        changed = true;
+      }
+      if (eci < maxCi && colHasContent(rows, eci + 1, sri, eri)) {
+        eci += 1;
+        changed = true;
+      }
+    }
+  }
+  return new CellRange(sri, sci, eri, eci);
+}
+
 function getDataRowIndex(dataProxy, ri) {
   if (ri < 0) return ri;
   if (dataProxy.sortedRowMap.has(ri)) {
@@ -1281,7 +1350,7 @@ export default class DataProxy {
         this.sortedRowMap = new Map();
         this.unsortedRowMap = new Map();
       } else {
-        autoFilter.ref = selector.range.toString();
+        autoFilter.ref = autofilterRangeFromSelection(this).toString();
       }
     });
   }

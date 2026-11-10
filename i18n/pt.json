@@ -1254,7 +1254,8 @@
       "asc": "Classificar de A a Z"
     },
     "filter": {
-      "empty": "vazio"
+      "empty": "vazio",
+      "all": "Tudo"
     },
     "hyperlink": {
       "address": "Endereço",

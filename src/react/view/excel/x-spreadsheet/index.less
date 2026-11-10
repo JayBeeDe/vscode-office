@@ -682,6 +682,26 @@ body {
       transform: rotate(45deg);
       box-sizing: border-box;
     }
+
+    // one choice at a time (sort order): a radio button instead of a checkbox
+    &.radio:before {
+      border-radius: 50%;
+    }
+
+    &.radio.checked:before {
+      background: #fff;
+    }
+
+    &.radio.checked:after {
+      left: 14px;
+      top: calc(50% - 3px);
+      width: 6px;
+      height: 6px;
+      border: 0;
+      border-radius: 50%;
+      background: #4b89ff;
+      transform: none;
+    }
   }
 
 }
@@ -737,13 +757,48 @@ body {
     overflow-y: auto;
 
     .@{css-prefix}-item {
+      display: flex;
       height: 20px;
       line-height: 20px;
+
+      .@{css-prefix}-filter-value {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .label {
+        float: none;
+        flex-shrink: 0;
+        margin-left: 8px;
+      }
     }
   }
 }
 
 .@{css-prefix}-sort-filter {
+  // drag the bottom right corner to widen it and read long values
+  width: 480px;
+  resize: horizontal;
+  min-width: 260px;
+  max-width: min(640px, 90vw);
+
+  .@{css-prefix}-sort-options {
+    display: flex;
+
+    .@{css-prefix}-item {
+      flex: 1;
+      min-width: 0;
+      padding-left: 28px !important;
+      padding-right: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
   .@{css-prefix}-buttons {
     margin: 10px;
   }

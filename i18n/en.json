@@ -1263,7 +1263,8 @@
       "asc": "Sort A -> Z"
     },
     "filter": {
-      "empty": "empty"
+      "empty": "empty",
+      "all": "All"
     },
     "hyperlink": {
       "address": "Address",

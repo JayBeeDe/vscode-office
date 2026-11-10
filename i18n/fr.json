@@ -1258,7 +1258,8 @@
       "asc": "Trier de A à Z"
     },
     "filter": {
-      "empty": "vide"
+      "empty": "vide",
+      "all": "Tout"
     },
     "hyperlink": {
       "address": "Adresse",

@@ -136,6 +136,16 @@ export function renderCell(draw, data, rindex, cindex, yoffset = 0) {
   });
 }
 
+// the sorted column, or a column whose filter hides some values, gets the accent color
+function isAutofilterColumnActive(data, ci) {
+  const { autoFilter } = data;
+  if (autoFilter.getSort(ci)) return true;
+  const filter = autoFilter.getFilter(ci);
+  if (!filter || filter.operator !== 'in') return false;
+  const values = Object.keys(autoFilter.items(ci, (r, c) => data.rows.getCell(r, c)));
+  return values.some((v) => !filter.includes(v));
+}
+
 function renderAutofilter(viewRange) {
   const { data, draw } = this;
   if (viewRange) {
@@ -143,9 +153,16 @@ function renderAutofilter(viewRange) {
     if (!autoFilter.active()) return;
     const afRange = autoFilter.hrange();
     if (viewRange.intersects(afRange)) {
+      const bg = getExcelThemeColor('--excel-cell-bg', '#ffffff');
+      const border = getExcelThemeColor('--excel-muted-line', '#d1d5db');
+      const fg = getExcelThemeColor('--excel-header-fg', '#4a5568');
+      const accent = getExcelThemeColor('--excel-accent', '#0078d4');
       afRange.each((ri, ci) => {
         const dbox = getDrawBox(data, ri, ci);
-        draw.dropdown(dbox);
+        const active = isAutofilterColumnActive(data, ci);
+        draw.dropdown(dbox, {
+          bg, border, fg: active ? accent : fg, active,
+        });
       });
     }
   }

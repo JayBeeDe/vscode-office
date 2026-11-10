@@ -9,7 +9,7 @@ function buildMenu(clsName) {
 }
 
 function buildSortItem(it) {
-  return buildMenu('state').child(t(`sort.${it}`))
+  return buildMenu('state radio').child(t(`sort.${it}`))
     .on('click.stop', () => this.itemClick(it));
 }
 
@@ -20,15 +20,21 @@ function buildFilterBody(items) {
   itemKeys.forEach((it, index) => {
     const cnt = items[it];
     const active = filterValues.includes(it) ? 'checked' : '';
+    const text = it === '' ? t('filter.empty') : it;
+    // a long value is cut with an ellipsis; the tooltip shows it in full
     filterbEl.child(h('div', `${cssPrefix}-item state ${active}`)
+      .attr('title', text)
       .on('click.stop', () => this.filterClick(index, it))
-      .children(it === '' ? t('filter.empty') : it, h('div', 'label').html(`(${cnt})`)));
+      .children(
+        h('span', `${cssPrefix}-filter-value`).child(text),
+        h('div', 'label').html(`(${cnt})`),
+      ));
   });
 }
 
 function resetFilterHeader() {
   const { filterhEl, filterValues, values } = this;
-  filterhEl.html(`${filterValues.length} / ${values.length}`);
+  filterhEl.html(`${t('filter.all')} (${filterValues.length}/${values.length})`);
   filterhEl.checked(filterValues.length === values.length);
 }
 
@@ -37,8 +43,10 @@ export default class SortFilter {
     this.filterbEl = h('div', `${cssPrefix}-body`);
     this.filterhEl = h('div', `${cssPrefix}-header state`).on('click.stop', () => this.filterClick(0, 'all'));
     this.el = h('div', `${cssPrefix}-sort-filter`).children(
-      this.sortAscEl = buildSortItem.call(this, 'asc'),
-      this.sortDescEl = buildSortItem.call(this, 'desc'),
+      h('div', `${cssPrefix}-sort-options`).children(
+        this.sortAscEl = buildSortItem.call(this, 'asc'),
+        this.sortDescEl = buildSortItem.call(this, 'desc'),
+      ),
       buildMenu('divider'),
       h('div', `${cssPrefix}-filter`).children(
         this.filterhEl,

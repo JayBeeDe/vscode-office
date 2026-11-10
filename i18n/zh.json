@@ -1258,7 +1258,8 @@
       "asc": "升序"
     },
     "filter": {
-      "empty": "空白"
+      "empty": "空白",
+      "all": "全部"
     },
     "hyperlink": {
       "address": "链接地址",

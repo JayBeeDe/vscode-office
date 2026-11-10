@@ -1336,7 +1336,8 @@
       "asc": "昇順 (A → Z)"
     },
     "filter": {
-      "empty": "(空白)"
+      "empty": "(空白)",
+      "all": "すべて"
     },
     "hyperlink": {
       "address": "アドレス",

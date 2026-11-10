@@ -371,20 +371,34 @@ class Draw {
     ctx.restore();
   }
 
-  dropdown(box) {
+  /** Autofilter button in the bottom right corner of a header cell. */
+  dropdown(box, {
+    bg = '#ffffff', border = '#d1d5db', fg = 'rgba(0, 0, 0, .65)', active = false,
+  } = {}) {
     const { ctx } = this;
     const {
       x, y, width, height,
     } = box;
-    const sx = x + width - 15;
-    const sy = y + height - 15;
+    const size = Math.max(10, Math.min(16, height - 4, width - 4));
+    const bx = x + width - size - 2;
+    const by = y + height - size - 2;
     ctx.save();
     ctx.beginPath();
-    ctx.moveTo(npx(sx), npx(sy));
-    ctx.lineTo(npx(sx + 8), npx(sy));
-    ctx.lineTo(npx(sx + 4), npx(sy + 6));
+    ctx.rect(npxLine(bx), npxLine(by), npx(size), npx(size));
+    ctx.fillStyle = bg;
+    ctx.fill();
+    ctx.lineWidth = npx(1);
+    ctx.strokeStyle = active ? fg : border;
+    ctx.stroke();
+    const cx = bx + size / 2;
+    const cy = by + size / 2;
+    const half = Math.max(3, Math.round(size / 4));
+    ctx.beginPath();
+    ctx.moveTo(npx(cx - half), npx(cy - half / 2));
+    ctx.lineTo(npx(cx + half), npx(cy - half / 2));
+    ctx.lineTo(npx(cx), npx(cy + half / 2 + 1));
     ctx.closePath();
-    ctx.fillStyle = 'rgba(0, 0, 0, .45)';
+    ctx.fillStyle = fg;
     ctx.fill();
     ctx.restore();
   }

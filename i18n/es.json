@@ -1235,7 +1235,8 @@
       "asc": "Ordenar de A a Z"
     },
     "filter": {
-      "empty": "vacío"
+      "empty": "vacío",
+      "all": "Todo"
     },
     "hyperlink": {
       "address": "Dirección",

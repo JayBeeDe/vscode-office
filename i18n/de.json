@@ -1299,7 +1299,8 @@
       "asc": "Sortieren A -> Z"
     },
     "filter": {
-      "empty": "leer"
+      "empty": "leer",
+      "all": "Alle"
     },
     "hyperlink": {
       "address": "Adresse",

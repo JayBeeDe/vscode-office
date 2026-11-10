@@ -862,7 +862,10 @@ function overlayerMousedown(evt) {
       const items = autoFilter.items(ci, (r, c) => data.rows.getCell(r, c));
       sortFilter.hide();
       sortFilter.set(ci, items, autoFilter.getFilter(ci), autoFilter.getSort(ci));
-      sortFilter.setOffset({ left, top: top + height + 2 });
+      // right edge aligned with the cell's, under its filter button, kept inside the sheet's left edge
+      sortFilter.show();
+      const popupWidth = sortFilter.el.el.offsetWidth;
+      sortFilter.setOffset({ left: Math.max(0, left + width - popupWidth), top: top + height + 2 });
       return;
     }
   }
