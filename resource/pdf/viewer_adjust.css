@@ -12,7 +12,6 @@
     --office-hover-fg: rgba(0, 0, 0, 0.9);
     --office-active-bg: rgba(10, 132, 255, 0.14);
     --office-active-fg: rgba(0, 90, 200, 1);
-    --office-toolbar-active-bg: rgba(0, 0, 0, 0.07);
     --office-toolbar-active-fg: rgba(0, 0, 0, 0.82);
 }
 
@@ -160,10 +159,15 @@ body.office-adaptive-theme :is(.toolbarButton, .splitToolbarButton > .toolbarBut
     background-color: var(--vscode-toolbar-hoverBackground) !important;
 }
 
-body.office-adaptive-theme .toolbarButton.toggled:not(#darkModeToggle),
-body.office-adaptive-theme .splitToolbarButton.toggled > .toolbarButton.toggled:not(#darkModeToggle) {
-    background-color: var(--vscode-list-activeSelectionBackground) !important;
-    color: var(--vscode-list-activeSelectionForeground) !important;
+/* An enabled toolbar button (sidebar, find, tool, fit, scroll and spread modes, the sidebar's views,
+   the menu's modes) shows like the find bar's checked options and VS Code's own toggles: inputOption
+   colours and a 1px outline, inset so the icon does not move. The dark mode button swaps its icon */
+body.office-adaptive-theme :is(.toolbarButton, .secondaryToolbarButton).toggled:not(#darkModeToggle),
+body.office-adaptive-theme :is(.toolbarButton, .secondaryToolbarButton).toggled:not(#darkModeToggle):hover,
+body.office-adaptive-theme #toolbarSidebar .splitToolbarButton > .toolbarButton.toggled {
+    background-color: var(--vscode-inputOption-activeBackground, var(--vscode-list-activeSelectionBackground)) !important;
+    color: var(--vscode-inputOption-activeForeground, var(--vscode-foreground)) !important;
+    box-shadow: inset 0 0 0 1px var(--vscode-inputOption-activeBorder, var(--vscode-focusBorder)) !important;
 }
 
 body.office-adaptive-theme :is(.doorHanger, .doorHangerRight) {
@@ -402,11 +406,6 @@ body.office-adaptive-theme #toolbarSidebar .splitToolbarButton > .toolbarButton:
     color: var(--vscode-sideBar-foreground) !important;
 }
 
-body.office-adaptive-theme #toolbarSidebar .splitToolbarButton > .toolbarButton.toggled {
-    background-color: var(--vscode-list-activeSelectionBackground) !important;
-    color: var(--vscode-list-activeSelectionForeground) !important;
-}
-
 body.office-adaptive-theme #toolbarSidebar .splitToolbarButton > .toolbarButton:not(.toggled):hover {
     background-color: var(--vscode-toolbar-hoverBackground) !important;
 }
@@ -530,10 +529,18 @@ body:not(.office-adaptive-theme) #outlineView .treeItem.selected > a {
     color: var(--office-active-fg) !important;
 }
 
+/* Light: an enabled toolbar button or find option takes the accent: a tint and a 1px outline (inset on
+   the buttons, so the icon does not move) */
 body:not(.office-adaptive-theme) :is(.toolbarButton.toggled, .splitToolbarButton.toggled > .toolbarButton.toggled, .secondaryToolbarButton.toggled):not(#darkModeToggle),
 body:not(.office-adaptive-theme) :is(.toolbarButton.toggled, .splitToolbarButton.toggled > .toolbarButton.toggled, .secondaryToolbarButton.toggled):not(#darkModeToggle):hover {
-    background-color: var(--office-toolbar-active-bg) !important;
+    background-color: color-mix(in srgb, var(--office-accent) 14%, transparent) !important;
     color: var(--office-toolbar-active-fg) !important;
+    box-shadow: inset 0 0 0 1px var(--office-accent) !important;
+}
+
+body:not(.office-adaptive-theme) .findbar .toolbarField[type="checkbox"]:checked + .toolbarLabel {
+    background-color: color-mix(in srgb, var(--office-accent) 14%, transparent) !important;
+    border-color: var(--office-accent) !important;
 }
 
 /* ---- Dark mode (black background, white text) ---- */
