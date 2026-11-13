@@ -181,6 +181,22 @@ body.office-adaptive-theme :is(.doorHanger, .doorHangerRight) .toolbarButton:hov
     color: var(--vscode-menu-selectionForeground) !important;
 }
 
+/* The find bar's arrow points at the Find button: PDF.js offsets the bar by 64px for the 40px
+   .toolbarButtonSpacer, which is hidden here, so the bar takes PDF.js's offset for a spacer of no width */
+html[dir="ltr"] .findbar {
+    left: 34px;
+}
+
+html[dir="rtl"] .findbar {
+    right: 34px;
+}
+
+/* A hand over what can be clicked (PDF.js keeps the arrow); a disabled button keeps the arrow */
+:is(.toolbarButton, .secondaryToolbarButton, .overlayButton, .dropdownToolbarButton > select):not([disabled]),
+.findbar input[type="checkbox"] + label {
+    cursor: pointer;
+}
+
 body.office-adaptive-theme #overlayContainer > .container > .dialog {
     background-color: var(--vscode-editorWidget-background) !important;
     color: var(--vscode-editorWidget-foreground, var(--vscode-foreground)) !important;
