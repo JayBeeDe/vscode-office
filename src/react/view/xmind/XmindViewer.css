@@ -174,8 +174,10 @@ body:has(.xmind-viewer.xmind-dark) {
 .xmind-map-toolbar {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 12px;
+    /* a toolbar too narrow for its buttons wraps them onto more lines rather than drawing the left
+       group over the right one (its buttons do not shrink) */
+    flex-wrap: wrap;
+    gap: 4px 2px;
     min-height: 36px;
     padding: 4px 8px;
     color: var(--viewer-toolbar-fg);
@@ -184,11 +186,21 @@ body:has(.xmind-viewer.xmind-dark) {
     flex-shrink: 0;
 }
 
-.xmind-toolbar-group {
+/* The left group's buttons wrap one by one in the toolbar's row, the right group as a block on the
+   right: a left group one button too wide sends that button down beside the right group (2 lines; each
+   group wrapping on its own made 3). A right group wider than the toolbar wraps within itself */
+.xmind-toolbar-group:first-child {
+    display: contents;
+}
+
+.xmind-toolbar-group:last-child {
     display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
     align-items: center;
-    gap: 2px;
+    gap: 4px 2px;
     min-width: 0;
+    margin-left: auto;
 }
 
 .xmind-toolbar-separator {
@@ -219,9 +231,11 @@ body:has(.xmind-viewer.xmind-dark) {
     opacity: 0.5;
 }
 
-/* a disabled button's tooltip: the span gets the mouse */
+/* a disabled button's tooltip: the span gets the mouse. Centred: the zoom field's "%" would otherwise sit
+   at the top of the input's height, like an exponent */
 .xmind-tool-btn-wrap {
     display: inline-flex;
+    align-items: center;
 }
 
 /* the chosen layout: the accent on its icon only */
@@ -270,7 +284,11 @@ body:has(.xmind-viewer.xmind-dark) {
     user-select: none;
 }
 
+/* the room the buttons leave, cut with an ellipsis; it moves to the next line below 6em */
 .xmind-map-title {
+    flex: 1 1 6em;
+    min-width: 6em;
+    margin: 0 10px 0 4px;
     font-size: 13px;
     font-weight: 600;
     color: var(--viewer-toolbar-fg);
