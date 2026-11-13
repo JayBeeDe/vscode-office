@@ -362,6 +362,66 @@
   }
 
   /**
+   * The find bar:
+   * - the match count moves from after "Whole words" into the bar's last group (with the "Reached end"
+   *   message): a bar too narrow for its line then sends only that group to a line of its own
+   *   (viewer_adjust.css), not every group (PDF.js's .wrapContainers stacks them all), and the long
+   *   "More than 1000 matches" of a first typed character no longer pushes the options down
+   * - a search with no match shows "0 matches" rather than "Phrase not found"
+   * - it closes the sidebar when it opens; opening the sidebar or switching between the hand and the
+   *   select tool closes it
+   */
+  function setupFindBar() {
+    const app = PDFViewerApplication;
+    const count = document.getElementById('findResultsCount');
+    const messages = document.getElementById('findbarMessageContainer');
+    if (count && messages) {
+      messages.prepend(count);
+    }
+    if (!app.findBar) {
+      return;
+    }
+    // a search with no match shows "0 matches" in the count (find.match.none) rather than PDF.js's
+    // "Phrase not found" message; the field still turns red. The count's own (empty, hidden) update
+    // is queued first, so the "0 matches" written once its string resolves stays
+    const bar = app.findBar;
+    const l10n = bar.l10n;
+    bar.l10n = Object.assign(Object.create(l10n), {
+      get: (key, ...rest) => (key === 'find_not_found' ? Promise.resolve('') : l10n.get(key, ...rest)),
+    });
+    const updateResultsCount = bar.updateResultsCount.bind(bar);
+    const notFound = () => bar.findField.classList.contains('notFound') && bar.findField.value !== '';
+    bar.updateResultsCount = (matchesCount = {}) => {
+      updateResultsCount(matchesCount);
+      if (matchesCount.total || !notFound() || !count) {
+        return;
+      }
+      l10n.get('find_match_none').then((text) => {
+        if (!notFound()) {
+          return;
+        }
+        count.textContent = text;
+        count.classList.remove('hidden');
+        bar._adjustWidth();
+      });
+    };
+    // the find bar and the sidebar are never open together: opening one closes the other
+    const open = bar.open.bind(bar);
+    bar.open = () => {
+      if (app.pdfSidebar?.isOpen) {
+        app.pdfSidebar.close();
+      }
+      open();
+    };
+    app.eventBus.on('sidebarviewchanged', () => {
+      if (app.pdfSidebar?.isOpen) {
+        app.findBar.close();
+      }
+    });
+    app.eventBus.on('cursortoolchanged', () => app.findBar.close());
+  }
+
+  /**
    * The toolbar's right part scrolls when the window is too narrow for all its buttons (its
    * scrollbar is hidden, viewer_adjust.css): the mouse wheel scrolls it sideways
    */
@@ -456,6 +516,7 @@
     PDFViewerApplication.initializedPromise.then(() => {
       initSidebarResize();
       setupSidebar();
+      setupFindBar();
       // vscode-office.pdf.zoom: the zoom every PDF opens with (rather than the one it was last
       // viewed with), and the one Ctrl/Cmd+0 goes back to
       PDFViewerApplicationOptions.set('defaultZoomValue', window.officePdfZoom || 'page-width');

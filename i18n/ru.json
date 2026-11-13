@@ -1642,6 +1642,7 @@
       "highlight": "Подсветить все",
       "match": {
         "case_label": "С учётом регистра",
+        "none": "0 совпадений",
         "count": {
           "[one]": "{current} из {total} совпадения",
           "[two]": "{current} из {total} совпадений",

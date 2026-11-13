@@ -1657,6 +1657,7 @@
       "highlight": "Alle hervorheben",
       "match": {
         "case_label": "Groß-/Kleinschreibung beachten",
+        "none": "0 Übereinstimmungen",
         "count": {
           "[one]": "{current} von {total} Übereinstimmung",
           "[two]": "{current} von {total} Übereinstimmungen",

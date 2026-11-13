@@ -1655,6 +1655,7 @@
       "highlight": "Realçar tudo",
       "match": {
         "case_label": "Diferenciar maiúsculas/minúsculas",
+        "none": "0 ocorrências",
         "count": {
           "[one]": "{current} de {total} ocorrência",
           "[two]": "{current} de {total} ocorrências",

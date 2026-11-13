@@ -1631,6 +1631,7 @@
       "highlight": "すべて強調表示",
       "match": {
         "case_label": "大文字/小文字を区別",
+        "none": "0 件一致",
         "count": {
           "[other]": "{total} 件中 {current} 件目",
           "limit": {

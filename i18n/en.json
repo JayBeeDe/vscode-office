@@ -1677,6 +1677,7 @@
       "highlight": "Highlight all",
       "match": {
         "case_label": "Match case",
+        "none": "0 matches",
         "count": {
           "@text": "{[ plural(total) ]}",
           "[one]": "{current} of {total} match",

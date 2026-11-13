@@ -1666,6 +1666,7 @@
       "highlight": "全部高亮显示",
       "match": {
         "case_label": "区分大小写",
+        "none": "0 项匹配",
         "count": {
           "@text": "{[ plural(total) ]}",
           "[one]": "第 {current} 项，共匹配 {total} 项",

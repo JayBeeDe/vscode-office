@@ -1637,6 +1637,7 @@
       "highlight": "Resaltar todos",
       "match": {
         "case_label": "Coincidencia de mayús./minús.",
+        "none": "0 coincidencias",
         "count": {
           "[one]": "{current} de {total} coincidencia",
           "[two]": "{current} de {total} coincidencias",

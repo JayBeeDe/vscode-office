@@ -181,14 +181,172 @@ body.office-adaptive-theme :is(.doorHanger, .doorHangerRight) .toolbarButton:hov
     color: var(--vscode-menu-selectionForeground) !important;
 }
 
-/* The find bar's arrow points at the Find button: PDF.js offsets the bar by 64px for the 40px
-   .toolbarButtonSpacer, which is hidden here, so the bar takes PDF.js's offset for a spacer of no width */
+/* The find bar hangs from the toolbar's far left (far right in RTL), flush with its bottom and side
+   edges as if part of it: no gap (PDF.js has a 4px 2px margin), square corners, no arrow, and an outline
+   on the inner side and the bottom only (a top or outer line would show against the toolbar and the edge) */
+.findbar {
+    margin: 0;
+}
+
+/* outranks the adaptive theme's rounded, outlined .doorHanger */
+html[dir] body #findbar.doorHanger {
+    border-radius: 0 !important;
+}
+
+html[dir="ltr"] body #findbar.doorHanger {
+    box-shadow: 1px 0 0 var(--toolbar-border-color), 0 1px 0 var(--toolbar-border-color),
+        1px 1px 0 var(--toolbar-border-color) !important;
+}
+
+html[dir="rtl"] body #findbar.doorHanger {
+    box-shadow: -1px 0 0 var(--toolbar-border-color), 0 1px 0 var(--toolbar-border-color),
+        -1px 1px 0 var(--toolbar-border-color) !important;
+}
+
 html[dir="ltr"] .findbar {
-    left: 34px;
+    left: 0;
 }
 
 html[dir="rtl"] .findbar {
-    right: 34px;
+    right: 0;
+}
+
+.findbar.doorHanger::before,
+.findbar.doorHanger::after {
+    display: none;
+}
+
+/* Previous / Next look like the toolbar's buttons: 28px, transparent and borderless (the hover and
+   radius come from the toolbar rules), with no separator between them */
+.findbar .splitToolbarButton {
+    margin-top: 2px !important;
+    background: transparent !important;
+}
+
+.findbar .splitToolbarButton .toolbarButton {
+    width: 28px;
+    height: 28px;
+    border: none !important;
+    background-color: transparent;
+}
+
+.findbar .splitToolbarButton .toolbarButton::before {
+    top: 6px;
+}
+
+html[dir="ltr"] .findbar #findPrevious {
+    margin-right: 2px;
+}
+
+html[dir="rtl"] .findbar #findPrevious {
+    margin-left: 2px;
+}
+
+.findbar .splitToolbarButtonSeparator {
+    display: none;
+}
+
+/* Dark/adaptive theme: the find options toggle like VS Code's own find widget (inputOption colours,
+   with a border so a checked option shows whatever the theme), and the match count is a VS Code badge */
+body.office-adaptive-theme .findbar .toolbarField[type="checkbox"]:checked + .toolbarLabel {
+    background-color: var(--vscode-inputOption-activeBackground, var(--vscode-list-activeSelectionBackground)) !important;
+    border-color: var(--vscode-inputOption-activeBorder, var(--vscode-focusBorder)) !important;
+    color: var(--vscode-inputOption-activeForeground, var(--vscode-foreground)) !important;
+}
+
+body.office-adaptive-theme #findResultsCount {
+    background-color: var(--vscode-badge-background) !important;
+    color: var(--vscode-badge-foreground) !important;
+    border-radius: var(--pdf-btn-radius);
+}
+
+/* Find matches take the theme's accent (VS Code's focus border) instead of PDF.js's purple and green:
+   every match a lighter tint, the current one the full colour (the text layer itself is at 20% opacity) */
+:root {
+    --office-accent: var(--vscode-focusBorder, #0078d4);
+}
+
+.textLayer .highlight {
+    background-color: color-mix(in srgb, var(--office-accent) 55%, transparent);
+}
+
+.textLayer .highlight.selected {
+    background-color: var(--office-accent);
+}
+
+/* A toolbar-style separator (as .verticalToolbarSeparator) after the Next arrow */
+.findbar #findbarOptionsOneContainer::before {
+    content: "";
+    display: block;
+    width: 1px;
+    height: 22px;
+    margin: 5px 4px 5px 2px;
+    background-color: var(--separator-color);
+}
+
+html[dir="ltr"] .findbar #findbarOptionsOneContainer::before {
+    float: left;
+}
+
+html[dir="rtl"] .findbar #findbarOptionsOneContainer::before {
+    float: right;
+    margin: 5px 2px 5px 4px;
+}
+
+/* The count opens the bar's last group (main.js). On the bar's line it follows "Whole words" behind a
+   separator drawn in its left margin (so it shows only with the count and stays out of its badge) */
+html[dir="ltr"] #findResultsCount {
+    margin-left: 11px;
+}
+
+html[dir="rtl"] #findResultsCount {
+    margin-right: 11px;
+}
+
+#findResultsCount::before {
+    content: "";
+    position: absolute;
+    top: -1px;
+    width: 1px;
+    height: 22px;
+    background-color: var(--separator-color);
+}
+
+html[dir="ltr"] #findResultsCount::before {
+    left: -7px;
+}
+
+html[dir="rtl"] #findResultsCount::before {
+    right: -7px;
+}
+
+/* A bar too narrow for one line: the groups stay side by side as long as they fit (PDF.js puts each
+   on a line of its own), the last one (count and message) on a line of its own, without separator */
+.findbar.wrapContainers > div {
+    clear: none;
+}
+
+.findbar.wrapContainers > #findbarMessageContainer {
+    clear: both;
+}
+
+html[dir="ltr"] .findbar.wrapContainers #findResultsCount {
+    margin-left: 5px;
+}
+
+html[dir="rtl"] .findbar.wrapContainers #findResultsCount {
+    margin-right: 5px;
+}
+
+.findbar.wrapContainers #findResultsCount::before {
+    display: none;
+}
+
+/* Hand tool: PDF.js's `.grab-to-pan-grab:active` lifts the page area to z-index 50000 while the mouse
+   is down (its other properties lose to #viewerContainer's), covering the find bar until the button is
+   released, so it seemed to close and reopen on a click in the document. The page area stays below it */
+#viewerContainer.grab-to-pan-grab:active {
+    z-index: auto;
 }
 
 /* A hand over what can be clicked (PDF.js keeps the arrow); a disabled button keeps the arrow */
