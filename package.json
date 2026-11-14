@@ -466,6 +466,11 @@
 						"default": "auto",
 						"markdownDescription": "Theme of the Mermaid diagrams in the Markdown editor. `auto` follows the page, so `#vscode-office.markdown.theme#`."
 					},
+					"vscode-office.markdown.waitForAllMermaidDiagrams": {
+						"type": "boolean",
+						"default": false,
+						"markdownDescription": "When a Markdown file opens, wait for all its Mermaid diagrams to be drawn: the file's loading screen stays until then. Off, the file shows at once and each diagram shows a spinner until it is drawn, with the number of diagrams left in the status bar."
+					},
 					"vscode-office.markdown.editMode": {
 						"type": "string",
 						"enum": [

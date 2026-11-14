@@ -65,11 +65,39 @@ const clearMermaidElement = (item: HTMLElement) => {
     item.innerHTML = "";
 };
 
+/**
+ * Where mermaid lays out a diagram before it is shown: a box off screen, out of the document's flow
+ * and contained (its layout and style do not reach the rest of the page), with the diagram's font
+ * and width so the text measures as it will be shown. Laid out in the diagram itself, inside the
+ * editor, each of mermaid's many text measurements laid the whole document out again: a diagram
+ * took over a second there, and the page could not scroll meanwhile (a tenth of that in this box).
+ */
+let renderHost: HTMLElement | undefined;
+const getRenderHost = (item: HTMLElement) => {
+    if (!renderHost || !renderHost.isConnected) {
+        renderHost = document.createElement("div");
+        renderHost.className = "vditor-mermaid-render-host";
+        renderHost.setAttribute("aria-hidden", "true");
+        renderHost.style.cssText = "position:fixed;left:-100000px;top:0;height:0;overflow:hidden;"
+            + "contain:strict;visibility:hidden;pointer-events:none;";
+        document.body.appendChild(renderHost);
+    }
+    const style = getComputedStyle(item);
+    renderHost.style.width = `${item.clientWidth || 800}px`;
+    renderHost.style.fontFamily = style.fontFamily;
+    renderHost.style.fontSize = style.fontSize;
+    renderHost.style.lineHeight = style.lineHeight;
+    renderHost.style.color = style.color;
+    return renderHost;
+};
+
 const renderSingleMermaid = async (item: HTMLElement, code: string, index: number) => {
+    // read before the source replaces its content (the spinner's box)
+    const host = getRenderHost(item);
     clearMermaidElement(item);
     const renderId = `vditor-mermaid-${++renderCounter}-${Date.now()}-${index}`;
     try {
-        const {svg, bindFunctions} = await mermaid.render(renderId, code, item);
+        const {svg, bindFunctions} = await mermaid.render(renderId, code, host);
         item.innerHTML = svg;
         bindFunctions?.(item);
         item.setAttribute(MERMAID_PROCESSED_ATTR, "true");
@@ -78,7 +106,23 @@ const renderSingleMermaid = async (item: HTMLElement, code: string, index: numbe
         item.className = "language-mermaid vditor-reset--error";
         item.textContent = `${window.VditorI18n.mermaidRenderError}: ${message}`;
         item.setAttribute(MERMAID_PROCESSED_ATTR, "true");
+    } finally {
+        // what a failed render leaves behind
+        host.replaceChildren();
     }
+};
+
+/**
+ * Diagrams are drawn one at a time, the page handling what is waiting (typing, clicks, painting)
+ * before each: every block renders its own (processCodeRender), all at once, and mermaid chains them
+ * on promises that let nothing else run, so a document with many froze until the last. A timer, not
+ * scheduler.yield(), whose continuation goes before the other tasks.
+ */
+let renderQueue: Promise<void> = Promise.resolve();
+const queueRender = (task: () => Promise<void>) => {
+    const run = renderQueue.then(() => new Promise<void>((resolve) => setTimeout(resolve, 0))).then(task);
+    renderQueue = run.catch(() => undefined);
+    return run;
 };
 
 const getThemeId = (themeRoot: HTMLElement, vditor?: IVditor) => {
@@ -108,10 +152,12 @@ const renderMermaidElements = async (
             continue;
         }
         storeMermaidSource(item, code);
-        await renderSingleMermaid(item, code, i);
-        if (vditor) {
-            ensureMermaidChrome(vditor, item);
-        }
+        await queueRender(async () => {
+            await renderSingleMermaid(item, code, i);
+            if (vditor) {
+                ensureMermaidChrome(vditor, item);
+            }
+        });
     }
 };
 

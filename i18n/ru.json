@@ -25,6 +25,12 @@
     },
     "loading": {
       "document": "Загрузка: {kind} {name}...",
+      "mermaid": {
+        "one": "Загрузка: осталась {count} диаграмма Mermaid, {kind} {name}...",
+        "few": "Загрузка: осталось {count} диаграммы Mermaid, {kind} {name}...",
+        "many": "Загрузка: осталось {count} диаграмм Mermaid, {kind} {name}...",
+        "other": "Загрузка: осталось {count} диаграммы Mermaid, {kind} {name}..."
+      },
       "kind": {
         "spreadsheet": "таблица",
         "document": "документ",

@@ -25,6 +25,10 @@
     },
     "loading": {
       "document": "{kind} {name} wird geladen...",
+      "mermaid": {
+        "one": "{count} verbleibendes Mermaid-Diagramm von {kind} {name} wird geladen...",
+        "other": "{count} verbleibende Mermaid-Diagramme von {kind} {name} werden geladen..."
+      },
       "kind": {
         "spreadsheet": "Tabelle",
         "document": "Dokument",

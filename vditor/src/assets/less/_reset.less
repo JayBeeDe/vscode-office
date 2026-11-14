@@ -314,10 +314,13 @@
       background-color: var(--mermaid-bg, var(--toolbar-background-color, #fff));
     }
 
-    // until mermaidRender has drawn the diagram: a spinner rather than its source
+    // until mermaidRender has drawn the diagram: a spinner rather than its source, the one of the
+    // file's loading screen (src/common/loadingStatus.ts), with the text the host sends under it
+    // ("Loading 3 remaining Mermaid diagrams of Markdown notes.md...", data-loading-label set by
+    // resource/markdown/index.js)
     .language-mermaid:not([data-vditor-mermaid-processed]):not(:empty) {
       position: relative;
-      min-height: 48px;
+      min-height: 96px;
       overflow: hidden;
       color: transparent;
       font-size: 0;
@@ -326,16 +329,38 @@
       &::after {
         content: "";
         position: absolute;
-        top: 50%;
+        top: calc(50% - 24px);
         left: 50%;
-        width: 20px;
-        height: 20px;
-        margin: -10px 0 0 -10px;
+        width: 28px;
+        height: 28px;
+        margin-left: -14px;
         box-sizing: border-box;
-        border: 2px solid color-mix(in srgb, var(--front-color, #333) 20%, transparent);
-        border-top-color: var(--front-color, #333);
+        border: 3px solid color-mix(in srgb, var(--vscode-progressBar-background, #0e70c0) 25%, transparent);
+        border-top-color: var(--vscode-progressBar-background, #0e70c0);
         border-radius: 50%;
         animation: vditor-mermaid-spin 0.8s linear infinite;
+      }
+
+      &::before {
+        content: attr(data-loading-label);
+        position: absolute;
+        top: calc(50% + 14px);
+        left: 0;
+        right: 0;
+        padding: 0 8px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: var(--vscode-descriptionForeground, #9d9d9d);
+        font-family: var(--vscode-font-family, system-ui, sans-serif);
+        font-size: 13px;
+        line-height: 1.4;
+        text-align: center;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .language-mermaid:not([data-vditor-mermaid-processed]):not(:empty)::after {
+        animation-duration: 2.4s;
       }
     }
 

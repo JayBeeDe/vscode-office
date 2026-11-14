@@ -25,6 +25,9 @@
     },
     "loading": {
       "document": "正在加载{kind} {name}...",
+      "mermaid": {
+        "other": "正在加载{kind} {name} 中剩余的 {count} 个 Mermaid 图表..."
+      },
       "kind": {
         "spreadsheet": "电子表格",
         "document": "文档",

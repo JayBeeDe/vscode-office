@@ -38,10 +38,16 @@ const markImageLoading = (img: HTMLImageElement) => {
 
 const WHEEL_FONT_SIZE_THROTTLE_MS = 250;
 
+/**
+ * Ctrl/Cmd + wheel changes the editor's font size. Its listener can cancel the wheel (not passive),
+ * so it is there only while Ctrl or Cmd is held: otherwise every scroll would wait for the page's
+ * scripts, and a long one (a large Mermaid diagram being drawn) would block scrolling until it ends,
+ * where a page without it scrolls on the browser's own thread.
+ */
 export const wheelZoomFontSizeEvent = (vditor: IVditor, editorElement: HTMLElement) => {
     let lastAppliedAt = 0;
 
-    editorElement.addEventListener("wheel", (event: WheelEvent) => {
+    const onWheel = (event: WheelEvent) => {
         if (!event.ctrlKey && !event.metaKey) {
             return;
         }
@@ -69,7 +75,27 @@ export const wheelZoomFontSizeEvent = (vditor: IVditor, editorElement: HTMLEleme
         applyEditorSettings(vditor);
         vditor.options.changeEditorFontSize?.(next);
         lastAppliedAt = now;
-    }, { passive: false });
+    };
+
+    let listening = false;
+    const listen = (on: boolean) => {
+        if (on === listening) {
+            return;
+        }
+        listening = on;
+        if (on) {
+            editorElement.addEventListener("wheel", onWheel, { passive: false });
+        } else {
+            editorElement.removeEventListener("wheel", onWheel);
+        }
+    };
+    // Ctrl/Cmd pressed or released (the page focused), or the pointer moving over the editor with it
+    const follow = (event: KeyboardEvent | PointerEvent) => listen(event.ctrlKey || event.metaKey);
+    window.addEventListener("keydown", follow, true);
+    window.addEventListener("keyup", follow, true);
+    editorElement.addEventListener("pointermove", follow, { passive: true });
+    editorElement.addEventListener("pointerover", follow, { passive: true });
+    window.addEventListener("blur", () => listen(false));
 };
 
 export const bindImageLoadingState = (editorElement: HTMLElement) => {

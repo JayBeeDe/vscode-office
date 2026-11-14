@@ -25,6 +25,9 @@
     },
     "loading": {
       "document": "{kind} {name} を読み込んでいます...",
+      "mermaid": {
+        "other": "{kind} {name} の残り {count} 件の Mermaid 図を読み込んでいます..."
+      },
       "kind": {
         "spreadsheet": "スプレッドシート",
         "document": "文書",

@@ -25,6 +25,11 @@
     },
     "loading": {
       "document": "Carregando {kind} {name}...",
+      "mermaid": {
+        "one": "Carregando {count} diagrama Mermaid restante de {kind} {name}...",
+        "many": "Carregando {count} diagramas Mermaid restantes de {kind} {name}...",
+        "other": "Carregando {count} diagramas Mermaid restantes de {kind} {name}..."
+      },
       "kind": {
         "spreadsheet": "planilha",
         "document": "documento",

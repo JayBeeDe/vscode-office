@@ -25,6 +25,11 @@
     },
     "loading": {
       "document": "Chargement {kind} {name}...",
+      "mermaid": {
+        "one": "Chargement de {count} diagramme Mermaid restant {kind} {name}...",
+        "many": "Chargement de {count} diagrammes Mermaid restants {kind} {name}...",
+        "other": "Chargement de {count} diagrammes Mermaid restants {kind} {name}..."
+      },
       "kind": {
         "spreadsheet": "du classeur",
         "document": "du document",

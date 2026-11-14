@@ -25,6 +25,11 @@
     },
     "loading": {
       "document": "Cargando {kind} {name}...",
+      "mermaid": {
+        "one": "Cargando {count} diagrama Mermaid restante de {kind} {name}...",
+        "many": "Cargando {count} diagramas Mermaid restantes de {kind} {name}...",
+        "other": "Cargando {count} diagramas Mermaid restantes de {kind} {name}..."
+      },
       "kind": {
         "spreadsheet": "hoja de cálculo",
         "document": "documento",

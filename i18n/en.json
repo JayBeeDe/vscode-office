@@ -25,6 +25,12 @@
     },
     "loading": {
       "document": "Loading {kind} {name}...",
+      "mermaid": {
+        "one": "Loading {count} remaining Mermaid diagram of {kind} {name}...",
+        "few": "Loading {count} remaining Mermaid diagrams of {kind} {name}...",
+        "many": "Loading {count} remaining Mermaid diagrams of {kind} {name}...",
+        "other": "Loading {count} remaining Mermaid diagrams of {kind} {name}..."
+      },
       "kind": {
         "spreadsheet": "spreadsheet",
         "document": "document",

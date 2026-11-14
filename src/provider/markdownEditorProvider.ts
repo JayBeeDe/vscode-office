@@ -9,7 +9,7 @@ import { Holder } from '../service/markdown/holder';
 import { MarkdownService } from '../service/markdownService';
 import { Global, i18n } from '@/common/global';
 import { bindTheme, getTheme } from '@/common/theme';
-import { trackDocumentLoading, trackTextDocumentSaving, withLoadingOverlay } from '@/common/loadingStatus';
+import { trackDocumentLoading, trackMermaidLoading, trackTextDocumentSaving, withLoadingOverlay } from '@/common/loadingStatus';
 import { getMessages, resolveLanguage } from '@/i18n';
 import { openWikiLink } from '@/service/markdown/wikilink';
 import {
@@ -157,6 +157,7 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
         }
         const handler = Handler.bind(webviewPanel, uri);
         trackDocumentLoading(handler, uri);
+        trackMermaidLoading(handler, uri);
         const savingTracker = trackTextDocumentSaving(handler, uri);
         webviewPanel.onDidDispose(() => savingTracker.dispose());
         void this.handleMarkdown(document, handler, folderPath);
@@ -343,6 +344,7 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
             pageTheme: configuration.get<string>("theme", "auto"),
             codeMirrorTheme: configuration.get<string>("codeMirrorTheme", "auto"),
             mermaidTheme: configuration.get<string>("mermaidTheme", "auto"),
+            waitForAllMermaidDiagrams: configuration.get<boolean>("waitForAllMermaidDiagrams", false),
             editorSettings: getEditorSettings(configuration),
             markdown: {
                 math: {

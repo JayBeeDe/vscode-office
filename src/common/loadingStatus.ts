@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { Handler } from './handler';
 import { i18n } from './global';
 import { getFileSuffix } from './fileSuffix';
+import { resolveLanguage } from '../i18n';
 
 /**
  * The loading screen every viewer shows while its document opens: a spinner over the whole
@@ -136,6 +137,54 @@ export function trackDocumentLoading(handler: Handler, uri: vscode.Uri): void {
     };
     start();
     handler.on('loadingState', (loading: boolean) => loading ? start() : end());
+    handler.panel.onDidDispose(end);
+}
+
+/**
+ * "Loading 3 remaining Mermaid diagrams of Markdown notes.md...": the plural form the language uses
+ * for that number (every form written out, so the i18n check sees them).
+ */
+function mermaidLoadingLabel(uri: vscode.Uri, count: number): string {
+    const name = documentName(uri);
+    const vars = { count, kind: documentKind(getFileSuffix(name)), name };
+    switch (new Intl.PluralRules(resolveLanguage(vscode.env.language)).select(count)) {
+        case 'one': return i18n('loading.mermaid.one', vars);
+        case 'few': return i18n('loading.mermaid.few', vars);
+        case 'many': return i18n('loading.mermaid.many', vars);
+        default: return i18n('loading.mermaid.other', vars);
+    }
+}
+
+/**
+ * The markdown editor reports the Mermaid diagrams it has left to draw (`mermaidLoading`): the
+ * status bar shows how many while there are some, and the editor gets the same text back
+ * (`mermaidLoadingLabel`) for the diagrams' spinners. Empty once they are all drawn.
+ */
+export function trackMermaidLoading(handler: Handler, uri: vscode.Uri): void {
+    let label = '';
+    let finish: (() => void) | undefined;
+    let report: ((message: string) => void) | undefined;
+    const end = () => {
+        finish?.();
+        finish = undefined;
+        report = undefined;
+    };
+    handler.on('mermaidLoading', (remaining: number) => {
+        label = remaining > 0 ? mermaidLoadingLabel(uri, remaining) : '';
+        handler.emit('mermaidLoadingLabel', label);
+        if (!label) {
+            end();
+        } else if (report) {
+            report(label);
+        } else if (!finish && !handler.disposed) {
+            const done = new Promise<void>(resolve => { finish = resolve; });
+            void vscode.window.withProgress({ location: vscode.ProgressLocation.Window }, (progress) => {
+                report = (message) => progress.report({ message });
+                report(label);
+                return done;
+            });
+        }
+    });
     handler.panel.onDidDispose(end);
 }
 

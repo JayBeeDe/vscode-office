@@ -9,6 +9,88 @@ function findReferenceDefinition(markdown, label) {
   return match ? (match[1] ?? match[2]) : '';
 }
 
+/**
+ * A mermaid diagram not drawn yet (it shows its spinner), in a block's preview (wysiwyg, ir) or the
+ * preview pane (sv); the block's source, also .language-mermaid, is never drawn. mermaidRender marks a
+ * diagram processed once drawn, or failed; until then it holds its source.
+ */
+const PENDING_DIAGRAM = ':is(.vditor-wysiwyg__preview, .vditor-ir__preview, .vditor-preview) .language-mermaid:not([data-vditor-mermaid-processed]):not(:empty)';
+/** The longest the loading screen waits for the diagrams: a mermaid script that never loads */
+const DIAGRAMS_TIMEOUT = 30000;
+
+/**
+ * Resolves once every mermaid diagram of the file is drawn: the file's loading screen and its status
+ * bar entry last until then (vscode-office.markdown.waitForAllMermaidDiagrams), a save waits for it.
+ * Resolves at once when there is none (checked after the editor's deferred renders), at the latest
+ * after DIAGRAMS_TIMEOUT.
+ */
+function whenDiagramsDrawn(root) {
+  return new Promise((resolve) => {
+    if (!root) {
+      resolve();
+      return;
+    }
+    let observer;
+    let timer;
+    const finish = () => {
+      observer?.disconnect();
+      clearTimeout(timer);
+      resolve();
+    };
+    setTimeout(() => {
+      if (!root.querySelector(PENDING_DIAGRAM)) {
+        finish();
+        return;
+      }
+      observer = new MutationObserver(() => {
+        if (!root.querySelector(PENDING_DIAGRAM)) {
+          finish();
+        }
+      });
+      observer.observe(root, { subtree: true, childList: true, attributes: true, attributeFilter: ['data-vditor-mermaid-processed'] });
+      timer = setTimeout(finish, DIAGRAMS_TIMEOUT);
+    }, 0);
+  });
+}
+
+/**
+ * Reports the diagrams left to draw, whenever their number changes (the file opening, a diagram
+ * edited, the mermaid theme changed): the extension shows "Loading 3 remaining Mermaid diagrams of
+ * Markdown notes.md..." in the status bar and sends the text back, which each diagram's spinner shows
+ * under it (data-loading-label). On the diagrams themselves: a property set on the editor would
+ * restyle the whole document at each count, freezing a long one.
+ */
+function trackDiagrams(root) {
+  if (!root) {
+    return;
+  }
+  let label = '';
+  const showLabel = (pending) => {
+    for (const diagram of pending) {
+      if (diagram.getAttribute('data-loading-label') !== label) {
+        diagram.setAttribute('data-loading-label', label);
+      }
+    }
+  };
+  handler.on('mermaidLoadingLabel', (text) => {
+    label = text || '';
+    showLabel(root.querySelectorAll(PENDING_DIAGRAM));
+  });
+  let reported = 0;
+  const update = () => {
+    const pending = root.querySelectorAll(PENDING_DIAGRAM);
+    // a diagram drawn again (edited, theme changed) gets the current text until the next one
+    showLabel(pending);
+    if (pending.length !== reported) {
+      reported = pending.length;
+      handler.emit('mermaidLoading', pending.length);
+    }
+  };
+  new MutationObserver(update).observe(root, { subtree: true, childList: true, attributes: true, attributeFilter: ['data-vditor-mermaid-processed'] });
+  // the editor's first diagrams are added after it is ready
+  setTimeout(update, 0);
+}
+
 handler.on("open", (md) => {
   // the loading screen stays until the editor is ready, or its setup fails
   openMarkdown(md).catch((error) => {
@@ -32,7 +114,7 @@ async function openMarkdown(md) {
   window.__officeMarkdownFileName = fileName || 'Note';
   const {
     language, i18n, isWeb, isDev, markdown,
-    editMode, theme, pageTheme, codeMirrorTheme, mermaidTheme, editorSettings
+    editMode, theme, pageTheme, codeMirrorTheme, mermaidTheme, editorSettings, waitForAllMermaidDiagrams
   } = config;
   if (isWeb) {
     document.body.classList.add('is-web')
@@ -43,13 +125,25 @@ async function openMarkdown(md) {
   const formatForFile = (text) => editor?.formatMarkdown ? editor.formatMarkdown(text, fileName) : text;
   const getMarkdownValue = () => formatForFile(readMarkdown());
   /** the formatted text, shown in the editor when it differs: on save, not while typing */
-  const saveFormatted = () => {
+  const saveNow = () => {
     const formatted = getMarkdownValue();
     handler.emit('doSave', formatted);
     if (formatted !== readMarkdown()) {
       editor.setValue(Vditor.prepareMarkdown(formatted));
     }
     editor?.markSaved();
+  };
+  // a save while diagrams are being drawn waits for the last one, then saves the text as it is then
+  // (edits made meanwhile included); saves asked meanwhile are that one
+  let pendingSave = null;
+  const saveFormatted = () => {
+    if (!pendingSave) {
+      pendingSave = whenDiagramsDrawn(document.getElementById('vditor')).then(() => {
+        pendingSave = null;
+        saveNow();
+      });
+    }
+    return pendingSave;
   };
   window.__officeMarkdownSave = saveFormatted;
   // `#word` is an Obsidian tag only with vscode-office.markdown.useObsidianTags (MD018)
@@ -150,7 +244,17 @@ async function openMarkdown(md) {
       },
     },
     after() {
-      window.setDocumentLoading(false);
+      // the file shows once its diagrams are drawn, or at once, each diagram with its own spinner
+      const root = document.getElementById('vditor');
+      if (waitForAllMermaidDiagrams) {
+        whenDiagramsDrawn(root).then(() => {
+          window.setDocumentLoading(false);
+          trackDiagrams(root);
+        });
+      } else {
+        window.setDocumentLoading(false);
+        trackDiagrams(root);
+      }
       observeWorkspaceAbsoluteImages(document.getElementById('vditor'), workspaceBaseUrl);
       disableSlowExports(!!exporting);
       handler.on('exporting', disableSlowExports);
