@@ -1404,8 +1404,9 @@ function sheetInitEvents() {
     evt.preventDefault();
   });
 
-  // for selector
-  bindGlobal(this, window, 'keydown', (evt) => {
+  // for selector: on the document, not the window, so that stopPropagation keeps a handled Ctrl+B
+  // from VS Code's webview keydown listener, which sits on the window
+  bindGlobal(this, document, 'keydown', (evt) => {
     if (!this.focusing) return;
     const keyCode = evt.keyCode || evt.which;
     const {
@@ -1441,8 +1442,10 @@ function sheetInitEvents() {
         case 85: {
           // ctrl/cmd + b / i / u: bold, italic, underline, like the toolbar buttons
           if (shiftKey || altKey || this.editor.cell !== null) break;
-          // handled even in read mode, so VS Code does not run its own Ctrl+B (side bar) etc.
+          // handled even in read mode, so VS Code does not run its own Ctrl+B (side bar) etc.:
+          // its webview forwards any keydown that reaches the window
           evt.preventDefault();
+          evt.stopPropagation();
           if (this.data.settings.mode === 'read') break;
           const style = this.data.getSelectedCellStyle();
           if (keyCode === 66) toolbarChange.call(this, 'font-bold', !style.font.bold);

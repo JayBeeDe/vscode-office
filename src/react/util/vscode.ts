@@ -80,6 +80,19 @@ export function isCompose(e) {
     return e.metaKey || e.ctrlKey;
 }
 
+/**
+ * VS Code's webview listens to keydown on the page's window (registered before the page loads, and
+ * blind to preventDefault) and forwards the key to the workbench: Ctrl+B would bold the text and
+ * also toggle the side bar. A formatting shortcut a viewer's editor handled (default prevented)
+ * stops here, on the document, so it never reaches that window listener. The editors' handlers sit
+ * on the document or below it.
+ */
+const isFormattingShortcut = (e: KeyboardEvent) =>
+    isCompose(e) && !e.altKey && !e.shiftKey && ['KeyB', 'KeyI', 'KeyU'].includes(e.code);
+document.addEventListener('keydown', e => {
+    if (e.defaultPrevented && isFormattingShortcut(e)) e.stopPropagation();
+});
+
 window.addEventListener('keydown', e => {
     if (e.code == 'F12') handler.emit('developerTool')
     else if ((isCompose(e) && e.code == 'KeyV')) e.preventDefault()  // VS Code bug: with a Hebrew keyboard, paste happens twice
