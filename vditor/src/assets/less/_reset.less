@@ -615,6 +615,12 @@
     // 270px whenever it opens, like the PDF viewer's sidebar: a width dragged to is not remembered
     // (vditor/src/ts/outline/index.ts); the narrow layout's drawer has its own (_editorThemeApply.less)
     width: 270px;
+    // the active and hovered headings and the selected text take VS Code's accent (--list-hover-color
+    // is --vscode-focusBorder in the editor themes), like the links and the toolbar; hover is lighter
+    --outline-active-bg: color-mix(in srgb, var(--list-hover-color, #007aff) 16%, transparent);
+    --outline-active-color: var(--list-hover-color, #007aff);
+    --outline-hover-bg: color-mix(in srgb, var(--list-hover-color, #007aff) 8%, transparent);
+    --outline-hover-color: var(--list-hover-color, #007aff);
     background-color: var(--outline-bg-color, var(--panel-background-color));
     border: var(--vditor-outline-border, none);
     display: none;
@@ -650,8 +656,13 @@
       }
     }
 
+    ::selection {
+      background-color: var(--selection-bg, Highlight);
+    }
+
+    // no horizontal scrollbar: a long heading wraps within the sidebar's width
     &__content {
-      overflow-x: auto;
+      overflow-x: hidden;
       overflow-y: auto;
       box-sizing: border-box;
       height: 100%;
@@ -660,8 +671,6 @@
 
       &>ul {
         padding-left: 0;
-        min-width: 100%;
-        width: max-content;
       }
     }
 
@@ -694,7 +703,8 @@
 
     li>span {
       display: flex;
-      align-items: center;
+      // the arrow stays on a wrapped heading's first line
+      align-items: flex-start;
       margin: 0 2px;
       padding: 5px 8px;
       border-radius: var(--vditor-popover-radius, 6px);
@@ -708,6 +718,8 @@
         height: 12px;
         width: 12px;
         margin-right: 6px;
+        // centred on the first line of the text: the outline's font size × line-height 1.45
+        margin-top: calc((var(--ui-font-size, 14px) * 1.45 - 12px) / 2);
       }
 
       &>.vditor-outline__placeholder {
@@ -723,7 +735,7 @@
 
       &:hover {
         background-color: var(--outline-hover-bg);
-        color: var(--front-color, var(--textarea-text-color));
+        color: var(--outline-hover-color, var(--front-color, var(--textarea-text-color)));
 
         &>span {
           color: inherit;
@@ -745,7 +757,9 @@
       }
 
       &>span {
-        white-space: nowrap;
+        min-width: 0;
+        white-space: normal;
+        overflow-wrap: anywhere;
         line-height: 1.45;
       }
     }
