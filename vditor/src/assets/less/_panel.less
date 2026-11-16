@@ -216,8 +216,9 @@
     &--html-inline,
     &--front-matter {
       position: absolute;
-      --vditor-popover-primary-btn-bg: #007aff;
-      --vditor-popover-primary-btn-bg-hover: #0066d6;
+      // Save and the line wrap switch take VS Code's accent, like the links and the toolbar
+      --vditor-popover-primary-btn-bg: var(--list-hover-color, #007aff);
+      --vditor-popover-primary-btn-bg-hover: color-mix(in srgb, var(--vditor-popover-primary-btn-bg) 85%, #000);
       --vditor-popover-primary-btn-fg: #fff;
       --vditor-popover-secondary-btn-bg: color-mix(in srgb, var(--textarea-text-color) 10%, transparent);
       --vditor-popover-secondary-btn-bg-hover: color-mix(in srgb, var(--textarea-text-color) 16%, transparent);
@@ -325,6 +326,12 @@
           }
         }
       }
+    }
+
+    // the HTML editor: wide, its lines wrapping (htmlInlineEditor.ts), kept inside the window
+    &--html-inline {
+      width: min(760px, calc(100vw - 24px));
+      max-width: min(760px, calc(100vw - 24px));
     }
 
     &--arrow:before {

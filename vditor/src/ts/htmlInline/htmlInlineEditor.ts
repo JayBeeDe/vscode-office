@@ -1,6 +1,6 @@
 import { indentLess } from "@codemirror/commands";
 import { Compartment } from "@codemirror/state";
-import { EditorView, keymap } from "@codemirror/view";
+import { EditorView, keymap, lineNumbers } from "@codemirror/view";
 
 import { getModeEditorElement, getModePopover } from "../codeBlock/codeBlockLanguagePopover";
 import { loadCodeMirrorHighlightLanguage } from "../codeBlock/codeBlockHighlightLanguages";
@@ -387,6 +387,7 @@ const mountHtmlEditorCodeMirror = (
         parent: host,
         extensions: [
             vditorCodeMirrorSetup,
+            lineNumbers(),
             languageCompartment.of([]),
             wrapCompartment.of([]),
             keymap.of(stopHandledCodeMirrorKeymap([

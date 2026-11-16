@@ -587,6 +587,8 @@
 }
 
 .vditor-html-inline-popover__cm-host {
+  // the HTML tags take VS Code's accent, not the code theme's red (light.css / dark.css)
+  --cm-syntax-tag: var(--list-hover-color, var(--link-color));
   flex: 1 1 auto;
   min-height: 96px;
   max-height: min(280px, calc(100vh - 140px));
@@ -617,6 +619,23 @@
 
   .cm-content {
     min-height: 96px;
+  }
+
+  // line numbers, like the code blocks'
+  .cm-gutters {
+    background: var(--cm-bg-color, var(--textarea-background-color, var(--panel-background-color))) !important;
+    border-right: 1px solid color-mix(in srgb, var(--cm-fg-color, var(--toolbar-icon-color)) 10%, transparent);
+    user-select: none;
+  }
+
+  .cm-gutterElement {
+    color: var(--cm-line-number-fg, var(--vscode-editorLineNumber-foreground));
+  }
+
+  // no band on the caret's line: on opening, the first line looked selected
+  &.vditor-cm-host .cm-editor .cm-activeLine,
+  &.vditor-cm-host .cm-editor .cm-activeLineGutter {
+    background: transparent !important;
   }
 }
 

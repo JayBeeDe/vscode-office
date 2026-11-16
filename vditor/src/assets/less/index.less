@@ -98,8 +98,9 @@
   --panel-shadow-hairline: 0 0 0 0.5px color-mix(in srgb, var(--toolbar-icon-color) 6%, transparent);
   --panel-shadow-elevated: var(--panel-shadow), var(--panel-shadow-hairline);
 
-  --vditor-popover-primary-btn-bg: #007aff;
-  --vditor-popover-primary-btn-bg-hover: #0066d6;
+  // VS Code's accent (--list-hover-color is --vscode-focusBorder in the editor themes), like the links
+  --vditor-popover-primary-btn-bg: var(--list-hover-color, #007aff);
+  --vditor-popover-primary-btn-bg-hover: color-mix(in srgb, var(--vditor-popover-primary-btn-bg) 85%, #000);
   --vditor-popover-primary-btn-fg: #fff;
   --vditor-popover-secondary-btn-bg: color-mix(in srgb, var(--toolbar-icon-color) 8%, transparent);
   --vditor-popover-secondary-btn-bg-hover: color-mix(in srgb, var(--toolbar-icon-color) 13%, transparent);
