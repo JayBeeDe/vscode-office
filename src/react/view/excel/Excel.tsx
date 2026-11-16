@@ -9,7 +9,7 @@ import { detectCsvEncoding, type CsvEncoding } from "./csvEncoding.ts";
 import type { CsvFormat } from "./csvFormat.ts";
 import { loadSheets } from "./excel_reader.ts";
 import { export_xlsx, exportSaveAs, buildFormattingSnapshot, hasFormattingChanged } from "./excel_writer.ts";
-import Spreadsheet, { type SheetData } from './x-spreadsheet/index';
+import Spreadsheet from './x-spreadsheet/index';
 import FindReplacePanel, { type FindReplacePanelHandle } from './FindReplacePanel';
 import { parseSpreadsheetLink } from './excel_hyperlink';
 import { initExcelLocale, t } from './excel_i18n';
@@ -17,47 +17,19 @@ import { $t } from '../../i18n/i18nConfig.ts';
 
 initExcelLocale();
 
-type ExcelViewState = { ri: number; ci: number; sheetIndex: number };
-
-const EXCEL_VIEW_STATE_SUFFIX = '-excel-view';
-
-function getViewStateKey(documentCacheId: string): string {
-    return `${documentCacheId}${EXCEL_VIEW_STATE_SUFFIX}`;
-}
-
-function loadViewState(documentCacheId: string): ExcelViewState | null {
-    if (!documentCacheId) return null;
-    const key = getViewStateKey(documentCacheId);
+// the spreadsheet remembers nothing between two openings: the selected cell and sheet, which older
+// versions kept per file under `<documentCacheId>-excel-view`, are removed once
+function purgeLegacyViewState() {
     try {
-        const raw = localStorage.getItem(key);
-        if (!raw) return null;
-        return JSON.parse(raw) as ExcelViewState;
+        for (let i = localStorage.length - 1; i >= 0; i--) {
+            const key = localStorage.key(i);
+            if (key?.endsWith('-excel-view')) localStorage.removeItem(key);
+        }
     } catch {
-        return null;
+        // storage unavailable: nothing to remove
     }
 }
-
-function saveViewState(documentCacheId: string, view: ExcelViewState) {
-    if (!documentCacheId) return;
-    const key = getViewStateKey(documentCacheId);
-    try {
-        localStorage.setItem(key, JSON.stringify(view));
-    } catch {
-        // ignore quota / private mode errors
-    }
-}
-
-function restoreViewState(spreadSheet: Spreadsheet, saved: ExcelViewState) {
-    const sheets = spreadSheet.getData();
-    if (!sheets.length) return;
-    const sheetIndex = Math.min(Math.max(0, saved.sheetIndex), sheets.length - 1);
-    const sheet = sheets[sheetIndex] as SheetData;
-    const maxRi = Math.max(0, (sheet.rows?.len ?? 1) - 1);
-    const maxCi = Math.max(0, (sheet.cols?.len ?? 1) - 1);
-    const ri = Math.min(Math.max(0, saved.ri), maxRi);
-    const ci = Math.min(Math.max(0, saved.ci), maxCi);
-    spreadSheet.scrollToCell(ri, ci, sheetIndex);
-}
+purgeLegacyViewState();
 
 function isCsvLikeExt(ext: string): boolean {
     return /^(csv|tsv)$/i.test(ext.replace(/^\./, ''));
@@ -78,7 +50,6 @@ function ExcelViewer() {
     const [activeSpreadsheet, setActiveSpreadsheet] = useState<Spreadsheet | null>(null)
     const extRef = useRef('')
     const sourceBufferRef = useRef<ArrayBuffer | null>(null)
-    const documentCacheIdRef = useRef('')
     const readOnlyRef = useRef(false)
     const spreadSheetRef = useRef<Spreadsheet | null>(null)
     const csvEncodingRef = useRef<CsvEncoding>('utf8')
@@ -345,11 +316,6 @@ function ExcelViewer() {
                     setFindPanel('find');
                 }
             });
-            const persistView = () => {
-                saveViewState(documentCacheIdRef.current, spreadSheet.getSelection());
-            };
-            spreadSheet.on('cell-selected', () => { persistView(); });
-            spreadSheet.onSheetChange(() => { persistView(); });
             spreadSheet.onOpenLink((linkPayload) => {
                 const parsed = parseSpreadsheetLink(linkPayload.link);
                 if (parsed.type === 'internal') {
@@ -370,18 +336,11 @@ function ExcelViewer() {
                     handler.emit('change');
                 }
             });
-            const savedView = loadViewState(documentCacheIdRef.current);
-            if (savedView) {
-                requestAnimationFrame(() => {
-                    requestAnimationFrame(() => { restoreViewState(spreadSheet, savedView); });
-                });
-            }
             initialFormattingRef.current = buildFormattingSnapshot(spreadSheet.getData());
         };
 
         handler.on("open", (payload) => {
             extRef.current = payload.ext ?? '';
-            documentCacheIdRef.current = payload.documentCacheId ?? '';
             const fileReadOnly = payload.readOnly === true;
             readOnlyRef.current = fileReadOnly;
             setReadOnly(fileReadOnly);
