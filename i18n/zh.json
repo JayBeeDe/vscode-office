@@ -83,7 +83,7 @@
       "fetchFailed": "获取失败（{status}）"
     },
     "document": {
-      "heading": "标题 {level}",
+      "heading": "标题 {level} (Ctrl+Alt+{level})",
       "failedLoad": "加载文档失败",
       "pageTheme": "页面颜色",
       "darkPages": "深色页面",

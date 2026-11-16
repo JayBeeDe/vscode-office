@@ -83,7 +83,7 @@
       "fetchFailed": "取得に失敗しました ({status})"
     },
     "document": {
-      "heading": "見出し {level}",
+      "heading": "見出し {level} (Ctrl+Alt+{level})",
       "failedLoad": "ドキュメントの読み込みに失敗しました",
       "pageTheme": "ページの色",
       "darkPages": "ダークページ",

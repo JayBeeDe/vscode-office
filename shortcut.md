@@ -25,7 +25,7 @@ Keyboard Shortcuts editor.
 | --- | --- |
 | `Ctrl+S` | Save (the file is formatted on save) |
 | `Ctrl+Alt+E` (macOS `Ctrl+Cmd+E`) | Edit in the VS Code text editor |
-| `Ctrl+Alt+7` / `Ctrl+Alt+8` | WYSIWYG / instant rendering mode |
+| `Ctrl+Alt+Shift+E` | Toggle WYSIWYG / instant rendering mode |
 | `Ctrl+F` / `Ctrl+H` | Find / find and replace |
 | `Enter` / `Shift+Enter` | In the find bar: next / previous match; in the replace field: replace / replace all |
 | `Ctrl+Z` / `Ctrl+Y` | Undo / redo |
@@ -96,6 +96,7 @@ The grid keys work after a click in the grid.
 | `Ctrl+S` | Save |
 | `Ctrl+B` / `Ctrl+I` / `Ctrl+U` | Bold / italic / underline |
 | `Ctrl+L` / `Ctrl+E` / `Ctrl+R` / `Ctrl+J` | Align left / center / right / justify |
+| `Ctrl+Alt+1` … `Ctrl+Alt+5` | Heading 1 to 5 (again: back to normal text) |
 | `Ctrl+K` | Hyperlink |
 | `Ctrl+F` / `Ctrl+H` | Find / find and replace |
 | `Ctrl+Z` / `Ctrl+Y` | Undo / redo |

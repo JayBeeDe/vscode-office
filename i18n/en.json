@@ -87,7 +87,7 @@
       "fetchFailed": "Failed to fetch ({status})"
     },
     "document": {
-      "heading": "Heading {level}",
+      "heading": "Heading {level} (Ctrl+Alt+{level})",
       "failedLoad": "Failed to load document",
       "pageTheme": "Page colors",
       "darkPages": "Dark pages",

@@ -86,7 +86,7 @@
       "fetchFailed": "Не удалось получить файл ({status})"
     },
     "document": {
-      "heading": "Заголовок {level}",
+      "heading": "Заголовок {level} (Ctrl+Alt+{level})",
       "failedLoad": "Не удалось загрузить документ",
       "pageTheme": "Цвета страниц",
       "darkPages": "Тёмные страницы",

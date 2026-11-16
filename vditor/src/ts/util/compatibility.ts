@@ -64,7 +64,7 @@ export const updateHotkeyTip = (hotkey: string) => {
         } else if (hotkey.startsWith("⌥") && hotkey.substr(1, 1) !== "⌘") {
             hotkey = hotkey.replace("⌥", "⌥+");
         } else {
-            hotkey = hotkey.replace("⇧⌘", "⌘+⇧+").replace("⌥⌘", "⌥+⌘+");
+            hotkey = hotkey.replace("⇧⌥⌘", "⌘+⌥+⇧+").replace("⇧⌘", "⌘+⇧+").replace("⌥⌘", "⌥+⌘+");
         }
         hotkey = hotkey.replace("⌘", "Ctrl").replace("⇧", "Shift")
             .replace("⌥", "Alt");

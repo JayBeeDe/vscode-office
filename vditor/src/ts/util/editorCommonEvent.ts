@@ -307,13 +307,11 @@ export const hotkeyEvent = (vditor: IVditor, editorElement: HTMLElement) => {
             return true;
         }
 
-        // toggle edit mode
-        if (isCtrl(event) && event.altKey && !event.shiftKey && /^Digit[7-8]$/.test(event.code)) {
-            if (event.code === "Digit7") {
-                setEditMode(vditor, "wysiwyg", event);
-            } else if (event.code === "Digit8") {
-                setEditMode(vditor, "ir", event);
-            }
+        // toggle edit mode: WYSIWYG <-> instant rendering, like the toolbar's edit mode button
+        if (isCtrl(event) && event.altKey && event.shiftKey && event.code === "KeyE") {
+            setEditMode(vditor, vditor.currentMode === "ir" ? "wysiwyg" : "ir", event);
+            event.preventDefault();
+            event.stopPropagation();
             return true;
         }
 

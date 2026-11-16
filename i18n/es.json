@@ -85,7 +85,7 @@
       "fetchFailed": "No se pudo obtener el archivo ({status})"
     },
     "document": {
-      "heading": "Título {level}",
+      "heading": "Título {level} (Ctrl+Alt+{level})",
       "failedLoad": "Error al cargar el documento",
       "pageTheme": "Colores de página",
       "darkPages": "Páginas oscuras",

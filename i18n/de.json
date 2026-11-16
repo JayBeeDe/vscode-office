@@ -84,7 +84,7 @@
       "fetchFailed": "Abruf fehlgeschlagen ({status})"
     },
     "document": {
-      "heading": "Überschrift {level}",
+      "heading": "Überschrift {level} (Ctrl+Alt+{level})",
       "failedLoad": "Dokument konnte nicht geladen werden",
       "pageTheme": "Seitenfarben",
       "darkPages": "Dunkle Seiten",

@@ -300,6 +300,23 @@ function HeadingButtons({ editorRef, docx, styleId }: { editorRef: RefObject<Doc
         }
     };
 
+    // Ctrl+Alt+1 … 5, like the buttons (the toolbar, and so this listener, is gone in read mode)
+    const shortcutRef = useRef({ apply, defined });
+    useEffect(() => { shortcutRef.current = { apply, defined }; });
+    useEffect(() => {
+        const onKeyDown = (e: KeyboardEvent) => {
+            if (!(e.ctrlKey || e.metaKey) || !e.altKey || e.shiftKey || e.getModifierState("AltGraph")) return;
+            const level = Number(/^Digit([1-9])$/.exec(e.code)?.[1]);
+            if (!HEADING_LEVELS.includes(level)) return;
+            e.preventDefault();
+            // kept from VS Code's webview keydown listener on the window
+            e.stopPropagation();
+            if (shortcutRef.current.defined(level)) shortcutRef.current.apply(level);
+        };
+        document.addEventListener("keydown", onKeyDown);
+        return () => document.removeEventListener("keydown", onKeyDown);
+    }, []);
+
     return (
         <GroupButtons group={group}>
             {HEADING_LEVELS.map(level => (

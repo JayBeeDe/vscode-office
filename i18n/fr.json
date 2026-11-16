@@ -85,7 +85,7 @@
       "fetchFailed": "Échec du chargement ({status})"
     },
     "document": {
-      "heading": "Titre {level}",
+      "heading": "Titre {level} (Ctrl+Alt+{level})",
       "failedLoad": "Échec du chargement du document",
       "pageTheme": "Couleurs des pages",
       "darkPages": "Pages sombres",

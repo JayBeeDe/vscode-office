@@ -24,8 +24,8 @@ type SetEditModeOptions = {
 };
 
 const EDIT_MODE_TARGETS: { [mode: string]: { labelKey: string, descKey: string, hotkey: string } } = {
-    ir: {labelKey: "instantRendering", descKey: "edit-mode-ir-desc", hotkey: "⌥⌘8"},
-    wysiwyg: {labelKey: "wysiwyg", descKey: "edit-mode-wysiwyg-desc", hotkey: "⌥⌘7"},
+    ir: {labelKey: "instantRendering", descKey: "edit-mode-ir-desc", hotkey: "⇧⌥⌘E"},
+    wysiwyg: {labelKey: "wysiwyg", descKey: "edit-mode-wysiwyg-desc", hotkey: "⇧⌥⌘E"},
 };
 
 /**
