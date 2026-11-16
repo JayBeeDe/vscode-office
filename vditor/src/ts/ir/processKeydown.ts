@@ -187,6 +187,8 @@ export const processKeydown = (vditor: IVditor, event: KeyboardEvent) => {
         return true;
     }
 
+    // the heading the caret is in: Shift+Enter makes a paragraph there, Backspace skips its marker
+    const headingElement = hasClosestByHeadings(startContainer);
 
     // shift+enter: hard line break inside a paragraph (\n + ZWSP); table is handled by fixTable above
     // With pre-wrap, inserting only \n at the end of a paragraph does not move the caret to a new line, so a ZWSP placeholder is needed https://github.com/Vanessa219/vditor/issues/170
