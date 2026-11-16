@@ -532,6 +532,15 @@ body,
     overflow-y: auto;
     scroll-behavior: auto;
     background: #f5f5f4;
+    /* the scrollbar follows vscode-office.theme like the sidebar (VS Code's light and dark sliders),
+       not VS Code's own theme */
+    --epub-scrollbar-thumb: rgba(100, 100, 100, 0.4);
+    --epub-scrollbar-thumb-hover: rgba(100, 100, 100, 0.7);
+    scrollbar-color: var(--epub-scrollbar-thumb) transparent;
+}
+
+.epub-viewer .sidebar .tab-container:hover {
+    scrollbar-color: var(--epub-scrollbar-thumb-hover) transparent;
 }
 
 .epub-viewer .sidebar .toc-list {
@@ -889,6 +898,12 @@ body.office-dark .epub-viewer .dictionary,
 body.office-dark .epub-viewer .error {
     background: var(--epub-dark-bg);
     color: var(--epub-dark-fg);
+}
+
+body.office-dark .epub-viewer .sidebar .tab-container {
+    --epub-scrollbar-thumb: rgba(121, 121, 121, 0.4);
+    --epub-scrollbar-thumb-hover: rgba(100, 100, 100, 0.7);
+    color-scheme: dark;
 }
 
 body.office-dark .epub-viewer .sidebar {

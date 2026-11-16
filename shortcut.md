@@ -126,6 +126,7 @@ The grid keys work after a click in the grid.
 | Shortcut | Action |
 | --- | --- |
 | `Right` / `Left` | Next / previous page |
+| `Ctrl+F` | Find in the book |
 | `Ctrl+C` | Copy the selected text |
 
 ## Mind map

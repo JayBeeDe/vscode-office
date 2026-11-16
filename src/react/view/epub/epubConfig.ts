@@ -163,13 +163,17 @@ function themeRulesToCss(rules: ReturnType<typeof buildThemeRules>): string {
     return parts.join('\n');
 }
 
+/** VS Code's accent, resolved: the book's documents are iframes, which don't see VS Code's variables */
+export function epubAccent(): string {
+    return getVscodeThemeColor('--vscode-focusBorder', getVscodeThemeColor('--vscode-textLink-foreground', '#1e83d2'));
+}
+
 export function buildThemeRules(settings: EpubSettings, theme: Theme) {
     const { bg, fg } = THEME_COLORS[theme];
     const font = `${fontStack(settings.fontFamily)} !important`;
     const fontSize = `${settings.fontSize}pt !important`;
-    // the book's links and selection take VS Code's accent like the sidebar (Epub.css --epub-accent); its
-    // documents are iframes, which don't see VS Code's variables, hence the resolved colour
-    const accent = getVscodeThemeColor('--vscode-focusBorder', getVscodeThemeColor('--vscode-textLink-foreground', '#1e83d2'));
+    // the book's links and selection take VS Code's accent like the sidebar (Epub.css --epub-accent)
+    const accent = epubAccent();
     return {
         body: {
             background: bg,

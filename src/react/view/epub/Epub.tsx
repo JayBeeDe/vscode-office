@@ -29,11 +29,16 @@ import {
     resolveEpubAuthor,
     sanitizeEpubDescription,
     searchEpubBook,
+    epubAccent,
     SearchHit,
     SYSTEM_FONT,
     THEME_COLORS,
 } from './epubConfig';
 import './Epub.css';
+
+/** Ctrl+F (Cmd+F on macOS): find in the book */
+const isFindShortcut = (e: KeyboardEvent) =>
+    (e.ctrlKey || e.metaKey) && !e.altKey && !e.shiftKey && e.code === 'KeyF';
 
 type SidebarTab = 'toc' | 'search' | 'info' | 'settings';
 
@@ -146,10 +151,12 @@ export default function Epub() {
     const [searchQuery, setSearchQuery] = useState('');
     const [searching, setSearching] = useState(false);
     const [searchResults, setSearchResults] = useState<SearchHit[]>([]);
+    const [searchHighlight, setSearchHighlight] = useState<string | null>(null);
     const [searchResultProgress, setSearchResultProgress] = useState<Record<string, string>>({});
     const [bookReady, setBookReady] = useState(false);
 
     const destroyBook = useCallback(() => {
+        setSearchHighlight(null);
         renditionRef.current?.destroy();
         renditionRef.current = null;
         bookRef.current?.destroy();
@@ -175,6 +182,39 @@ export default function Epub() {
         setSidebarOpen(true);
     }, []);
 
+    // Ctrl+F: the sidebar's search tab, its field focused with its text selected
+    const searchInputRef = useRef<HTMLInputElement>(null);
+    const [searchFocusRequest, setSearchFocusRequest] = useState(0);
+    const openSearch = useCallback(() => {
+        setSidebarTab('search');
+        setSidebarOpen(true);
+        setSearchFocusRequest(request => request + 1);
+    }, []);
+    useEffect(() => {
+        if (!searchFocusRequest) return;
+        searchInputRef.current?.focus();
+        searchInputRef.current?.select();
+    }, [searchFocusRequest]);
+
+    // the chosen search result's text (searchHighlight), highlighted with the accent at 30% like the
+    // selection; again in the new accent when the theme changes
+    useEffect(() => {
+        const rendition = renditionRef.current;
+        if (!rendition || !searchHighlight) return;
+        // epub.js multiplies by default, which hides the highlight on dark pages
+        rendition.annotations.highlight(searchHighlight, {}, () => undefined, 'epub-search-hit',
+            { fill: epubAccent(), 'fill-opacity': '0.3', 'mix-blend-mode': 'normal' });
+        return () => {
+            // not on a book that is gone
+            if (renditionRef.current === rendition) rendition.annotations.remove(searchHighlight, 'highlight');
+        };
+    }, [searchHighlight, theme]);
+
+    const goToSearchHit = useCallback((cfi: string) => {
+        setSearchHighlight(cfi);
+        renditionRef.current?.display(cfi);
+    }, []);
+
     const handleReaderWheel = useCallback((rendition: Rendition, e: WheelEvent) => {
         e.preventDefault();
         const now = Date.now();
@@ -196,9 +236,16 @@ export default function Epub() {
             if (doc) {
                 bindReaderMetaKeyRelay(doc);
                 doc.onwheel = (e: WheelEvent) => handleReaderWheel(rendition, e);
+                // the book's frame keeps its keys from the window's listener
+                doc.addEventListener('keydown', (e: KeyboardEvent) => {
+                    if (isFindShortcut(e)) {
+                        e.preventDefault();
+                        openSearch();
+                    }
+                });
             }
         });
-    }, [handleReaderWheel]);
+    }, [handleReaderWheel, openSearch]);
 
     const onRelocated = useCallback((location: {
         start: { cfi: string; href: string; location?: number; percentage?: number };
@@ -379,10 +426,6 @@ export default function Epub() {
         renditionRef.current?.display(href).catch(() => undefined);
     }, []);
 
-    const goToCfi = useCallback((cfi: string) => {
-        renditionRef.current?.display(cfi);
-    }, []);
-
     const goToLocation = useCallback((value: number) => {
         const book = bookRef.current;
         const rendition = renditionRef.current;
@@ -417,6 +460,7 @@ export default function Epub() {
     }, [goToLocation, locationCurrent, locationDraft]);
 
     const runSearch = useCallback(async () => {
+        setSearchHighlight(null);
         const book = bookRef.current;
         const query = searchQuery.trim();
         if (!book || !query) {
@@ -479,6 +523,11 @@ export default function Epub() {
 
     useEffect(() => {
         const onKeyDown = (e: KeyboardEvent) => {
+            if (isFindShortcut(e)) {
+                e.preventDefault();
+                openSearch();
+                return;
+            }
             if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
                 return;
             }
@@ -496,7 +545,7 @@ export default function Epub() {
         };
         window.addEventListener('keydown', onKeyDown);
         return () => window.removeEventListener('keydown', onKeyDown);
-    }, [flashNav, goNext, goPrev]);
+    }, [flashNav, goNext, goPrev, openSearch]);
 
     useEffect(() => {
         const onResize = () => {
@@ -563,6 +612,7 @@ export default function Epub() {
                             <div className="tab search">
                                 <div className="search-bar">
                                     <input
+                                        ref={searchInputRef}
                                         type="text"
                                         className="search-box"
                                         placeholder={$t('epub.searchBook')}
@@ -588,7 +638,7 @@ export default function Epub() {
                                                 href="#"
                                                 onClick={e => {
                                                     e.preventDefault();
-                                                    goToCfi(result.cfi);
+                                                    goToSearchHit(result.cfi);
                                                 }}
                                             >
                                                 <div className="text">{result.excerpt.trim()}</div>
