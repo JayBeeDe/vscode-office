@@ -2304,26 +2304,6 @@ function webViewerKeyDown(evt) {
 
         break;
 
-      case 71:
-        if (!PDFViewerApplication.supportsIntegratedFind) {
-          const findState = PDFViewerApplication.findController.state;
-
-          if (findState) {
-            PDFViewerApplication.findController.executeCommand("findagain", {
-              query: findState.query,
-              phraseSearch: findState.phraseSearch,
-              caseSensitive: findState.caseSensitive,
-              entireWord: findState.entireWord,
-              highlightAll: findState.highlightAll,
-              findPrevious: cmd === 5 || cmd === 12
-            });
-          }
-
-          handled = true;
-        }
-
-        break;
-
       case 61:
       case 107:
       case 187:
@@ -2355,24 +2335,6 @@ function webViewerKeyDown(evt) {
         }
 
         break;
-
-      case 38:
-        if (isViewerInPresentationMode || PDFViewerApplication.page > 1) {
-          PDFViewerApplication.page = 1;
-          handled = true;
-          ensureViewerFocused = true;
-        }
-
-        break;
-
-      case 40:
-        if (isViewerInPresentationMode || PDFViewerApplication.page < PDFViewerApplication.pagesCount) {
-          PDFViewerApplication.page = PDFViewerApplication.pagesCount;
-          handled = true;
-          ensureViewerFocused = true;
-        }
-
-        break;
     }
   }
 
@@ -2385,20 +2347,6 @@ function webViewerKeyDown(evt) {
 
       case 72:
         PDFViewerApplication.pdfCursorTools.switchTool(_pdf_cursor_tools.CursorTool.HAND);
-        handled = true;
-        break;
-    }
-  }
-
-  if (cmd === 3 || cmd === 10) {
-    switch (evt.keyCode) {
-      case 80:
-        PDFViewerApplication.requestPresentationMode();
-        handled = true;
-        break;
-
-      case 71:
-        PDFViewerApplication.appConfig.toolbar.pageNumber.select();
         handled = true;
         break;
     }
@@ -2449,8 +2397,6 @@ function webViewerKeyDown(evt) {
           turnOnlyIfPageFit = true;
         }
 
-      case 75:
-      case 80:
         turnPage = -1;
         break;
 
@@ -2490,8 +2436,6 @@ function webViewerKeyDown(evt) {
           turnOnlyIfPageFit = true;
         }
 
-      case 74:
-      case 78:
         turnPage = 1;
         break;
 
@@ -2511,10 +2455,6 @@ function webViewerKeyDown(evt) {
           ensureViewerFocused = true;
         }
 
-        break;
-
-      case 82:
-        PDFViewerApplication.rotatePages(90);
         break;
 
       case 115:
@@ -2550,10 +2490,6 @@ function webViewerKeyDown(evt) {
         }
 
         handled = true;
-        break;
-
-      case 82:
-        PDFViewerApplication.rotatePages(-90);
         break;
     }
   }
@@ -13267,19 +13203,6 @@ function renderProgress(index, total, l10n) {
     progressPerc.textContent = msg;
   });
 }
-
-window.addEventListener("keydown", function (event) {
-  if (event.keyCode === 80 && (event.ctrlKey || event.metaKey) && !event.altKey && (!event.shiftKey || window.chrome || window.opera)) {
-    window.print();
-    event.preventDefault();
-
-    if (event.stopImmediatePropagation) {
-      event.stopImmediatePropagation();
-    } else {
-      event.stopPropagation();
-    }
-  }
-}, true);
 
 if ("onbeforeprint" in window) {
   const stopPropagationIfNeeded = function (event) {

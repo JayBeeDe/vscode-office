@@ -128,16 +128,12 @@ The grid keys work after a click in the grid.
 | Shortcut | Action |
 | --- | --- |
 | `Ctrl+L` | Dark / light pages |
-| `Ctrl+F`, `Ctrl+G` / `Ctrl+Shift+G` | Find, next / previous match |
+| `Ctrl+F` | Find |
 | `Ctrl++` / `Ctrl+-` / `Ctrl+0` | Zoom in / out / default zoom |
-| `Home` / `End`, `Ctrl+Up` / `Ctrl+Down` | First / last page |
-| `PageUp` / `PageDown`, `P` / `N`, `K` / `J` | Previous / next page |
-| `Ctrl+Alt+G` | Go to a page number |
+| `Home` / `End` | First / last page |
+| `PageUp` / `PageDown` | Previous / next page |
 | `Ctrl+S` / `Ctrl+H` | Text selection / hand tool |
-| `R` / `Shift+R` | Rotate clockwise / counterclockwise |
 | `F4` | Sidebar |
-| `Ctrl+Alt+P` | Presentation mode |
-| `Ctrl+P` | Print |
 
 ## EPUB
 
