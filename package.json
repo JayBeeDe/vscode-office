@@ -1,9 +1,10 @@
 {
 	"name": "vscode-office",
 	"displayName": "Office Viewer",
-	"description": "View word, excel, powerpoint, pdf, epub, xmind and parquet files and using WYSIWYG editor for markdown.",
+	"description": "Preview and edit office files in VS Code: Markdown (WYSIWYG editor), document, spreadsheet, Parquet, presentation, PDF, eBook and xMind.",
 	"version": "4.2.0",
 	"publisher": "cweijan",
+	"license": "MIT",
 	"icon": "image/logo.png",
 	"engines": {
 		"vscode": "^1.64.0"
@@ -39,13 +40,12 @@
 		"Other"
 	],
 	"bugs": {
-		"url": "https://github.com/cweijan/vscode-office/issues",
-		"email": "cweijan@163.com"
+		"url": "https://github.com/JayBeeDe/vscode-office/issues"
 	},
-	"homepage": "https://github.com/cweijan/vscode-office/blob/master/README.md",
+	"homepage": "https://github.com/JayBeeDe/vscode-office/blob/main/README.md",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/cweijan/vscode-office.git"
+		"url": "https://github.com/JayBeeDe/vscode-office.git"
 	},
 	"activationEvents": [
 		"onStartupFinished"
@@ -331,7 +331,7 @@
 			},
 			{
 				"viewType": "cweijan.epubViewer",
-				"displayName": "EPUB Viewer",
+				"displayName": "eBook Viewer",
 				"selector": [
 					{
 						"filenamePattern": "*.epub"
@@ -340,7 +340,7 @@
 			},
 			{
 				"viewType": "cweijan.xmindEditor",
-				"displayName": "XMind Editor",
+				"displayName": "xMind Editor",
 				"selector": [
 					{
 						"filenamePattern": "*.xmind"
@@ -399,7 +399,7 @@
 							"Always dark."
 						],
 						"default": "auto",
-						"markdownDescription": "Theme of every viewer and editor of the extension. The EPUB pages follow `#vscode-office.epub.theme#`, the Markdown pages `#vscode-office.markdown.theme#`, the document pages `#vscode-office.document.theme#` and the PDF pages `#vscode-office.pdf.theme#`."
+						"markdownDescription": "Theme of every viewer and editor of the extension. The eBook pages follow `#vscode-office.epub.theme#`, the Markdown pages `#vscode-office.markdown.theme#`, the document pages `#vscode-office.document.theme#` and the PDF pages `#vscode-office.pdf.theme#`."
 					}
 				}
 			},
@@ -478,7 +478,7 @@
 							"ir"
 						],
 						"default": "wysiwyg",
-						"markdownDescription": "Default edit mode for the Markdown editor."
+						"markdownDescription": "Edit mode of the Markdown editor, for every Markdown file: WYSIWYG or IR (instant rendering). Switching the mode in the editor (its toolbar button or Ctrl+Alt+Shift+E) changes this setting in the user settings, and changing it switches the Markdown editors already open."
 					},
 					"vscode-office.markdown.sidebar": {
 						"type": "string",
@@ -670,7 +670,7 @@
 				}
 			},
 			{
-				"title": "EPUB",
+				"title": "eBook",
 				"order": 3,
 				"properties": {
 					"vscode-office.epub.theme": {
@@ -686,7 +686,7 @@
 							"Black pages, white text."
 						],
 						"default": "auto",
-						"markdownDescription": "Colours of the EPUB reader's pages; the menus follow `#vscode-office.theme#`. The reader's \"Themes\" choice changes this setting in the user settings; a workspace value overrides it."
+						"markdownDescription": "Colours of the eBook reader's pages; the menus follow `#vscode-office.theme#`. The reader's \"Themes\" choice changes this setting in the user settings; a workspace value overrides it."
 					},
 					"vscode-office.epub.font.family": {
 						"type": "string",
@@ -699,7 +699,7 @@
 							"Arbutus Slab"
 						],
 						"default": "System",
-						"markdownDescription": "Font of the EPUB reader's text. The reader's \"Font\" choice changes this setting in the user settings; a workspace value overrides it."
+						"markdownDescription": "Font of the eBook reader's text. The reader's \"Font\" choice changes this setting in the user settings; a workspace value overrides it."
 					},
 					"vscode-office.epub.font.size": {
 						"type": "number",
@@ -712,7 +712,7 @@
 							16
 						],
 						"default": 13,
-						"markdownDescription": "Size of the EPUB reader's text, in points. The reader's \"Font Size\" choice changes this setting in the user settings; a workspace value overrides it."
+						"markdownDescription": "Size of the eBook reader's text, in points. The reader's \"Font Size\" choice changes this setting in the user settings; a workspace value overrides it."
 					},
 					"vscode-office.epub.line-height": {
 						"type": "number",
@@ -728,7 +728,7 @@
 							3
 						],
 						"default": 1.6,
-						"markdownDescription": "Line spacing of the EPUB reader's text, as a multiple of the font size. The reader's \"Line Spacing\" choice changes this setting in the user settings; a workspace value overrides it."
+						"markdownDescription": "Line spacing of the eBook reader's text, as a multiple of the font size. The reader's \"Line Spacing\" choice changes this setting in the user settings; a workspace value overrides it."
 					}
 				}
 			},
