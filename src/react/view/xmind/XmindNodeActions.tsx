@@ -56,8 +56,8 @@ const ACTIONS: (Action | 'separator')[] = [
     { tip: 'addParent', icon: ApartmentOutlined, keys: ['Mod', 'Enter'], unavailable: needOneChild, run: mind => void mind.insertParent() },
     { tip: 'remove', icon: DeleteOutlined, keys: ['Delete'], unavailable: needChildren, run: mind => void mind.removeNodes(mind.currentNodes ?? []) },
     'separator',
-    { tip: 'moveUp', icon: ArrowUpOutlined, keys: ['Page Up'], unavailable: needOneChild, run: mind => void mind.moveUpNode() },
-    { tip: 'moveDown', icon: ArrowDownOutlined, keys: ['Page Down'], unavailable: needOneChild, run: mind => void mind.moveDownNode() },
+    { tip: 'moveUp', icon: ArrowUpOutlined, keys: ['Alt', 'Up'], unavailable: needOneChild, run: mind => void mind.moveUpNode() },
+    { tip: 'moveDown', icon: ArrowDownOutlined, keys: ['Alt', 'Down'], unavailable: needOneChild, run: mind => void mind.moveDownNode() },
     'separator',
     {
         tip: 'focus', icon: FullscreenOutlined, unavailable: needOneChild,

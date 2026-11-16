@@ -7,6 +7,7 @@ import { loadOfficeBuffer } from '../../util/loadOfficeContent';
 import { $t } from '../../i18n/i18nConfig.ts';
 import { observeVscodeThemeChange } from '../../util/vscodeTheme';
 import { useTheme } from '../../util/theme';
+import { isAlternativeRedo, useBlockedShortcuts } from '../../util/blockedShortcuts';
 import { buildMindElixirTheme } from './mindElixirTheme';
 import XmindNodeActions from './XmindNodeActions';
 import XmindToolButton, { type TipKey, WithTip } from './XmindToolButton';
@@ -40,7 +41,16 @@ function detachOperationListener(mind: MindElixirInstance, onOperation: () => vo
     mind.bus.removeListener('operation', onOperation);
 }
 
+// mind-elixir's keys the viewer turns off: PageUp / PageDown (move the topic, Alt+Up / Alt+Down
+// still do it)
+const KEYPRESS_OVERRIDES = {
+    PageUp: () => undefined,
+    PageDown: () => undefined,
+};
+
 export default function XmindViewer() {
+    // mind-elixir's redo alternative, outside its key map: redo is Ctrl+Y
+    useBlockedShortcuts(isAlternativeRedo);
     const mapRef = useRef<HTMLDivElement>(null);
     const mindRef = useRef<MindElixirInstance | null>(null);
     const documentRef = useRef<XmindDocument | null>(null);
@@ -193,7 +203,7 @@ export default function XmindViewer() {
             newTopicName: $t('xmind.newTopic'),
             // the viewer's toolbar replaces mind-elixir's floating ones
             toolBar: false,
-            keypress: true,
+            keypress: KEYPRESS_OVERRIDES,
             scaleMin: ZOOM_MIN / 100,
             scaleMax: ZOOM_MAX / 100,
             imageProxy: resolveImageUrl,

@@ -9,6 +9,7 @@ import { loadOfficeBuffer } from "../../util/loadOfficeContent";
 import { $t, getLanguage, getSection } from "../../i18n/i18nConfig.ts";
 import { LANGUAGES } from "../../../i18n/index.ts";
 import DocumentMenuButtons from "./DocumentMenuButtons";
+import { isAlternativeRedo, useBlockedShortcuts } from "../../util/blockedShortcuts";
 import "./Word.css";
 
 // the editor's toolbar, menus and dialogs: the `document` section of i18n/<language>.json.
@@ -32,10 +33,16 @@ interface WordOpenPayload {
     nonce?: number;
 }
 
+// shortcuts the editor hard-codes and the viewer turns off: Ctrl+= / Ctrl+Shift+= (subscript /
+// superscript, still in the toolbar) and Ctrl+Shift+Z (redo is Ctrl+Y)
+const isBlockedShortcut = (e: KeyboardEvent) =>
+    isAlternativeRedo(e) || ((e.ctrlKey || e.metaKey) && !e.altKey && (e.key === "=" || e.key === "+"));
+
 export default function Word() {
     const editorRef = useRef<DocxEditorRef>(null);
     const readOnlyRef = useRef(false);
     const theme = useTheme();
+    useBlockedShortcuts(isBlockedShortcut);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     // the file is read, but the editor has not painted its pages yet

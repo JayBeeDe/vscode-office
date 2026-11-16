@@ -107,7 +107,6 @@ The grid keys work after a click in the grid.
 | --- | --- |
 | `Ctrl+S` | Save |
 | `Ctrl+B` / `Ctrl+I` / `Ctrl+U` | Bold / italic / underline |
-| `Ctrl+=` / `Ctrl+Shift+=` | Subscript / superscript |
 | `Ctrl+L` / `Ctrl+E` / `Ctrl+R` / `Ctrl+J` | Align left / center / right / justify |
 | `Ctrl+K` | Hyperlink |
 | `Ctrl+F` / `Ctrl+H` | Find / find and replace |
@@ -157,7 +156,7 @@ The grid keys work after a click in the grid.
 | `Ctrl+Enter` | New parent topic |
 | `Delete` | Delete the topics |
 | `F2` | Edit the topic |
-| `PageUp` / `PageDown`, `Alt+Up` / `Alt+Down` | Move the topic up / down |
+| `Alt+Up` / `Alt+Down` | Move the topic up / down |
 | Arrows | Select the next topic |
 | `Ctrl+Up` / `Ctrl+Left` / `Ctrl+Right` | Branches on both sides / left / right |
 | `F1` | Center the map |
