@@ -1,6 +1,5 @@
 .vscode/**
 .claude/**
-shortcut.md
 .vscode-test/**
 .github/**
 .idea/**
@@ -25,3 +24,4 @@ yarn.lock
 pnpm-lock.yaml
 pnpm-workspace.yaml
 i18n/**
+image/**
