@@ -128,7 +128,7 @@
     if (btn) {
       btn.classList.toggle('toggled', pageDark);
       btn.innerHTML = pageDark ? BULB_ICON : MOON_ICON;
-      btn.title = `${pageDark ? strings.switchToLight : strings.switchToDark} (Ctrl/Cmd+L)`; // i18n-ignore: the shortcut
+      btn.title = `${pageDark ? strings.switchToLight : strings.switchToDark} (Ctrl+L)`; // i18n-ignore: the shortcut
       btn.setAttribute('aria-label', pageDark ? strings.switchToLight : strings.switchToDark);
     }
   }

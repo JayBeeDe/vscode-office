@@ -15,7 +15,7 @@ export class Headings extends MenuItem {
 
         const panelElement = document.createElement("div");
         panelElement.className = "vditor-hint vditor-panel--arrow";
-        panelElement.innerHTML = `<button data-tag="h1" data-value="# ">${window.VditorI18n.heading1} ${updateHotkeyTip("&lt;⌥⌘1>")}</button>
+        panelElement.innerHTML = `<button data-tag="h1" data-value="# ">${window.VditorI18n.heading1} &lt;${updateHotkeyTip("⌥⌘1")}></button>
 <button data-tag="h2" data-value="## ">${window.VditorI18n.heading2} &lt;${updateHotkeyTip("⌥⌘2")}></button>
 <button data-tag="h3" data-value="### ">${window.VditorI18n.heading3} &lt;${updateHotkeyTip("⌥⌘3")}></button>
 <button data-tag="h4" data-value="#### ">${window.VditorI18n.heading4} &lt;${updateHotkeyTip("⌥⌘4")}></button>

@@ -250,12 +250,12 @@ export const highlightToolbarWYSIWYG = (vditor: IVditor) => {
             vditor.wysiwyg.popover.innerHTML = "";
 
             const inputWrap = document.createElement("span");
-            inputWrap.setAttribute("aria-label", window.VditorI18n.footnoteRef + "<" + updateHotkeyTip("⌥Enter") + ">");
+            inputWrap.setAttribute("aria-label", window.VditorI18n.footnoteRef + " <" + updateHotkeyTip("⌥Enter") + ">");
             inputWrap.className = "vditor-tooltipped vditor-tooltipped__n";
             const input = document.createElement("input");
             inputWrap.appendChild(input);
             input.className = "vditor-input";
-            input.setAttribute("placeholder", window.VditorI18n.footnoteRef + "<" + updateHotkeyTip("⌥Enter") + ">");
+            input.setAttribute("placeholder", window.VditorI18n.footnoteRef + " <" + updateHotkeyTip("⌥Enter") + ">");
             input.style.width = "120px";
             input.value = footnotesRefElement.getAttribute("data-footnotes-label");
             input.oninput = () => {

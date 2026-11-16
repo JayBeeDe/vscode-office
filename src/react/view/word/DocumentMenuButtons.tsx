@@ -7,6 +7,7 @@ import { ColorPicker, ToolbarButton, ToolbarGroup, type ColorPickerProps } from 
 import { useEffect, useMemo, useRef, useState, type ReactNode, type RefObject } from "react";
 import { createPortal } from "react-dom";
 import { $t } from "../../i18n/i18nConfig.ts";
+import { withShortcut } from "../../util/shortcut";
 
 // the editor's own Material icons (it does not export them), viewBox 0 -960 960 960
 const ICONS = {
@@ -474,8 +475,8 @@ export default function DocumentMenuButtons({ editorRef, onSave, darkPages, onTo
     const file = t("toolbar.file");
     const insert = t("toolbar.insert");
     const label = (icon: ItemIcon) => t(`toolbar.${icon}`);
-    const item = (icon: ItemIcon, run: () => void) => (
-        <ToolbarButton title={label(icon)} onClick={run}>
+    const item = (icon: ItemIcon, run: () => void, title = label(icon)) => (
+        <ToolbarButton title={title} onClick={run}>
             <Icon name={icon} />
         </ToolbarButton>
     );
@@ -490,7 +491,7 @@ export default function DocumentMenuButtons({ editorRef, onSave, darkPages, onTo
                 <OutlineButton />
             </ToolbarGroup>
             <GroupItems group={history} className="document-group-items--save">
-                {item("save", onSave)}
+                {item("save", onSave, withShortcut(label("save"), t("toolbar.saveShortcut")))}
             </GroupItems>
             <div role="separator" className="w-px h-6 bg-border mx-1.5 document-separator document-separator--start" />
             <HeadingButtons editorRef={editorRef} docx={docx} styleId={selection?.styleId ?? null} />

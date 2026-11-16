@@ -5,7 +5,10 @@ function loadRes(url) {
 }
 
 const isMac = navigator.userAgent.includes('Mac OS');
-const shortcutTip = isMac ? '⌘ ^ E' : 'Ctrl Alt E';
+// Ctrl+Alt+E (Ctrl+Cmd+E on a Mac), in the format vditor gives its buttons' shortcuts
+const shortcutTip = isMac ? '⌃⌘E' : 'Ctrl+Alt+E';
+// Ctrl+S, in the format vditor gives its buttons' shortcuts (Bold <Ctrl+B>, ⌘B on a Mac)
+const saveShortcutTip = isMac ? '⌘S' : 'Ctrl+S';
 
 export async function getToolbar(resPath, i18n, onSave = null, isWeb = false) {
     const codicon = (name) => `<span class="codicon codicon-${name}" aria-hidden="true"></span>`;
@@ -39,7 +42,7 @@ export async function getToolbar(resPath, i18n, onSave = null, isWeb = false) {
         },
         {
             name: 'save',
-            tip: i18n.save,
+            tip: `${i18n.save} <${saveShortcutTip}>`, // i18n-ignore: the shortcut
             className: 'right',
             icon: codicon('save'),
             click() {

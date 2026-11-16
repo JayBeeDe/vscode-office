@@ -38,9 +38,27 @@ function toDictionary(tree: PdfStringTree, path: string[] = [], dictionary: PdfD
  */
 export function getPdfViewerStrings(language: Language) {
     const strings = getMessages(language).pdf as PdfStringTree;
+    const dictionary = toDictionary(strings);
+    // the buttons' tooltips show their shortcut (webViewerKeyDown in resource/pdf/viewer.js), like the
+    // dark mode button; previous / next page have none: their keys only turn pages in page-fit
+    for (const [id, shortcut] of Object.entries(PDF_BUTTON_SHORTCUTS)) {
+        const entry = dictionary[id];
+        if (entry?.title) entry.title = `${entry.title} (${shortcut})`; // i18n-ignore: the shortcut
+    }
     return {
         buttons: toJson(strings),
         // any locale PDF.js asks for falls back to default_locale
-        l10n: toJson({ default_locale: language, locales: { [language]: toDictionary(strings) } }),
+        l10n: toJson({ default_locale: language, locales: { [language]: dictionary } }),
     };
 }
+
+/** PDF.js ids of the buttons whose title gets their shortcut, the same in every language */
+const PDF_BUTTON_SHORTCUTS: Record<string, string> = {
+    toggle_sidebar: 'F4',
+    toggle_sidebar_notification: 'F4',
+    findbar: 'Ctrl+F',
+    cursor_text_select_tool: 'Ctrl+S',
+    cursor_hand_tool: 'Ctrl+H',
+    first_page: 'Home',
+    last_page: 'End',
+};

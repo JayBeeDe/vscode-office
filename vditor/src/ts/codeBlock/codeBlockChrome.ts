@@ -424,7 +424,7 @@ const createChromeRoot = (editable: boolean) => {
     langTrigger.className = "vditor-cm-chrome__lang-trigger";
     langTrigger.setAttribute(
         "aria-label",
-        window.VditorI18n.language + "<" + updateHotkeyTip("⌥Enter") + ">",
+        window.VditorI18n.language + " <" + updateHotkeyTip("⌥Enter") + ">",
     );
     langTrigger.innerHTML = `<span class="vditor-cm-chrome__lang-label"></span>`;
     langWrap.appendChild(langTrigger);

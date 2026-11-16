@@ -97,6 +97,7 @@
       "loadingThumbnails": "加载中…"
     },
     "epub": {
+      "search": "搜索",
       "searchBook": "搜索书籍...",
       "failedLoad": "加载 EPUB 失败",
       "failedRender": "渲染 EPUB 页面失败",
@@ -1369,8 +1370,8 @@
     "find-whole-word": "整词匹配",
     "find-regex": "使用正则表达式",
     "find-toggle-replace": "展开替换",
-    "find-previous": "上一个（Shift+Enter）",
-    "find-next": "下一个（Enter）",
+    "find-previous": "上一个 <Shift+Enter>",
+    "find-next": "下一个 <Enter>",
     "find-replace": "替换",
     "find-replace-all": "全部替换",
     "find-invalid-regex": "正则表达式无效",
@@ -1430,7 +1431,7 @@
     "aiSave": "保存",
     "aiCancel": "取消",
     "aiDelete": "删除",
-    "editInVscode": "在 VS Code 中编辑（{shortcut}）",
+    "editInVscode": "在 VS Code 中编辑 <{shortcut}>",
     "save": "保存",
     "paste": "粘贴",
     "exportPdf": "导出 PDF",

@@ -101,6 +101,7 @@
       "loadingThumbnails": "loading…"
     },
     "epub": {
+      "search": "Search",
       "searchBook": "Search book...",
       "failedLoad": "Failed to load EPUB",
       "failedRender": "Failed to render EPUB page",
@@ -1377,8 +1378,8 @@
     "find-whole-word": "Whole Word",
     "find-regex": "Use Regular Expression",
     "find-toggle-replace": "Toggle Replace",
-    "find-previous": "Previous (Shift+Enter)",
-    "find-next": "Next (Enter)",
+    "find-previous": "Previous <Shift+Enter>",
+    "find-next": "Next <Enter>",
     "find-replace": "Replace",
     "find-replace-all": "Replace All",
     "find-invalid-regex": "Invalid regular expression",
@@ -1438,7 +1439,7 @@
     "aiSave": "Save",
     "aiCancel": "Cancel",
     "aiDelete": "Delete",
-    "editInVscode": "Edit In VS Code ({shortcut})",
+    "editInVscode": "Edit In VS Code <{shortcut}>",
     "save": "Save",
     "paste": "Paste",
     "exportPdf": "Export PDF",

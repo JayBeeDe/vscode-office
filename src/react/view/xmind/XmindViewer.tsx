@@ -22,10 +22,11 @@ const ZOOM_STEP = 10;
 
 type Direction = typeof MindElixir.LEFT | typeof MindElixir.RIGHT | typeof MindElixir.SIDE;
 
-const LAYOUTS: [Direction, ComponentType, TipKey][] = [
-    [MindElixir.LEFT, AlignLeftOutlined, 'layoutLeft'],
-    [MindElixir.SIDE, AlignCenterOutlined, 'layoutSide'],
-    [MindElixir.RIGHT, AlignRightOutlined, 'layoutRight'],
+// with their shortcuts, mind-elixir's Ctrl+Left / Ctrl+Up / Ctrl+Right
+const LAYOUTS: [Direction, ComponentType, TipKey, string[]][] = [
+    [MindElixir.LEFT, AlignLeftOutlined, 'layoutLeft', ['Mod', 'Left']],
+    [MindElixir.SIDE, AlignCenterOutlined, 'layoutSide', ['Mod', 'Up']],
+    [MindElixir.RIGHT, AlignRightOutlined, 'layoutRight', ['Mod', 'Right']],
 ];
 
 function attachScaleListener(mind: MindElixirInstance, onScale: (value: number) => void) {
@@ -445,11 +446,12 @@ export default function XmindViewer() {
                                     )}
                                 </div>
                                 <div className="xmind-toolbar-group">
-                                    {LAYOUTS.map(([value, Icon, tipKey]) => (
+                                    {LAYOUTS.map(([value, Icon, tipKey, keys]) => (
                                         <XmindToolButton
                                             key={value}
                                             tipKey={tipKey}
                                             icon={Icon}
+                                            keys={keys}
                                             active={direction === value}
                                             pressed={direction === value}
                                             onClick={() => changeDirection(value)}
@@ -459,6 +461,7 @@ export default function XmindViewer() {
                                     <XmindToolButton
                                         tipKey="center"
                                         icon={AimOutlined}
+                                        keys={['F1']}
                                         onClick={() => mindRef.current?.toCenter()}
                                     />
                                     <span className="xmind-toolbar-separator" />

@@ -5,6 +5,7 @@ import '@vscode/codicons/dist/codicon.css';
 import { $t } from '../../i18n/i18nConfig.ts';
 import { beginDocumentSaving, cancelDocumentSaving, handler, onSaveRequest, useDocumentLoading } from '../../util/vscode.ts';
 import { useTheme } from '../../util/theme.ts';
+import { withShortcut } from '../../util/shortcut.ts';
 import { loadOfficeBuffer } from '../../util/loadOfficeContent.ts';
 import {
     formatCellValue,
@@ -362,6 +363,7 @@ function ParquetViewer() {
                                     <button
                                         type="button"
                                         className="parquet-viewer__save-btn"
+                                        title={withShortcut($t('parquet.save'), 'Ctrl+S')}
                                         disabled={!dirty || saving || readOnly}
                                         onClick={() => handleSave()}
                                     >

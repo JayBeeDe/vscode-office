@@ -149,8 +149,8 @@ export class FindBar {
                 <button type="button" class="vditor-find-bar__option" data-option="wholeWord" title="${i18n?.["find-whole-word"] || "Whole Word"}">W</button>
                 <button type="button" class="vditor-find-bar__option" data-option="regex" title="${i18n?.["find-regex"] || "Use Regular Expression"}">.*</button>
                 <button type="button" class="vditor-find-bar__option" data-action="toggle-replace" title="${i18n?.["find-toggle-replace"] || "Toggle Replace"}">R</button>
-                <button type="button" class="vditor-find-bar__nav" data-dir="-1" title="${i18n?.["find-previous"] || "Previous (Shift+Enter)"}">${c("arrow-up")}</button>
-                <button type="button" class="vditor-find-bar__nav" data-dir="1" title="${i18n?.["find-next"] || "Next (Enter)"}">${c("arrow-down")}</button>
+                <button type="button" class="vditor-find-bar__nav" data-dir="-1" title="${i18n?.["find-previous"] || "Previous <Shift+Enter>"}">${c("arrow-up")}</button>
+                <button type="button" class="vditor-find-bar__nav" data-dir="1" title="${i18n?.["find-next"] || "Next <Enter>"}">${c("arrow-down")}</button>
                 <button type="button" class="vditor-find-bar__close" title="${i18n?.close || "Close"}">${c("close")}</button>
             </div>
             <div class="vditor-find-bar__row vditor-find-bar__row--replace" style="display: none;">

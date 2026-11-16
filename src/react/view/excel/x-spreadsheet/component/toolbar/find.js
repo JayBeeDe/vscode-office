@@ -3,7 +3,7 @@ import Icon from '../icon';
 
 export default class Find extends Item {
   constructor() {
-    super('find');
+    super('find', 'Ctrl+F');
   }
 
   element() {

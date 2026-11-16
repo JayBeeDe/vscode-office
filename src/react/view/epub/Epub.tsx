@@ -11,6 +11,7 @@ import { handler, useDocumentLoading } from '../../util/vscode';
 import { type Theme, type ThemeSetting, toThemeSetting, useTheme } from '../../util/theme';
 import { getConfigs } from '../../util/vscodeConfig';
 import { loadOfficeBuffer } from '../../util/loadOfficeContent';
+import { withShortcut } from '../../util/shortcut';
 import { $t } from '../../i18n/i18nConfig.ts';
 import {
     applyEpubTheme,
@@ -559,9 +560,10 @@ export default function Epub() {
         return () => window.removeEventListener('resize', onResize);
     }, []);
 
-    const sidebarTabs: { key: SidebarTab; icon: ReactNode }[] = [
+    // the search tab's tooltip names Ctrl+F, which opens it
+    const sidebarTabs: { key: SidebarTab; icon: ReactNode; title?: string }[] = [
         { key: 'toc', icon: <UnorderedListOutlined /> },
-        { key: 'search', icon: <SearchOutlined /> },
+        { key: 'search', icon: <SearchOutlined />, title: withShortcut($t('epub.search'), 'Ctrl+F') },
         { key: 'info', icon: <InfoCircleOutlined /> },
         { key: 'settings', icon: <SettingOutlined /> },
     ];
@@ -585,6 +587,7 @@ export default function Epub() {
                             <a
                                 key={tab.key}
                                 className={`item${sidebarTab === tab.key ? ' active' : ''}`}
+                                title={tab.title}
                                 onClick={() => setSidebarTab(tab.key)}
                             >
                                 <span className="icon">{tab.icon}</span>
@@ -783,6 +786,7 @@ export default function Epub() {
                     disabled={atStart}
                     onClick={goPrev}
                     aria-label={$t('common.previousPage')}
+                    title={withShortcut($t('common.previousPage'), 'Left')}
                 >
                     <NavChevron direction="prev" />
                 </button>
@@ -793,6 +797,7 @@ export default function Epub() {
                     disabled={atEnd}
                     onClick={goNext}
                     aria-label={$t('common.nextPage')}
+                    title={withShortcut($t('common.nextPage'), 'Right')}
                 >
                     <NavChevron direction="next" />
                 </button>
