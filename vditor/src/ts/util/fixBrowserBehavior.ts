@@ -495,8 +495,8 @@ export const listOutdent = (vditor: IVditor, liElement: HTMLElement, range: Rang
     }
 };
 
-export const setTableAlign = (tableElement: HTMLTableElement, type: string) => {
-    const cell = getSelection().getRangeAt(0).startContainer.parentElement;
+export const setTableAlign = (tableElement: HTMLTableElement, type: string, cell?: HTMLElement) => {
+    cell = cell || getSelection().getRangeAt(0).startContainer.parentElement;
 
     const columnCnt = tableElement.rows[0].cells.length;
     const rowCnt = tableElement.rows.length;
@@ -1098,53 +1098,15 @@ export const fixTable = (vditor: IVditor, event: KeyboardEvent, range: Range) =>
             return true;
         }
 
-        // align left
-        if (matchHotKey("⇧⌘L", event)) {
-            if (vditor.currentMode === "ir") {
-                setTableAlign(tableElement, "left");
+        // align the column left / center / right (same code in WYSIWYG and IR: the old WYSIWYG
+        // table popover these keys used to click is gone)
+        const alignHotKeys: Array<[string, string]> = [["⇧⌘L", "left"], ["⇧⌘E", "center"], ["⇧⌘R", "right"]];
+        for (const [alignHotKey, alignType] of alignHotKeys) {
+            if (matchHotKey(alignHotKey, event)) {
+                setTableAlign(tableElement, alignType, cellElement);
                 execAfterRender(vditor);
                 event.preventDefault();
                 return true;
-            } else {
-                const itemElement: HTMLElement = vditor.wysiwyg.popover.querySelector('[data-type="left"]');
-                if (itemElement) {
-                    itemElement.click();
-                    event.preventDefault();
-                    return true;
-                }
-            }
-        }
-
-        // align center
-        if (matchHotKey("⇧⌘C", event)) {
-            if (vditor.currentMode === "ir") {
-                setTableAlign(tableElement, "center");
-                execAfterRender(vditor);
-                event.preventDefault();
-                return true;
-            } else {
-                const itemElement: HTMLElement = vditor.wysiwyg.popover.querySelector('[data-type="center"]');
-                if (itemElement) {
-                    itemElement.click();
-                    event.preventDefault();
-                    return true;
-                }
-            }
-        }
-        // align right
-        if (matchHotKey("⇧⌘R", event)) {
-            if (vditor.currentMode === "ir") {
-                setTableAlign(tableElement, "right");
-                execAfterRender(vditor);
-                event.preventDefault();
-                return true;
-            } else {
-                const itemElement: HTMLElement = vditor.wysiwyg.popover.querySelector('[data-type="right"]');
-                if (itemElement) {
-                    itemElement.click();
-                    event.preventDefault();
-                    return true;
-                }
             }
         }
     }

@@ -42,7 +42,7 @@ export class Find extends MenuItem {
                 return;
             }
 
-            if ((e.ctrlKey || e.metaKey) && e.key === "r") {
+            if ((e.ctrlKey || e.metaKey) && e.key === "h") {
                 e.preventDefault();
                 const bar = getOrCreateBar();
                 if (bar.isVisible()) {

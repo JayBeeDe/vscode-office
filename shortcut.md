@@ -26,7 +26,7 @@ Keyboard Shortcuts editor.
 | `Ctrl+S` | Save (the file is formatted on save) |
 | `Ctrl+Alt+E` (macOS `Ctrl+Cmd+E`) | Edit in the VS Code text editor |
 | `Ctrl+Alt+7` / `Ctrl+Alt+8` | WYSIWYG / instant rendering mode |
-| `Ctrl+F` / `Ctrl+R` | Find / find and replace |
+| `Ctrl+F` / `Ctrl+H` | Find / find and replace |
 | `Enter` / `Shift+Enter` | In the find bar: next / previous match; in the replace field: replace / replace all |
 | `Ctrl+Z` / `Ctrl+Y` | Undo / redo |
 | `Ctrl+Shift+V` | Paste as plain text |
@@ -36,7 +36,6 @@ Keyboard Shortcuts editor.
 
 | Shortcut | Action |
 | --- | --- |
-| `Ctrl+H` | Headings menu |
 | `Ctrl+Alt+1` … `Ctrl+Alt+6` | Heading 1 to 6 |
 | `Ctrl+=` / `Ctrl+-` | In a heading: bigger / smaller heading |
 | `Ctrl+B` / `Ctrl+I` / `Ctrl+D` | Bold / italic / strikethrough |
@@ -73,7 +72,7 @@ Keyboard Shortcuts editor.
 | `Ctrl+Shift+F` / `Ctrl+=` | Insert a row above / below |
 | `Ctrl+Shift+G` / `Ctrl+Shift+=` | Insert a column left / right |
 | `Ctrl+-` / `Ctrl+Shift+-` | Delete the row / column |
-| `Ctrl+Shift+L` / `Ctrl+Shift+C` / `Ctrl+Shift+R` | Align the column left / center / right |
+| `Ctrl+Shift+L` / `Ctrl+Shift+E` / `Ctrl+Shift+R` | Align the column left / center / right |
 
 Code blocks, math, HTML and front matter are edited with CodeMirror and its usual keys
 (`Ctrl+/` to comment, `Ctrl+D` to select the next match...). On the last line of a code block,
@@ -135,11 +134,11 @@ The grid keys work after a click in the grid.
 | `Home` / `End`, `Ctrl+Up` / `Ctrl+Down` | First / last page |
 | `PageUp` / `PageDown`, `P` / `N`, `K` / `J` | Previous / next page |
 | `Ctrl+Alt+G` | Go to a page number |
-| `S` / `H` | Text selection / hand tool |
+| `Ctrl+S` / `Ctrl+H` | Text selection / hand tool |
 | `R` / `Shift+R` | Rotate clockwise / counterclockwise |
 | `F4` | Sidebar |
 | `Ctrl+Alt+P` | Presentation mode |
-| `Ctrl+P` / `Ctrl+S` | Print / download |
+| `Ctrl+P` | Print |
 
 ## EPUB
 
