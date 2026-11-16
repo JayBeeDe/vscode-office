@@ -2303,38 +2303,6 @@ function webViewerKeyDown(evt) {
         }
 
         break;
-
-      case 61:
-      case 107:
-      case 187:
-      case 171:
-        if (!isViewerInPresentationMode) {
-          PDFViewerApplication.zoomIn();
-        }
-
-        handled = true;
-        break;
-
-      case 173:
-      case 109:
-      case 189:
-        if (!isViewerInPresentationMode) {
-          PDFViewerApplication.zoomOut();
-        }
-
-        handled = true;
-        break;
-
-      case 48:
-      case 96:
-        if (!isViewerInPresentationMode) {
-          setTimeout(function () {
-            PDFViewerApplication.zoomReset();
-          });
-          handled = false;
-        }
-
-        break;
     }
   }
 

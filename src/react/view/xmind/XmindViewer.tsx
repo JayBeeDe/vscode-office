@@ -42,10 +42,14 @@ function detachOperationListener(mind: MindElixirInstance, onOperation: () => vo
 }
 
 // mind-elixir's keys the viewer turns off: PageUp / PageDown (move the topic, Alt+Up / Alt+Down
+// still do it) and Ctrl+= / Ctrl+- / Ctrl+0 (zoom: the toolbar, the zoom field and Ctrl+wheel
 // still do it)
 const KEYPRESS_OVERRIDES = {
     PageUp: () => undefined,
     PageDown: () => undefined,
+    '=': () => undefined,
+    '-': () => undefined,
+    '0': () => undefined,
 };
 
 export default function XmindViewer() {

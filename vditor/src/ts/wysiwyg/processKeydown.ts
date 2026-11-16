@@ -28,18 +28,16 @@ import {
     hasTopClosestByTag,
 } from "../util/hasClosest";
 import { hasClosestByHeadings } from "../util/hasClosestByHeadings";
-import { matchHotKey } from "../util/hotKey";
 import { recordHistoryChange } from "../util/instantHistory";
 import { getEditorRange, getSelectPosition, setSelectionFocus } from "../util/selection";
 import { keydownToc, renderTocNow } from "../util/toc";
 import { afterRenderEvent } from "./afterRenderEvent";
 import { handleLinkPopoverAltEnter } from "./highlightToolbarWYSIWYG";
 import { nextIsCode } from "./inlineTag";
-import { removeHeading, setHeading } from "./setHeading";
+import { removeHeading } from "./setHeading";
 import { focusWysiwygCodeBlock, showCode } from "./showCode";
 import { enterInlineMathEdit, skipZwspAfterInlineMath } from "../math/inlineMathCodeMirror";
 import { handleHtmlEditorAltEnter } from "../htmlInline/htmlInlineEditor";
-import {hasTopHeadingBeforeCaret} from "../util/singleTitle";
 
 export const processKeydown = (vditor: IVditor, event: KeyboardEvent) => {
     // Chrome and Firefox fire compositionend inconsistently https://github.com/Vanessa219/vditor/issues/188
@@ -205,29 +203,6 @@ export const processKeydown = (vditor: IVditor, event: KeyboardEvent) => {
             fixHeadingEnter(vditor, range, headingElement);
             renderTocNow(vditor);
             afterRenderEvent(vditor);
-            event.preventDefault();
-            return true;
-        }
-
-        // enter++: increase heading size
-        if (matchHotKey("⌘=", event)) {
-            const index = parseInt((headingElement as HTMLElement).tagName.substr(1), 10) - 1;
-            // MD025: one top-level heading per file
-            if (index > 0 && !(index === 1 && hasTopHeadingBeforeCaret(vditor))) {
-                setHeading(vditor, `h${index}`);
-                afterRenderEvent(vditor);
-            }
-            event.preventDefault();
-            return true;
-        }
-
-        // enter++: decrease heading size
-        if (matchHotKey("⌘-", event)) {
-            const index = parseInt((headingElement as HTMLElement).tagName.substr(1), 10) + 1;
-            if (index < 7) {
-                setHeading(vditor, `h${index}`);
-                afterRenderEvent(vditor);
-            }
             event.preventDefault();
             return true;
         }

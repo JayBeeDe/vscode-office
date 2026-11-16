@@ -27,16 +27,14 @@ import {
     hasClosestByMatchTag,
 } from "../util/hasClosest";
 import {hasClosestByHeadings} from "../util/hasClosestByHeadings";
-import {matchHotKey} from "../util/hotKey";
 import {recordHistoryChange} from "../util/instantHistory";
 import {getEditorRange, getSelectPosition, setSelectionFocus} from "../util/selection";
 import {keydownToc} from "../util/toc";
 import {expandMarkerWithMathSync} from "./expandMarkerSync";
 import {handleHtmlEditorAltEnter} from "../htmlInline/htmlInlineEditor";
 import {handleLinkPopoverAltEnter} from "../wysiwyg/highlightToolbarWYSIWYG";
-import {processAfterRender, processHeading} from "./process";
+import {processAfterRender} from "./process";
 import {skipZwspAfterInlineMath} from "../math/inlineMathCodeMirror";
-import {hasTopHeadingBeforeCaret} from "../util/singleTitle";
 
 export const processKeydown = (vditor: IVditor, event: KeyboardEvent) => {
     vditor.ir.composingLock = event.isComposing;
@@ -189,30 +187,6 @@ export const processKeydown = (vditor: IVditor, event: KeyboardEvent) => {
         return true;
     }
 
-    const headingElement = hasClosestByHeadings(startContainer);
-    if (headingElement) {
-        // enter++: increase heading size
-        if (matchHotKey("⌘=", event)) {
-            const headingMarkerElement = headingElement.querySelector(".vditor-ir__marker--heading");
-            const level = headingMarkerElement?.textContent.trim().length ?? 0;
-            // MD025: one top-level heading per file
-            if (headingMarkerElement && level > 1 && !(level === 2 && hasTopHeadingBeforeCaret(vditor))) {
-                processHeading(vditor, headingMarkerElement.textContent.substr(1));
-            }
-            event.preventDefault();
-            return true;
-        }
-
-        // enter++: decrease heading size
-        if (matchHotKey("⌘-", event)) {
-            const headingMarkerElement = headingElement.querySelector(".vditor-ir__marker--heading");
-            if (headingMarkerElement && headingMarkerElement.textContent.trim().length < 6) {
-                processHeading(vditor, headingMarkerElement.textContent.trim() + "# ");
-            }
-            event.preventDefault();
-            return true;
-        }
-    }
 
     // shift+enter: hard line break inside a paragraph (\n + ZWSP); table is handled by fixTable above
     // With pre-wrap, inserting only \n at the end of a paragraph does not move the caret to a new line, so a ZWSP placeholder is needed https://github.com/Vanessa219/vditor/issues/170

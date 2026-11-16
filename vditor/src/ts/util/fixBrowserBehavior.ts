@@ -1056,20 +1056,6 @@ export const fixTable = (vditor: IVditor, event: KeyboardEvent, range: Range) =>
             event.preventDefault();
             return true;
         }
-        // delete the current row
-        if (matchHotKey("⌘-", event)) {
-            deleteRow(vditor, range, cellElement);
-            event.preventDefault();
-            return true;
-        }
-
-        // delete the current column
-        if (matchHotKey("⇧⌘-", event)) {
-            deleteColumn(vditor, range, tableElement, cellElement);
-            event.preventDefault();
-            return true;
-        }
-
         // align the column left / center / right (same code in WYSIWYG and IR: the old WYSIWYG
         // table popover these keys used to click is gone)
         const alignHotKeys: Array<[string, string]> = [["⇧⌘L", "left"], ["⇧⌘E", "center"], ["⇧⌘R", "right"]];

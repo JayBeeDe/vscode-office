@@ -37,7 +37,6 @@ Keyboard Shortcuts editor.
 | Shortcut | Action |
 | --- | --- |
 | `Ctrl+Alt+1` … `Ctrl+Alt+6` | Heading 1 to 6 |
-| `Ctrl+=` / `Ctrl+-` | In a heading: bigger / smaller heading |
 | `Ctrl+B` / `Ctrl+I` | Bold / italic |
 | `Ctrl+K` | Link |
 | `Ctrl+Shift+J` | Tick or untick the task |
@@ -60,7 +59,6 @@ Keyboard Shortcuts editor.
 | --- | --- |
 | `Tab` / `Shift+Tab` | Next / previous cell |
 | `Enter` | Line break in the cell |
-| `Ctrl+-` / `Ctrl+Shift+-` | Delete the row / column |
 | `Ctrl+Shift+L` / `Ctrl+Shift+E` / `Ctrl+Shift+R` | Align the column left / center / right |
 
 Code blocks, math, HTML and front matter are edited with CodeMirror and its usual keys
@@ -118,7 +116,6 @@ The grid keys work after a click in the grid.
 | --- | --- |
 | `Ctrl+L` | Dark / light pages |
 | `Ctrl+F` | Find |
-| `Ctrl++` / `Ctrl+-` / `Ctrl+0` | Zoom in / out / default zoom |
 | `Home` / `End` | First / last page |
 | `PageUp` / `PageDown` | Previous / next page |
 | `Ctrl+S` / `Ctrl+H` | Text selection / hand tool |
@@ -145,7 +142,6 @@ The grid keys work after a click in the grid.
 | Arrows | Select the next topic |
 | `Ctrl+Up` / `Ctrl+Left` / `Ctrl+Right` | Branches on both sides / left / right |
 | `F1` | Center the map |
-| `Ctrl+=` / `Ctrl+-` / `Ctrl+0` | Zoom in / out / 100% |
 | `Ctrl+K` then `0`, `=`, `1`…`9` | Collapse all, expand all, expand to a level |
 | `Ctrl+Z` / `Ctrl+Y` | Undo / redo |
 | `Ctrl+C` / `Ctrl+X` / `Ctrl+V` | Copy / cut / paste topics |
