@@ -30,9 +30,8 @@ import { setTheme } from "./ts/ui/setTheme";
 import { Undo } from "./ts/undo/index";
 import { Upload } from "./ts/upload/index";
 import { addScript } from "./ts/util/addScript";
-import { clearCacheFocus, restoreCacheFocus } from "./ts/util/cacheFocus";
-import { accessLocalStorage } from "./ts/util/compatibility";
-import { clearDocumentScroll, restoreDocumentScroll } from "./ts/util/documentState";
+import { restoreCacheFocus } from "./ts/util/cacheFocus";
+import { restoreDocumentScroll } from "./ts/util/documentState";
 import { getSelectText } from "./ts/util/getSelectText";
 import { Options } from "./ts/util/Options";
 import { processCodeRender } from "./ts/util/processCode";
@@ -281,33 +280,6 @@ class Vditor {
         return this.vditor.upload.isUploading;
     }
 
-    /** Clear the cache */
-    public clearCache() {
-        if (accessLocalStorage()) {
-            const cacheId = this.vditor.options.cache.id;
-            if (cacheId) {
-                localStorage.removeItem(cacheId);
-                clearCacheFocus(cacheId);
-                clearDocumentScroll(cacheId);
-            }
-        }
-    }
-
-    /** Disable the cache */
-    public disabledCache() {
-        this.vditor.options.cache.enable = false;
-    }
-
-    /** Enable the cache */
-    public enableCache() {
-        if (!this.vditor.options.cache.id) {
-            throw new Error(
-                "need options.cache.id, see https://ld246.com/article/1549638745630#options",
-            );
-        }
-        this.vditor.options.cache.enable = true;
-    }
-
     /** Convert HTML to Markdown */
     public html2md(value: string) {
         return this.vditor.lute.HTML2Md(value);
@@ -407,7 +379,6 @@ class Vditor {
             if (this.vditor.wysiwyg.popover) {
                 this.vditor.wysiwyg.popover.style.display = "none";
             }
-            this.clearCache();
         }
         if (clearStack) {
             this.clearStack();
@@ -433,7 +404,6 @@ class Vditor {
         this.vditor.element.innerHTML = this.vditor.originalInnerHTML;
         this.vditor.element.classList.remove("vditor");
         this.vditor.element.removeAttribute("style");
-        this.clearCache();
 
         this.vditor.wysiwyg.unbindListener();
     }

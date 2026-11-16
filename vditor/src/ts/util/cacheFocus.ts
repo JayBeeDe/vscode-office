@@ -1,7 +1,6 @@
 import { getCodeMirrorView, isInsideCodeBlockChrome, isInsideCodeMirror, restoreCodeMirrorFocus } from "../codeBlock/codeMirrorManager";
 import { syncOutlineOnDocumentLoad } from "../outline/updateOutlineActive";
-import { accessLocalStorage } from "./compatibility";
-import { adjustEditorScrollBy, getFocusStateKey, restoreDocumentScroll } from "./documentState";
+import { adjustEditorScrollBy, restoreDocumentScroll } from "./documentState";
 import {
     getEditorRange,
     getEditorTextOffset,
@@ -39,26 +38,8 @@ type CaretViewportMetrics = {
     visible: boolean;
 };
 
-const cacheRestoredMap = new WeakMap<IVditor, boolean>();
 const sessionFocusMap = new WeakMap<IVditor, CacheFocusState>();
 const focusSavedMap = new WeakMap<IVditor, boolean>();
-
-export const getCacheFocusKey = (cacheId: string) => getFocusStateKey(cacheId);
-
-export const markCacheContentRestored = (vditor: IVditor) => {
-    cacheRestoredMap.set(vditor, true);
-};
-
-export const wasCacheContentRestored = (vditor: IVditor) => {
-    return cacheRestoredMap.get(vditor) === true;
-};
-
-export const clearCacheFocus = (cacheId: string) => {
-    if (!accessLocalStorage()) {
-        return;
-    }
-    localStorage.removeItem(getCacheFocusKey(cacheId));
-};
 
 const isVscodeFocusHost = (vditor: IVditor) => {
     return vditor.options.cache?.focusHost === "vscode";
@@ -78,31 +59,22 @@ const getCodeBlockIndex = (editor: HTMLElement, block: HTMLElement) => {
     return blockIndex;
 };
 
+// the caret is kept in memory only, for the editor's lifetime (documentState.ts)
 const persistFocusState = (vditor: IVditor, state: CacheFocusState) => {
     sessionFocusMap.set(vditor, state);
     focusSavedMap.set(vditor, true);
-    if (accessLocalStorage() && vditor.options.cache?.id) {
-        localStorage.setItem(getCacheFocusKey(vditor.options.cache.id), JSON.stringify(state));
-    }
 };
 
-const readFocusState = (vditor: IVditor): CacheFocusState | null => {
-    const cached = sessionFocusMap.get(vditor);
-    if (cached) {
-        return cached;
+const readFocusState = (vditor: IVditor): CacheFocusState | null => sessionFocusMap.get(vditor) ?? null;
+
+/** A file just opened: the caret at the start of the document, which shows its top */
+const placeCaretAtDocumentStart = (vditor: IVditor) => {
+    const editor = vditor[vditor.currentMode]?.element as HTMLElement | undefined;
+    if (!editor) {
+        return;
     }
-    if (!accessLocalStorage() || !vditor.options.cache?.id) {
-        return null;
-    }
-    const raw = localStorage.getItem(getCacheFocusKey(vditor.options.cache.id));
-    if (!raw) {
-        return null;
-    }
-    try {
-        return JSON.parse(raw) as CacheFocusState;
-    } catch {
-        return null;
-    }
+    setSelectionByPosition(0, 0, editor);
+    editor.focus({ preventScroll: true });
 };
 
 const rectToCaretViewportMetrics = (editor: HTMLElement, top: number, bottom: number): CaretViewportMetrics => {
@@ -231,7 +203,7 @@ const buildFocusStateFromCurrentSelection = (vditor: IVditor): CacheFocusState |
 };
 
 export const persistScrollFocusAnchor = (vditor: IVditor) => {
-    if (!vditor.options.cache?.id || !accessLocalStorage()) {
+    if (!vditor.options.cache?.id) {
         return;
     }
 
@@ -323,7 +295,7 @@ const canRestoreFocus = (vditor: IVditor, onLoad: boolean) => {
     if (onLoad) {
         return true;
     }
-    return focusSavedMap.get(vditor) === true || wasCacheContentRestored(vditor);
+    return focusSavedMap.get(vditor) === true;
 };
 
 const applyFocusState = (vditor: IVditor, state: CacheFocusState) => {
@@ -414,13 +386,13 @@ export const restoreCacheFocus = (vditor: IVditor, options?: RestoreFocusOptions
     if (!canRestoreFocus(vditor, onLoad)) {
         return;
     }
-    if (wasCacheContentRestored(vditor)) {
-        cacheRestoredMap.delete(vditor);
-    }
 
     const state = readFocusState(vditor);
     if (!state || state.mode !== vditor.currentMode) {
         if (onLoad) {
+            if (!state && restoreCaret) {
+                placeCaretAtDocumentStart(vditor);
+            }
             finishDocumentLoadScroll(vditor, null);
             scheduleOutlineSyncOnLoad(vditor);
         }

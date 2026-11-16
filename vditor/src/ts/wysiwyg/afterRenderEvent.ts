@@ -1,7 +1,5 @@
 import { getMarkdown } from "../markdown/getMarkdown";
-import { saveCacheFocus } from "../util/cacheFocus";
 import { fireContentInput } from "../util/saveToolbarState";
-import { accessLocalStorage } from "../util/compatibility";
 import { clearHistoryInputBuffer } from "../util/historyInputBufferState";
 import { getHistoryMaxWaitFactor, getHistoryRecordWait } from "../util/historySchedule";
 import { matchHotkeyNew } from "../util/hotKey";
@@ -60,13 +58,6 @@ export function recordHistory(vditor: IVditor, options = { enableAddUndoStack: t
         vditor.counter.render(vditor, text);
     }
 
-    if (vditor.options.cache.enable && accessLocalStorage()) {
-        localStorage.setItem(vditor.options.cache.id, text);
-        saveCacheFocus(vditor);
-        if (vditor.options.cache.after) {
-            vditor.options.cache.after(text);
-        }
-    }
     const cacheAndCounterMs = debug ? performance.now() - stepStart : 0;
 
     stepStart = debug ? performance.now() : 0;

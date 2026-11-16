@@ -497,16 +497,14 @@ interface IOptions {
             type?: "markdown" | "text"
         }): void
     };
-    /** @link https://ld246.com/article/1549638745630#options-cache */
+    /**
+     * The document: `id` keys the state kept in memory while it is open (caret, scroll, collapsed
+     * outline headings); nothing is stored. `focusHost` "vscode" (this extension) keeps the caret
+     * state without a scroll position, which the editor's own scroll tracking keeps.
+     */
     cache?: {
         id?: string;
-        /**
-         * Saves the text to localStorage after each input event; on init, Vditor loads the stored data if any
-         */
-        enable?: boolean;
-        /** Where the cursor position is cached. */
         focusHost?: "browser" | "vscode";
-        after?(markdown: string): void;
     };
     /** Edit mode. Default: 'ir' */
     mode?: IEditMode;

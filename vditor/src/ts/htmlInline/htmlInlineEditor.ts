@@ -11,11 +11,6 @@ import { resolveAdjacentElementFromRange } from "../util/rangeAdjacentElement";
 import { getEditorRange, setSelectionFocus } from "../util/selection";
 import { formatAltEnterHotkeyTip } from "../util/compatibility";
 import { codicon } from "../util/codicon";
-import {
-    getGlobalLocalStorageSetting,
-    HTML_EDITOR_LINE_WRAP_KEY,
-    setGlobalLocalStorageSetting,
-} from "../util/globalLocalStorageSettings";
 import { afterRenderEvent } from "../wysiwyg/afterRenderEvent";
 import { processAfterRender } from "../ir/process";
 
@@ -433,13 +428,6 @@ const mountHtmlEditorCodeMirror = (
     return view;
 };
 
-const readHtmlEditorLineWrapEnabled = (): boolean =>
-    getGlobalLocalStorageSetting<boolean>(HTML_EDITOR_LINE_WRAP_KEY, false) === true;
-
-const persistHtmlEditorLineWrapEnabled = (enabled: boolean) => {
-    setGlobalLocalStorageSetting(HTML_EDITOR_LINE_WRAP_KEY, enabled);
-};
-
 const applyHtmlEditorLineWrap = (wrapButton: HTMLButtonElement, enabled: boolean) => {
     const binding = activeHtmlEditorPopover;
     if (!binding) {
@@ -460,9 +448,7 @@ const toggleHtmlEditorLineWrap = (wrapButton: HTMLButtonElement) => {
     if (!binding) {
         return;
     }
-    const enabled = !binding.lineWrapEnabled;
-    applyHtmlEditorLineWrap(wrapButton, enabled);
-    persistHtmlEditorLineWrapEnabled(enabled);
+    applyHtmlEditorLineWrap(wrapButton, !binding.lineWrapEnabled);
 };
 
 export const showHtmlEditorPopover = (vditor: IVditor, target: HtmlEditTarget) => {
@@ -544,7 +530,8 @@ export const showHtmlEditorPopover = (vditor: IVditor, target: HtmlEditTarget) =
     panel.appendChild(actions);
     popover.appendChild(panel);
     const view = mountHtmlEditorCodeMirror(cmHost, initialSource, save, cancel);
-    applyHtmlEditorLineWrap(wrapButton, readHtmlEditorLineWrapEnabled());
+    // lines wrap every time the editor opens; the button unwraps them for this edit only, not remembered
+    applyHtmlEditorLineWrap(wrapButton, true);
     scheduleHtmlEditorPopoverPosition(vditor, target.anchorElement);
     scheduleFocusHtmlEditorAtStart(view);
 };

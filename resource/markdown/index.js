@@ -99,6 +99,20 @@ handler.on("open", (md) => {
   });
 }).emit("init")
 
+/**
+ * vscode-office.markdown.sidebar: `auto` opens the outline sidebar when the file opens with headings
+ * (headings added later don't open it), `none` keeps it closed. Only at opening: the Outline button
+ * shows or hides it afterwards, and that is not remembered.
+ */
+function openOutlineIfHeadings(editor, sidebar) {
+  const vditor = editor?.vditor;
+  if (sidebar === 'none' || !vditor) return;
+  const content = vditor[vditor.currentMode]?.element;
+  if (!content?.querySelector('h1, h2, h3, h4, h5, h6')) return;
+  vditor.options.outline.enable = true;
+  vditor.outline.toggle(vditor, true);
+}
+
 async function openMarkdown(md) {
   /**
    * Shows a search result: the find bar on the match. The match's number among the source's
@@ -110,11 +124,11 @@ async function openMarkdown(md) {
       editor.revealFindMatch(text, occurrence);
     }
   };
-  const { content, rootPath, workspaceBaseUrl, documentCacheId, pendingFragment, pendingMatch, shouldRestoreFocus, config, fileName, exporting } = md;
+  const { content, rootPath, workspaceBaseUrl, documentCacheId, pendingFragment, pendingMatch, config, fileName, exporting } = md;
   window.__officeMarkdownFileName = fileName || 'Note';
   const {
     language, i18n, isWeb, isDev, markdown,
-    editMode, theme, pageTheme, codeMirrorTheme, mermaidTheme, editorSettings, waitForAllMermaidDiagrams
+    editMode, sidebar, theme, pageTheme, codeMirrorTheme, mermaidTheme, editorSettings, waitForAllMermaidDiagrams
   } = config;
   if (isWeb) {
     document.body.classList.add('is-web')
@@ -152,11 +166,12 @@ async function openMarkdown(md) {
     value: Vditor.prepareMarkdown(content),
     cdn: rootPath,
     height: '100%',
+    // hidden at start: vscode-office.markdown.sidebar opens it in after(), once the headings are known
     outline: {
       position: 'left',
+      enable: false,
     },
     cache: {
-      enable: false,
       id: documentCacheId,
       focusHost: 'vscode',
     },
@@ -244,6 +259,7 @@ async function openMarkdown(md) {
       },
     },
     after() {
+      openOutlineIfHeadings(editor, sidebar);
       // the file shows once its diagrams are drawn, or at once, each diagram with its own spinner
       const root = document.getElementById('vditor');
       if (waitForAllMermaidDiagrams) {
@@ -314,7 +330,8 @@ async function openMarkdown(md) {
       })
       // a search result clicked in VS Code's Search view
       handler.on("revealMatch", revealMatch)
-      editor.restoreDocumentSession(true, !!shouldRestoreFocus)
+      // nothing is remembered from an earlier opening: the top of the file, the caret at its start
+      editor.restoreDocumentSession(true)
       if (pendingFragment) {
         editor.scrollToBlock(pendingFragment);
       }

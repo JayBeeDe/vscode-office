@@ -248,7 +248,6 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
                 pendingFragment: consumePendingBlockScroll(uri),
                 // a search result clicked in the Search view: the editor's find bar shows it
                 pendingMatch: consumePendingMatch(uri),
-                shouldRestoreFocus: config.get<boolean>("restoreViewState", true),
                 // a PDF or DOCX export started from another panel
                 exporting: MarkdownService.exporting,
                 config: this.getMarkdownWebviewConfig(config),
@@ -340,6 +339,7 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
         const markdownConfiguration = vscode.workspace.getConfiguration("markdown");
         return {
             editMode: configuration.get<string>("editMode", "wysiwyg"),
+            sidebar: configuration.get<string>("sidebar", "auto"),
             theme: getTheme(),
             pageTheme: configuration.get<string>("theme", "auto"),
             codeMirrorTheme: configuration.get<string>("codeMirrorTheme", "auto"),

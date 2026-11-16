@@ -1,17 +1,11 @@
 import {Constants} from "../constants";
 import {outlineRender} from "../markdown/outlineRender";
 import {isEditorThemeMobileLayout, isMobileOutlineDrawerOpen, setMobileOutlineDrawerOpen, syncMobileOutlinePanel} from "../ui/mobileOutlineMenu";
-import {
-    getGlobalLocalStorageSetting,
-    setGlobalLocalStorageSetting,
-} from "../util/globalLocalStorageSettings";
 import {setSelectionFocus} from "../util/selection";
 import {bindOutlineScrollSpy, restoreOutlineActive, updateOutlineActive} from "./updateOutlineActive";
 
 const OUTLINE_MIN_WIDTH = 120;
 const OUTLINE_MAX_WIDTH = 480;
-const OUTLINE_WIDTH_SETTING_KEY = "outlineWidth";
-const OUTLINE_ENABLE_SETTING_KEY = "outlineEnable";
 
 const normalizeOutlineWidth = (width: number | string | undefined | null): number => {
     const parsedWidth = Number(width);
@@ -21,35 +15,10 @@ const normalizeOutlineWidth = (width: number | string | undefined | null): numbe
     return Math.min(OUTLINE_MAX_WIDTH, Math.max(OUTLINE_MIN_WIDTH, parsedWidth));
 };
 
-const getStoredOutlineWidth = (vditor: IVditor): number => {
-    return normalizeOutlineWidth(getGlobalLocalStorageSetting<number>(OUTLINE_WIDTH_SETTING_KEY));
-};
 
-const saveOutlineWidth = (vditor: IVditor, width: number) => {
-    const normalizedWidth = normalizeOutlineWidth(width);
-    if (!normalizedWidth) {
-        return;
-    }
-    setGlobalLocalStorageSetting(OUTLINE_WIDTH_SETTING_KEY, normalizedWidth);
-};
-
-const parseStoredOutlineEnable = (value: boolean | string | null | undefined): boolean | null => {
-    if (value === true || value === "true") {
-        return true;
-    }
-    if (value === false || value === "false") {
-        return false;
-    }
-    return null;
-};
-
-const getStoredOutlineEnable = (vditor: IVditor): boolean | null => {
-    return parseStoredOutlineEnable(getGlobalLocalStorageSetting<boolean>(OUTLINE_ENABLE_SETTING_KEY));
-};
-
-const saveOutlineEnable = (vditor: IVditor, enable: boolean) => {
-    setGlobalLocalStorageSetting(OUTLINE_ENABLE_SETTING_KEY, enable);
-};
+// Nothing about the outline is remembered: vscode-office.markdown.sidebar decides whether it opens
+// with a file (resource/markdown/index.js), and it opens 270px wide (_reset.less), a width dragged to
+// lasting while the file is open.
 
 export class Outline {
     public element: HTMLElement;
@@ -73,23 +42,18 @@ export class Outline {
 
     public init(vditor: IVditor) {
         this.vditor = vditor;
-        this.restoreStoredWidth();
-        const storedEnable = getStoredOutlineEnable(vditor);
-        if (storedEnable !== null) {
-            vditor.options.outline.enable = storedEnable;
-        }
+        this.applyOptionsWidth();
     }
 
-    private restoreStoredWidth() {
+    /** A width given in the editor's options (none in this extension), else the stylesheet's 270px */
+    private applyOptionsWidth() {
         if (!this.vditor) {
             return;
         }
-        const fromOptions = normalizeOutlineWidth(this.vditor.options.outline?.width);
-        const restoredWidth = getStoredOutlineWidth(this.vditor) || fromOptions;
-        if (!restoredWidth) {
-            return;
+        const width = normalizeOutlineWidth(this.vditor.options.outline?.width);
+        if (width) {
+            this.element.style.width = `${width}px`;
         }
-        this.element.style.width = `${restoredWidth}px`;
     }
 
     private bindResize() {
@@ -121,9 +85,6 @@ export class Outline {
                 this.element.dispatchEvent(new CustomEvent("vditor-outline-resize", {
                     detail: {width},
                 }));
-                if (this.vditor) {
-                    saveOutlineWidth(this.vditor, width);
-                }
             };
 
             document.addEventListener("mousemove", onMouseMove);
@@ -214,7 +175,6 @@ export class Outline {
         }
         if (!mobileLayout) {
             vditor.options.outline.enable = show;
-            saveOutlineEnable(vditor, show);
         }
         if (getSelection().rangeCount > 0) {
             const range = getSelection().getRangeAt(0);

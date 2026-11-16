@@ -2,7 +2,6 @@ import {Constants} from "../constants";
 import {processAfterRender} from "../ir/process";
 import {getMarkdown} from "../markdown/getMarkdown";
 import {mathRender} from "../markdown/mathRender";
-import {restoreCacheFocus, wasCacheContentRestored} from "../util/cacheFocus";
 import {getEventName, updateHotkeyTip} from "../util/compatibility";
 import {highlightToolbar} from "../util/highlightToolbar";
 import {log} from "../util/log";
@@ -127,8 +126,6 @@ export const setEditMode = (
         // do not focus on init
         vditor[vditor.currentMode].element.focus();
         highlightToolbar(vditor);
-    } else if (wasCacheContentRestored(vditor)) {
-        restoreCacheFocus(vditor, { onLoad: true });
     }
     renderTocNow(vditor);
 

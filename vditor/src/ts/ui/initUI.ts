@@ -1,10 +1,9 @@
 import { setEditMode } from "../toolbar/EditMode";
 import { bindToolbarOutsideDismiss } from "../toolbar/setToolbar";
-import { bindCacheFocusPersistence, markCacheContentRestored, persistScrollFocusAnchor } from "../util/cacheFocus";
+import { bindCacheFocusPersistence, persistScrollFocusAnchor } from "../util/cacheFocus";
 import { bindEmphasisHeading } from "../util/emphasisHeading";
 import { bindDocumentScrollPersistence, purgeLegacyDocumentStateKeys, setScrollFocusAnchorHandler } from "../util/documentState";
 import { bindHistoryInputBufferClick } from "../util/historyInputBuffer";
-import { accessLocalStorage } from "../util/compatibility";
 import { macOptionSymbolEvent } from "../util/editorCommonEvent";
 import { initColorTheme } from "./setEditorTheme";
 import { initMermaidTheme } from "./setMermaidTheme";
@@ -113,20 +112,13 @@ export const initUI = (vditor: IVditor) => {
   }
 };
 
+/** The editor's initial text: the given value, else the element's HTML; never a stored copy */
 const afterRender = (vditor: IVditor) => {
-  // set default value
-  let initValue = accessLocalStorage() && localStorage.getItem(vditor.options.cache.id);
-  if (vditor.options.cache.enable && initValue) {
-    markCacheContentRestored(vditor);
+  if (vditor.options.value) {
+    return vditor.options.value;
   }
-  if (!vditor.options.cache.enable || !initValue) {
-    if (vditor.options.value) {
-      initValue = vditor.options.value;
-    } else if (vditor.originalInnerHTML) {
-      initValue = vditor.lute.HTML2Md(vditor.originalInnerHTML);
-    } else if (!vditor.options.cache.enable) {
-      initValue = "";
-    }
+  if (vditor.originalInnerHTML) {
+    return vditor.lute.HTML2Md(vditor.originalInnerHTML) || "";
   }
-  return initValue || "";
+  return "";
 };

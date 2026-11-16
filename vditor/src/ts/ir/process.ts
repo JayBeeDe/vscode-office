@@ -1,8 +1,6 @@
 import {getMarkdown} from "../markdown/getMarkdown";
 import {fireContentInput} from "../util/saveToolbarState";
 import {removeCurrentToolbar} from "../toolbar/setToolbar";
-import {accessLocalStorage} from "../util/compatibility";
-import {saveCacheFocus} from "../util/cacheFocus";
 import {clearHistoryInputBuffer} from "../util/historyInputBufferState";
 import {listToggle} from "../util/fixBrowserBehavior";
 import {hasClosestBlock, hasClosestByAttribute, hasClosestByClassName, hasClosestByMatchTag} from "../util/hasClosest";
@@ -32,14 +30,6 @@ export const recordHistory = (vditor: IVditor, options = {
 
     if (vditor.options.counter.enable) {
         vditor.counter.render(vditor, text);
-    }
-
-    if (vditor.options.cache.enable && accessLocalStorage()) {
-        localStorage.setItem(vditor.options.cache.id, text);
-        saveCacheFocus(vditor);
-        if (vditor.options.cache.after) {
-            vditor.options.cache.after(text);
-        }
     }
 
     if (options.enableAddUndoStack) {

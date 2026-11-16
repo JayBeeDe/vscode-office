@@ -480,10 +480,18 @@
 						"default": "wysiwyg",
 						"markdownDescription": "Default edit mode for the Markdown editor."
 					},
-					"vscode-office.markdown.restoreViewState": {
-						"type": "boolean",
-						"default": true,
-						"markdownDescription": "Restore caret focus when opening a Markdown file. Scroll position is always restored."
+					"vscode-office.markdown.sidebar": {
+						"type": "string",
+						"enum": [
+							"auto",
+							"none"
+						],
+						"default": "auto",
+						"markdownEnumDescriptions": [
+							"Open the outline sidebar when the file opens, if it has headings. Headings added later don't open it: open it with the toolbar's Outline button.",
+							"Never open the outline sidebar when a file opens."
+						],
+						"markdownDescription": "Whether the Markdown editor's outline sidebar, on the left, opens with the file. Shown or hidden with the toolbar's Outline button meanwhile, it is not remembered."
 					},
 					"vscode-office.markdown.openSearchResults": {
 						"type": "boolean",

@@ -1,7 +1,16 @@
 import {accessLocalStorage} from "./compatibility";
 
-const LEGACY_FOCUS_KEY_PATTERN = /^md-.+-focus$/;
-const LEGACY_SCROLL_KEY_PATTERN = /^scrollTop_/;
+// Nothing is remembered between two openings: a file opens at its top, the caret at its start, the
+// outline expanded. The scroll position, the caret and the collapsed outline headings live in memory
+// only, for the editor's lifetime (mode switch, window refocus, outline re-render). Keys older
+// versions left in localStorage are removed once: `<cacheId>-scroll`, `<cacheId>-focus`,
+// `vditor-outline-state:<cacheId>`, `vditor-global-settings`, and earlier still `md-…-focus` / `scrollTop_…`.
+const LEGACY_FOCUS_KEY_PATTERN = /-focus$/;
+const LEGACY_SCROLL_KEY_PATTERN = /^scrollTop_|-scroll$/;
+const LEGACY_OUTLINE_KEY_PATTERN = /^vditor-outline-state:/;
+// the shared settings older versions kept: whether the outline was shown, its width, the HTML
+// editor's line wrap; none is remembered any more
+const LEGACY_GLOBAL_SETTINGS_KEY = "vditor-global-settings";
 
 let legacyDocumentStatePurged = false;
 let scrollFocusAnchorHandler: ((vditor: IVditor) => void) | undefined;
@@ -31,14 +40,6 @@ const getScrollSession = (vditor: IVditor): ScrollSession => {
     return session;
 };
 
-export const buildDocumentCacheId = (scheme: string, uri: string): string => {
-    return `${scheme}:${uri}`;
-};
-
-export const getFocusStateKey = (cacheId: string): string => `${cacheId}-focus`;
-
-export const getScrollStateKey = (cacheId: string): string => `${cacheId}-scroll`;
-
 export const setScrollFocusAnchorHandler = (handler: (vditor: IVditor) => void) => {
     scrollFocusAnchorHandler = handler;
 };
@@ -53,14 +54,11 @@ export const purgeLegacyDocumentStateKeys = () => {
         if (!key) {
             continue;
         }
-        if (LEGACY_FOCUS_KEY_PATTERN.test(key) || LEGACY_SCROLL_KEY_PATTERN.test(key)) {
+        if (LEGACY_FOCUS_KEY_PATTERN.test(key) || LEGACY_SCROLL_KEY_PATTERN.test(key)
+            || LEGACY_OUTLINE_KEY_PATTERN.test(key) || key === LEGACY_GLOBAL_SETTINGS_KEY) {
             localStorage.removeItem(key);
         }
     }
-};
-
-const getDocumentCacheId = (vditor: IVditor): string | undefined => {
-    return vditor.options.cache?.id;
 };
 
 const getEditorElement = (vditor: IVditor): HTMLElement | null => {
@@ -71,38 +69,8 @@ const getEditorElement = (vditor: IVditor): HTMLElement | null => {
     return null;
 };
 
-export const saveDocumentScroll = (vditor: IVditor, scrollTop: number) => {
-    const cacheId = getDocumentCacheId(vditor);
-    if (!cacheId || !accessLocalStorage() || Number.isNaN(scrollTop)) {
-        return;
-    }
-    try {
-        localStorage.setItem(getScrollStateKey(cacheId), String(scrollTop));
-    } catch {
-        // ignore
-    }
-};
-
-export const clearDocumentScroll = (cacheId: string) => {
-    if (!accessLocalStorage()) {
-        return;
-    }
-    localStorage.removeItem(getScrollStateKey(cacheId));
-};
-
-const readStoredDocumentScroll = (vditor: IVditor): number => {
-    const cacheId = getDocumentCacheId(vditor);
-    if (!cacheId || !accessLocalStorage()) {
-        return 0;
-    }
-    try {
-        const raw = localStorage.getItem(getScrollStateKey(cacheId));
-        const scrollTop = Number(raw);
-        return Number.isNaN(scrollTop) ? 0 : scrollTop;
-    } catch {
-        return 0;
-    }
-};
+/** The scroll position kept in memory for this editor: 0, the top, for a file just opened */
+const readStoredDocumentScroll = (vditor: IVditor): number => getScrollSession(vditor).scrollTop;
 
 const persistScroll = (vditor: IVditor) => {
     const editorEl = getEditorElement(vditor);
@@ -113,7 +81,6 @@ const persistScroll = (vditor: IVditor) => {
     const top = editorEl.scrollTop;
     session.scrollTop = top;
     window.clearTimeout(session.scrollSaveTimer);
-    saveDocumentScroll(vditor, top);
     scrollFocusAnchorHandler?.(vditor);
 };
 

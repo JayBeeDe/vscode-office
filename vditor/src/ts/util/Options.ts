@@ -8,7 +8,6 @@ export class Options {
         rtl: false,
         after: undefined,
         cache: {
-            enable: false,
             focusHost: "browser",
         },
         cdn: Constants.CDN,
@@ -108,12 +107,6 @@ export class Options {
         // backward compatibility: map the legacy sv (split view) option to ir
         if ((mergedOptions.mode as string) === "sv") {
             mergedOptions.mode = "ir";
-        }
-
-        if (mergedOptions.cache.enable && !mergedOptions.cache.id) {
-            throw new Error(
-                "need options.cache.id, see https://ld246.com/article/1549638745630#options",
-            );
         }
 
         return mergedOptions;

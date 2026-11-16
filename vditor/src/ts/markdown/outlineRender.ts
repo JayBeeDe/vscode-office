@@ -4,6 +4,9 @@ import { codicon } from "../util/codicon";
 import { hasClosestByHeadings } from "../util/hasClosestByHeadings";
 import { mathRender } from "./mathRender";
 
+/** The outline headings collapsed per document, for the editor's lifetime only */
+const collapsedOutlineHeadings = new Map<string, string[]>();
+
 const stripIrOutlineMarkers = (element: HTMLElement) => {
     const clone = element.cloneNode(true) as HTMLElement;
     clone.querySelectorAll(".vditor-ir__marker, wbr").forEach((node) => {
@@ -124,27 +127,22 @@ export const outlineRender = (contentElement: HTMLElement, targetElement: Elemen
             math: vditor.options.preview.math,
         });
     }
-    const cacheId = vditor?.options?.cache?.id;
-    const storageKey = cacheId ? `vditor-outline-state:${cacheId}` : null;
+    // the collapsed headings, kept in memory only: they survive the outline's re-render after an
+    // edit, not a reopening, where the outline starts expanded
+    const stateKey = vditor?.options?.cache?.id ?? null;
 
     const loadCollapsedState = (): Set<string> => {
-        if (!storageKey) return new Set();
-        try {
-            const raw = localStorage.getItem(storageKey);
-            return raw ? new Set(JSON.parse(raw)) : new Set();
-        } catch {
-            return new Set();
-        }
+        return new Set(stateKey ? collapsedOutlineHeadings.get(stateKey) : []);
     };
 
     const saveCollapsedState = () => {
-        if (!storageKey) return;
+        if (!stateKey) return;
         const collapsed: string[] = [];
         targetElement.querySelectorAll(".vditor-outline__action--close").forEach((el) => {
             const id = (el.parentElement?.getAttribute("data-target-id"));
             if (id) collapsed.push(id);
         });
-        localStorage.setItem(storageKey, JSON.stringify(collapsed));
+        collapsedOutlineHeadings.set(stateKey, collapsed);
     };
 
     // restore collapse state
