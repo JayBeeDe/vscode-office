@@ -33,7 +33,7 @@ import { recordHistoryChange } from "../util/instantHistory";
 import { getEditorRange, getSelectPosition, setSelectionFocus } from "../util/selection";
 import { keydownToc, renderTocNow } from "../util/toc";
 import { afterRenderEvent } from "./afterRenderEvent";
-import { moveDown, moveUp, handleLinkPopoverAltEnter } from "./highlightToolbarWYSIWYG";
+import { handleLinkPopoverAltEnter } from "./highlightToolbarWYSIWYG";
 import { nextIsCode } from "./inlineTag";
 import { removeHeading, setHeading } from "./setHeading";
 import { focusWysiwygCodeBlock, showCode } from "./showCode";
@@ -92,18 +92,6 @@ export const processKeydown = (vditor: IVditor, event: KeyboardEvent) => {
     fixCJKPosition(range, vditor, event);
 
     fixHR(range);
-
-    // Move up blocks that have a sub-toolbar
-    if (matchHotKey("^⌘i", event) || matchHotKey("^!i", event)) {
-        moveUp(range, vditor);
-        event.stopPropagation();
-    }
-
-    // Move down blocks that have a sub-toolbar
-    if (matchHotKey("^⌘j", event) || matchHotKey("^!j", event)) {
-        moveDown(range, vditor);
-        event.stopPropagation();
-    }
 
     // Only handle the following shortcuts
     if (event.key !== "Enter" && event.key !== "Tab" && event.key !== "Backspace" && event.key.indexOf("Arrow") === -1
@@ -268,11 +256,6 @@ export const processKeydown = (vditor: IVditor, event: KeyboardEvent) => {
         }
     }
 
-    // Delete blocks that have a sub-toolbar
-    if (removeBlockElement(vditor, event)) {
-        return true;
-    }
-
     if (fixTab(vditor, range, event)) {
         return true;
     }
@@ -433,16 +416,4 @@ export const processKeydown = (vditor: IVditor, event: KeyboardEvent) => {
     }
 
     return false;
-};
-
-export const removeBlockElement = (vditor: IVditor, event: KeyboardEvent) => {
-    // Delete blocks that have a sub-toolbar
-    if (matchHotKey("⇧⌘X", event)) {
-        const itemElement: HTMLElement = vditor.wysiwyg.popover.querySelector('[data-type="remove"]');
-        if (itemElement) {
-            itemElement.click();
-            event.preventDefault();
-            return true;
-        }
-    }
 };

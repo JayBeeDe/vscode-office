@@ -1056,34 +1056,6 @@ export const fixTable = (vditor: IVditor, event: KeyboardEvent, range: Range) =>
             event.preventDefault();
             return true;
         }
-        // insert a new row above
-        if (matchHotKey("⇧⌘F", event)) {
-            insertRowAbove(vditor, range, cellElement);
-            event.preventDefault();
-            return true;
-        }
-
-        // insert a new row below https://github.com/Vanessa219/vditor/issues/46
-        if (matchHotKey("⌘=", event)) {
-            insertRow(vditor, range, cellElement);
-            event.preventDefault();
-            return true;
-        }
-
-        // insert a new column on the left
-        if (matchHotKey("⇧⌘G", event)) {
-            insertColumn(vditor, tableElement, cellElement, "beforebegin");
-            event.preventDefault();
-            return true;
-        }
-
-        // insert a new column on the right
-        if (matchHotKey("⇧⌘=", event)) {
-            insertColumn(vditor, tableElement, cellElement);
-            event.preventDefault();
-            return true;
-        }
-
         // delete the current row
         if (matchHotKey("⌘-", event)) {
             deleteRow(vditor, range, cellElement);
@@ -1382,16 +1354,6 @@ export const fixBlockquote = (vditor: IVditor, range: Range, event: KeyboardEven
             return true;
         }
         const blockElement = hasClosestBlock(startContainer);
-        if (vditor.currentMode === "wysiwyg" && blockElement && matchHotKey("⇧⌘;", event)) {
-            // insert a blockquote
-            range.insertNode(document.createElement("wbr"));
-            blockElement.outerHTML = `<blockquote data-block="0">${blockElement.outerHTML}</blockquote>`;
-            setRangeByWbr(vditor.wysiwyg.element, range);
-            afterRenderEvent(vditor);
-            event.preventDefault();
-            return true;
-        }
-
         if (pElement) {
             if (insertAfterBlockquoteLine(vditor, event, range, pElement, blockquoteElement)) {
                 return true;

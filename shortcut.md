@@ -38,14 +38,10 @@ Keyboard Shortcuts editor.
 | --- | --- |
 | `Ctrl+Alt+1` … `Ctrl+Alt+6` | Heading 1 to 6 |
 | `Ctrl+=` / `Ctrl+-` | In a heading: bigger / smaller heading |
-| `Ctrl+B` / `Ctrl+I` / `Ctrl+D` | Bold / italic / strikethrough |
-| `Ctrl+G` | Inline code |
+| `Ctrl+B` / `Ctrl+I` | Bold / italic |
 | `Ctrl+K` | Link |
-| `Ctrl+O` / `Ctrl+J` | Ordered list / task list |
 | `Ctrl+Shift+J` | Tick or untick the task |
 | `Ctrl+;` | Blockquote |
-| `Ctrl+Shift+;` | In a blockquote: nested blockquote (WYSIWYG) |
-| `Ctrl+Shift+U` | Code block |
 | `Ctrl+M` | Table |
 | `(`, `[` | The closing `)` or `]` is added |
 
@@ -53,12 +49,7 @@ Keyboard Shortcuts editor.
 
 | Shortcut | Action |
 | --- | --- |
-| `Ctrl+L` | Select the block |
-| `Ctrl+Shift+K` | Delete the block |
-| `Alt+Up` / `Alt+Down` | Move the block up / down (also `Ctrl+Alt+I` / `Ctrl+Alt+J` in WYSIWYG) |
-| `Shift+Alt+Up` / `Shift+Alt+Down` | Copy the block up / down |
-| `Ctrl+Enter` / `Ctrl+Shift+Enter` | Insert an empty block after / before |
-| `Ctrl+Shift+X` | Remove the block, when its popover has a Remove button (WYSIWYG) |
+| `Alt+Up` / `Alt+Down` | Move the block up / down |
 | `Shift+Enter` | Line break |
 | `Alt+Enter` | On a link, image, HTML or table cell: open its popover; on a code block: choose its language |
 | `Tab` / `Shift+Tab` | In a list: indent / outdent |
@@ -69,14 +60,11 @@ Keyboard Shortcuts editor.
 | --- | --- |
 | `Tab` / `Shift+Tab` | Next / previous cell |
 | `Enter` | Line break in the cell |
-| `Ctrl+Shift+F` / `Ctrl+=` | Insert a row above / below |
-| `Ctrl+Shift+G` / `Ctrl+Shift+=` | Insert a column left / right |
 | `Ctrl+-` / `Ctrl+Shift+-` | Delete the row / column |
 | `Ctrl+Shift+L` / `Ctrl+Shift+E` / `Ctrl+Shift+R` | Align the column left / center / right |
 
 Code blocks, math, HTML and front matter are edited with CodeMirror and its usual keys
-(`Ctrl+/` to comment, `Ctrl+D` to select the next match...). On the last line of a code block,
-`Ctrl+Enter` leaves it.
+(`Ctrl+/` to comment, `Ctrl+D` to select the next match...).
 
 ## Spreadsheet
 

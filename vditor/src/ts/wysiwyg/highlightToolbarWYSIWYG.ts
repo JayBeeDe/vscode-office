@@ -32,7 +32,6 @@ import {
     setSelectionFocus,
 } from "../util/selection";
 import {afterRenderEvent} from "./afterRenderEvent";
-import {removeBlockElement} from "./processKeydown";
 import {updateActiveHeadingMarker} from "../util/updateActiveHeadingMarker";
 import {showToast} from "../ui/toast";
 import {codicon} from "../util/codicon";
@@ -280,7 +279,6 @@ export const highlightToolbarWYSIWYG = (vditor: IVditor) => {
                     event.preventDefault();
                     return;
                 }
-                removeBlockElement(vditor, event);
             };
 
             vditor.wysiwyg.popover.insertAdjacentElement("beforeend", inputWrap);
@@ -504,9 +502,6 @@ export const genLinkRefPopover = (vditor: IVditor, linkRefElement: HTMLElement) 
         updateText();
     };
     textInput.onkeydown = (event) => {
-        if (removeBlockElement(vditor, event)) {
-            return;
-        }
         linkHotkey(vditor, linkRefElement, event, refInput);
     };
 
@@ -518,9 +513,6 @@ export const genLinkRefPopover = (vditor: IVditor, linkRefElement: HTMLElement) 
         updateRef();
     };
     refInput.onkeydown = (event) => {
-        if (removeBlockElement(vditor, event)) {
-            return;
-        }
         linkHotkey(vditor, linkRefElement, event, textInput);
     };
 
@@ -672,9 +664,6 @@ export const genAPopover = (vditor: IVditor, aElement: HTMLElement) => {
         updateText();
     };
     textInput.onkeydown = (event) => {
-        if (removeBlockElement(vditor, event)) {
-            return;
-        }
         linkHotkey(vditor, aElement, event, hrefInput);
     };
 
@@ -686,9 +675,6 @@ export const genAPopover = (vditor: IVditor, aElement: HTMLElement) => {
         updateHref();
     };
     hrefInput.onkeydown = (event) => {
-        if (removeBlockElement(vditor, event)) {
-            return;
-        }
         linkHotkey(vditor, aElement, event, textInput);
     };
 
@@ -783,9 +769,6 @@ export const genImagePopoverForElement = (vditor: IVditor, imgElement: HTMLImage
         updateAlt();
     };
     altInput.onkeydown = (elementEvent) => {
-        if (removeBlockElement(vditor, elementEvent)) {
-            return;
-        }
         linkHotkey(vditor, imgElement, elementEvent, srcInput);
     };
 
@@ -797,9 +780,6 @@ export const genImagePopoverForElement = (vditor: IVditor, imgElement: HTMLImage
         updateSrc();
     };
     srcInput.onkeydown = (elementEvent) => {
-        if (removeBlockElement(vditor, elementEvent)) {
-            return;
-        }
         linkHotkey(vditor, imgElement, elementEvent, altInput);
     };
 

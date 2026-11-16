@@ -1,38 +1,19 @@
 import { isInsideCodeMirror } from "../codeBlock/codeMirrorManager";
-import { expandMarkerWithMathSync } from "../ir/expandMarkerSync";
 import { highlightToolbarIR } from "../ir/highlightToolbarIR";
 import { processAfterRender } from "../ir/process";
 import { afterRenderEvent } from "../wysiwyg/afterRenderEvent";
 import { highlightToolbarWYSIWYG, moveDown, moveUp } from "../wysiwyg/highlightToolbarWYSIWYG";
-import { removeTextCutBlock } from "./cutEmptySelection";
 import { isCtrl } from "./compatibility";
-import { insertEmptyBlock } from "./fixBrowserBehavior";
 import {
     hasClosestBlock,
     hasClosestByAttribute,
-    hasClosestByClassName,
     hasClosestByMatchTag,
 } from "./hasClosest";
 import { hasClosestByHeadings, hasClosestByTag } from "./hasClosestByHeadings";
-import { getEditorRange, setRangeByWbr, setSelectionFocus } from "./selection";
+import { getEditorRange, setRangeByWbr } from "./selection";
 
 const isTableCell = (startContainer: Node) => {
     return hasClosestByMatchTag(startContainer, "TD") || hasClosestByMatchTag(startContainer, "TH");
-};
-
-const getWysiwygBlockElement = (range: Range): HTMLElement | false => {
-    const startContainer = range.startContainer;
-    if (isTableCell(startContainer)) {
-        return false;
-    }
-    const typeElement = startContainer as HTMLElement;
-    return hasClosestByTag(typeElement, "BLOCKQUOTE") as HTMLElement
-        || hasClosestByMatchTag(typeElement, "LI") as HTMLElement
-        || hasClosestByMatchTag(typeElement, "TABLE") as HTMLElement
-        || hasClosestByClassName(typeElement, "vditor-wysiwyg__block") as HTMLElement
-        || hasClosestByHeadings(typeElement) as HTMLElement
-        || hasClosestByAttribute(typeElement, "data-block", "0") as HTMLElement
-        || false;
 };
 
 const getIrBlockElement = (range: Range): HTMLElement | false => {
@@ -49,20 +30,6 @@ const getIrBlockElement = (range: Range): HTMLElement | false => {
         || hasClosestByAttribute(startContainer, "data-block", "0") as HTMLElement
         || hasClosestBlock(startContainer) as HTMLElement
         || false;
-};
-
-const getBlockElement = (range: Range, vditor: IVditor): HTMLElement | false => {
-    if (vditor.currentMode === "wysiwyg") {
-        return getWysiwygBlockElement(range);
-    }
-    if (vditor.currentMode === "ir") {
-        return getIrBlockElement(range);
-    }
-    return false;
-};
-
-const getEditorElement = (vditor: IVditor) => {
-    return vditor[vditor.currentMode].element as HTMLElement;
 };
 
 const canMoveBlockAmongSiblings = (element: HTMLElement, editorElement: HTMLElement) => {
@@ -113,55 +80,7 @@ const moveIrBlock = (range: Range, vditor: IVditor, direction: "up" | "down") =>
     return true;
 };
 
-const copyBlock = (range: Range, vditor: IVditor, direction: "up" | "down") => {
-    const element = getBlockElement(range, vditor);
-    if (!element) {
-        return false;
-    }
-
-    const clone = element.cloneNode(true) as HTMLElement;
-    range.insertNode(document.createElement("wbr"));
-    if (direction === "up") {
-        element.insertAdjacentElement("beforebegin", clone);
-    } else {
-        element.insertAdjacentElement("afterend", clone);
-    }
-    setRangeByWbr(getEditorElement(vditor), range);
-    afterBlockChange(vditor);
-    return true;
-};
-
-const deleteBlock = (vditor: IVditor, range: Range) => {
-    const blockElement = getBlockElement(range, vditor);
-    if (!blockElement) {
-        return false;
-    }
-    removeTextCutBlock(vditor, blockElement);
-    return true;
-};
-
-const selectBlock = (range: Range, vditor: IVditor) => {
-    const startContainer = range.startContainer;
-    const cellElement = isTableCell(startContainer) ?
-        (hasClosestByMatchTag(startContainer, "TD") || hasClosestByMatchTag(startContainer, "TH")) :
-        false;
-    const blockElement = cellElement || getBlockElement(range, vditor);
-    if (!blockElement) {
-        return false;
-    }
-
-    range.selectNodeContents(blockElement as HTMLElement);
-    setSelectionFocus(range);
-    if (vditor.currentMode === "ir") {
-        expandMarkerWithMathSync(range, vditor);
-        highlightToolbarIR(vditor);
-    } else if (vditor.currentMode === "wysiwyg") {
-        highlightToolbarWYSIWYG(vditor);
-    }
-    return true;
-};
-
-/** VS Code shortcuts: Alt+↑/↓ move line, Shift+Alt+↑/↓ copy line, Shift+Ctrl+K delete line, Ctrl+L select line, Ctrl+Enter insert empty line */
+/** VS Code shortcuts: Alt+↑/↓ move the block */
 export const handleVscodeShortcut = (vditor: IVditor, event: KeyboardEvent): boolean => {
     if (event.isComposing) {
         return false;
@@ -177,37 +96,6 @@ export const handleVscodeShortcut = (vditor: IVditor, event: KeyboardEvent): boo
 
     const range = getEditorRange(vditor);
 
-    if (!isCtrl(event) && event.shiftKey && event.altKey &&
-        (event.key === "ArrowUp" || event.key === "ArrowDown")) {
-        const copied = copyBlock(range, vditor, event.key === "ArrowUp" ? "up" : "down");
-        if (!copied) {
-            return false;
-        }
-        event.preventDefault();
-        event.stopPropagation();
-        return true;
-    }
-
-    if (isCtrl(event) && !event.shiftKey && !event.altKey &&
-        (event.key === "l" || event.key === "L")) {
-        if (!selectBlock(range, vditor)) {
-            return false;
-        }
-        event.preventDefault();
-        event.stopPropagation();
-        return true;
-    }
-
-    if (isCtrl(event) && event.shiftKey && !event.altKey &&
-        (event.key === "k" || event.key === "K")) {
-        if (!deleteBlock(vditor, range)) {
-            return false;
-        }
-        event.preventDefault();
-        event.stopPropagation();
-        return true;
-    }
-
     if (!isCtrl(event) && !event.shiftKey && event.altKey &&
         (event.key === "ArrowUp" || event.key === "ArrowDown")) {
         if (vditor.currentMode === "wysiwyg") {
@@ -219,13 +107,6 @@ export const handleVscodeShortcut = (vditor: IVditor, event: KeyboardEvent): boo
         } else if (!moveIrBlock(range, vditor, event.key === "ArrowUp" ? "up" : "down")) {
             return false;
         }
-        event.preventDefault();
-        event.stopPropagation();
-        return true;
-    }
-
-    if (isCtrl(event) && event.key === "Enter") {
-        insertEmptyBlock(vditor, event.shiftKey ? "beforebegin" : "afterend");
         event.preventDefault();
         event.stopPropagation();
         return true;

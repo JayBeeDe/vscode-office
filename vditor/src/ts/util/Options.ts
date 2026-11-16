@@ -137,7 +137,6 @@ export class Options {
             prefix: "*",
             suffix: "*",
         }, {
-            hotkey: "⌘D",
             icon: getToolbarCodicon("strike"),
             name: "strike",
             prefix: "~~",
@@ -155,12 +154,10 @@ export class Options {
             name: "list",
             prefix: "* ",
         }, {
-            hotkey: "⌘O",
             icon: getToolbarCodicon("ordered-list"),
             name: "ordered-list",
             prefix: "1. ",
         }, {
-            hotkey: "⌘J",
             icon: getToolbarCodicon("check"),
             name: "check",
             prefix: "* [ ] ",
@@ -185,13 +182,11 @@ export class Options {
             name: "line",
             prefix: "---",
         }, {
-            hotkey: "⇧⌘U",
             icon: getToolbarCodicon("code"),
             name: "code",
             prefix: "```",
             suffix: "\n```",
         }, {
-            hotkey: "⌘G",
             icon: getToolbarCodicon("inline-code"),
             name: "inline-code",
             prefix: "`",
