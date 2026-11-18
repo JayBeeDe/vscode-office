@@ -16,9 +16,9 @@ jobs:
     # includes the hard-coded UI string rules
     - run: npm run lint
     - run: |
-        echo ">>> Start compile vscode-office."
+        echo ">>> Start compile foss-office."
         npm run build
-        echo ">>> Compile vscode-office sucess!"
+        echo ">>> Compile foss-office sucess!"
   i18n:
     runs-on: ubuntu-latest
     steps:

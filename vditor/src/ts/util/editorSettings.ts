@@ -1,5 +1,5 @@
 /**
- * The editor's display settings: the vscode-office.markdown.* settings of the extension, as ids
+ * The editor's display settings: the foss-office.markdown.* settings of the extension, as ids
  * (`serif`, `a4`...). This turns them into the CSS variables the editor's styles read.
  */
 

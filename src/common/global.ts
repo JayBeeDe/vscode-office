@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { ExtensionContext } from 'vscode';
 import { createTranslator, MessageKey, MessageVars, resolveLanguage, SectionKey } from '../i18n';
 
-const prefix = 'vscode-office';
+const prefix = 'foss-office';
 
 export function language() {
     return vscode.env.language;

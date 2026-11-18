@@ -1,6 +1,6 @@
 # Obsidian Test Vault
 
-A multi-file Markdown test set that mimics an Obsidian vault, for manual testing of vscode-office / Vditor.
+A multi-file Markdown test set that mimics an Obsidian vault, for manual testing of foss-office / Vditor.
 
 ## Folder Structure
 

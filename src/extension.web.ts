@@ -28,7 +28,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(
 		vscode.commands.registerCommand('office.markdown.switch', (uri) => { markdownService.switchEditor(uri); }),
 		vscode.commands.registerCommand('office.csv.switch', (uri) => { switchCsvEditor(uri); }),
-		vscode.window.registerCustomEditorProvider('cweijan.markdownViewer', markdownEditorProvider, viewOption),
+		vscode.window.registerCustomEditorProvider('foss-office.markdownViewer', markdownEditorProvider, viewOption),
 		...viewerInstance.bindCustomEditors(viewOption),
 	);
 }

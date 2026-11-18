@@ -7,7 +7,7 @@ Related: [[Projects/Roadmap]], [[Reference/API]]
 
 ## Goals
 
-Support the Obsidian syntax extensions in vscode-office, including:
+Support the Obsidian syntax extensions in foss-office, including:
 
 1. Callout `> [!NOTE]`
 2. WikiLink `[[page]]`

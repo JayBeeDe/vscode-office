@@ -1,5 +1,5 @@
 /*
- * VS Code's colours for a page that is dark while VS Code is light (vscode-office.theme: dark):
+ * VS Code's colours for a page that is dark while VS Code is light (foss-office.theme: dark):
  * the viewers' dark styles read the --vscode-* variables, which are light ones then. These are
  * the values of VS Code's "Dark Modern" theme. Shared by the React viewers and the PDF viewer.
  */

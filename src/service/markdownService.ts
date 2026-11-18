@@ -77,7 +77,7 @@ export class MarkdownService {
         const { type = 'pdf', accent } = option;
         return {
             type,
-            // the page: light, or dark for an HTML export when vscode-office.markdown.exportHtml.theme says so
+            // the page: light, or dark for an HTML export when foss-office.markdown.exportHtml.theme says so
             pageTheme: type === 'html' ? this.resolveTheme('markdown.exportHtml.theme', 'markdown.theme', 'theme') : 'light',
             // code blocks and diagrams follow their settings, `auto` following the editor's page
             codeTheme: this.resolveTheme('markdown.codeMirrorTheme', 'markdown.theme', 'theme'),
@@ -100,7 +100,7 @@ export class MarkdownService {
 
     /**
      * The first of these settings set to `light` or `dark`, each one's `auto` following the next
-     * (vscode-office.markdown.theme's follows vscode-office.theme's), then VS Code's own theme.
+     * (foss-office.markdown.theme's follows foss-office.theme's), then VS Code's own theme.
      */
     private resolveTheme(...keys: string[]): Theme {
         for (const key of keys) {
@@ -113,7 +113,7 @@ export class MarkdownService {
         return kind === vscode.ColorThemeKind.Dark || kind === vscode.ColorThemeKind.HighContrast ? 'dark' : 'light';
     }
 
-    /** vscode-office.markdown.mermaidTheme, `auto` following the editor's page like in the editor */
+    /** foss-office.markdown.mermaidTheme, `auto` following the editor's page like in the editor */
     private getMermaidTheme(): string {
         const theme = Global.getConfig<string>('markdown.mermaidTheme', 'auto');
         return theme && theme !== 'auto' ? theme : this.resolveTheme('markdown.theme', 'theme');
@@ -178,12 +178,12 @@ export class MarkdownService {
                 ? i18n('markdown.noChromiumDocxAt', { path: configuredPath })
                 : i18n('markdown.noChromiumDocx'), openSettings);
         if (choice === openSettings) {
-            vscode.commands.executeCommand('workbench.action.openSettings', 'vscode-office.markdown.export.chromiumPath');
+            vscode.commands.executeCommand('workbench.action.openSettings', 'foss-office.markdown.export.chromiumPath');
         }
     }
 
     /**
-     * vscode-office.markdown.export.chromiumPath when set, undefined if it does not exist: a wrong
+     * foss-office.markdown.export.chromiumPath when set, undefined if it does not exist: a wrong
      * path must be reported, not replaced; when empty, the usual install locations
      */
     private getChromiumPath(): string | undefined {
@@ -347,7 +347,7 @@ export class MarkdownService {
         const editor = vscode.window.activeTextEditor;
         if (!uri) uri = editor?.document.uri;
         if (editor) {
-            vscode.commands.executeCommand('vscode.openWith', uri, 'cweijan.markdownViewer');
+            vscode.commands.executeCommand('vscode.openWith', uri, 'foss-office.markdownViewer');
         } else {
             void openMarkdownAsText(uri, vscode.ViewColumn.Active);
         }

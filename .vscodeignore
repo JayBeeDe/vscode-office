@@ -24,4 +24,4 @@ yarn.lock
 pnpm-lock.yaml
 pnpm-workspace.yaml
 i18n/**
-image/**
+images/**

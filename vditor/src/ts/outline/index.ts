@@ -16,7 +16,7 @@ const normalizeOutlineWidth = (width: number | string | undefined | null): numbe
 };
 
 
-// Nothing about the outline is remembered: vscode-office.markdown.sidebar decides whether it opens
+// Nothing about the outline is remembered: foss-office.markdown.sidebar decides whether it opens
 // with a file (resource/markdown/index.js), and it opens 270px wide (_reset.less), a width dragged to
 // lasting while the file is open.
 

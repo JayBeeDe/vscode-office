@@ -10,7 +10,7 @@ function spineItems(book: Book): Section[] {
 
 export const STORAGE_PREFIX = 'ePubViewer:';
 
-/** The page and text colours of the reader in a light and a dark vscode-office.theme. */
+/** The page and text colours of the reader in a light and a dark foss-office.theme. */
 export const THEME_COLORS: Record<Theme, { bg: string; fg: string }> = {
     light: { bg: '#fff', fg: '#000' },
     dark: { bg: '#000', fg: '#fff' },
@@ -19,7 +19,7 @@ export const THEME_COLORS: Record<Theme, { bg: string; fg: string }> = {
 export const SYSTEM_FONT = "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif";
 
 /**
- * The reader's choices, the values of the vscode-office.epub.font.family, .font.size (in points)
+ * The reader's choices, the values of the foss-office.epub.font.family, .font.size (in points)
  * and .line-height settings: keep them the same as their `enum` in package.json.
  */
 export const FONT_OPTIONS = [
@@ -34,14 +34,14 @@ export const FONT_OPTIONS = [
 export const FONT_SIZE_OPTIONS = [11, 12, 13, 14, 15, 16];
 export const LINE_HEIGHT_OPTIONS = [1, 1.2, 1.4, 1.6, 1.8, 2, 2.3, 2.6, 3];
 
-/** The vscode-office.epub.* display settings, as the extension sends them (`epubSettings`). */
+/** The foss-office.epub.* display settings, as the extension sends them (`epubSettings`). */
 export interface EpubSettings {
     fontFamily: string;
     fontSize: number;
     lineHeight: number;
 }
 
-/** The font stack of a vscode-office.epub.font.family value, the system font for an unknown one. */
+/** The font stack of a foss-office.epub.font.family value, the system font for an unknown one. */
 export function fontStack(fontFamily: string): string {
     return FONT_OPTIONS.find(option => option.label === fontFamily)?.value ?? SYSTEM_FONT;
 }
@@ -213,7 +213,7 @@ export function buildThemeRules(settings: EpubSettings, theme: Theme) {
 /**
  * Paints the pages: the book's own documents and the page area around them (`page`, with the
  * previous/next arrows) take the colours of `theme`; the bars and the sidebar around follow
- * vscode-office.theme in Epub.css. `root` takes the book's font.
+ * foss-office.theme in Epub.css. `root` takes the book's font.
  */
 export function applyEpubTheme(rendition: Rendition | null, settings: EpubSettings, theme: Theme, root?: HTMLElement | null, page?: HTMLElement | null) {
     const { bg, fg } = THEME_COLORS[theme];

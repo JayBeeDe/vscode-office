@@ -20,7 +20,7 @@ const DIAGRAMS_TIMEOUT = 30000;
 
 /**
  * Resolves once every mermaid diagram of the file is drawn: the file's loading screen and its status
- * bar entry last until then (vscode-office.markdown.waitForAllMermaidDiagrams), a save waits for it.
+ * bar entry last until then (foss-office.markdown.waitForAllMermaidDiagrams), a save waits for it.
  * Resolves at once when there is none (checked after the editor's deferred renders), at the latest
  * after DIAGRAMS_TIMEOUT.
  */
@@ -100,7 +100,7 @@ handler.on("open", (md) => {
 }).emit("init")
 
 /**
- * vscode-office.markdown.sidebar: `auto` opens the outline sidebar when the file opens with headings
+ * foss-office.markdown.sidebar: `auto` opens the outline sidebar when the file opens with headings
  * (headings added later don't open it), `none` keeps it closed. Only at opening: the Outline button
  * shows or hides it afterwards, and that is not remembered.
  */
@@ -160,13 +160,13 @@ async function openMarkdown(md) {
     return pendingSave;
   };
   window.__officeMarkdownSave = saveFormatted;
-  // `#word` is an Obsidian tag only with vscode-office.markdown.useObsidianTags (MD018)
+  // `#word` is an Obsidian tag only with foss-office.markdown.useObsidianTags (MD018)
   const obsidianTags = !!markdown?.useObsidianTags;
   editor = new Vditor('vditor', {
     value: Vditor.prepareMarkdown(content),
     cdn: rootPath,
     height: '100%',
-    // hidden at start: vscode-office.markdown.sidebar opens it in after(), once the headings are known
+    // hidden at start: foss-office.markdown.sidebar opens it in after(), once the headings are known
     outline: {
       position: 'left',
       enable: false,

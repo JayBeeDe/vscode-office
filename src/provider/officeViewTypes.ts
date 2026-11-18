@@ -6,13 +6,13 @@ import { getFileSuffix } from '@/common/fileSuffix';
  * otherwise.
  */
 export const OFFICE_VIEW_TYPES = {
-    spreadsheet: 'cweijan.spreadsheetEditor',
-    document: 'cweijan.documentEditor',
-    presentation: 'cweijan.presentationViewer',
-    pdf: 'cweijan.pdfViewer',
-    epub: 'cweijan.epubViewer',
-    xmind: 'cweijan.xmindEditor',
-    parquet: 'cweijan.parquetViewer',
+    spreadsheet: 'foss-office.spreadsheetEditor',
+    document: 'foss-office.documentEditor',
+    presentation: 'foss-office.presentationViewer',
+    pdf: 'foss-office.pdfViewer',
+    epub: 'foss-office.epubViewer',
+    xmind: 'foss-office.xmindEditor',
+    parquet: 'foss-office.parquetViewer',
 } as const;
 
 const COMPONENT_SUFFIXES: Record<keyof typeof OFFICE_VIEW_TYPES, string[]> = {

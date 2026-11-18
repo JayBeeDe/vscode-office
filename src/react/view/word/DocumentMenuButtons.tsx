@@ -464,7 +464,7 @@ function useFormattingGroups() {
 export default function DocumentMenuButtons({ editorRef, onSave, darkPages, onToggleDarkPages }: {
     editorRef: RefObject<DocxEditorRef | null>;
     onSave: () => void;
-    /** vscode-office.document.theme, resolved; the button sets it */
+    /** foss-office.document.theme, resolved; the button sets it */
     darkPages: boolean;
     onToggleDarkPages: () => void;
 }) {

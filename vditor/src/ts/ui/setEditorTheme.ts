@@ -15,7 +15,7 @@ const editorThemeOf = (dark: boolean) => dark ? DARK_EDITOR_THEME : LIGHT_EDITOR
 
 /**
  * Applies the light or dark looks: the toolbar, the outline and the menus follow
- * vscode-office.theme; the page panes follow vscode-office.markdown.theme, and code blocks and
+ * foss-office.theme; the page panes follow foss-office.markdown.theme, and code blocks and
  * Mermaid diagrams on `auto` follow the page.
  */
 const applyColorTheme = (vditor: IVditor) => {
@@ -60,13 +60,13 @@ const observeVscodeTheme = (vditor: IVditor) => {
     observer.observe(document.body, {attributes: true, attributeFilter: ["data-vscode-theme-kind"]});
 };
 
-/** Follows a new `vscode-office.theme` value: `auto`, `light` or `dark`. */
+/** Follows a new `foss-office.theme` value: `auto`, `light` or `dark`. */
 export const setColorTheme = (vditor: IVditor, theme: string) => {
     vditor.options.colorTheme = normalizeColorTheme(theme);
     applyColorTheme(vditor);
 };
 
-/** Follows a new `vscode-office.markdown.theme` value: `auto`, `light` or `dark`. */
+/** Follows a new `foss-office.markdown.theme` value: `auto`, `light` or `dark`. */
 export const setPageTheme = (vditor: IVditor, theme: string) => {
     vditor.options.pageTheme = normalizeColorTheme(theme);
     applyColorTheme(vditor);

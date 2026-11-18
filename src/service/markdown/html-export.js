@@ -148,7 +148,7 @@ async function replaceDynamicContentWithImages(data, config = {}, exportFilePath
         await page.addStyleTag({
             content: `
                 body { background: transparent !important; }
-                .vscode-office-docx-image-shot {
+                .foss-office-docx-image-shot {
                     display: inline-block !important;
                     margin: 0 !important;
                     padding: 0 !important;
@@ -219,8 +219,8 @@ async function replaceMermaidWithImages(page) {
             const diagrams = Array.from(document.querySelectorAll('.mermaid'))
                 .filter(element => element.querySelector('svg'))
             diagrams.forEach((element, index) => {
-                element.setAttribute('data-vscode-office-mermaid-id', String(index))
-                element.classList.add('vscode-office-docx-image-shot')
+                element.setAttribute('data-foss-office-mermaid-id', String(index))
+                element.classList.add('foss-office-docx-image-shot')
             })
             return diagrams
         })
@@ -244,9 +244,9 @@ async function replaceKatexWithImages(page) {
             const formulas = Array.from(document.querySelectorAll('.katex-display, .katex'))
                 .filter(element => element.classList.contains('katex-display') || !element.closest('.katex-display'))
             formulas.forEach((element, index) => {
-                element.setAttribute('data-vscode-office-math-id', String(index))
-                element.setAttribute('data-vscode-office-math-display', String(element.classList.contains('katex-display')))
-                element.classList.add('vscode-office-docx-image-shot')
+                element.setAttribute('data-foss-office-math-id', String(index))
+                element.setAttribute('data-foss-office-math-display', String(element.classList.contains('katex-display')))
+                element.classList.add('foss-office-docx-image-shot')
             })
             return formulas
         })
@@ -274,7 +274,7 @@ async function replaceKatexFormulaWithImage(handle) {
         const imageBuffer = Buffer.from(image)
         const src = `data:image/png;base64,${imageBuffer.toString('base64')}`
         await formula.evaluate((element, imageSrc, width, height) => {
-            const isDisplay = element.getAttribute('data-vscode-office-math-display') === 'true'
+            const isDisplay = element.getAttribute('data-foss-office-math-display') === 'true'
             const imageElement = document.createElement('img')
             imageElement.setAttribute('src', imageSrc)
             imageElement.setAttribute('width', String(Math.ceil(width)))

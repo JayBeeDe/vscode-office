@@ -2,7 +2,7 @@ import { Global } from '@/common/global';
 import { Handler } from '@/common/handler';
 import * as vscode from 'vscode';
 
-/** The EPUB reader's display settings, `vscode-office.epub.*`: their defaults are package.json's. */
+/** The EPUB reader's display settings, `foss-office.epub.*`: their defaults are package.json's. */
 const EPUB_SETTINGS = {
     fontFamily: 'epub.font.family',
     fontSize: 'epub.font.size',
@@ -19,7 +19,7 @@ export interface EpubSettings {
 
 /** A setting's value when it is one of its package.json choices, else its package.json default. */
 function readSetting(key: string): unknown {
-    const config = vscode.workspace.getConfiguration('vscode-office');
+    const config = vscode.workspace.getConfiguration('foss-office');
     const value = config.get(key);
     const choices = (getSettingSchema(key)?.enum ?? []) as unknown[];
     return choices.includes(value) ? value : config.inspect(key)?.defaultValue;
@@ -29,7 +29,7 @@ function getSettingSchema(key: string): { enum?: unknown[] } | undefined {
     const configuration = Global.context?.extension.packageJSON?.contributes?.configuration;
     const sections: { properties?: Record<string, { enum?: unknown[] }> }[] = Array.isArray(configuration) ? configuration : [configuration];
     for (const section of sections) {
-        const schema = section?.properties?.[`vscode-office.${key}`];
+        const schema = section?.properties?.[`foss-office.${key}`];
         if (schema) {
             return schema;
         }
@@ -37,7 +37,7 @@ function getSettingSchema(key: string): { enum?: unknown[] } | undefined {
     return undefined;
 }
 
-/** The `vscode-office.epub.font.family`, `.font.size` and `.line-height` settings. */
+/** The `foss-office.epub.font.family`, `.font.size` and `.line-height` settings. */
 export function getEpubSettings(): EpubSettings {
     return {
         fontFamily: readSetting(EPUB_SETTINGS.fontFamily) as string,
@@ -52,7 +52,7 @@ export function getEpubSettings(): EpubSettings {
  */
 export function bindEpubSettings(handler: Handler) {
     const subscription = vscode.workspace.onDidChangeConfiguration((change) => {
-        if (Object.values(EPUB_SETTINGS).some(key => change.affectsConfiguration(`vscode-office.${key}`))) {
+        if (Object.values(EPUB_SETTINGS).some(key => change.affectsConfiguration(`foss-office.${key}`))) {
             handler.emit('epubSettings', getEpubSettings());
         }
     });

@@ -120,9 +120,9 @@ export default function Epub() {
     const loadGenerationRef = useRef(0);
     const storageKeyRef = useRef('');
     const renditionRef = useRef<Rendition | null>(null);
-    // vscode-office.epub.font.family, .font.size and .line-height, sent by the extension
+    // foss-office.epub.font.family, .font.size and .line-height, sent by the extension
     const settingsRef = useRef<EpubSettings>(getConfigs()?.epubSettings);
-    // the pages follow vscode-office.epub.theme, `auto` following vscode-office.theme like the menus
+    // the pages follow foss-office.epub.theme, `auto` following foss-office.theme like the menus
     const uiTheme = useTheme();
     const [themeSetting, setThemeSetting] = useState<ThemeSetting>(() => toThemeSetting(getConfigs()?.epubTheme));
     const theme: Theme = themeSetting === 'auto' ? uiTheme : themeSetting;

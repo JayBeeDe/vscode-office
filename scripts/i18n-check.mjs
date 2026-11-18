@@ -17,7 +17,7 @@ const RUNTIME = 'src/i18n/index.ts';
 const SECTIONS = ['host', 'viewer', 'document', 'spreadsheet', 'markdown', 'pdf'];
 const PLACEHOLDER = /\{(\w+)\}/g;
 // values that stay the same in every language: brands, formats, symbols
-const SAME_IN_EVERY_LANGUAGE = new Set(['Schema', 'Office Viewer', 'XMind', 'EPUB', 'PDF', 'HTML', 'CSV', 'OK', 'Markdown', 'Mermaid', 'PlantUML', 'KaTeX', 'Emoji', 'Excel', 'Word', 'VS Code', 'Github Copilot', 'Anthropic Claude', 'Google Gemini']);
+const SAME_IN_EVERY_LANGUAGE = new Set(['Schema', 'foss-office', 'XMind', 'EPUB', 'PDF', 'HTML', 'CSV', 'OK', 'Markdown', 'Mermaid', 'PlantUML', 'KaTeX', 'Emoji', 'Excel', 'Word', 'VS Code', 'Github Copilot', 'Anthropic Claude', 'Google Gemini']);
 
 // Which files use which section, and how they name keys.
 const USAGE = {

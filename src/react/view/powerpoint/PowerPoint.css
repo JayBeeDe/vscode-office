@@ -211,7 +211,7 @@ body.office-dark .ppt-thumb img {
     background: #fff;
 }
 
-/* the bands around a slide that doesn't fill the canvas: black in a dark vscode-office.theme */
+/* the bands around a slide that doesn't fill the canvas: black in a dark foss-office.theme */
 body.office-dark #ppt-canvas {
     background: #000;
 }

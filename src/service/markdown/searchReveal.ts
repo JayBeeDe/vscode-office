@@ -3,7 +3,7 @@ import { MARKDOWN_EXTENSIONS } from './wikilink/constants';
 import { getMarkdownWebviewHandler, markdownUriKey } from './blockScroll';
 
 /**
- * Opens search results in the Markdown editor, at the match (`vscode-office.markdown.openSearchResults`).
+ * Opens search results in the Markdown editor, at the match (`foss-office.markdown.openSearchResults`).
  *
  * VS Code doesn't tell a custom editor where to open: a Search view click only reaches a text
  * editor. So when the setting is on, Markdown files open as text (user `workbench.editorAssociations`
@@ -42,7 +42,7 @@ export function openMarkdownAsText(uri: vscode.Uri, column: vscode.ViewColumn) {
 /** Opens `uri` in the Markdown editor when it is a Markdown file, else in its default editor. */
 export function openInEditor(uri: vscode.Uri) {
     if (isMarkdownFile(uri)) {
-        return vscode.commands.executeCommand('vscode.openWith', uri, 'cweijan.markdownViewer', { preview: false });
+        return vscode.commands.executeCommand('vscode.openWith', uri, 'foss-office.markdownViewer', { preview: false });
     }
     return vscode.commands.executeCommand('vscode.open', uri, { preview: false });
 }
@@ -65,7 +65,7 @@ function isAssociatedElsewhere(uri: vscode.Uri): boolean {
     const associations = vscode.workspace.getConfiguration('workbench').get<Record<string, string>>('editorAssociations') ?? {};
     const name = uri.path.slice(uri.path.lastIndexOf('/') + 1).toLowerCase();
     return Object.entries(associations).some(([pattern, viewType]) => {
-        if (viewType === 'cweijan.markdownViewer' || (addedAssociations.includes(pattern) && viewType === 'default')) {
+        if (viewType === 'foss-office.markdownViewer' || (addedAssociations.includes(pattern) && viewType === 'default')) {
             return false;
         }
         const glob = pattern.toLowerCase().replace(/^.*\//, '');
@@ -91,7 +91,7 @@ function selectedMatch(editor: vscode.TextEditor): MarkdownMatch | undefined {
 }
 
 function isEnabled(): boolean {
-    return vscode.workspace.getConfiguration('vscode-office').get<boolean>(SETTING, false);
+    return vscode.workspace.getConfiguration('foss-office').get<boolean>(SETTING, false);
 }
 
 /**
@@ -145,7 +145,7 @@ async function reopenInMarkdownEditor(editor: vscode.TextEditor) {
     // the text editor saves its view state when it closes: at the top, so that the next opening
     // doesn't take this match for a search result
     editor.selection = new vscode.Selection(0, 0, 0, 0);
-    await vscode.commands.executeCommand('vscode.openWith', document.uri, 'cweijan.markdownViewer', {
+    await vscode.commands.executeCommand('vscode.openWith', document.uri, 'foss-office.markdownViewer', {
         viewColumn: group.viewColumn,
         preview: tab.isPreview,
     });
@@ -165,7 +165,7 @@ export function bindMarkdownSearchReveal(context: vscode.ExtensionContext) {
     let timer: ReturnType<typeof setTimeout> | undefined;
     context.subscriptions.push(
         vscode.workspace.onDidChangeConfiguration(event => {
-            if (event.affectsConfiguration(`vscode-office.${SETTING}`)) {
+            if (event.affectsConfiguration(`foss-office.${SETTING}`)) {
                 void syncAssociations(context);
             }
         }),

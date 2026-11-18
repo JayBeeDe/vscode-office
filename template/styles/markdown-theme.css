@@ -44,7 +44,7 @@ blockquote {
 	padding: 0 4px;
 }
 
-/* code blocks: vscode-office.markdown.codeMirrorTheme */
+/* code blocks: foss-office.markdown.codeMirrorTheme */
 pre,
 pre.hljs {
 	background-color: var(--cm-bg-color);

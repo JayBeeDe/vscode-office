@@ -6,7 +6,7 @@ body,
     overflow: hidden;
 }
 
-/* dark (vscode-office.theme): sync the webview page background */
+/* dark (foss-office.theme): sync the webview page background */
 html:has(.word-viewer--vscode-theme),
 html:has(.word-viewer--vscode-theme) body,
 html:has(.word-viewer--vscode-theme) #root {
@@ -828,7 +828,7 @@ html:has(.word-viewer--vscode-theme) .ep-root ::selection {
 }
 
 /*
- * ── Dark pages (vscode-office.document.theme) ──
+ * ── Dark pages (foss-office.document.theme) ──
  * White pages with the document's colours, shown inverted: black pages, light text, hues kept. The
  * pictures are inverted back, and printing shows the document as it is. The selection and the caret
  * are drawn over the pages, not inverted: the caret is turned light.

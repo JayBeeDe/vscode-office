@@ -4,7 +4,7 @@ import { getConfigs } from './vscodeConfig';
 import { isVscodeEditorDark } from './vscodeTheme';
 import '../../../resource/theme/dark-palette.css';
 
-/** The `vscode-office.theme` setting. */
+/** The `foss-office.theme` setting. */
 export type ThemeSetting = 'auto' | 'light' | 'dark';
 export type Theme = 'light' | 'dark';
 
@@ -67,7 +67,7 @@ function subscribe(listener: () => void) {
     return () => listeners.delete(listener);
 }
 
-/** `light` or `dark`, following `vscode-office.theme` and, for `auto`, VS Code. */
+/** `light` or `dark`, following `foss-office.theme` and, for `auto`, VS Code. */
 export function useTheme(): Theme {
     return useSyncExternalStore(subscribe, () => resolveTheme());
 }

@@ -63,7 +63,7 @@ export default function Word() {
 
     // dark: the toolbars and panels take VS Code's colours (dark-palette.css when VS Code is light)
     const adaptiveColorMode = theme === "dark";
-    // the pages follow vscode-office.document.theme, `auto` following vscode-office.theme like the toolbars
+    // the pages follow foss-office.document.theme, `auto` following foss-office.theme like the toolbars
     const [pageThemeSetting, setPageThemeSetting] = useState<ThemeSetting>(() => toThemeSetting(getConfigs()?.documentTheme));
     const darkPages = (pageThemeSetting === "auto" ? theme : pageThemeSetting) === "dark";
 

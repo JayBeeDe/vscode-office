@@ -122,12 +122,12 @@ class Vditor {
         }
     }
 
-    /** Follow a new vscode-office.theme value: auto, light or dark */
+    /** Follow a new foss-office.theme value: auto, light or dark */
     public setColorTheme(colorTheme: string) {
         setColorTheme(this.vditor, colorTheme);
     }
 
-    /** Follow a new vscode-office.markdown.theme value for the page: auto, light or dark */
+    /** Follow a new foss-office.markdown.theme value for the page: auto, light or dark */
     public setPageTheme(pageTheme: string) {
         setPageTheme(this.vditor, pageTheme);
     }
@@ -393,7 +393,7 @@ class Vditor {
         this.vditor.undo.addToUndoStack(this.vditor);
     }
 
-    /** Apply new vscode-office.markdown display settings (font sizes, fonts, widths...) */
+    /** Apply new foss-office.markdown display settings (font sizes, fonts, widths...) */
     public setEditorSettings(editorSettings: IEditorSettings) {
         this.vditor.options.editorSettings = editorSettings;
         applyEditorSettings(this.vditor);

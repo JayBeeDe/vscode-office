@@ -70,7 +70,7 @@ export const wheelZoomFontSizeEvent = (vditor: IVditor, editorElement: HTMLEleme
             return;
         }
 
-        // shown at once; the extension saves it in vscode-office.markdown.editorFontSize
+        // shown at once; the extension saves it in foss-office.markdown.editorFontSize
         vditor.options.editorSettings = { ...vditor.options.editorSettings, editorFontSize: next };
         applyEditorSettings(vditor);
         vditor.options.changeEditorFontSize?.(next);

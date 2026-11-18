@@ -12,30 +12,30 @@ function readTheme(key: string): Theme {
     return isTheme(theme) ? theme : 'auto';
 }
 
-/** The `vscode-office.theme` setting, shared by every viewer and editor. */
+/** The `foss-office.theme` setting, shared by every viewer and editor. */
 export function getTheme(): Theme {
     return readTheme('theme');
 }
 
-/** The `vscode-office.epub.theme` setting: the EPUB pages' colours, `auto` following `vscode-office.theme`. */
+/** The `foss-office.epub.theme` setting: the EPUB pages' colours, `auto` following `foss-office.theme`. */
 export function getEpubTheme(): Theme {
     return readTheme('epub.theme');
 }
 
-/** The `vscode-office.document.theme` setting: the document pages' colours, `auto` following `vscode-office.theme`. */
+/** The `foss-office.document.theme` setting: the document pages' colours, `auto` following `foss-office.theme`. */
 export function getDocumentTheme(): Theme {
     return readTheme('document.theme');
 }
 
-/** The `vscode-office.pdf.theme` setting: the PDF pages' colours, `auto` following `vscode-office.theme`. */
+/** The `foss-office.pdf.theme` setting: the PDF pages' colours, `auto` following `foss-office.theme`. */
 export function getPdfTheme(): Theme {
     return readTheme('pdf.theme');
 }
 
-/** Sends `theme` to the page whenever `vscode-office.theme` changes. */
+/** Sends `theme` to the page whenever `foss-office.theme` changes. */
 export function bindTheme(handler: Handler) {
     const subscription = vscode.workspace.onDidChangeConfiguration((event) => {
-        if (event.affectsConfiguration('vscode-office.theme')) {
+        if (event.affectsConfiguration('foss-office.theme')) {
             handler.emit('theme', getTheme());
         }
     });
@@ -43,12 +43,12 @@ export function bindTheme(handler: Handler) {
 }
 
 /**
- * Keeps a viewer's page theme in sync: sends `event` whenever the `vscode-office.<key>` setting
+ * Keeps a viewer's page theme in sync: sends `event` whenever the `foss-office.<key>` setting
  * changes, and saves the theme the viewer picks (an `event` it sends) in the user settings.
  */
 function bindPageTheme(handler: Handler, key: string, event: string) {
     const subscription = vscode.workspace.onDidChangeConfiguration((change) => {
-        if (change.affectsConfiguration(`vscode-office.${key}`)) {
+        if (change.affectsConfiguration(`foss-office.${key}`)) {
             handler.emit(event, readTheme(key));
         }
     });

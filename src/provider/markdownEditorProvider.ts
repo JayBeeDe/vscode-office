@@ -86,16 +86,16 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
         MarkdownEditorProvider.configSyncRegistered = true;
         context.subscriptions.push(
             vscode.workspace.onDidChangeConfiguration((event) => {
-                const config = vscode.workspace.getConfiguration('vscode-office.markdown');
+                const config = vscode.workspace.getConfiguration('foss-office.markdown');
                 const patch: Partial<Record<MarkdownSyncConfigKey | 'editorSettings', unknown>> = {};
                 let changed = false;
                 for (const key of MARKDOWN_SYNC_CONFIG_KEYS) {
-                    if (event.affectsConfiguration(`vscode-office.markdown.${key}`)) {
+                    if (event.affectsConfiguration(`foss-office.markdown.${key}`)) {
                         patch[key] = config.get(key);
                         changed = true;
                     }
                 }
-                if (EDITOR_SETTING_KEYS.some(key => event.affectsConfiguration(`vscode-office.markdown.${key}`))) {
+                if (EDITOR_SETTING_KEYS.some(key => event.affectsConfiguration(`foss-office.markdown.${key}`))) {
                     patch.editorSettings = getEditorSettings(config);
                     changed = true;
                 }
@@ -226,7 +226,7 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
             // re-parsing on every keystroke (ANTLR token recognition errors in console).
             documentSyncTimer = setTimeout(() => void flushDocumentSync(), 400);
         };
-        const config = vscode.workspace.getConfiguration("vscode-office.markdown");
+        const config = vscode.workspace.getConfiguration("foss-office.markdown");
         registerMarkdownWebview(uri, handler);
         bindTheme(handler);
         handler.panel.onDidDispose(() => {

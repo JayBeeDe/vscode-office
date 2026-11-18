@@ -26,7 +26,7 @@ interface IObject {
 
 type ITheme = "classic" | "dark";
 type IEditMode = "wysiwyg" | "ir";
-/** The extension's vscode-office.theme setting. */
+/** The extension's foss-office.theme setting. */
 type IColorTheme = "auto" | "light" | "dark";
 type ICodeMirrorTheme = "auto" | "light" | "dark";
 type IMermaidTheme =
@@ -444,7 +444,7 @@ interface IHint {
     extend?: IHintExtend[];
 }
 
-/** The vscode-office.markdown display settings, as their ids (see util/editorSettings) */
+/** The foss-office.markdown display settings, as their ids (see util/editorSettings) */
 interface IEditorSettings {
     uiFontSize?: number;
     editorFontSize?: number;
@@ -519,11 +519,11 @@ interface IOptions {
     };
     /** Theme. Default: 'classic' */
     theme?: ITheme;
-    /** Light or dark: vscode-office.theme, `auto` following VS Code. Default: 'auto' */
+    /** Light or dark: foss-office.theme, `auto` following VS Code. Default: 'auto' */
     colorTheme?: IColorTheme | string;
-    /** Light or dark page: vscode-office.markdown.theme, `auto` following colorTheme. Default: 'auto' */
+    /** Light or dark page: foss-office.markdown.theme, `auto` following colorTheme. Default: 'auto' */
     pageTheme?: IColorTheme | string;
-    /** Display settings: font sizes, fonts, widths... (vscode-office.markdown.*) */
+    /** Display settings: font sizes, fonts, widths... (foss-office.markdown.*) */
     editorSettings?: IEditorSettings;
     /** CodeMirror code block theme; `auto` follows the editor. Default: 'auto' */
     codeMirrorTheme?: ICodeMirrorTheme | string;

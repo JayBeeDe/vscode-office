@@ -367,7 +367,7 @@ async function writeZenPackage(zip: JSZip, content: Sheet[]) {
     }
     zip.file('content.json', JSON.stringify(content));
 
-    const metadata = (await readJson(zip, 'metadata.json')) ?? { creator: { name: 'Office Viewer' } };
+    const metadata = (await readJson(zip, 'metadata.json')) ?? { creator: { name: 'foss-office' } };
     if (metadata.activeSheetId && !content.some(sheet => sheet.id === metadata.activeSheetId)) {
         metadata.activeSheetId = content[0]?.id;
     }

@@ -1,4 +1,4 @@
-/** The extension's `vscode-office.theme` setting: `auto` follows VS Code's kind. */
+/** The extension's `foss-office.theme` setting: `auto` follows VS Code's kind. */
 export type IColorTheme = "auto" | "light" | "dark";
 
 export const normalizeColorTheme = (theme?: string): IColorTheme =>
@@ -21,17 +21,17 @@ export const isEditorDark = (vditor: IVditor) => {
     return theme === "auto" ? isVscodeDarkTheme() : theme === "dark";
 };
 
-/** Whether the page is dark: vscode-office.markdown.theme, `auto` following the editor. */
+/** Whether the page is dark: foss-office.markdown.theme, `auto` following the editor. */
 export const isPageDark = (vditor: IVditor) => {
     const theme = normalizeColorTheme(vditor.options.pageTheme);
     return theme === "auto" ? isEditorDark(vditor) : theme === "dark";
 };
 
-/** The page panes (WYSIWYG and instant rendering), which follow vscode-office.markdown.theme. */
+/** The page panes (WYSIWYG and instant rendering), which follow foss-office.markdown.theme. */
 export const getPageElements = (vditor: IVditor): HTMLElement[] =>
     [vditor.wysiwyg?.element?.parentElement, vditor.ir?.element?.parentElement].filter(Boolean) as HTMLElement[];
 
-/** The menus inside the page panes, which follow vscode-office.theme like the toolbar. */
+/** The menus inside the page panes, which follow foss-office.theme like the toolbar. */
 export const getPaneMenuElements = (vditor: IVditor): HTMLElement[] =>
     [
         vditor.wysiwyg?.popover,

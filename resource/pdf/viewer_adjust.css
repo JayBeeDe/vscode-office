@@ -71,7 +71,7 @@ body:not(.office-adaptive-theme) ::-webkit-scrollbar-corner {
     background: rgb(212 212 215) !important;
 }
 
-/* Dark UI (vscode-office.theme): PDF.js's theme variables from VS Code's colours, or from
+/* Dark UI (foss-office.theme): PDF.js's theme variables from VS Code's colours, or from
    ../theme/dark-palette.css when VS Code is light (office-forced-dark) */
 body.office-adaptive-theme {
     --main-color: var(--vscode-foreground);

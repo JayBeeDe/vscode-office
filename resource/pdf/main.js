@@ -7,12 +7,12 @@
   // the sidebar opens 270px wide with every PDF: the width it is dragged to is not kept (the one
   // earlier versions kept is removed)
   try {
-    localStorage.removeItem('vscode-office.pdf.sidebarWidth');
+    localStorage.removeItem('foss-office.pdf.sidebarWidth');
   } catch {
     // ignore storage errors
   }
 
-  // vscode-office.pdf.sidebar: `<none|always|auto>-<outlines|thumbnails>`. The first part says
+  // foss-office.pdf.sidebar: `<none|always|auto>-<outlines|thumbnails>`. The first part says
   // whether the sidebar opens with the document (`auto`: when it has an outline), the second the
   // view it shows whenever it opens, an empty outline if the document has none
   let sidebarSetting = window.officePdfSidebar || 'auto-outlines';
@@ -64,11 +64,11 @@
     });
   }
 
-  // vscode-office.pdf.tool: 'hand' (1) scrolls by dragging the pages, 'selection' (0) selects text
+  // foss-office.pdf.tool: 'hand' (1) scrolls by dragging the pages, 'selection' (0) selects text
   function cursorTools(name) {
     return name === 'selection' ? 0 : 1
   }
-  // vscode-office.pdf.scrolling
+  // foss-office.pdf.scrolling
   function scrollMode(name) {
     switch (name) {
       case 'vertical':
@@ -81,7 +81,7 @@
         return -1
     }
   }
-  // vscode-office.pdf.spread
+  // foss-office.pdf.spread
   function spreadMode(name) {
     switch (name) {
       case 'none':
@@ -100,9 +100,9 @@
 
   const strings = window.officePdfStrings || {};
 
-  // vscode-office.theme: the toolbars, the sidebar and the menus are light or dark.
-  // vscode-office.pdf.theme: the pages' colours, inverted when dark (`office-dark`); `auto`
-  // follows vscode-office.theme. The dark mode button sets it.
+  // foss-office.theme: the toolbars, the sidebar and the menus are light or dark.
+  // foss-office.pdf.theme: the pages' colours, inverted when dark (`office-dark`); `auto`
+  // follows foss-office.theme. The dark mode button sets it.
   let uiTheme = window.officePdfTheme || 'auto';
   let pageTheme = window.officePdfPageTheme || 'auto';
 
@@ -146,7 +146,7 @@
     new MutationObserver(applyThemes).observe(document.body, { attributes: true, attributeFilter: ['class', 'data-vscode-theme-kind'] });
   }
 
-  // the dark mode button and Ctrl/Cmd+L save the other theme in vscode-office.pdf.theme
+  // the dark mode button and Ctrl/Cmd+L save the other theme in foss-office.pdf.theme
   function setupDarkMode() {
     const toggle = () => {
       pageTheme = isPageDark() ? 'light' : 'dark';
@@ -517,7 +517,7 @@
       initSidebarResize();
       setupSidebar();
       setupFindBar();
-      // vscode-office.pdf.zoom: the zoom every PDF opens with (rather than the one it was last
+      // foss-office.pdf.zoom: the zoom every PDF opens with (rather than the one it was last
       // viewed with), and the one Ctrl/Cmd+0 goes back to
       PDFViewerApplicationOptions.set('defaultZoomValue', window.officePdfZoom || 'page-width');
       // every PDF opens at its beginning: not where it was last viewed, nor at the destination the
